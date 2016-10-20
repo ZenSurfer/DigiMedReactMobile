@@ -1,0 +1,18 @@
+rootProject.name = 'AwesomeProject'
+
+include ':app'
+include ':react-native-vector-icons'
+include ':RNMaterialKit'
+include ':react-native-image-picker'
+include ':react-native-sqlite-storage'
+include ':react-native-fs'
+include ':react-native-chart-android'
+include ':react-native-photo-view'
+
+project(':react-native-vector-icons').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-vector-icons/android')
+project(':RNMaterialKit').projectDir = file('../node_modules/react-native-material-kit/android')
+project(':react-native-image-picker').projectDir = new File(settingsDir, '../node_modules/react-native-image-picker/android')
+project(':react-native-sqlite-storage').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-sqlite-storage/src/android')
+project(':react-native-fs').projectDir = new File(settingsDir, '../node_modules/react-native-fs/android')
+project(':react-native-chart-android').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-chart-android/android')
+project(':react-native-photo-view').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-photo-view/android')

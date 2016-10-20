@@ -1,0 +1,725 @@
+'use strict'
+
+import React, {Component} from 'react'
+import {StyleSheet, Text, Image, View, Navigator, InteractionManager, DrawerLayoutAndroid, StatusBar, TouchableOpacity, TouchableNativeFeedback, DatePickerAndroid, ScrollView, RefreshControl, TextInput, Picker, TimePickerAndroid, Slider, Switch, ToastAndroid, ListView, Modal} from 'react-native'
+import Icon from 'react-native-vector-icons/MaterialIcons'
+import RNFS from 'react-native-fs'
+import {LineChart} from 'react-native-chart-android';
+
+import _ from 'lodash'
+import moment from 'moment'
+import ImagePicker from 'react-native-image-picker'
+import Env from '../../env'
+
+import Styles from '../../assets/Styles'
+import DrawerPage from '../../components/DrawerPage'
+
+const _scrollView = {}
+const EnvInstance = new Env()
+const db = EnvInstance.db()
+const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
+
+class OrderItem extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            steps: {active: 1},
+            avatar: false,
+            refreshing: false,
+            modalVisible: false,
+            labItem: {},
+            labItemSelect: {},
+            pendingItem: {},
+            recentItem: {},
+            recentItemData: {},
+            allItem: {},
+            modalItems: {},
+        }
+    }
+    componentWillMount() {
+        this.setState({refreshing: true})
+        RNFS.exists(this.props.patientAvatar).then((exist) => {
+            if (exist)
+            RNFS.readFile(this.props.patientAvatar, 'base64').then((rs) => {
+                this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')})
+            })
+        })
+    }
+    componentDidMount() {
+        setTimeout(() => {this.labItemUpdate()}, 1000)
+    }
+    render() {
+        return (
+            <Navigator
+                renderScene={this.renderScene.bind(this)}
+                navigator={this.props.navigator}
+                navigationBar={
+                    <Navigator.NavigationBar style={[Styles.navigationBar, {marginTop: 24}]}
+                        routeMapper={NavigationBarRouteMapper(this.props.patientID, this.props.patientName, this.state.avatar)} />
+                }
+            />
+        )
+    }
+    renderScene(route, navigator) {
+        return (
+            <View style={[Styles.containerStyle, {backgroundColor: '#E0E0E0'}]}>
+                {this.state.children}
+                <View style={[Styles.subTolbar, {marginTop: 24}]}>
+                    <Text style={Styles.subTitle}>Laboratory Works</Text>
+                </View>
+                <Modal
+                    animationType={"slide"}
+                    transparent={true}
+                    visible={this.state.modalVisible}
+                    onRequestClose={() => {
+                        this.setState({modalVisible: false})
+                    }}>
+                    <View style={{flex: 1, alignItems: 'stretch'}}>
+                        <View style={{flex: 1, backgroundColor: '#FFF'}}>
+                            <View style={{padding: 16, paddingRight: 0, paddingBottom: 16, paddingTop: 16, backgroundColor: '#2962FF', elevation: 2}}>
+                                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
+                                    <Text style={{color: '#FFF', fontSize: 26, textAlignVertical: 'center'}}>Pending Laboratory</Text>
+                                    <TouchableOpacity
+                                        style={{padding: 16, paddingTop: 0, paddingBottom: 0,}}
+                                        onPress={() => this.setState({modalVisible: false})}>
+                                        <Icon name={'close'} size={30} color={'#FFF'} style={{textAlignVertical: 'center'}}/>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                            <ScrollView style={{flex: 1}}>
+                                <View style={{padding: 16}}>
+                                    {_.map(this.state.modalItems, (v, i) => {
+                                        return (
+                                            <View key={i} style={{flexDirection: 'column', marginLeft: -1, marginRight: -1}}>
+                                                <Text style={styles.label}>{i}</Text>
+                                                <TextInput
+                                                    placeholder={'Text Here...'}
+                                                    style={[styles.textInput]}
+                                                    value={this.state.modalItems[i].value}
+                                                    placeholderTextColor={'#E0E0E0'}
+                                                    onChangeText={(text) => {
+                                                        var obj = this.state.modalItems || {}; obj[i] = {value: text};
+                                                        this.setState({modalItems: obj})
+                                                    }} />
+                                            </View>
+                                        )
+                                    })}
+                                </View>
+                            </ScrollView>
+                            <View style={{flexDirection: 'row', alignItems: 'stretch'}}>
+                                <TouchableOpacity
+                                    activeOpacity={0.9}
+                                    style={{flex: 1, alignItems: 'stretch', borderStyle: 'solid', borderRightWidth: 0.5, borderRightColor: '#81C784'}}
+                                    onPress={() => {
+                                        db.transaction((tx) => {
+                                            tx.executeSql("SELECT labData FROM labwork WHERE id=? LIMIT 1", [this.state.modalLabworkID], (tx, rs) => {
+                                                var labData = _.split(rs.rows.item(0).labData, ':::');
+                                                labData[1] = _.join(_.flatMap(this.state.modalItems, (n) => {
+                                                    return n.value
+                                                }), '@@');
+                                                tx.executeSql("UPDATE labwork SET completionDate='"+moment().format('YYYY-MM-DD')+"', completed=1, labData='"+_.join(labData, ':::')+"' WHERE id=?",[this.state.modalLabworkID], (tx, rs) => {
+                                                    console.log(rs.rowsAffected)
+                                                }, (err) => alert(err.message))
+                                            }, (err) => alert(err.message))
+                                        }, (err) => alert(err.message), () => {
+                                            this.setState({modalVisible: false})
+                                            this.pendingItemUpdate();
+                                            ToastAndroid.show('Successfully completed!', 3000);
+                                        })
+                                    }}>
+                                    <View style={{backgroundColor: '#4CAF50'}}>
+                                        <Text style={{textAlign: 'center', padding: 16, color: '#FFF', paddingTop: 20, paddingBottom: 20}}>COMPLETED</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    activeOpacity={0.9}
+                                    style={{flex: 1, alignItems: 'stretch'}}
+                                    onPress={() => {
+                                        db.transaction((tx) => {
+                                            tx.executeSql("SELECT labData FROM labwork WHERE id=? LIMIT 1", [this.state.modalLabworkID], (tx, rs) => {
+                                                var labData = _.split(rs.rows.item(0).labData, ':::');
+                                                labData[1] = _.join(_.flatMap(this.state.modalItems, (n) => {
+                                                    return n.value
+                                                }), '@@');
+                                                tx.executeSql("UPDATE labwork SET labData='"+_.join(labData, ':::')+"' WHERE id=?",[this.state.modalLabworkID], (tx, rs) => {
+                                                    console.log(rs.rowsAffected)
+                                                }, (err) => alert(err.message))
+                                            }, (err) => alert(err.message))
+                                        }, (err) => alert(err.message), () => {
+                                            this.setState({modalVisible: false})
+                                            ToastAndroid.show('Successfully saved!', 3000);
+                                        })
+                                    }}>
+                                    <View style={{backgroundColor: '#4CAF50'}}>
+                                        <Text style={{textAlign: 'center', color: '#FFF', padding: 16, paddingTop: 20, paddingBottom: 20}}>SAVE</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
+                <View style={{flexDirection: 'row', backgroundColor: '#E0E0E0'}}>
+                    <TouchableOpacity
+                        ref={ref => this.refStep1 = ref}
+                        activeOpacity={(this.state.steps.active == 1) ? 1 : 0.2}
+                        style={[styles.steps, (this.state.steps.active == 1) ? styles.stepsActive : {}]}
+                        onPress={() => {
+                            this.refStep1.setOpacityTo(1)
+                            if (this.state.steps.active != 1) {
+                                this.labItemUpdate();
+                                this.setState({steps: {active: 1}})
+                            }
+                        }}>
+                        <Text style={[styles.stepsText, (this.state.steps.active == 1) ? styles.stepsTextActive : {}]}>Ordering</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        ref={ref => this.refStep2 = ref}
+                        activeOpacity={(this.state.steps.active == 2) ? 1 : 0.2}
+                        style={[styles.steps, (this.state.steps.active == 2) ? styles.stepsActive : {}]}
+                        onPress={() => {
+                            this.refStep2.setOpacityTo(1)
+                            if (this.state.steps.active != 2) {
+                                this.pendingItemUpdate();
+                                this.setState({steps: {active: 2}})
+                            }
+                        }}>
+                        <Text style={[styles.stepsText, (this.state.steps.active == 2) ? styles.stepsTextActive : {}]}>Pending</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        ref={ref => this.refStep3 = ref}
+                        activeOpacity={(this.state.steps.active == 3) ? 1 : 0.2}
+                        style={[styles.steps, (this.state.steps.active == 3) ? styles.stepsActive : {}]}
+                        onPress={() => {
+                            this.refStep3.setOpacityTo(1)
+                            if (this.state.steps.active != 3) {
+                                this.recentItemUpdate();
+                                this.setState({steps: {active: 3}})
+                            }
+                        }}>
+                        <Text style={[styles.stepsText, (this.state.steps.active == 3) ? styles.stepsTextActive : {}]}>Recent</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        ref={ref => this.refStep4 = ref}
+                        activeOpacity={(this.state.steps.active == 4) ? 1 : 0.2}
+                        style={[styles.steps, (this.state.steps.active == 4) ? styles.stepsActive : {}]}
+                        onPress={() => {
+                            this.refStep4.setOpacityTo(1)
+                            if (this.state.steps.active != 4) {
+                                this.getChart();
+                                this.setState({steps: {active: 4}})
+                            }
+                        }}>
+                        <Text style={[styles.stepsText, (this.state.steps.active == 4) ? styles.stepsTextActive : {}]}>All</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{flex:1, backgroundColor: '#FFF'}}>
+                    {this.steps(this.state.steps.active)}
+                </View>
+                {(this.state.steps.active == 1) ? (<TouchableOpacity
+                    style={[Styles.buttonFab, {backgroundColor: (_.size(_.compact(_.toArray(this.state.labItemSelect))) > 0) ? '#E91E63' : '#E0E0E0', elevation:  (_.size(_.compact(_.toArray(this.state.labItemSelect))) > 0) ? 4 : 0}]}
+                    onPress={this.labItemOrder.bind(this)}>
+                    <Icon name={'shopping-cart'} color={'#FFFFFF'} size={30}/>
+                </TouchableOpacity>) : (<View/>)}
+            </View>
+        )
+    }
+    labItemUpdate() {
+        this.setState({refreshing: true, labItem: {}, labItemSelect: {}})
+        db.transaction((tx) => {
+            tx.executeSql("SELECT `labItemClass`.`value` as `class`, (SELECT GROUP_CONCAT((`labItem`.`id` || ':' ||`labItem`.`name`), '@') FROM labItem WHERE (`labItem`.`deleted_at` in (null, 'NULL', '') OR `labItem`.`deleted_at` is null) AND `labItem`.`labItemClassID` = `labItemClass`.`id` ORDER BY `labItem`.`name` ASC) as `value` FROM labItemClass ORDER BY `labItemClass`.`value` ASC", [], (tx, rs) => {
+                db.data = rs.rows
+            })
+        }, (err) => {
+            this.setState({refreshing: false})
+        }, () => {
+            var labItem = []
+            _.forEach(db.data, (v, i) => {
+                labItem.push(db.data.item(i))
+            })
+            this.setState({labItem: labItem, refreshing: false})
+        })
+    }
+    pendingItemUpdate() {
+        this.setState({refreshing: true, pendingItem: {}})
+        db.transaction((tx) => {
+            tx.executeSql("SELECT `labwork`.`id` as `id`, `labwork`.`orderDate`, `labwork`.`labData` FROM `labwork` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND (`labwork`.`completed` in (null, 'NULL', '') OR `labwork`.`completed` is null) AND `labwork`.`patientID` = ? ORDER BY `labwork`.`orderDate` DESC, `labwork`.`created_at` DESC", [this.props.patientID], (tx, rs) => {
+                var pendingItemObj = {};
+                _.forEach(rs.rows, (v, i) => {
+                    var orderDate = rs.rows.item(i).orderDate;
+                    var labworkID = rs.rows.item(i).id;
+                    var labData = _.split(_.split(rs.rows.item(i).labData, ':::')[1], '@@');
+                    tx.executeSql("SELECT GROUP_CONCAT(`labItem`.`name`, ',') as value, GROUP_CONCAT(`labItem`.`unit`, ',') as unit, GROUP_CONCAT(`labItem`.`normalMinValue`, ',') as normalMinValue, GROUP_CONCAT(`labItem`.`normalMaxValue`, ',') as normalMaxValue FROM `labItem` WHERE `labItem`.`id` in ("+_.join(_.split(_.split(rs.rows.item(i).labData, ':::')[0], '@@'), ',')+")", [], (tx, rs) => {
+                        var obj = {};
+                        alert(JSON.stringify(rs.rows.item(0).unit))
+                        var unit = _.split(rs.rows.item(0).unit, ',');
+                        var normalMinValue = _.split(rs.rows.item(0).normalMinValue, ',');
+                        var normalMaxValue = _.split(rs.rows.item(0).normalMaxValue, ',');
+                        _.forEach(_.split(rs.rows.item(0).value, ','), (v, i) => {
+                            obj[v] = {value: labData[i], unit: unit[i], normalMinValue: normalMinValue[i], normalMaxValue: normalMaxValue[i], labworkID: labworkID}
+                        })
+                        if (orderDate in pendingItemObj) {
+                            pendingItemObj[orderDate].push(obj);
+                        } else {
+                            pendingItemObj[orderDate] = []
+                            pendingItemObj[orderDate].push(obj);
+                        }
+                    })
+
+                })
+                db.pendingItem = pendingItemObj
+            })
+        }, (err) => {
+            this.setState({refreshing: false})
+        }, () => {
+            this.setState({pendingItem: db.pendingItem, refreshing: false})
+        })
+    }
+    recentItemUpdate() {
+        this.setState({refreshing: true, recentItem: {}})
+        db.transaction((tx) => {
+            tx.executeSql("SELECT `labwork`.`completionDate`, `labwork`.`labData` FROM `labwork` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND `labwork`.`completed` = 1 AND `labwork`.`patientID` = ? ORDER BY `labwork`.`completionDate` DESC, `labwork`.`created_at` DESC", [this.props.patientID], (tx, rs) => {
+                var recentItemObj = {};
+                _.forEach(rs.rows, (v, i) => {
+                    var completionDate = rs.rows.item(i).completionDate;
+                    var labData = _.split(_.split(rs.rows.item(i).labData, ':::')[1], '@@');
+                    tx.executeSql("SELECT GROUP_CONCAT(`labItem`.`name`, ',') as value FROM `labItem` WHERE `labItem`.`id` in ("+_.join(_.split(_.split(rs.rows.item(i).labData, ':::')[0], '@@'), ',')+")", [], (tx, rs) => {
+                        var obj = {}
+                        _.forEach(_.split(rs.rows.item(0).value, ','), (v, i) => {
+                            obj[v] = {value: labData[i], normal: '-'}
+                        })
+                        if (completionDate in recentItemObj) {
+                            recentItemObj[completionDate].push(obj);
+                        } else {
+                            recentItemObj[completionDate] = []
+                            recentItemObj[completionDate].push(obj);
+                        }
+                    })
+
+                })
+                db.recentItem = recentItemObj
+            })
+        }, (err) => {
+            this.setState({refreshing: false})
+        }, () => {
+            this.setState({recentItem: db.recentItem, refreshing: false})
+        })
+    }
+    steps(step) {
+        switch (step) {
+            case 1:
+            return (
+                <ScrollView
+                    ref={(ref) => this.refStep1 = ref}
+                    keyboardShouldPersistTaps={true}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.refreshing}
+                            onRefresh={this.labItemUpdate.bind(this)}/>
+                    }>
+                    <View style={{marginBottom: 50}}>
+                        {_.map(this.state.labItem, (v, i) => {
+                            var labItems = _.split(v.value, '@');
+                            return (
+                                <View key={i} style={{flexDirection: 'column', backgroundColor: '#FFFFFF'}}>
+                                    <View style={{flex:1, backgroundColor: '#FFEB3B', elevation: 1}}>
+                                        <Text style={[styles.heading, {fontSize: 25, color: '#424242'} ]}>{v.class}</Text>
+                                    </View>
+                                    {_.map(labItems, (v, i) => {
+                                        if ((i % 2) == 0)
+                                        return (
+                                            <View key={i} style={{flexDirection: 'row', backgroundColor: ((i%4)==0) ? '#FAFAFA': '#FFF', paddingLeft: 16, paddingRight: 16, borderStyle: 'solid', borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}>
+                                                <TouchableOpacity style={{flex: 1, alignItems: 'stretch', flexDirection: 'row'}}
+                                                    activeOpacity={1}
+                                                    onPress={this.labItemSelect.bind(this, _.split(labItems[i], ':')[0])}>
+                                                    <Icon name={(this.state.labItemSelect[_.split(labItems[i], ':')[0]]) ? 'check-box' : 'check-box-outline-blank'} size={20} style={{paddingTop: 12, paddingBottom: 12, color: (this.state.labItemSelect[_.split(labItems[i], ':')[0]]) ? '#4CAF50' : '#616161'}}/>
+                                                        <View style={{flex: 1, alignItems: 'stretch', alignSelf: 'center'}}>
+                                                            <Text style={[styles.label, {textAlignVertical: 'center'}]}>{_.split(labItems[i], ':')[1]}</Text>
+                                                        </View>
+                                                    </TouchableOpacity>
+                                                        {(_.isEmpty(labItems[i+1])) ? (<View/>) : (
+                                                            <TouchableOpacity style={{flex: 1, alignItems: 'stretch', flexDirection: 'row'}}
+                                                                activeOpacity={1}
+                                                                onPress={this.labItemSelect.bind(this, _.split(labItems[i+1], ':')[0])}>
+                                                                <Icon name={(this.state.labItemSelect[_.split(labItems[i+1], ':')[0]]) ? 'check-box' : 'check-box-outline-blank'} size={20} style={{paddingTop: 12, paddingBottom: 12, color: (this.state.labItemSelect[_.split(labItems[i+1], ':')[0]]) ? '#4CAF50' : '#616161'}}/>
+                                                                <View style={{flex: 1, alignItems: 'stretch', alignSelf: 'center'}}>
+                                                                    <Text style={[styles.label, {textAlignVertical: 'center'}]}>{_.split(labItems[i+1], ':')[1]}</Text>
+                                                                </View>
+                                                            </TouchableOpacity>
+                                                        )}
+                                                </View>
+                                            )
+                                        })}
+                                </View>
+                            )
+                        })}
+                    </View>
+                </ScrollView>
+            )
+            break;
+            case 2:
+            return (
+                <View style={{flex: 1}}>
+                    <ListView
+                        dataSource={ds.cloneWithRows(this.state.pendingItem)}
+                        renderRow={(rowData, sectionID, rowID) => {
+                            return (
+                                <View>
+                                    <View style={{backgroundColor: '#FFEB3B', paddingBottom: 10, paddingLeft: 16, paddingRight: 16, elevation: 1}}>
+                                        <Text style={{fontSize: 25, color: '#424242', paddingBottom: 5, paddingTop: 5}}>{moment(rowID).format('MMMM DD, YYYY')}</Text>
+                                        <View style={{flexDirection: 'row'}}>
+                                            <Text style={{flex:1, color: '#616161', fontSize: 16, alignItems: 'stretch'}}>Laboratory Items</Text>
+                                            <Text style={{flex:1, color: '#616161', fontSize: 16, alignItems: 'stretch'}}>Normal Values</Text>
+                                        </View>
+                                    </View>
+                                    <ListView
+                                        dataSource={ds.cloneWithRows(rowData)}
+                                        renderRow={(rowData, sectionID, rowID) => {
+                                            return (
+                                                <TouchableNativeFeedback
+                                                    onPress={() => {
+                                                        var modalLabworkID = _.nth(_.flatMap(rowData, (n) => {
+                                                            return n.labworkID
+                                                        }), 0);
+                                                        this.setState({modalVisible: true, modalItems: rowData, modalLabworkID: modalLabworkID});
+                                                    }}>
+                                                    <View style={{paddingLeft: 16, paddingRight: 16, paddingBottom: 5, marginTop: 0, borderStyle: 'solid', borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}>
+                                                        {_.map(rowData, (v, i) => {
+                                                            return (
+                                                                <View key={i} style={{flexDirection: 'row', paddingTop: 5, paddingBottom: 5}}>
+                                                                    <Text style={{flex:1, alignItems: 'stretch'}}>{i}</Text>
+                                                                    <Text style={{flex:1, alignItems: 'stretch'}}>{v.unit || '-'}</Text>
+                                                                </View>
+                                                            )
+                                                        })}
+                                                    </View>
+                                                </TouchableNativeFeedback>
+                                            )
+                                        }}
+                                        enableEmptySections={true}
+                                    />
+                                </View>
+                            )
+                        }}
+                        enableEmptySections={true}
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={this.state.refreshing}
+                                onRefresh={this.pendingItemUpdate.bind(this)}
+                            />
+                        }/>
+                </View>
+            )
+            break;
+            case 3:
+            return (
+                <View style={{flex: 1}}>
+                    <ListView
+                        dataSource={ds.cloneWithRows(this.state.recentItem)}
+                        renderRow={(rowData, sectionID, rowID) => {
+                            return (
+                                <View>
+                                    <View style={{backgroundColor: '#FFEB3B', paddingBottom: 10, paddingLeft: 16, paddingRight: 16, elevation: 1}}>
+                                        <Text style={{fontSize: 25, color: '#424242', paddingBottom: 5, paddingTop: 5}}>{moment(rowID).format('MMMM DD, YYYY')}</Text>
+                                        <View style={{flexDirection: 'row'}}>
+                                            <Text style={{flex:1, color: '#616161', fontSize: 16, alignItems: 'stretch'}}>Laboratory Items</Text>
+                                            <Text style={{color: '#616161', fontSize: 16, flex:1, alignItems: 'stretch', textAlign: 'center'}}>Result</Text>
+                                            <Text style={{flex:1, color: '#616161', fontSize: 16, alignItems: 'stretch'}}>Normal Values</Text>
+                                        </View>
+                                    </View>
+                                    <ListView
+                                        dataSource={ds.cloneWithRows(rowData)}
+                                        renderRow={(rowData, sectionID, rowID) => {
+                                            return (
+                                                <View style={{paddingLeft: 16, paddingRight: 16, paddingBottom: 5, marginTop: 0, borderStyle: 'solid', borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}>
+                                                    {_.map(rowData, (v, i) => {
+                                                        return (
+                                                            <View key={i} style={{flexDirection: 'row', paddingTop: 5, paddingBottom: 5}}>
+                                                                <Text style={{flex:1, alignItems: 'stretch'}}>{i}</Text>
+                                                                <Text style={{flex:1, alignItems: 'stretch', textAlign: 'center'}}>{v.value}</Text>
+                                                                <Text style={{flex:1, alignItems: 'stretch'}}>{v.normal}</Text>
+                                                            </View>
+                                                        )
+                                                    })}
+                                                </View>
+                                            )
+                                        }}
+                                        enableEmptySections={true}
+                                    />
+                                </View>
+                            )
+                        }}
+                        enableEmptySections={true}
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={this.state.refreshing}
+                                onRefresh={this.recentItemUpdate.bind(this)}
+                            />
+                        }/>
+                </View>
+            )
+            break;
+            case 4:
+            return (
+                <ScrollView style={{flex: 1}}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.refreshing}
+                            onRefresh={this.getChart.bind(this)}
+                        />
+                    }>
+                    <View style={{backgroundColor: '#FFFFFF'}}>
+                        {_.map(this.state.allItem, (v, i) => {
+                            return (
+                                <View key={i} style={{flex: 1, alignItems: 'stretch'}}>
+                                    <View style={{padding: 10, paddingLeft: 16, paddingRight: 16, backgroundColor: '#FFEB3B', elevation: 1}}>
+                                        <Text style={{fontSize: 25, color: '#424242'}}>{i}</Text>
+                                    </View>
+                                    <LineChart
+                                        ref={ref => this.lineChartRef = ref}
+                                        style={{flex:1, height: 300, margin: 16, marginTop: 0, marginBottom: 20}}
+                                        visibleXRange={[0,7]}
+                                        xAxis={{drawGridLines:false,gridLineWidth:1,position:"BOTTOM"}}
+                                        yAxisRight={{enable:false}}
+                                        yAxis={{startAtZero:false,drawGridLines:false, drawLimitLinesBehindData: true, position:"INSIDE_CHART"}}
+                                        yAxisLeft={{limitLine: [{enableDashedLine: true, lineWidth: 2, labelPosition: 'RIGHT_TOP', textSize: 10}]}}
+                                        drawGridBackground={false}
+                                        description={"Day/Month"}
+                                        legend={{enable:false,position:'ABOVE_CHART_LEFT',direction:"LEFT_TO_RIGHT"}}
+                                        data={v}/>
+                                </View>
+                            )
+                        })}
+                    </View>
+                </ScrollView>
+            )
+            break;
+        }
+    }
+    getChart() {
+        this.setState({refreshing: true, allItem: {}})
+        db.transaction((tx) => {
+            tx.executeSql("SELECT `labwork`.`completionDate`, `labwork`.`labData` FROM `labwork` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND `labwork`.`completed` = 1 AND `labwork`.`patientID` = ? ORDER BY `labwork`.`completionDate` DESC, `labwork`.`created_at` DESC", [this.props.patientID], (tx, rs) => {
+                var recentItemObj = {};
+                _.forEach(rs.rows, (v, i) => {
+                    var orderDate = rs.rows.item(i).completionDate;
+                    var labData = _.split(_.split(rs.rows.item(i).labData, ':::')[1], '@@');
+                    tx.executeSql("SELECT GROUP_CONCAT(`labItem`.`name`, ',') as value FROM `labItem` WHERE `labItem`.`id` in ("+_.join(_.split(_.split(rs.rows.item(i).labData, ':::')[0], '@@'), ',')+")", [], (tx, rs) => {
+                        _.forEach(_.split(rs.rows.item(0).value, ','), (v, i) => {
+                            if (_.isObject(recentItemObj[v])) {
+                                if (orderDate in recentItemObj[v])
+                                recentItemObj[v][orderDate].push(labData[i]);
+                                else {
+                                    recentItemObj[v][orderDate] = [];
+                                    recentItemObj[v][orderDate].push(labData[i]);
+                                }
+                            } else {
+                                var obj = {}; obj[orderDate] = [];
+                                recentItemObj[v] = obj;
+                                recentItemObj[v][orderDate].push(labData[i]);
+                            }
+                        })
+                    })
+
+                })
+                db.recentItem = recentItemObj
+            })
+        }, (err) => {
+            this.setState({refreshing: false})
+        }, () => {
+            var obj = {};
+            _.forEach(db.recentItem, (v, i) => {
+                var data={};
+                data['xValues']=[];
+                data['yValues']=[{
+                    data:[],
+                    label: i,
+                    config:{ color:'#2979FF' }
+                }];
+                _.forEach(v, (vv, ii) => {
+                    if (moment(ii).isValid())
+                    for (var j = 0; j < 30; j++) {
+                        data.xValues.push(moment(ii).add(j, 'day').format('DD/MM'));
+                        data.yValues[0].data.push(Math.random()*100);
+                    };
+                })
+                obj[i] = data
+            })
+            this.setState({allItem: obj, refreshing: false})
+        })
+    }
+    getLineData(argument) {
+        var data={
+            xValues:['1','2','3'],
+            yValues:[
+                {
+                    data:[1.0,5.0,6.0],
+                    label:'test1',
+                    config:{
+                        color:'blue'
+                    }
+                },
+                {
+                    data:[3.0,15.0,22],
+                    label:'test2',
+                    config:{
+                        color:'red'
+                    }
+                },
+                {
+                    data:[7,12,22],
+                    label:'test2',
+                    config:{
+                        color:'yellow'
+                    }
+                }
+            ]
+        };
+        return data;
+    }
+    getRandomData(argument) {
+        var data={};
+        data['xValues']=[];
+        data['yValues']=[
+            {
+                data:[],
+                label:'test1',
+                config:{
+                    color:'red'
+                }
+            }
+        ];
+        for (var i = 0; i < 500; i++) {
+            data.xValues.push(moment().add(i, 'day').format('DD/MM')+'');
+            data.yValues[0].data.push(Math.random()*100);
+        };
+        return data;
+    }
+    labItemSelect(labItemID) {
+        var obj = this.state.labItemSelect; obj[labItemID] = (_.isEmpty(obj[labItemID])) ? labItemID : false;
+        var myArray = []; myArray.push(obj);
+        this.setState({labItemSelect: myArray[0]})
+    }
+    labItemOrder() {
+        var labItems = _.compact(_.toArray(this.state.labItemSelect))
+        if (_.size(labItems) > 0) {
+            var values = _.join(_.fill(Array(_.size(labItems))), '@@') ;
+            var data = _.join(labItems, '@@');
+            var labData = data+':::'+values;
+            var insert = [this.props.patientID, 0, moment().format('YYYY-MM-DD'), null, null, labData, null, null, moment().format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss')];
+            db.transaction((tx) => {
+                tx.executeSql("INSERT INTO `labwork` (`patientID`, `userID`, `orderDate`, `completionDate`, `completed`, `labData`, `viewed`, `deleted_at`, `created_at`, `updated_at`) VALUES (?,?,?,?,?,?,?,?,?,?)", insert, (tx, rs) => {
+                    console.log('insert:', rs.insertId)
+                })
+            }, (err) => {
+                alert(err.message)
+            }, () => {
+                ToastAndroid.show('Laboratory items order success!', 3000)
+                this.setState({labItemSelect: {}})
+            })
+        } else
+        ToastAndroid.show('No item selected!', 1000)
+    }
+}
+
+const styles = StyleSheet.create({
+    avatarImage: {
+        height: 48,
+        width: 48,
+        borderRadius: 30,
+        margin: 5,
+        marginRight: 10,
+    },
+    avatarIcon: {
+        margin: 0,
+    },
+    containerWrapper: {
+        backgroundColor: '#FFF',
+        paddingTop: 16,
+        paddingLeft: 12,
+        paddingRight: 12,
+    },
+    heading: {
+        fontSize: 30,
+        color: '#616161',
+        padding: 10,
+        paddingLeft: 16,
+        paddingRight: 16,
+    },
+    label: {
+        color: '#616161',
+        textAlign: 'left',
+        marginLeft: 4,
+        marginRight: 4,
+    },
+    select: {
+        borderBottomWidth: 1,
+        borderBottomColor: '#757575',
+        borderStyle: 'solid',
+        marginLeft: 4,
+        marginRight: 4,
+        marginBottom: 10,
+        paddingLeft: -5,
+    },
+    textInput: {
+        fontSize: 16,
+        paddingTop: 5   ,
+        marginBottom: 5,
+    },
+    slider: {
+        paddingTop: 5,
+        marginBottom: 5,
+        marginLeft: -10,
+        marginRight: -10,
+    },
+    switch: {
+        height: 25,
+        textAlignVertical: 'center',
+        color: '#9E9E9E'
+    },
+    steps: {
+        flex:1,
+        alignItems: 'stretch',
+        backgroundColor: '#FFF59D',
+    },
+    stepsActive: {
+        backgroundColor: '#FFEB3B',
+    },
+    stepsText: {
+        color:'#757575',
+        padding: 8,
+        fontSize: 16,
+        textAlign: 'center',
+        textAlignVertical: 'center',
+    },
+    stepsTextActive: {
+        color: '#616161',
+    }
+})
+
+var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
+    LeftButton(route, navigator, index, navState) {
+        return (
+            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                <TouchableOpacity
+                    onPress={() => navigator.parentNavigator.pop()}>
+                    <Text style={{color: 'white', margin: 10, marginTop: 15}}>
+                        <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
+                    </Text>
+                </TouchableOpacity>
+                {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Icon name={'account-circle'} color={'#FFFFFF'} size={65}  style={styles.avatarIcon}/>)}
+            </View>
+        )
+    },
+    RightButton(route, navigator, index, navState) {
+        return null
+    },
+    Title(route, navigator, index, navState) {
+        return (
+            <TouchableOpacity style={[Styles.title, {marginLeft: 50}]}>
+                <Text style={Styles.titleText}>{patientName}</Text>
+            </TouchableOpacity>
+        )
+    }
+})
+
+module.exports = OrderItem
