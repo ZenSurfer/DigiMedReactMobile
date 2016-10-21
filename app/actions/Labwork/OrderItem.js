@@ -295,7 +295,7 @@ class OrderItem extends Component {
                         _.forEach(rs.rows, (v, i) => {
                             var color = '#616161';
                             if (labData[i] < rs.rows.item(i).normalMinValue)
-                                color = '#FFD600';
+                                color = '#673AB7';
                             else if (labData[i] > rs.rows.item(i).normalMaxValue)
                                 color = '#F44336';
                             obj[rs.rows.item(i).name] = {value: labData[i], isNumeric: rs.rows.item(i).isNumeric, unit: rs.rows.item(i).unit, normalMinValue: rs.rows.item(i).normalMinValue, normalMaxValue: rs.rows.item(i).normalMaxValue, color: color}
@@ -494,7 +494,7 @@ class OrderItem extends Component {
                                         xAxis={{drawGridLines:false,gridLineWidth:1,position:"BOTTOM"}}
                                         yAxisRight={{enable:false}}
                                         yAxis={{startAtZero:false,drawGridLines:false, drawLimitLinesBehindData: true, position:"INSIDE_CHART"}}
-                                        yAxisLeft={{limitLine: [{enableDashedLine: true, lineWidth: 2, labelPosition: 'RIGHT_TOP', textSize: 10}]}}
+                                        yAxisLeft={{max: {Limit: v.max, LineColor: "#F44336", LineWidth: 1, Label: _.toString(v.max), TextColor: '#F44336', TextSize: 10}, min: {Limit: v.min, LineColor: "#673AB7", LineWidth: 1, Label: _.toString(v.min), TextColor: '#673AB7', TextSize: 10}}}
                                         drawGridBackground={false}
                                         description={"Day/Month"}
                                         legend={{enable:false,position:'ABOVE_CHART_LEFT',direction:"LEFT_TO_RIGHT"}}
@@ -511,24 +511,28 @@ class OrderItem extends Component {
     getChart() {
         this.setState({refreshing: true, allItem: {}})
         db.transaction((tx) => {
-            tx.executeSql("SELECT `labwork`.`completionDate`, `labwork`.`labData` FROM `labwork` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND `labwork`.`completed` = 1 AND `labwork`.`patientID` = ? ORDER BY `labwork`.`completionDate` DESC, `labwork`.`created_at` DESC", [this.props.patientID], (tx, rs) => {
+            tx.executeSql("SELECT `labwork`.`completionDate`, `labwork`.`labData` FROM `labwork` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND `labwork`.`completed` = 1 AND `labwork`.`patientID` = ? ORDER BY `labwork`.`completionDate` ASC, `labwork`.`created_at` ASC", [this.props.patientID], (tx, rs) => {
                 var recentItemObj = {};
                 _.forEach(rs.rows, (v, i) => {
                     var orderDate = rs.rows.item(i).completionDate;
                     var labData = _.split(_.split(rs.rows.item(i).labData, ':::')[1], '@@');
-                    tx.executeSql("SELECT GROUP_CONCAT(`labItem`.`name`, ',') as value FROM `labItem` WHERE `labItem`.`id` in ("+_.join(_.split(_.split(rs.rows.item(i).labData, ':::')[0], '@@'), ',')+")", [], (tx, rs) => {
-                        _.forEach(_.split(rs.rows.item(0).value, ','), (v, i) => {
-                            if (_.isObject(recentItemObj[v])) {
-                                if (orderDate in recentItemObj[v])
-                                recentItemObj[v][orderDate].push(labData[i]);
+                    tx.executeSql("SELECT name, normalMinValue, normalMaxValue, isNumeric FROM `labItem` WHERE `labItem`.`id` in ("+_.join(_.split(_.split(rs.rows.item(i).labData, ':::')[0], '@@'), ',')+")", [], (tx, rs) => {
+                        _.forEach(rs.rows, (v, i) => {
+                            if (_.isObject(recentItemObj[rs.rows.item(i).name])) {
+                                if (orderDate in recentItemObj[rs.rows.item(i).name])
+                                    recentItemObj[rs.rows.item(i).name][orderDate].push(labData[i]);
                                 else {
-                                    recentItemObj[v][orderDate] = [];
-                                    recentItemObj[v][orderDate].push(labData[i]);
+                                    recentItemObj[rs.rows.item(i).name][orderDate] = [];
+                                    recentItemObj[rs.rows.item(i).name][orderDate].push(labData[i]);
                                 }
                             } else {
-                                var obj = {}; obj[orderDate] = [];
-                                recentItemObj[v] = obj;
-                                recentItemObj[v][orderDate].push(labData[i]);
+                                var obj = {};
+                                obj['isNumeric'] = rs.rows.item(i).isNumeric;
+                                obj['min'] = rs.rows.item(i).normalMinValue;
+                                obj['max'] = rs.rows.item(i).normalMaxValue;
+                                obj[orderDate] = [];
+                                recentItemObj[rs.rows.item(i).name] = obj;
+                                recentItemObj[rs.rows.item(i).name][orderDate].push(labData[i]);
                             }
                         })
                     })
@@ -542,70 +546,41 @@ class OrderItem extends Component {
             var obj = {};
             _.forEach(db.recentItem, (v, i) => {
                 var data={};
-                data['xValues']=[];
-                data['yValues']=[{
-                    data:[],
-                    label: i,
-                    config:{ color:'#2979FF' }
-                }];
-                _.forEach(v, (vv, ii) => {
-                    if (moment(ii).isValid())
-                    for (var j = 0; j < 30; j++) {
-                        data.xValues.push(moment(ii).add(j, 'day').format('DD/MM'));
-                        data.yValues[0].data.push(Math.random()*100);
-                    };
-                })
-                obj[i] = data
+                if (v.isNumeric) {
+                    data['min']= v.min;
+                    data['max']= v.max;
+                    data['xValues']=[];
+                    data['yValues']=[{
+                        data:[],
+                        label: i,
+                        config:{ color:'#2979FF' }
+                    }, {
+                        data:[],
+                        label: i,
+                        config:{ color:'#2979FF' }
+                    }, {
+                        data:[],
+                        label: i,
+                        config:{ color:'#2979FF' }
+                    }];
+                    _.forEach(v, (vv, ii) => {
+                        if (ii != 'isNumeric' && ii != 'min' && ii != 'max' && moment(ii).isValid()) {
+                            data.xValues.push(moment(ii).format('DD/MM'));
+                        }
+                    })
+                    _.forEach(v, (vv, ii) => {
+                        if (ii != 'isNumeric' && ii != 'min' && ii != 'max' && moment(ii).isValid()) {
+                            data.yValues[0].data.push(parseFloat(vv[0]));
+                            data.yValues[1].data.push(parseFloat(_.isEmpty(vv[1]) ? vv[0] : vv[1]));
+                            data.yValues[2].data.push(parseFloat(_.isEmpty(vv[2]) ? vv[0] : vv[2]));
+                        }
+                    })
+                    obj[i] = data
+                }
             })
+            // alert(JSON.stringify(db.recentItem))
             this.setState({allItem: obj, refreshing: false})
         })
-    }
-    getLineData(argument) {
-        var data={
-            xValues:['1','2','3'],
-            yValues:[
-                {
-                    data:[1.0,5.0,6.0],
-                    label:'test1',
-                    config:{
-                        color:'blue'
-                    }
-                },
-                {
-                    data:[3.0,15.0,22],
-                    label:'test2',
-                    config:{
-                        color:'red'
-                    }
-                },
-                {
-                    data:[7,12,22],
-                    label:'test2',
-                    config:{
-                        color:'yellow'
-                    }
-                }
-            ]
-        };
-        return data;
-    }
-    getRandomData(argument) {
-        var data={};
-        data['xValues']=[];
-        data['yValues']=[
-            {
-                data:[],
-                label:'test1',
-                config:{
-                    color:'red'
-                }
-            }
-        ];
-        for (var i = 0; i < 500; i++) {
-            data.xValues.push(moment().add(i, 'day').format('DD/MM')+'');
-            data.yValues[0].data.push(Math.random()*100);
-        };
-        return data;
     }
     labItemSelect(labItemID) {
         var obj = this.state.labItemSelect; obj[labItemID] = (_.isEmpty(obj[labItemID])) ? labItemID : false;
