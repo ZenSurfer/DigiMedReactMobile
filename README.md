@@ -1,6 +1,6 @@
 #REACT NATIVE 0.33.0
 
-file:node_modules/react-native-chart-android/android/src/main/java/cn/mandata/react_native_mpchart/MPBarLineChartManager.java
+file:node_modules/react-native-chart-android/android/src/main/java/cn/mandata/react_native_mpchart/MPBarLineChartManager.java  
 line:176
 
     public  void  setYAxisLeft(BarLineChartBase chart,ReadableMap v){
@@ -15,7 +15,7 @@ line:176
         +}
     }
 
-file:node_modules/react-native/Libraries/Components/StatusBar/StatusBar.js
+file:node_modules/react-native/Libraries/Components/StatusBar/StatusBar.js  
 line:144
 
     static _defaultProps = createStackEntry({
@@ -29,7 +29,7 @@ line:144
         networkActivityIndicatorVisible: false,
     });
 
-file:node_modules/react-native/Libraries/Components/TextInput/TextInput.js
+file:node_modules/react-native/Libraries/Components/TextInput/TextInput.js  
 line:676
 
     const textContainer =
