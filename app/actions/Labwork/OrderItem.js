@@ -86,21 +86,32 @@ class OrderItem extends Component {
                                     </TouchableOpacity>
                                 </View>
                             </View>
-                            <ScrollView style={{flex: 1}}>
+                            <ScrollView
+                                style={{flex: 1}}
+                                keyboardShouldPersistTaps={true}>
                                 <View style={{padding: 16}}>
                                     {_.map(this.state.modalItems, (v, i) => {
                                         return (
                                             <View key={i} style={{flexDirection: 'column', marginLeft: -1, marginRight: -1}}>
                                                 <Text style={styles.label}>{i}</Text>
-                                                <TextInput
-                                                    placeholder={'Text Here...'}
-                                                    style={[styles.textInput]}
-                                                    value={this.state.modalItems[i].value}
-                                                    placeholderTextColor={'#E0E0E0'}
-                                                    onChangeText={(text) => {
-                                                        var obj = this.state.modalItems || {}; obj[i] = {value: text};
-                                                        this.setState({modalItems: obj})
-                                                    }} />
+                                                <View style={{flex: 1, flexDirection: 'row'}}>
+                                                    {(this.state.modalItems[i].unit) ? (
+                                                        <Text style={{marginTop: 13, fontSize: 16, paddingLeft: 4, paddingRight: 5, fontWeight: 'bold'}}>{this.state.modalItems[i].unit}:</Text>
+                                                    ):(<View/>)}
+                                                    <View style={{flex: 1, alignItems: 'stretch'}}>
+                                                        <TextInput
+                                                            placeholder={'Text Here...'}
+                                                            style={[styles.textInput]}
+                                                            keyboardType={(this.state.modalItems[i].isNumeric) ? 'numeric' : 'default'}
+                                                            value={this.state.modalItems[i].value}
+                                                            placeholderTextColor={'#E0E0E0'}
+                                                            onChangeText={(text) => {
+                                                                var result = this.state.modalItems[i]; result['value'] = text;
+                                                                var obj = this.state.modalItems || {}; obj[i] = result;
+                                                                this.setState({modalItems: obj})
+                                                            }} />
+                                                    </View>
+                                                </View>
                                             </View>
                                         )
                                     })}
@@ -147,6 +158,7 @@ class OrderItem extends Component {
                                             }, (err) => alert(err.message))
                                         }, (err) => alert(err.message), () => {
                                             this.setState({modalVisible: false})
+                                            this.pendingItemUpdate();
                                             ToastAndroid.show('Successfully saved!', 3000);
                                         })
                                     }}>
@@ -248,14 +260,10 @@ class OrderItem extends Component {
                     var orderDate = rs.rows.item(i).orderDate;
                     var labworkID = rs.rows.item(i).id;
                     var labData = _.split(_.split(rs.rows.item(i).labData, ':::')[1], '@@');
-                    tx.executeSql("SELECT GROUP_CONCAT(`labItem`.`name`, ',') as value, GROUP_CONCAT(`labItem`.`unit`, ',') as unit, GROUP_CONCAT(`labItem`.`normalMinValue`, ',') as normalMinValue, GROUP_CONCAT(`labItem`.`normalMaxValue`, ',') as normalMaxValue FROM `labItem` WHERE `labItem`.`id` in ("+_.join(_.split(_.split(rs.rows.item(i).labData, ':::')[0], '@@'), ',')+")", [], (tx, rs) => {
+                    tx.executeSql("SELECT `labItem`.`name`, `labItem`.`unit`, `labItem`.`normalMinValue`, `labItem`.`normalMaxValue`, `labItem`.`isNumeric` FROM `labItem` WHERE `labItem`.`id` in ("+_.join(_.split(_.split(rs.rows.item(i).labData, ':::')[0], '@@'), ',')+")", [], (tx, rs) => {
                         var obj = {};
-                        alert(JSON.stringify(rs.rows.item(0).unit))
-                        var unit = _.split(rs.rows.item(0).unit, ',');
-                        var normalMinValue = _.split(rs.rows.item(0).normalMinValue, ',');
-                        var normalMaxValue = _.split(rs.rows.item(0).normalMaxValue, ',');
-                        _.forEach(_.split(rs.rows.item(0).value, ','), (v, i) => {
-                            obj[v] = {value: labData[i], unit: unit[i], normalMinValue: normalMinValue[i], normalMaxValue: normalMaxValue[i], labworkID: labworkID}
+                        _.forEach(rs.rows, (v, i) => {
+                            obj[rs.rows.item(i).name] = {value: labData[i], isNumeric: rs.rows.item(i).isNumeric, unit: rs.rows.item(i).unit, normalMinValue: rs.rows.item(i).normalMinValue, normalMaxValue: rs.rows.item(i).normalMaxValue, labworkID: labworkID}
                         })
                         if (orderDate in pendingItemObj) {
                             pendingItemObj[orderDate].push(obj);
@@ -282,10 +290,15 @@ class OrderItem extends Component {
                 _.forEach(rs.rows, (v, i) => {
                     var completionDate = rs.rows.item(i).completionDate;
                     var labData = _.split(_.split(rs.rows.item(i).labData, ':::')[1], '@@');
-                    tx.executeSql("SELECT GROUP_CONCAT(`labItem`.`name`, ',') as value FROM `labItem` WHERE `labItem`.`id` in ("+_.join(_.split(_.split(rs.rows.item(i).labData, ':::')[0], '@@'), ',')+")", [], (tx, rs) => {
-                        var obj = {}
-                        _.forEach(_.split(rs.rows.item(0).value, ','), (v, i) => {
-                            obj[v] = {value: labData[i], normal: '-'}
+                    tx.executeSql("SELECT `labItem`.`name`, `labItem`.`unit`, `labItem`.`normalMinValue`, `labItem`.`normalMaxValue`, `labItem`.`isNumeric` FROM `labItem` WHERE `labItem`.`id` in ("+_.join(_.split(_.split(rs.rows.item(i).labData, ':::')[0], '@@'), ',')+")", [], (tx, rs) => {
+                        var obj = {};
+                        _.forEach(rs.rows, (v, i) => {
+                            var color = '#616161';
+                            if (labData[i] < rs.rows.item(i).normalMinValue)
+                                color = '#FFD600';
+                            else if (labData[i] > rs.rows.item(i).normalMaxValue)
+                                color = '#F44336';
+                            obj[rs.rows.item(i).name] = {value: labData[i], isNumeric: rs.rows.item(i).isNumeric, unit: rs.rows.item(i).unit, normalMinValue: rs.rows.item(i).normalMinValue, normalMaxValue: rs.rows.item(i).normalMaxValue, color: color}
                         })
                         if (completionDate in recentItemObj) {
                             recentItemObj[completionDate].push(obj);
@@ -387,7 +400,7 @@ class OrderItem extends Component {
                                                             return (
                                                                 <View key={i} style={{flexDirection: 'row', paddingTop: 5, paddingBottom: 5}}>
                                                                     <Text style={{flex:1, alignItems: 'stretch'}}>{i}</Text>
-                                                                    <Text style={{flex:1, alignItems: 'stretch'}}>{v.unit || '-'}</Text>
+                                                                    <Text style={{flex:1, alignItems: 'stretch'}}>{(v.normalMinValue && v.normalMaxValue) ? (v.normalMinValue || '0')+' - '+(v.normalMaxValue || '0'): '' } {v.unit || ''}</Text>
                                                                 </View>
                                                             )
                                                         })}
@@ -435,8 +448,8 @@ class OrderItem extends Component {
                                                         return (
                                                             <View key={i} style={{flexDirection: 'row', paddingTop: 5, paddingBottom: 5}}>
                                                                 <Text style={{flex:1, alignItems: 'stretch'}}>{i}</Text>
-                                                                <Text style={{flex:1, alignItems: 'stretch', textAlign: 'center'}}>{v.value}</Text>
-                                                                <Text style={{flex:1, alignItems: 'stretch'}}>{v.normal}</Text>
+                                                                <Text style={{flex:1, marginLeft: 5, marginRight: 5, alignItems: 'stretch', textAlign: 'center', color: v.color}}>{v.value} {v.unit}</Text>
+                                                                <Text style={{flex:1, alignItems: 'stretch'}}>{(v.normalMinValue && v.normalMaxValue) ? (v.normalMinValue || '0')+' - '+(v.normalMaxValue || '0'): '' } {v.unit || ''}</Text>
                                                             </View>
                                                         )
                                                     })}
