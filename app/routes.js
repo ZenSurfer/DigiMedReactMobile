@@ -37,6 +37,7 @@ import AddAppointment from './actions/Appointment/AddAppointment'
 
 import FollowupPage from './actions/Followup/FollowupPage'
 import AddFollowup from './actions/Followup/AddFollowup'
+import EditFollowup from './actions/Followup/EditFollowup'
 
 import Styles from './assets/Styles'
 
@@ -219,6 +220,13 @@ module.exports = (route, navigator, state) => {
             <AddFollowup navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
             </AddFollowup>
+        )
+    }
+    if (routeId === 'EditFollowup') {
+        return (
+            <EditFollowup navigator={navigator} {...route.passProps}>
+                <StatusBar backgroundColor='#2962FF'/>
+            </EditFollowup>
         )
     }
 

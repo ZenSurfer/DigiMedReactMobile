@@ -18,6 +18,7 @@ class FollowupPage extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            doctorID: EnvInstance.getDoctor().id,
             refreshing: false,
             rowData: [],
             avatar: false
@@ -26,7 +27,7 @@ class FollowupPage extends Component {
     componentWillMount() {
         this.setState({refreshing: true})
         db.transaction((tx) => {
-            tx.executeSql("SELECT * FROM followup WHERE diagnosisID=? AND (deleted_at in (null, 'NULL', '') OR deleted_at is null) ORDER BY date DESC, time ASC", [this.props.diagnosisID], function(tx, rs) {
+            tx.executeSql("SELECT * FROM followup WHERE diagnosisID=? AND leadSurgeon=? AND (deleted_at in (null, 'NULL', '') OR deleted_at is null) ORDER BY date DESC, time DESC", [this.props.diagnosisID, this.state.doctorID], function(tx, rs) {
                 db.data = rs.rows
             }, (err) =>  { alert(err.message); });
         }, (err) => { alert(err.message); }, () => {
@@ -93,8 +94,9 @@ class FollowupPage extends Component {
             <View style={styles.listView}>
                 <TouchableNativeFeedback
                     onPress={() => this.props.navigator.push({
-                        id: 'EditPrescription',
+                        id: 'EditFollowup',
                         passProps: {
+                            followupID: rowData.id,
                             diagnosisID: this.props.diagnosisID,
                             patientID: this.props.patientID,
                             patientAvatar: this.props.patientAvatar,
@@ -104,9 +106,10 @@ class FollowupPage extends Component {
                     })}>
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
                         <View style={[styles.listText, {flex: 1, alignItems: 'stretch'}]}>
-                            <Text style={styles.listItem}>{moment(rowData.date+' '+rowData.time).format('MMMM DD, YYYY hh:mm A')}</Text>
+                            <Text style={styles.listItem}>{moment(rowData.date+' '+rowData.time).format('MMMM DD, YYYY')}</Text>
                             <Text style={styles.listItemHead}>{rowData.name}</Text>
-                            <Text style={styles.listItem}>{_.upperFirst(rowData.emergencyOrElective)}</Text>
+                            <Text style={styles.listItem}>{moment(rowData.date+' '+rowData.time).format('hh:mm A')} / {_.upperFirst(rowData.emergencyOrElective)}</Text>
+                            {/* <Text style={styles.listItem}>{rowData.id} {rowData.diagnosisID}</Text> */}
                         </View>
                     </View>
                 </TouchableNativeFeedback>
@@ -116,7 +119,7 @@ class FollowupPage extends Component {
     onRefresh() {
         this.setState({refreshing: true})
         db.transaction((tx) => {
-            tx.executeSql("SELECT * FROM followup WHERE diagnosisID=? AND (deleted_at in (null, 'NULL', '') OR deleted_at is null) ORDER BY date DESC, time ASC", [this.props.diagnosisID], function(tx, rs) {
+            tx.executeSql("SELECT * FROM followup WHERE diagnosisID=? AND leadSurgeon=? AND (deleted_at in (null, 'NULL', '') OR deleted_at is null) ORDER BY date DESC, time DESC", [this.props.diagnosisID, this.state.doctorID], function(tx, rs) {
                 db.data = rs.rows
             }, (err) =>  { alert(err.message); });
         }, (err) => { alert(err.message); }, () => {
@@ -126,6 +129,16 @@ class FollowupPage extends Component {
             })
             this.setState({refreshing: false, rowData: rowData})
         })
+    }
+    componentWillReceiveProps(nextProps) {
+        if (_.size(nextProps.navigator.getCurrentRoutes(0)) > 4) {
+            this.setState({lastRoute: nextProps.navigator.getCurrentRoutes(0)[4].id})
+        } else {
+            if (this.state.lastRoute == 'AddFollowup' || this.state.lastRoute == 'EditFollowup') {
+                this.setState({lastRoute: ''});
+                this.onRefresh();
+            }
+        }
     }
 }
 

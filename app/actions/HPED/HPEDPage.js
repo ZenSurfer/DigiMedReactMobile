@@ -18,6 +18,7 @@ class HPEDPage extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            doctorID: EnvInstance.getDoctor().id,
             refreshing: false,
             rowData: [],
             avatar: false
@@ -26,13 +27,13 @@ class HPEDPage extends Component {
     componentWillMount() {
         this.setState({refreshing: true})
         db.transaction((tx) => {
-            tx.executeSql("SELECT `diagnosis`.`id` AS `id`, ('Dr. ' || `doctors`.`firstname` || ' ' || `doctors`.`middlename` || ' ' || `doctors`.`lastname`)  AS `doctorName`, `diagnosis`.`date` AS `date`, `diagnosis`.`chiefComplaint` AS `chiefComplaint` FROM `diagnosis` LEFT OUTER JOIN `patients` on `diagnosis`.`patientID` = `patients`.`id` LEFT OUTER JOIN `doctors` on `diagnosis`.`doctorID` = `doctors`.`id` WHERE (`diagnosis`.`deleted_at` in (null, 'NULL', '') OR `diagnosis`.`deleted_at` is null) AND `diagnosis`.`patientID` = ? ORDER BY `diagnosis`.`date` DESC, `diagnosis`.`timeStart` DESC", [this.props.patientID], function(tx, rs) {
+            tx.executeSql("SELECT `diagnosis`.`id` AS `id`, ('Dr. ' || `doctors`.`firstname` || ' ' || `doctors`.`middlename` || ' ' || `doctors`.`lastname`)  AS `doctorName`, `diagnosis`.`date` AS `date`, `diagnosis`.`chiefComplaint` AS `chiefComplaint`, (SELECT (`followup`.`date`|| ' ' ||`followup`.`time`|| '@@' ||`followup`.`name`) as description FROM `followup` WHERE `followup`.`leadSurgeon`="+this.state.doctorID+" AND `followup`.`diagnosisID` = `diagnosis`.`id` AND (`followup`.`date` || ' ' || `followup`.`time`) >= '"+moment().format('YYYY-MM-DD HH:mm:SS')+"' AND (`followup`.`deleted_at` in (null, 'NULL', '') OR `followup`.`deleted_at` is null) ORDER BY `followup`.`date` ASC, `followup`.`time` ASC LIMIT 1) as upcoming, (SELECT (`followup`.`date`|| ' ' ||`followup`.`time`|| '@@' ||`followup`.`name`) as description  FROM `followup` WHERE `followup`.`leadSurgeon`="+this.state.doctorID+" AND `followup`.`diagnosisID` = `diagnosis`.`id` AND (`followup`.`date` || ' ' || `followup`.`time`) < '"+moment().format('YYYY-MM-DD HH:mm:SS')+"' AND (`followup`.`deleted_at` in (null, 'NULL', '') OR `followup`.`deleted_at` is null) ORDER BY `followup`.`date` DESC, `followup`.`time` DESC LIMIT 1) as last FROM `diagnosis` LEFT OUTER JOIN `patients` on `diagnosis`.`patientID` = `patients`.`id` LEFT OUTER JOIN `doctors` on `diagnosis`.`doctorID` = `doctors`.`id` WHERE (`diagnosis`.`deleted_at` in (null, 'NULL', '') OR `diagnosis`.`deleted_at` is null) AND `diagnosis`.`patientID` = ? ORDER BY `diagnosis`.`date` DESC, `diagnosis`.`timeStart` DESC", [this.props.patientID], function(tx, rs) {
                 db.data = rs.rows
             }, function(error) {
-                console.log('SELECT SQL statement ERROR: ' + error.message);
+                alert(error.message);
             });
         }, (error) => {
-            console.log('transaction error: ' + error.message);
+            alert(error.message);
         }, () => {
             var rowData = [];
             _.forEach(db.data, function(v, i) {
@@ -185,17 +186,40 @@ class HPEDPage extends Component {
                         </View>
                     </View>
                 </TouchableNativeFeedback>
-                <View style={{flexDirection: 'column', backgroundColor: '#FFEB3B'}}>
-                    <View style={{padding: 16, paddingTop: 5, paddingBottom: 5, borderBottomWidth: 0.5, borderBottomColor: '#FFF176'}}>
-                        <Text style={{color: '#616161', fontWeight: 'bold'}}>Previous Followup</Text>
+                {(rowData.upcoming || rowData.last) ? (
+                    <View style={{backgroundColor: '#FFEB3B'}}>
+                        <TouchableNativeFeedback>
+                        {(rowData.upcoming) ? (
+                            <View style={{flexDirection: 'column',padding: 16, paddingTop: 5, paddingBottom: 5, borderBottomWidth: 0.5, borderBottomColor: '#FFF176'}}>
+                                <Text style={{color: '#F44336', fontWeight: 'bold'}}>Upcoming Followup</Text>
+                                <Text style={{color: '#616161', flex: 1, alignItems: 'stretch', fontStyle: 'italic'}}>
+                                    {_.map(_.split(rowData.upcoming, '@@'), (v,i) => {
+                                        if (i==1)
+                                            return (<Text key={i}> {v}</Text>)
+                                        else
+                                            return (<Text key={i} style={{fontWeight: 'bold'}}>{moment(v).format('MMMM DD, YYYY')} at {moment(v).format('hh:mm A')},</Text>)
+
+                                    })}
+                                </Text>
+                            </View>
+                        ) : (
+                            <View style={{flexDirection: 'column',padding: 16, paddingTop: 5, paddingBottom: 5, borderBottomWidth: 0.5, borderBottomColor: '#FFF176'}}>
+                                <Text style={{color: '#616161', fontWeight: 'bold'}}>Previous Followup</Text>
+                                <Text style={{color: '#616161', flex: 1, alignItems: 'stretch', fontStyle: 'italic'}}>
+                                    {_.map(_.split(rowData.last, '@@'), (v,i) => {
+                                        if (i==1)
+                                            return (<Text key={i}> {v}</Text>)
+                                        else
+                                            return (<Text key={i} style={{fontWeight: 'bold'}}>{moment(v).format('MMMM DD, YYYY')} at {moment(v).format('hh:mm A')},</Text>)
+
+                                    })}
+                                </Text>
+                            </View>
+                        )}
+                        </TouchableNativeFeedback>
                     </View>
-                    <TouchableNativeFeedback>
-                        <View style={{flexDirection: 'row',padding: 16, paddingTop: 5, paddingBottom: 5, borderBottomWidth: 0.5, borderBottomColor: '#FFF176'}}>
-                            <Text style={{color: '#616161', textAlignVertical: 'top'}}>02-10-2016</Text>
-                            <Text style={{color: '#616161', flex:1, alignItems: 'stretch', marginLeft: 10}}>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</Text>
-                        </View>
-                    </TouchableNativeFeedback>
-                </View>
+                ) : (<View/>) }
+
             </View>
 
         )
@@ -203,14 +227,13 @@ class HPEDPage extends Component {
     onRefresh() {
         this.setState({refreshing: true})
         db.transaction((tx) => {
-            tx.executeSql("SELECT * FROM diagnosis WHERE `diagnosis`.`patientID` = ? ", [this.props.patientID], (tx, rs) => { console.log(rs.rows) });
-            tx.executeSql("SELECT `diagnosis`.`id` AS `id`, ('Dr. ' || `doctors`.`firstname` || ' ' || `doctors`.`middlename` || ' ' || `doctors`.`lastname`)  AS `doctorName`, `diagnosis`.`date` AS `date`, `diagnosis`.`chiefComplaint` AS `chiefComplaint`, `diagnosis`.`deleted_at` as `deleted_at` FROM `diagnosis` LEFT OUTER JOIN `patients` on `diagnosis`.`patientID` = `patients`.`id` LEFT OUTER JOIN `doctors` on `diagnosis`.`doctorID` = `doctors`.`id` WHERE (`diagnosis`.`deleted_at` in (null, 'NULL', '') OR `diagnosis`.`deleted_at` is null) AND `diagnosis`.`patientID` = ? ORDER BY `diagnosis`.`date` DESC, `diagnosis`.`timeStart` DESC", [this.props.patientID], function(tx, rs) {
+            tx.executeSql("SELECT `diagnosis`.`id` AS `id`, ('Dr. ' || `doctors`.`firstname` || ' ' || `doctors`.`middlename` || ' ' || `doctors`.`lastname`)  AS `doctorName`, `diagnosis`.`date` AS `date`, `diagnosis`.`chiefComplaint` AS `chiefComplaint`, (SELECT (`followup`.`date`|| ' ' ||`followup`.`time`|| '@@' ||`followup`.`name`) as description FROM `followup` WHERE `followup`.`leadSurgeon`="+this.state.doctorID+" AND `followup`.`diagnosisID` = `diagnosis`.`id` AND (`followup`.`date` || ' ' || `followup`.`time`) >= '"+moment().format('YYYY-MM-DD HH:mm:SS')+"' AND (`followup`.`deleted_at` in (null, 'NULL', '') OR `followup`.`deleted_at` is null) ORDER BY `followup`.`date` ASC, `followup`.`time` ASC LIMIT 1) as upcoming, (SELECT (`followup`.`date`|| ' ' ||`followup`.`time`|| '@@' ||`followup`.`name`) as description  FROM `followup` WHERE `followup`.`leadSurgeon`="+this.state.doctorID+" AND `followup`.`diagnosisID` = `diagnosis`.`id` AND (`followup`.`date` || ' ' || `followup`.`time`) < '"+moment().format('YYYY-MM-DD HH:mm:SS')+"' AND (`followup`.`deleted_at` in (null, 'NULL', '') OR `followup`.`deleted_at` is null) ORDER BY `followup`.`date` DESC, `followup`.`time` DESC LIMIT 1) as last FROM `diagnosis` LEFT OUTER JOIN `patients` on `diagnosis`.`patientID` = `patients`.`id` LEFT OUTER JOIN `doctors` on `diagnosis`.`doctorID` = `doctors`.`id` WHERE (`diagnosis`.`deleted_at` in (null, 'NULL', '') OR `diagnosis`.`deleted_at` is null) AND `diagnosis`.`patientID` = ? ORDER BY `diagnosis`.`date` DESC, `diagnosis`.`timeStart` DESC", [this.props.patientID], function(tx, rs) {
                 db.data = rs.rows
             }, function(error) {
-                console.log('SELECT SQL statement ERROR: ' + error.message);
+                alert(error.message);
             });
         }, (error) => {
-            console.log('transaction error: ' + error.message);
+            alert(error.message);
         }, () => {
             var rowData = [];
             _.forEach(db.data, function(v, i) {

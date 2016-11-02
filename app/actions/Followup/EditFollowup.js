@@ -1,7 +1,7 @@
 'use strict'
 
 import React, {Component} from 'react'
-import { Text, StyleSheet, View, DrawerLayoutAndroid, Navigator, ToastAndroid, ProgressBarAndroid, InteractionManager, TouchableOpacity, DatePickerAndroid, TimePickerAndroid, Picker, TextInput, ScrollView, ListView, Modal, RefreshControl, TouchableNativeFeedback} from 'react-native'
+import { Text, StyleSheet, View, DrawerLayoutAndroid, Navigator, ToastAndroid, ProgressBarAndroid, InteractionManager, TouchableOpacity, DatePickerAndroid, TimePickerAndroid, Picker, TextInput, ScrollView, ListView, Modal, RefreshControl, TouchableNativeFeedback, Alert} from 'react-native'
 import RNFS from 'react-native-fs'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import moment from 'moment'
@@ -14,15 +14,13 @@ const EnvInstance = new Env()
 const db = EnvInstance.db()
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 
-class AddFollowup extends Component {
+class EditFollowup extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            presetText: moment().format('MMMM DD, YYYY'),
             doctorID: EnvInstance.getDoctor().id,
+            presetText: moment().format('MMMM DD, YYYY'),
             presetDate: Date.now(),
-            patientID: 0,
-            patientName: 'Select Here...',
             presetStart: {
                 presetTime: moment().hour(8).minute(0).format('hh:mm A'),
                 presetHour: 8,
@@ -46,6 +44,31 @@ class AddFollowup extends Component {
         }
     }
     componentWillMount() {
+        db.transaction((tx) => {
+            tx.executeSql("SELECT * FROM followup WHERE id="+this.props.followupID+" LIMIT 1", [], function(tx, rs) {
+                db.data = rs.rows.item(0)
+            }, (err) =>  { alert(err.message); });
+        }, (err) => { alert(err.message); }, () => {
+            var currentDate = moment(db.data.date+' '+db.data.time);
+            this.setState({
+                refreshing: false,
+                presetText: currentDate.format('MMMM DD, YYYY'),
+                presetDate: new Date(currentDate.year(), currentDate.month(), currentDate.date()),
+                presetStart: {
+                    presetTime: moment().hour(currentDate.hour()).minute(currentDate.minute()).format('hh:mm A'),
+                    presetHour: 8,
+                    presetMinute: 0,
+                },
+                presetEnd: {
+                    presetTime: moment().hour(currentDate.hour()).minute(currentDate.minute()).add(30, 'minutes').format('hh:mm A'),
+                    presetHour: 8,
+                    presetMinute: 30,
+                },
+                name: db.data.name,
+                description: db.data.description,
+                emergencyOrElective: db.data.emergencyOrElective,
+            })
+        })
         RNFS.exists(this.props.patientAvatar).then((exist) => {
             if (exist)
                 RNFS.readFile(this.props.patientAvatar, 'base64').then((rs) => {
@@ -134,7 +157,7 @@ class AddFollowup extends Component {
                 <View style={Styles.containerStyle}>
                     {this.props.children}
                     <View style={[Styles.subTolbar, {marginTop: 24}]}>
-                        <Text style={Styles.subTitle}>Add Follow-Up</Text>
+                        <Text style={Styles.subTitle}>Edit Follow-Up</Text>
                     </View>
                     <ScrollView style={styles.containerWrapper}
                         keyboardShouldPersistTaps={true}>
@@ -185,6 +208,33 @@ class AddFollowup extends Component {
                             onChangeText={(text) => this.setState({description: text})} />
                     </ScrollView>
                     <TouchableOpacity
+                        style={[Styles.buttonFab, Styles.subTolbarButton, {marginTop: 25}]}
+                        onPress={() => (
+                            Alert.alert(
+                                'Delete Confirmation',
+                                'Are you sure you want to delete?',
+                                [
+                                    {text: 'CANCEL'},
+                                    {text: 'OK', onPress: () => {
+                                        db.transaction((tx) => {
+                                            tx.executeSql("UPDATE followup SET deleted_at = ?, updated_at = ? where id = ?", [moment(new Date()).format('YYYY-MM-DD'), moment(new Date()).format('YYYY-MM-DD'), this.props.followupID], (tx, rs) => {
+                                                console.log("deleted: " + rs.rowsAffected);
+                                            }, (tx, err) => {
+                                                console.log('DELETE error: ' + err.message);
+                                            });
+                                        }, (err) => {
+                                            ToastAndroid.show("Error occured while deleting!", 3000)
+                                        }, () => {
+                                            ToastAndroid.show("Successfully deleted!", 3000)
+                                            this.props.navigator.pop()
+                                        })
+                                    }},
+                                ]
+                            )
+                        )}>
+                        <Icon name={'delete'} color={'#FFFFFF'} size={30}/>
+                    </TouchableOpacity>
+                    <TouchableOpacity
                         style={[Styles.buttonFab, {backgroundColor: '#4CAF50', bottom: 80}]}
                         onPress={this.onSubmit.bind(this)}>
                         <Icon name="save" size={30} color="#FFF" />
@@ -229,17 +279,13 @@ class AddFollowup extends Component {
         var timeStart = moment(this.state.presetText+' '+this.state.presetStart.presetTime).add(1, 'minutes').format('HH:mm:00');
         var timeEnd = moment(this.state.presetText+' '+this.state.presetEnd.presetTime).subtract(1, 'minutes').format('HH:mm:00');
         var values = {
-            diagnosisID: this.props.diagnosisID,
             date: currentDate,
             time: moment(this.state.presetText+' '+this.state.presetStart.presetTime).format('HH:mm:00'),
             description: this.state.description,
             name: this.state.name,
             emergencyOrElective: this.state.emergencyOrElective,
-            pay: 'personal',
-            leadSurgeon: this.state.doctorID,
-            deleted_at: '',
-            created_at: moment().format('YYYY-MM-DD'),
             updated_at: moment().format('YYYY-MM-DD'),
+            id: this.props.followupID,
         }
         if (!this.state.name) {
             ToastAndroid.show('Cannot be empty brief description!', 3000);
@@ -251,12 +297,12 @@ class AddFollowup extends Component {
                         db.duplicate = true;
                         db.type = 'apppointment';
                     } else {
-                        tx.executeSql("SELECT DISTINCT COUNT(`followup`.`id`) as total FROM `followup` LEFT OUTER JOIN `diagnosis` ON `diagnosis`.`id` = `followup`.`diagnosisID` LEFT OUTER JOIN `patients` ON `patients`.`id` = `diagnosis`.`patientID` WHERE (`followup`.`deleted_at` IN (null, 'NULL', '') OR `followup`.`deleted_at` is null) AND `followup`.`leadSurgeon` = '"+this.state.doctorID+"' AND (`followup`.`time` BETWEEN '"+timeStart+"' AND '"+timeEnd+"' OR strftime('%H:%M:%S', `followup`.`time`, '+30 minutes') BETWEEN '"+timeStart+"' AND '"+timeEnd+"' OR (`followup`.`time` < '"+timeStart+"' AND strftime('%H:%M:%S', `followup`.`time`, '+30 minutes') > '"+timeEnd+"')) AND `followup`.`date` = '"+currentDate+"' AND (`patients`.`deleted_at` IN (null, 'NULL', '') OR `patients`.`deleted_at` is null)", [], (tx, rs) => {
+                        tx.executeSql("SELECT DISTINCT COUNT(`followup`.`id`) as total FROM `followup` LEFT OUTER JOIN `diagnosis` ON `diagnosis`.`id` = `followup`.`diagnosisID` LEFT OUTER JOIN `patients` ON `patients`.`id` = `diagnosis`.`patientID` WHERE (`followup`.`deleted_at` IN (null, 'NULL', '') OR `followup`.`deleted_at` is null) AND `followup`.`leadSurgeon` = '"+this.state.doctorID+"' AND (`followup`.`time` BETWEEN '"+timeStart+"' AND '"+timeEnd+"' OR strftime('%H:%M:%S', `followup`.`time`, '+30 minutes') BETWEEN '"+timeStart+"' AND '"+timeEnd+"' OR (`followup`.`time` < '"+timeStart+"' AND strftime('%H:%M:%S', `followup`.`time`, '+30 minutes') > '"+timeEnd+"')) AND `followup`.`date` = '"+currentDate+"' AND (`patients`.`deleted_at` IN (null, 'NULL', '') OR `patients`.`deleted_at` is null) AND `followup`.`id` NOT IN ("+this.props.followupID+")", [], (tx, rs) => {
                             if (rs.rows.item(0).total > 0) {
                                 db.duplicate = true;
                                 db.type = 'followup';
                             } else {
-                                tx.executeSql("INSERT INTO followup (diagnosisID, date, time, description, name, emergencyOrElective, pay, leadSurgeon, deleted_at, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)", _.values(values), (tx, rs) => {
+                                tx.executeSql("UPDATE followup SET date=?, time=?, description=?, name=?, emergencyOrElective=?,  updated_at=? WHERE id=?", _.values(values), (tx, rs) => {
                                     console.log("created: " + rs.rowsAffected);
                                 }, (err) => { alert(err.message)})
                             }
@@ -348,4 +394,4 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
     }
 })
 
-module.exports = AddFollowup
+module.exports = EditFollowup

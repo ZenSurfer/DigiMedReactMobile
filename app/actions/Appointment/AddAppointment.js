@@ -304,10 +304,12 @@ class AppointmentPage extends Component {
                 tx.executeSql("SELECT DISTINCT COUNT(`appointments`.`id`) as total FROM `appointments` LEFT OUTER JOIN `patients` ON `patients`.`id` = `appointments`.`patientID` WHERE (`appointments`.`deleted_at` IN (null, 'NULL', '') OR `appointments`.`deleted_at` is null) AND `appointments`.`doctorID` = "+this.state.doctorID+" AND (`appointments`.`timeStart` BETWEEN '"+timeStart+"' AND '"+timeEnd+"' OR `appointments`.`timeEnd` BETWEEN '"+timeStart+"' AND '"+timeEnd+"' OR (`appointments`.`timeStart` < '"+timeStart+"' AND `appointments`.`timeEnd` > '"+timeEnd+"')) AND `appointments`.`date` = '"+currentDate+"' AND (`patients`.`deleted_at` IN (null, 'NULL', '') OR `patients`.`deleted_at` is null)", [], (tx, rs) => {
                     if (rs.rows.item(0).total > 0) {
                         db.duplicate = true;
+                        db.type = 'appointment';
                     } else {
                         tx.executeSql("SELECT DISTINCT COUNT(`followup`.`id`) as total FROM `followup` LEFT OUTER JOIN `diagnosis` ON `diagnosis`.`id` = `followup`.`diagnosisID` LEFT OUTER JOIN `patients` ON `patients`.`id` = `diagnosis`.`patientID` WHERE (`followup`.`deleted_at` IN (null, 'NULL', '') OR `followup`.`deleted_at` is null) AND `followup`.`leadSurgeon` = '"+this.state.doctorID+"' AND (`followup`.`time` BETWEEN '"+timeStart+"' AND '"+timeEnd+"' OR strftime('%H:%M:%S', `followup`.`time`, '+30 minutes') BETWEEN '"+timeStart+"' AND '"+timeEnd+"' OR (`followup`.`time` < '"+timeStart+"' AND strftime('%H:%M:%S', `followup`.`time`, '+30 minutes') > '"+timeEnd+"')) AND `followup`.`date` = '"+currentDate+"' AND (`patients`.`deleted_at` IN (null, 'NULL', '') OR `patients`.`deleted_at` is null)", [], (tx, rs) => {
                             if (rs.rows.item(0).total > 0) {
                                 db.duplicate = true;
+                                db.type = 'followup';
                             } else {
                                 tx.executeSql("INSERT INTO appointments (date, timeStart, timeEnd, patientID, doctorID, hospitalID, type, deleted_at, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?)", _.values(values), (tx, rs) => {
                                     console.log("created: " + rs.rowsAffected);
@@ -320,7 +322,7 @@ class AppointmentPage extends Component {
                 alert(err.message)
             }, () => {
                 if(db.duplicate) {
-                    ToastAndroid.show('Time slot already occupied!', 1000);
+                    ToastAndroid.show('Time slot reflected at '+db.type+'!', 1000);
                 } else {
                     ToastAndroid.show('Appointment successfully scheduled!', 3000);
                     this.props.navigator.pop();
