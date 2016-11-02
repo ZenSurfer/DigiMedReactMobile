@@ -33,7 +33,9 @@ import AddImage from './actions/Image/AddImage'
 import EditImage from './actions/Image/EditImage'
 
 import AppointmentPage from './actions/Appointment/AppointmentPage'
+import AppointmentPatientPage from './actions/Appointment/AppointmentPatientPage'
 import AddAppointment from './actions/Appointment/AddAppointment'
+import EditAppointment from './actions/Appointment/EditAppointment'
 
 import FollowupPage from './actions/Followup/FollowupPage'
 import AddFollowup from './actions/Followup/AddFollowup'
@@ -200,11 +202,25 @@ module.exports = (route, navigator, state) => {
             </AppointmentPage>
         )
     }
+    if (routeId === 'AppointmentPatientPage') {
+        return (
+            <AppointmentPatientPage navigator={navigator} {...route.passProps}>
+                <StatusBar backgroundColor='#2962FF' translucent={true}/>
+            </AppointmentPatientPage>
+        )
+    }
     if (routeId === 'AddAppointment') {
         return (
             <AddAppointment navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
             </AddAppointment>
+        )
+    }
+    if (routeId === 'EditAppointment') {
+        return (
+            <EditAppointment navigator={navigator} {...route.passProps}>
+                <StatusBar backgroundColor='#2962FF'/>
+            </EditAppointment>
         )
     }
     //followup page

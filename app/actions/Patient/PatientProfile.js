@@ -287,6 +287,18 @@ class PatientProfile extends Component {
                         })}>
                         <Icon name={'edit'} color={'#FFFFFF'} size={30}/>
                     </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[Styles.buttonFab, {backgroundColor: 'rgba(0,0,0,0.1)', bottom: 80, elevation: 0}]}
+                        onPress={() => this.props.navigator.push({
+                            id: 'AddAppointment',
+                            passProps: {
+                                patientID: this.state.rowData.id,
+                                patientAvatar: this.state.rowData.imagePath,
+                                patientName: this.state.rowData.firstname+' '+this.state.rowData.middlename+' '+this.state.rowData.lastname
+                            }
+                        })}>
+                        <Icon name={'playlist-add'} color={'#616161'} size={30}/>
+                    </TouchableOpacity>
                 </View>
                 <View style={{position: 'absolute', bottom: 0, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                     <TouchableNativeFeedback
@@ -297,14 +309,21 @@ class PatientProfile extends Component {
                                 patientAvatar: this.state.rowData.imagePath,
                                 patientName: this.state.rowData.firstname+' '+this.state.rowData.middlename+' '+this.state.rowData.lastname
                             }
-                        })}
-                        >
+                        })}>
                         <View style={{backgroundColor: '#E91E63', flex: 1, alignItems: 'stretch',  padding: 10, borderColor: '#EC407A', borderStyle: 'solid', borderRightWidth: 1}}>
                             <Text style={{textAlign: 'center'}}><Icon name={'local-hospital'} color={'#FFFFFF'} size={34} /></Text>
                             <Text style={{textAlign: 'center', fontSize: 10, color: '#FFFFFF'}}>HPED</Text>
                         </View>
                     </TouchableNativeFeedback>
-                    <TouchableNativeFeedback>
+                    <TouchableNativeFeedback
+                        onPress={() => this.props.navigator.push({
+                            id: 'AppointmentPatientPage',
+                            passProps: {
+                                patientID: this.state.rowData.id,
+                                patientAvatar: this.state.rowData.imagePath,
+                                patientName: this.state.rowData.firstname+' '+this.state.rowData.middlename+' '+this.state.rowData.lastname
+                            }
+                        })}>
                         <View style={{backgroundColor: '#E91E63', flex: 1, alignItems: 'stretch',  padding: 10}}>
                             <Text style={{textAlign: 'center'}}><Icon name={'schedule'} color={'#FFFFFF'} size={34} /></Text>
                             <Text style={{textAlign: 'center', fontSize: 10, color: '#FFFFFF'}}>Appointments</Text>

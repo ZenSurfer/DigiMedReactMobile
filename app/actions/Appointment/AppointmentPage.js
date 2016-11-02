@@ -287,8 +287,7 @@ class AppointmentPage extends Component {
                     />
                 <TouchableOpacity
                     style={[Styles.buttonFab, Styles.subTolbarButton]}
-                    onPress={this.showPicker.bind(this, 'simple', {date: this.state.presetDate})}
-                    >
+                    onPress={this.showPicker.bind(this, 'simple', {date: this.state.presetDate})}>
                     <Icon name="date-range" size={30} color="#FFF" />
                 </TouchableOpacity>
                 <TouchableOpacity

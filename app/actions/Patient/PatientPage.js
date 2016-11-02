@@ -115,12 +115,12 @@ class PatientPage extends Component {
         return (
             <TouchableNativeFeedback
                 onPress={() => this.gotoPatientProfile(rowData)}>
-                <View style={styles.listView}>
+                <View style={[styles.listView]}>
                     {(rowData.imagePath) ? ((this.state['patient'+rowData.id]) ? (<Image source={{uri: this.state['patient'+rowData.id]}} style={styles.avatarImage}/>) : ((<Icon name={'account-circle'} color={'grey'} size={80}  style={styles.avatarIcon}/>))) : (<Icon name={'account-circle'} color={'grey'} size={80}  style={styles.avatarIcon}/>)}
-                    <View style={styles.listText}>
+                    <View style={[styles.listText, {justifyContent: 'center'}]}>
                         <Text style={styles.listItemHead}>{rowData.firstname+' '+rowData.middlename+' '+rowData.lastname}</Text>
                         <Text style={styles.listItem}>{moment().diff(rowData.birthdate, 'years')} yo / {rowData.sex ? 'Male' : 'Female'}</Text>
-                        <Text style={styles.listItem}>{moment(rowData.birthdate).format('MMMM DD, YYYY')} / AAA</Text>
+                        {/* <Text style={styles.listItem}>{moment(rowData.birthdate).format('MMMM DD, YYYY')} / AAA</Text> */}
                     </View>
                 </View>
             </TouchableNativeFeedback>
@@ -208,7 +208,7 @@ var styles = StyleSheet.create({
         marginBottom: 10,
     },
     listItemHead: {
-        fontSize: 20,
+        fontSize: 22,
         color: '#424242'
     },
     listItem: {

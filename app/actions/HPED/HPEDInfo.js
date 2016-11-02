@@ -202,8 +202,17 @@ class HPEDInfo extends Component {
                         <Icon name={'edit'} color={'#FFFFFF'} size={30}/>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={[Styles.buttonFab, {backgroundColor: 'rgba(0,0,0,0.1)', bottom: 80, elevation: 0}]}>
-                        <Icon name={'event-note'} color={'#616161'} size={30}/>
+                        style={[Styles.buttonFab, {backgroundColor: 'rgba(0,0,0,0.1)', bottom: 80, elevation: 0}]}
+                        onPress={() => this.props.navigator.push({
+                            id: 'AddFollowup',
+                            passProps: {
+                                diagnosisID: this.props.diagnosisID,
+                                patientID: this.props.patientID,
+                                patientAvatar: this.props.patientAvatar,
+                                patientName: this.props.patientName
+                            }
+                        })}>
+                        <Icon name={'playlist-add'} color={'#616161'} size={30}/>
                     </TouchableOpacity>
                 </View>
                 <View style={{position: 'absolute', bottom: 0, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>

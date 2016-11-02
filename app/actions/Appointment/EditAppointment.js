@@ -14,7 +14,7 @@ const EnvInstance = new Env()
 const db = EnvInstance.db()
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 
-class AppointmentPage extends Component {
+class EditAppointment extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -45,27 +45,37 @@ class AppointmentPage extends Component {
         }
     }
     componentWillMount() {
-        if (this.props.patientID)
-            RNFS.exists(this.props.patientAvatar).then((exist) => {
-                if (exist)
-                    RNFS.readFile(this.props.patientAvatar, 'base64').then((rs) => {
-                        this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')})
-                    })
+        db.transaction((tx) => {
+            tx.executeSql("SELECT * FROM appointments WHERE id="+this.props.appointmentID+" LIMIT 1", [], function(tx, rs) {
+                db.data = rs.rows.item(0)
+            }, (err) =>  { alert(err.message); });
+        }, (err) => { alert(err.message); }, () => {
+            var currentDateStart = moment(db.data.date+' '+db.data.timeStart);
+            var currentDateEnd = moment(db.data.date+' '+db.data.timeEnd);
+            this.setState({
+                refreshing: false,
+                presetText: currentDateStart.format('MMMM DD, YYYY'),
+                presetDate: new Date(currentDateStart.year(), currentDateStart.month(), currentDateStart.date()),
+                presetStart: {
+                    presetTime: moment().hour(currentDateStart.hour()).minute(currentDateStart.minute()).format('hh:mm A'),
+                    presetHour: currentDateStart.hour(),
+                    presetMinute: currentDateStart.minute(),
+                },
+                presetEnd: {
+                    presetTime: moment().hour(currentDateEnd.hour()).minute(currentDateEnd.minute()).format('hh:mm A'),
+                    presetHour: currentDateEnd.hour(),
+                    presetMinute: currentDateEnd.minute(),
+                },
+                setType: db.data.type,
+                notes: db.data.notes,
             })
-        else
-            db.transaction((tx) => {
-                tx.executeSql("SELECT * FROM patients WHERE (deleted_at in (null, 'NULL', '') OR deleted_at is null) ORDER BY firstname ASC", [], (tx, rs) => {
-                    db.data = rs.rows
+        })
+        RNFS.exists(this.props.patientAvatar).then((exist) => {
+            if (exist)
+                RNFS.readFile(this.props.patientAvatar, 'base64').then((rs) => {
+                    this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')})
                 })
-            }, (err) => {
-                alert(err.message)
-            }, () => {
-                var patients = [];
-                _.forEach(db.data, (v, i) => {
-                    patients.push(db.data.item(i))
-                })
-                this.setState({patients: patients, refreshing: false})
-            })
+        })
     }
     async showPicker(stateKey, startFrom) {
         if (stateKey === 'date') {
@@ -148,68 +158,8 @@ class AppointmentPage extends Component {
                 <View style={Styles.containerStyle}>
                     {this.props.children}
                     <View style={[Styles.subTolbar, {marginTop: 24}]}>
-                        <Text style={Styles.subTitle}>{(this.props.patientID) ? 'Add Appointment' : this.state.presetText}</Text>
+                        <Text style={Styles.subTitle}>Edit Appointment</Text>
                     </View>
-                    <Modal
-                        animationType={'slide'}
-                        transparent={false}
-                        visible={this.state.modalVisible}
-                        onRequestClose={() => {this.setState({modalVisible: false}) }}>
-                        <View style={{flex:1}}>
-                            <View style={{padding: 10, paddingLeft: 16,  paddingRight: 0, backgroundColor: '#2979FF'}}>
-                                <View style={{flexDirection: 'row', paddingRight: 0}}>
-                                    <Icon name={'search'} size={30} style={{color: '#FFF', textAlignVertical: 'center', paddingRight: 8}}/>
-                                    <TextInput
-                                        style={[styles.textInput, {flex:1, alignItems: 'stretch', color: '#FFF'}]}
-                                        placeholderTextColor={'#FFF'}
-                                        underlineColorAndroid={'#FFF'}
-                                        placeholder={'Search'}
-                                        returnKeyType={'search'}
-                                        value={this.state.search}
-                                        onChangeText={(value) => this.setState({search: value})}
-                                        onSubmitEditing={(event) => {
-                                            this.setState({refreshing: true}); this.updatePatients();
-                                        }}
-                                        />
-                                    <TouchableOpacity style={{padding: 15}}
-                                        onPress={() => {
-                                            this.setState({modalVisible: false})
-                                        }}>
-                                        <Icon name={'close'} size={30} style={{color: '#FFF', textAlignVertical: 'center'}}/>
-                                    </TouchableOpacity>
-                                </View>
-                                <View style={{flexDirection: 'row', paddingTop: 5, paddingBottom: 5, paddingRight: 16}}>
-                                    <Text style={{flex:1, alignItems: 'stretch', color: '#FFF'}}>First Name</Text>
-                                    <Text style={{flex:1, alignItems: 'stretch', color: '#FFF'}}>Middle Name</Text>
-                                    <Text style={{flex:1, alignItems: 'stretch', color: '#FFF'}}>Last Name</Text>
-                                </View>
-                            </View>
-                            <ListView
-                                dataSource={ds.cloneWithRows(this.state.patients)}
-                                renderRow={(rowData, sectionID, rowID) => {
-                                    var patientName = rowData.firstname+' '+rowData.middlename+' '+rowData.lastname;
-                                    return (
-                                        <TouchableNativeFeedback
-                                            onPress={() => {
-                                                this.setState({patientID: rowData.id, patientName: patientName, modalVisible: false})
-                                            }}>
-                                            <View style={{flexDirection: 'row', padding: 12, paddingLeft: 16, paddingRight: 16, backgroundColor: (rowID%2) ? '#FFFFFF' : '#FAFAFA', borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}>
-                                                <Text style={{flex: 1, alignItems: 'stretch'}}>{rowData.firstname}</Text>
-                                                <Text style={{flex: 1, alignItems: 'stretch'}}>{rowData.middlename}</Text>
-                                                <Text style={{flex: 1, alignItems: 'stretch'}}>{rowData.lastname}</Text>
-                                            </View>
-                                        </TouchableNativeFeedback>
-                                    )
-                                }}
-                                enableEmptySections={true}
-                                refreshControl={
-                                    <RefreshControl
-                                        refreshing={this.state.refreshing}
-                                        onRefresh={this.updatePatients.bind(this)}
-                                        />
-                                }/>
-                        </View>
-                    </Modal>
                     <ScrollView style={styles.containerWrapper}
                         keyboardShouldPersistTaps={true}>
                         {(this.props.patientID) ? (
@@ -270,17 +220,33 @@ class AppointmentPage extends Component {
                             numberOfLines={4}
                             onChangeText={(text) => this.setState({notes: text})} />
                     </ScrollView>
-                    {(this.props.patientID) ? (
-                        <View/>
-                    ) : (
-                        <TouchableOpacity
-                            style={[Styles.buttonFab, Styles.subTolbarButton, {marginTop: 24}]}
-                            onPress={this.showPicker.bind(this, 'date')}
-                            >
-                            <Icon name="date-range" size={30} color="#FFF" />
-                        </TouchableOpacity>
-                    )}
-
+                    <TouchableOpacity
+                        style={[Styles.buttonFab, Styles.subTolbarButton, {marginTop: 25}]}
+                        onPress={() => (
+                            Alert.alert(
+                                'Delete Confirmation',
+                                'Are you sure you want to delete?',
+                                [
+                                    {text: 'CANCEL'},
+                                    {text: 'OK', onPress: () => {
+                                        db.transaction((tx) => {
+                                            tx.executeSql("UPDATE appointments SET deleted_at = ?, updated_at = ? where id = ?", [moment(new Date()).format('YYYY-MM-DD'), moment(new Date()).format('YYYY-MM-DD'), this.props.followupID], (tx, rs) => {
+                                                console.log("deleted: " + rs.rowsAffected);
+                                            }, (tx, err) => {
+                                                console.log('DELETE error: ' + err.message);
+                                            });
+                                        }, (err) => {
+                                            ToastAndroid.show("Error occured while deleting!", 3000)
+                                        }, () => {
+                                            ToastAndroid.show("Successfully deleted!", 3000)
+                                            this.props.navigator.pop()
+                                        })
+                                    }},
+                                ]
+                            )
+                        )}>
+                        <Icon name={'delete'} color={'#FFFFFF'} size={30}/>
+                    </TouchableOpacity>
                     <TouchableOpacity
                         style={[Styles.buttonFab, {backgroundColor: '#4CAF50'}]}
                         onPress={this.onSubmit.bind(this)}>
@@ -290,21 +256,6 @@ class AppointmentPage extends Component {
             </View>
         )
     }
-    updatePatients() {
-        db.transaction((tx) => {
-            tx.executeSql("SELECT * FROM patients WHERE (deleted_at in (null, 'NULL', '') OR deleted_at is null) AND (firstname LIKE '%"+this.state.search+"%' OR middlename LIKE '%"+this.state.search+"%' OR  lastname LIKE '%"+this.state.search+"%') ORDER BY firstname ASC", [], (tx, rs) => {
-                db.data = rs.rows
-            })
-        }, (err) => {
-            alert(err.message)
-        }, () => {
-            var patients = [];
-            _.forEach(db.data, (v, i) => {
-                patients.push(db.data.item(i))
-            })
-            this.setState({patients: patients, refreshing: false})
-        })
-    }
     onSubmit() {
         var currentDate = moment(this.state.presetText).format('YYYY-MM-DD');
         var timeStart = moment(this.state.presetText+' '+this.state.presetStart.presetTime).add(1, 'minutes').format('HH:mm:00');
@@ -313,18 +264,14 @@ class AppointmentPage extends Component {
             date: currentDate,
             timeStart: moment(this.state.presetText+' '+this.state.presetStart.presetTime).format('HH:mm:00'),
             timeEnd: moment(this.state.presetText+' '+this.state.presetEnd.presetTime).format('HH:mm:00'),
-            patientID: this.props.patientID,
-            doctorID: this.state.doctorID,
-            hospitalID: '',
             type: this.state.setType,
             notes: this.state.notes,
-            deleted_at: '',
-            created_at: moment().format('YYYY-MM-DD'),
             updated_at: moment().format('YYYY-MM-DD'),
+            appointmentID: this.props.appointmentID,
         }
         db.transaction((tx) => {
             db.duplicate = false;
-            tx.executeSql("SELECT DISTINCT COUNT(`appointments`.`id`) as total FROM `appointments` LEFT OUTER JOIN `patients` ON `patients`.`id` = `appointments`.`patientID` WHERE (`appointments`.`deleted_at` IN (null, 'NULL', '') OR `appointments`.`deleted_at` is null) AND `appointments`.`doctorID` = "+this.state.doctorID+" AND (`appointments`.`timeStart` BETWEEN '"+timeStart+"' AND '"+timeEnd+"' OR `appointments`.`timeEnd` BETWEEN '"+timeStart+"' AND '"+timeEnd+"' OR (`appointments`.`timeStart` < '"+timeStart+"' AND `appointments`.`timeEnd` > '"+timeEnd+"')) AND `appointments`.`date` = '"+currentDate+"' AND (`patients`.`deleted_at` IN (null, 'NULL', '') OR `patients`.`deleted_at` is null)", [], (tx, rs) => {
+            tx.executeSql("SELECT DISTINCT COUNT(`appointments`.`id`) as total FROM `appointments` LEFT OUTER JOIN `patients` ON `patients`.`id` = `appointments`.`patientID` WHERE (`appointments`.`deleted_at` IN (null, 'NULL', '') OR `appointments`.`deleted_at` is null) AND `appointments`.`doctorID` = "+this.state.doctorID+" AND (`appointments`.`timeStart` BETWEEN '"+timeStart+"' AND '"+timeEnd+"' OR `appointments`.`timeEnd` BETWEEN '"+timeStart+"' AND '"+timeEnd+"' OR (`appointments`.`timeStart` < '"+timeStart+"' AND `appointments`.`timeEnd` > '"+timeEnd+"')) AND `appointments`.`date` = '"+currentDate+"' AND (`patients`.`deleted_at` IN (null, 'NULL', '') OR `patients`.`deleted_at` is null) AND `appointments`.`id` NOT IN ("+this.props.appointmentID+")", [], (tx, rs) => {
                 if (rs.rows.item(0).total > 0) {
                     db.duplicate = true;
                     db.type = 'appointment';
@@ -334,7 +281,7 @@ class AppointmentPage extends Component {
                             db.duplicate = true;
                             db.type = 'followup';
                         } else {
-                            tx.executeSql("INSERT INTO appointments (date, timeStart, timeEnd, patientID, doctorID, hospitalID, type, notes, deleted_at, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)", _.values(values), (tx, rs) => {
+                            tx.executeSql("UPDATE appointments SET date=?, timeStart=?, timeEnd=?, type=?, notes=?, updated_at=? WHERE id=?", _.values(values), (tx, rs) => {
                                 console.log("created: " + rs.rowsAffected);
                             }, (err) => { alert(err.message)})
                         }
@@ -412,45 +359,29 @@ var styles = StyleSheet.create({
 
 var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
     LeftButton(route, navigator, index, nextState) {
-        if (patientID)
-            return (
-                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                    <TouchableOpacity
-                        onPress={() => navigator.parentNavigator.pop()}>
-                        <Text style={{color: 'white', margin: 10, marginTop: 15}}>
-                            <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
-                        </Text>
-                    </TouchableOpacity>
-                    {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Icon name={'account-circle'} color={'#FFFFFF'} size={65}  style={styles.avatarIcon}/>)}
-                </View>
-            )
-        else
-            return (
-                <TouchableOpacity style={{flex: 1, justifyContent: 'center'}}
-                    onPress={() => { navigator.parentNavigator.pop() }}>
-                    <Text style={{color: 'white', margin: 10,}}>
-                        <Icon name={"keyboard-arrow-left"} size={30} color={"#FFF"} />
+        return (
+            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                <TouchableOpacity
+                    onPress={() => navigator.parentNavigator.pop()}>
+                    <Text style={{color: 'white', margin: 10, marginTop: 15}}>
+                        <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                     </Text>
                 </TouchableOpacity>
-            )
+                {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Icon name={'account-circle'} color={'#FFFFFF'} size={65}  style={styles.avatarIcon}/>)}
+            </View>
+        )
+
     },
     RightButton(route, navigator, index, nextState) {
         return null
     },
     Title(route, navigator, index, nextState) {
-        if (patientID)
-            return (
-                <TouchableOpacity style={[Styles.title, {marginLeft: 50}]}>
-                    <Text style={[Styles.titleText]}>{patientName}</Text>
-                </TouchableOpacity>
-            )
-        else
-            return (
-                <TouchableOpacity style={Styles.title}>
-                    <Text style={Styles.titleText}>Add Appointment</Text>
-                </TouchableOpacity>
-            )
+        return (
+            <TouchableOpacity style={[Styles.title, {marginLeft: 50}]}>
+                <Text style={[Styles.titleText]}>{patientName}</Text>
+            </TouchableOpacity>
+        )
     }
 })
 
-module.exports = AppointmentPage
+module.exports = EditAppointment

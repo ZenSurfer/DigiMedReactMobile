@@ -1,7 +1,7 @@
 'use strict';
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, View, ListView, RefreshControl, Navigator, Dimensions, ToastAndroid, TouchableOpacity, TouchableNativeFeedback, Image} from 'react-native'
+import {StyleSheet, Text, View, ListView, RefreshControl, Navigator, Dimensions, ToastAndroid, TouchableOpacity, TouchableNativeFeedback, Image, Alert} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import RNFS from 'react-native-fs'
 import _ from 'lodash'
@@ -27,7 +27,7 @@ class HPEDPage extends Component {
     componentWillMount() {
         this.setState({refreshing: true})
         db.transaction((tx) => {
-            tx.executeSql("SELECT `diagnosis`.`id` AS `id`, ('Dr. ' || `doctors`.`firstname` || ' ' || `doctors`.`middlename` || ' ' || `doctors`.`lastname`)  AS `doctorName`, `diagnosis`.`date` AS `date`, `diagnosis`.`chiefComplaint` AS `chiefComplaint`, (SELECT (`followup`.`date`|| ' ' ||`followup`.`time`|| '@@' ||`followup`.`name`) as description FROM `followup` WHERE `followup`.`leadSurgeon`="+this.state.doctorID+" AND `followup`.`diagnosisID` = `diagnosis`.`id` AND (`followup`.`date` || ' ' || `followup`.`time`) >= '"+moment().format('YYYY-MM-DD HH:mm:SS')+"' AND (`followup`.`deleted_at` in (null, 'NULL', '') OR `followup`.`deleted_at` is null) ORDER BY `followup`.`date` ASC, `followup`.`time` ASC LIMIT 1) as upcoming, (SELECT (`followup`.`date`|| ' ' ||`followup`.`time`|| '@@' ||`followup`.`name`) as description  FROM `followup` WHERE `followup`.`leadSurgeon`="+this.state.doctorID+" AND `followup`.`diagnosisID` = `diagnosis`.`id` AND (`followup`.`date` || ' ' || `followup`.`time`) < '"+moment().format('YYYY-MM-DD HH:mm:SS')+"' AND (`followup`.`deleted_at` in (null, 'NULL', '') OR `followup`.`deleted_at` is null) ORDER BY `followup`.`date` DESC, `followup`.`time` DESC LIMIT 1) as last FROM `diagnosis` LEFT OUTER JOIN `patients` on `diagnosis`.`patientID` = `patients`.`id` LEFT OUTER JOIN `doctors` on `diagnosis`.`doctorID` = `doctors`.`id` WHERE (`diagnosis`.`deleted_at` in (null, 'NULL', '') OR `diagnosis`.`deleted_at` is null) AND `diagnosis`.`patientID` = ? ORDER BY `diagnosis`.`date` DESC, `diagnosis`.`timeStart` DESC", [this.props.patientID], function(tx, rs) {
+            tx.executeSql("SELECT `diagnosis`.`id` AS `id`, ('Dr. ' || `doctors`.`firstname` || ' ' || `doctors`.`middlename` || ' ' || `doctors`.`lastname`)  AS `doctorName`, `diagnosis`.`date` AS `date`, `diagnosis`.`chiefComplaint` AS `chiefComplaint`, (SELECT (`followup`.`date`|| ' ' ||`followup`.`time`|| '@@' ||`followup`.`name` || '@@' || `followup`.`description`) as description FROM `followup` WHERE `followup`.`leadSurgeon`="+this.state.doctorID+" AND `followup`.`diagnosisID` = `diagnosis`.`id` AND (`followup`.`date` || ' ' || `followup`.`time`) >= '"+moment().format('YYYY-MM-DD HH:mm:SS')+"' AND (`followup`.`deleted_at` in (null, 'NULL', '') OR `followup`.`deleted_at` is null) ORDER BY `followup`.`date` ASC, `followup`.`time` ASC LIMIT 1) as upcoming, (SELECT (`followup`.`date`|| ' ' ||`followup`.`time`|| '@@' ||`followup`.`name` || '@@' || `followup`.`description`) as description  FROM `followup` WHERE `followup`.`leadSurgeon`="+this.state.doctorID+" AND `followup`.`diagnosisID` = `diagnosis`.`id` AND (`followup`.`date` || ' ' || `followup`.`time`) < '"+moment().format('YYYY-MM-DD HH:mm:SS')+"' AND (`followup`.`deleted_at` in (null, 'NULL', '') OR `followup`.`deleted_at` is null) ORDER BY `followup`.`date` DESC, `followup`.`time` DESC LIMIT 1) as last FROM `diagnosis` LEFT OUTER JOIN `patients` on `diagnosis`.`patientID` = `patients`.`id` LEFT OUTER JOIN `doctors` on `diagnosis`.`doctorID` = `doctors`.`id` WHERE (`diagnosis`.`deleted_at` in (null, 'NULL', '') OR `diagnosis`.`deleted_at` is null) AND `diagnosis`.`patientID` = ? ORDER BY `diagnosis`.`date` DESC, `diagnosis`.`timeStart` DESC", [this.props.patientID], function(tx, rs) {
                 db.data = rs.rows
             }, function(error) {
                 alert(error.message);
@@ -163,7 +163,7 @@ class HPEDPage extends Component {
                             }
                         })
                     }}>
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFF', borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFF'}}>
                         <TouchableOpacity
                             style={{justifyContent: 'center', padding: 12, borderRadius: 50, backgroundColor: '#FFEB3B', marginLeft: 16}}
                             onPress={() => this.props.navigator.push({
@@ -175,7 +175,7 @@ class HPEDPage extends Component {
                                     patientName: this.props.patientName,
                                 }
                             })}>
-                            <Icon style={{textAlignVertical: 'center', textAlign: 'center', color: '#616161'}} name='date-range' size={20}/>
+                            <Icon style={{textAlignVertical: 'center', textAlign: 'center', color: '#616161'}} name='format-list-bulleted' size={20}/>
                         </TouchableOpacity>
                         <View style={[styles.listView, {elevation: 0, flex: 1, alignItems: 'stretch'}]}>
                             <View style={styles.listText}>
@@ -188,29 +188,40 @@ class HPEDPage extends Component {
                 </TouchableNativeFeedback>
                 {(rowData.upcoming || rowData.last) ? (
                     <View style={{backgroundColor: '#FFEB3B'}}>
-                        <TouchableNativeFeedback>
+                        <TouchableNativeFeedback
+                            onPress={() => {
+                            Alert.alert(
+                                'Description',
+                                _.split(rowData.upcoming, '@@')[2],
+                                [{text: 'OK'}]
+                            )
+                        }}>
                         {(rowData.upcoming) ? (
-                            <View style={{flexDirection: 'column',padding: 16, paddingTop: 5, paddingBottom: 5, borderBottomWidth: 0.5, borderBottomColor: '#FFF176'}}>
+                            <View style={{flexDirection: 'column',padding: 16, paddingTop: 5, paddingBottom: 5}}>
                                 <Text style={{color: '#F44336', fontWeight: 'bold'}}>Upcoming Followup</Text>
                                 <Text style={{color: '#616161', flex: 1, alignItems: 'stretch', fontStyle: 'italic'}}>
                                     {_.map(_.split(rowData.upcoming, '@@'), (v,i) => {
                                         if (i==1)
                                             return (<Text key={i}> {v}</Text>)
+                                        else if (i==0)
+                                            return (<Text key={i}>{moment(v).format('MMMM DD, YYYY')} at {moment(v).format('hh:mm A')},</Text>)
                                         else
-                                            return (<Text key={i} style={{fontWeight: 'bold'}}>{moment(v).format('MMMM DD, YYYY')} at {moment(v).format('hh:mm A')},</Text>)
+                                            return (<Text key={i}/>)
 
                                     })}
                                 </Text>
                             </View>
                         ) : (
-                            <View style={{flexDirection: 'column',padding: 16, paddingTop: 5, paddingBottom: 5, borderBottomWidth: 0.5, borderBottomColor: '#FFF176'}}>
+                            <View style={{flexDirection: 'column',padding: 16, paddingTop: 5, paddingBottom: 5}}>
                                 <Text style={{color: '#616161', fontWeight: 'bold'}}>Previous Followup</Text>
                                 <Text style={{color: '#616161', flex: 1, alignItems: 'stretch', fontStyle: 'italic'}}>
                                     {_.map(_.split(rowData.last, '@@'), (v,i) => {
                                         if (i==1)
                                             return (<Text key={i}> {v}</Text>)
+                                        else if (i==0)
+                                            return (<Text key={i}>{moment(v).format('MMMM DD, YYYY')} at {moment(v).format('hh:mm A')},</Text>)
                                         else
-                                            return (<Text key={i} style={{fontWeight: 'bold'}}>{moment(v).format('MMMM DD, YYYY')} at {moment(v).format('hh:mm A')},</Text>)
+                                            return (<Text key={i}/>)
 
                                     })}
                                 </Text>
@@ -227,7 +238,7 @@ class HPEDPage extends Component {
     onRefresh() {
         this.setState({refreshing: true})
         db.transaction((tx) => {
-            tx.executeSql("SELECT `diagnosis`.`id` AS `id`, ('Dr. ' || `doctors`.`firstname` || ' ' || `doctors`.`middlename` || ' ' || `doctors`.`lastname`)  AS `doctorName`, `diagnosis`.`date` AS `date`, `diagnosis`.`chiefComplaint` AS `chiefComplaint`, (SELECT (`followup`.`date`|| ' ' ||`followup`.`time`|| '@@' ||`followup`.`name`) as description FROM `followup` WHERE `followup`.`leadSurgeon`="+this.state.doctorID+" AND `followup`.`diagnosisID` = `diagnosis`.`id` AND (`followup`.`date` || ' ' || `followup`.`time`) >= '"+moment().format('YYYY-MM-DD HH:mm:SS')+"' AND (`followup`.`deleted_at` in (null, 'NULL', '') OR `followup`.`deleted_at` is null) ORDER BY `followup`.`date` ASC, `followup`.`time` ASC LIMIT 1) as upcoming, (SELECT (`followup`.`date`|| ' ' ||`followup`.`time`|| '@@' ||`followup`.`name`) as description  FROM `followup` WHERE `followup`.`leadSurgeon`="+this.state.doctorID+" AND `followup`.`diagnosisID` = `diagnosis`.`id` AND (`followup`.`date` || ' ' || `followup`.`time`) < '"+moment().format('YYYY-MM-DD HH:mm:SS')+"' AND (`followup`.`deleted_at` in (null, 'NULL', '') OR `followup`.`deleted_at` is null) ORDER BY `followup`.`date` DESC, `followup`.`time` DESC LIMIT 1) as last FROM `diagnosis` LEFT OUTER JOIN `patients` on `diagnosis`.`patientID` = `patients`.`id` LEFT OUTER JOIN `doctors` on `diagnosis`.`doctorID` = `doctors`.`id` WHERE (`diagnosis`.`deleted_at` in (null, 'NULL', '') OR `diagnosis`.`deleted_at` is null) AND `diagnosis`.`patientID` = ? ORDER BY `diagnosis`.`date` DESC, `diagnosis`.`timeStart` DESC", [this.props.patientID], function(tx, rs) {
+            tx.executeSql("SELECT `diagnosis`.`id` AS `id`, ('Dr. ' || `doctors`.`firstname` || ' ' || `doctors`.`middlename` || ' ' || `doctors`.`lastname`)  AS `doctorName`, `diagnosis`.`date` AS `date`, `diagnosis`.`chiefComplaint` AS `chiefComplaint`, (SELECT (`followup`.`date`|| ' ' ||`followup`.`time`|| '@@' ||`followup`.`name` || '@@' || `followup`.`description`) as description FROM `followup` WHERE `followup`.`leadSurgeon`="+this.state.doctorID+" AND `followup`.`diagnosisID` = `diagnosis`.`id` AND (`followup`.`date` || ' ' || `followup`.`time`) >= '"+moment().format('YYYY-MM-DD HH:mm:SS')+"' AND (`followup`.`deleted_at` in (null, 'NULL', '') OR `followup`.`deleted_at` is null) ORDER BY `followup`.`date` ASC, `followup`.`time` ASC LIMIT 1) as upcoming, (SELECT (`followup`.`date`|| ' ' ||`followup`.`time`|| '@@' ||`followup`.`name` || '@@' || `followup`.`description`) as description  FROM `followup` WHERE `followup`.`leadSurgeon`="+this.state.doctorID+" AND `followup`.`diagnosisID` = `diagnosis`.`id` AND (`followup`.`date` || ' ' || `followup`.`time`) < '"+moment().format('YYYY-MM-DD HH:mm:SS')+"' AND (`followup`.`deleted_at` in (null, 'NULL', '') OR `followup`.`deleted_at` is null) ORDER BY `followup`.`date` DESC, `followup`.`time` DESC LIMIT 1) as last FROM `diagnosis` LEFT OUTER JOIN `patients` on `diagnosis`.`patientID` = `patients`.`id` LEFT OUTER JOIN `doctors` on `diagnosis`.`doctorID` = `doctors`.`id` WHERE (`diagnosis`.`deleted_at` in (null, 'NULL', '') OR `diagnosis`.`deleted_at` is null) AND `diagnosis`.`patientID` = ? ORDER BY `diagnosis`.`date` DESC, `diagnosis`.`timeStart` DESC", [this.props.patientID], function(tx, rs) {
                 db.data = rs.rows
             }, function(error) {
                 alert(error.message);

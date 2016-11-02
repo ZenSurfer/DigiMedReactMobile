@@ -56,13 +56,13 @@ class EditFollowup extends Component {
                 presetDate: new Date(currentDate.year(), currentDate.month(), currentDate.date()),
                 presetStart: {
                     presetTime: moment().hour(currentDate.hour()).minute(currentDate.minute()).format('hh:mm A'),
-                    presetHour: 8,
-                    presetMinute: 0,
+                    presetHour: currentDate.hour(),
+                    presetMinute: currentDate.minute(),
                 },
                 presetEnd: {
                     presetTime: moment().hour(currentDate.hour()).minute(currentDate.minute()).add(30, 'minutes').format('hh:mm A'),
-                    presetHour: 8,
-                    presetMinute: 30,
+                    presetHour: currentDate.hour(),
+                    presetMinute: currentDate.add(30, 'minutes').minute(),
                 },
                 name: db.data.name,
                 description: db.data.description,
