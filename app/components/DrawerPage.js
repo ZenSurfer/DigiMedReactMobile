@@ -1,7 +1,7 @@
 'use strict'
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, View, TouchableNativeFeedback, TouchableHighlight, Image, StatusBar, ScrollView, Navigator} from 'react-native'
+import {StyleSheet, Text, View, TouchableNativeFeedback, TouchableHighlight, Image, StatusBar, ScrollView, Navigator, TouchableOpacity} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import Styles from '../assets/Styles'
@@ -20,13 +20,24 @@ class DrawerPage extends Component {
                         resizeMode={'cover'}>
                         <View style={{position: 'absolute', height: 200, width: 300, backgroundColor: 'rgba(0,0,0,0.25)'}}></View>
                         <View style={styles.drawerImageContainer}>
-                            <View style={{borderRadius: 40, width: 80, marginTop: 6, marginBottom: 10, elevation: 2}}>
+                            <View style={{borderRadius: 40, width: 80, marginTop: 6, marginBottom: 10}}>
                                 <Image
                                     style={[styles.drawerImageAvatar, {borderRadius: 40}]}
                                     source={{uri: 'https://avatars.io/facebook/donald/large'}}/>
                             </View>
-                            <Text style={styles.drawerImageName}>Donald P Benas</Text>
-                            <Text style={styles.drawerImageEmail}>donaldbenas@gmail.com</Text>
+                            <View style={{flexDirection: 'row'}}>
+                                <View style={{flex: 1, flexDirection: 'column'}}>
+                                    <Text style={styles.drawerImageName}>Donald P Benas</Text>
+                                    <Text style={styles.drawerImageEmail}>donaldbenas@gmail.com</Text>
+                                </View>
+                                <TouchableOpacity
+                                    style={{justifyContent: 'center', width: 40, height: 40, backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: 30}}
+                                    onPress={() => {
+                                        
+                                    }}>
+                                    <Icon name={'arrow-drop-down'} size={25} color={'#FFF'} style={{textAlign: 'center', textAlignVertical: 'center'}}/>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </Image>
                     <View style={[styles.drawerContainer, {marginTop: 5}]}>
