@@ -14,7 +14,7 @@ const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 const EnvInstance = new Env()
 const db = EnvInstance.db()
 
-class PrescriptionPage extends Component {
+class FollowupPage extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -26,36 +26,13 @@ class PrescriptionPage extends Component {
     componentWillMount() {
         this.setState({refreshing: true})
         db.transaction((tx) => {
-            tx.executeSql("SELECT * FROM prescriptions WHERE patientID = ? AND (deleted_at in (null, 'NULL', '') OR deleted_at is null) ORDER BY dateIssued DESC", [this.props.patientID], function(tx, rs) {
+            tx.executeSql("SELECT * FROM followup WHERE diagnosisID=? AND (deleted_at in (null, 'NULL', '') OR deleted_at is null) ORDER BY date DESC, time ASC", [this.props.diagnosisID], function(tx, rs) {
                 db.data = rs.rows
-            }, function(error) {
-                console.log('SELECT SQL statement ERROR: ' + error.message);
-            });
-        }, (error) => {
-            console.log('transaction error: ' + error.message);
-        }, () => {
+            }, (err) =>  { alert(err.message); });
+        }, (err) => { alert(err.message); }, () => {
             var rowData = [];
             _.forEach(db.data, function(v, i) {
-                var genericName = _.split(db.data.item(i).genericName, '||');
-                var brandName = _.split(db.data.item(i).brandName, '||');
-                var frequency = _.split(db.data.item(i).frequency, '||');
-                var dosage = _.split(db.data.item(i).dosage, '||');
-                var form = _.split(db.data.item(i).form, '||');
-                var notes = _.split(db.data.item(i).notes, '||');
-                _.forEach(genericName, (vv, ii) => {
-                    var prescription = {
-                        prescriptionID: db.data.item(i).id,
-                        prescriptionRowID: ii,
-                        date: db.data.item(i).dateIssued,
-                        generic: genericName[ii],
-                        brand: brandName[ii],
-                        dosage: dosage[ii],
-                        form: form[ii],
-                        frequency: frequency[ii],
-                        note: notes[ii],
-                    }
-                    rowData.push(prescription)
-                })
+                rowData.push(db.data.item(i))
             })
             this.setState({refreshing: false, rowData: rowData})
         })
@@ -83,7 +60,7 @@ class PrescriptionPage extends Component {
             <View style={Styles.containerStyle}>
                 {this.props.children}
                 <View style={[Styles.subTolbar, {marginTop: 24}]}>
-                    <Text style={Styles.subTitle}>Prescription</Text>
+                    <Text style={Styles.subTitle}>Follow-Up</Text>
                 </View>
                 <ListView
                     dataSource={ds.cloneWithRows(this.state.rowData)}
@@ -98,7 +75,7 @@ class PrescriptionPage extends Component {
                 <TouchableOpacity
                     style={[Styles.buttonFab, Styles.subTolbarButton, {marginTop: 24}]}
                     onPress={() => this.props.navigator.push({
-                        id: 'AddPrescription',
+                        id: 'AddFollowup',
                         passProps: {
                             diagnosisID: this.props.diagnosisID,
                             patientID: this.props.patientID,
@@ -126,22 +103,10 @@ class PrescriptionPage extends Component {
                             prescriptionRowID: rowData.prescriptionRowID}
                     })}>
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                        <TouchableOpacity
-                            style={{justifyContent: 'center', padding: 12, borderRadius: 50, backgroundColor: '#03A9F4', marginLeft: 16}}
-                            onPress={() => {
-                                Alert.alert(
-                                    'Note',
-                                    rowData.note,
-                                    [{text: 'CLOSE'}])
-                            }}>
-                            <Icon style={{textAlignVertical: 'center', textAlign: 'center', color: '#FFF'}} name='announcement' size={20}/>
-                        </TouchableOpacity>
                         <View style={[styles.listText, {flex: 1, alignItems: 'stretch'}]}>
-                            <Text style={styles.listItem}>{(rowData.date) ? moment(rowData.date).format('MMMM DD, YYYY') : ''}</Text>
-                            <Text style={styles.listItemHead}>{rowData.generic}</Text>
-                            <View style={{flexDirection: 'row'}}>
-                                <Text style={[styles.listItem, {flex: 1, alignItems: 'stretch'}]}>{rowData.brand} / {rowData.dosage} / {rowData.frequency}</Text>
-                            </View>
+                            <Text style={styles.listItem}>{moment(rowData.date+' '+rowData.time).format('MMMM DD, YYYY hh:mm A')}</Text>
+                            <Text style={styles.listItemHead}>{rowData.name}</Text>
+                            <Text style={styles.listItem}>{_.upperFirst(rowData.emergencyOrElective)}</Text>
                         </View>
                     </View>
                 </TouchableNativeFeedback>
@@ -151,36 +116,13 @@ class PrescriptionPage extends Component {
     onRefresh() {
         this.setState({refreshing: true})
         db.transaction((tx) => {
-            tx.executeSql("SELECT * FROM prescriptions WHERE patientID = ? AND (deleted_at in (null, 'NULL', '') OR deleted_at is null) ORDER BY dateIssued DESC", [this.props.patientID], function(tx, rs) {
+            tx.executeSql("SELECT * FROM followup WHERE diagnosisID=? AND (deleted_at in (null, 'NULL', '') OR deleted_at is null) ORDER BY date DESC, time ASC", [this.props.diagnosisID], function(tx, rs) {
                 db.data = rs.rows
-            }, function(error) {
-                console.log('SELECT SQL statement ERROR: ' + error.message);
-            });
-        }, (error) => {
-            console.log('transaction error: ' + error.message);
-        }, () => {
+            }, (err) =>  { alert(err.message); });
+        }, (err) => { alert(err.message); }, () => {
             var rowData = [];
             _.forEach(db.data, function(v, i) {
-                var genericName = _.split(db.data.item(i).genericName, '||');
-                var brandName = _.split(db.data.item(i).brandName, '||');
-                var frequency = _.split(db.data.item(i).frequency, '||');
-                var dosage = _.split(db.data.item(i).dosage, '||');
-                var form = _.split(db.data.item(i).form, '||');
-                var notes = _.split(db.data.item(i).notes, '||');
-                _.forEach(genericName, (vv, ii) => {
-                    var prescription = {
-                        prescriptionID: db.data.item(i).id,
-                        prescriptionRowID: ii,
-                        date: db.data.item(i).dateIssued,
-                        generic: genericName[ii],
-                        brand: brandName[ii],
-                        dosage: dosage[ii],
-                        form: form[ii],
-                        frequency: frequency[ii],
-                        note: notes[ii],
-                    }
-                    rowData.push(prescription)
-                })
+                rowData.push(db.data.item(i))
             })
             this.setState({refreshing: false, rowData: rowData})
         })
@@ -248,4 +190,4 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
     }
 })
 
-module.exports = PrescriptionPage;
+module.exports = FollowupPage;

@@ -15,87 +15,65 @@ class DrawerPage extends Component {
             <ScrollView>
                 <View style={styles.drawerView}>
                     <Image
-                        style={{height: 200, width: 300}}
-                        source={require('../assets/images/banner.jpg')}
-                        resizeMode={Image.resizeMode.cover}>
+                        style={{height: 200, width: 300, overlayColor: 'rgba(0,0,0,1)'}}
+                        source={{uri: 'https://avatars.io/facebook/donald/large'}}
+                        resizeMode={'cover'}>
+                        <View style={{position: 'absolute', height: 200, width: 300, backgroundColor: 'rgba(0,0,0,0.25)'}}></View>
                         <View style={styles.drawerImageContainer}>
-                            <Image style={styles.drawerImageAvatar} source={{uri: 'https://avatars.io/facebook/donald/large'}}></Image>
+                            <View style={{borderRadius: 40, width: 80, marginTop: 6, marginBottom: 10, elevation: 2}}>
+                                <Image
+                                    style={[styles.drawerImageAvatar, {borderRadius: 40}]}
+                                    source={{uri: 'https://avatars.io/facebook/donald/large'}}/>
+                            </View>
                             <Text style={styles.drawerImageName}>Donald P Benas</Text>
                             <Text style={styles.drawerImageEmail}>donaldbenas@gmail.com</Text>
                         </View>
                     </Image>
-                    <View style={styles.drawerContainer}>
-                        <TouchableNativeFeedback
-                                onPress={() => this.props.navigator.replace({
-                                    id: 'MainPage',
-                                })
-                            }>
-                            <View style={styles.drawerViewWrapper}>
-                                <View style={styles.iconWrapper}>
-                                    <Icon name='home' style={styles.icon} />
-                                </View>
-                                <Text style={styles.drawerViewText}>Dashboard</Text>
-                            </View>
-                        </TouchableNativeFeedback>
-                        <View style={{borderStyle: 'solid', borderBottomWidth: 1, borderBottomColor: '#EEEEEE'}}></View>
-                        <Text style={styles.drawerLabel}>Patient</Text>
+                    <View style={[styles.drawerContainer, {marginTop: 5}]}>
                         <TouchableNativeFeedback
                                 onPress={() => this.props.navigator.replace({
                                     id: 'PatientPage',
                                 })
                             }>
-                            <View style={styles.drawerViewWrapper}>
+                            <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'patients') ? '#EEEEEE' : '#FFFFFF'}]}>
                                 <View style={styles.iconWrapper}>
-                                    <Icon name='group' style={styles.icon} />
+                                    <Icon name='group' style={[styles.icon, {color: '#2979FF'}]}/>
                                 </View>
-                                <Text style={styles.drawerViewText}>Patient's List</Text>
+                                <Text style={styles.drawerViewText}>Patients</Text>
                             </View>
                         </TouchableNativeFeedback>
                         <TouchableNativeFeedback
                                 onPress={() => this.props.navigator.replace({
-                                    id: 'AddPatient',
+                                    id: 'AppointmentPage',
                                 })
                             }>
-                            <View style={styles.drawerViewWrapper}>
+                            <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'appointments') ? '#EEEEEE' : '#FFFFFF'}]}>
                                 <View style={styles.iconWrapper}>
-                                    <Icon name='person-add' style={styles.icon} />
+                                    <Icon name='assignment' style={[styles.icon, {color: '#4CAF50'}]} />
                                 </View>
-                                <Text style={styles.drawerViewText}>Add Patient</Text>
+                                <Text style={styles.drawerViewText}>Appointments</Text>
                             </View>
                         </TouchableNativeFeedback>
-                        <View style={{borderStyle: 'solid', borderBottomWidth: 1, borderBottomColor: '#EEEEEE'}}></View>
-                        <TouchableNativeFeedback
-                                onPress={() => this.props.navigator.replace({
-                                    id: 'FrontPage',
-                                })
-                            }>
-                            <View style={styles.drawerViewWrapper}>
-                                <View style={styles.iconWrapper}>
-                                    <Icon name='assignment' style={styles.icon} />
-                                </View>
-                                <Text style={styles.drawerViewText}>Frontdesk</Text>
-                            </View>
-                        </TouchableNativeFeedback>
-                        <View style={{borderStyle: 'solid', borderBottomWidth: 1, borderBottomColor: '#EEEEEE'}}></View>
+                        <View style={{marginTop: 5, marginBottom: 5, borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}></View>
                         <Text style={styles.drawerLabel}>Syncing</Text>
                         <TouchableNativeFeedback>
-                            <View style={styles.drawerViewWrapper}>
+                            <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'imports') ? '#EEEEEE' : '#FFFFFF'}]}>
                                 <View style={styles.iconWrapper}>
-                                    <Icon name='import-export' style={styles.icon} />
+                                    <Icon name='cloud-download' style={[styles.icon, {color: '#FF5722'}]} />
                                 </View>
                                 <Text style={styles.drawerViewText}>Import to Cloud</Text>
                             </View>
                         </TouchableNativeFeedback>
                         <TouchableNativeFeedback>
-                            <View style={styles.drawerViewWrapper}>
+                            <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'exports') ? '#EEEEEE' : '#FFFFFF'}]}>
                                 <View style={styles.iconWrapper}>
-                                    <Icon name='sync' style={styles.icon} />
+                                    <Icon name='cloud-upload' style={[styles.icon, {color: '#01579B'}]} />
                                 </View>
                                 <Text style={styles.drawerViewText}>Export to Cloud</Text>
                             </View>
                         </TouchableNativeFeedback>
-                        <View style={{borderStyle: 'solid', borderBottomWidth: 1, borderBottomColor: '#EEEEEE'}}></View>
-                        <Text style={styles.drawerLabel}>User</Text>
+                        <View style={{marginTop: 5, marginBottom: 5, borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}></View>
+                        <Text style={styles.drawerLabel}>Dashboard</Text>
                         <TouchableNativeFeedback>
                             <View style={styles.drawerViewWrapper}>
                                 <View style={styles.iconWrapper}>
@@ -138,9 +116,6 @@ const styles = StyleSheet.create({
     drawerImageAvatar: {
         height: 80,
         width: 80,
-        borderRadius: 40,
-        marginTop: 6,
-        marginBottom: 10,
     },
     drawerImageName: {
         color: '#FFF',
@@ -154,7 +129,6 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'stretch',
-        backgroundColor: '#FFF',
         marginBottom: 0,
     },
     drawerContainer: {
@@ -163,6 +137,7 @@ const styles = StyleSheet.create({
     },
     drawerLabel: {
         marginTop: 5,
+        marginBottom: 5,
         marginLeft: 16,
         color: '#424242',
         fontWeight: 'bold'
@@ -175,22 +150,24 @@ const styles = StyleSheet.create({
         height: 45,
     },
     drawerViewText: {
-        fontSize: 15,
+        fontSize: 13,
+        fontWeight: 'bold',
         textAlign: 'left',
-        textAlignVertical: 'center'
+        color: '#424242',
+        textAlignVertical: 'center',
     },
     iconWrapper: {
         borderRadius: 2,
-        backgroundColor: '#FFF',
         marginRight: 30
     },
     icon: {
         textAlignVertical: 'center',
         textAlign: 'center',
         width: 30,
-        height: 28,
-        color: '#616161',
-        fontSize: 25
+        paddingTop: 2,
+        paddingBottom: 2,
+        color: '#757575',
+        fontSize: 28,
     },
 })
 

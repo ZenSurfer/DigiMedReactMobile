@@ -1,9 +1,10 @@
 'use strict'
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, Image, View, Navigator, InteractionManager, StatusBar, TouchableOpacity, TouchableNativeFeedback, ScrollView, TextInput, ToastAndroid, Dimensions, RefreshControl, ListView, Picker} from 'react-native'
+import {StyleSheet, Text, Image, View, Navigator, InteractionManager, StatusBar, TouchableOpacity, TouchableNativeFeedback, ScrollView, TextInput, ToastAndroid, Dimensions, RefreshControl, ListView, Modal} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import RNFS from 'react-native-fs'
+import Picker from 'react-native-picker-android'
 
 import _ from 'lodash'
 import moment from 'moment'
@@ -31,35 +32,29 @@ class AddPrescription extends Component {
                 frequency: '',
                 notes: '',
             }],
-            medicine: [],
             avatar: false,
-            refreshing: false,
+            modalVisible: false,
+            selectedValue: {
+                index: '',
+                modal: '',
+                name: '',
+            },
+            firstDigit: 0,
+            secondDigit: 0,
+            thirdDigit: 0,
+            fourthDigit: 0,
+            numbers: [0,1,2,3,4,5,6,7,8,9],
+            massValue: 'mg',
+            massAccro: ['g','kg','mg','mcg','mL'],
+            masses: {'g': 'Gram', 'kg': 'Kilogram', 'mg': 'Milligram', 'mcg': 'Microgram', 'mL': 'Milliliter'},
+            frequencyDigit: 1,
+            frequencyAmount: 'times(s)',
+            frequencyAmounts: ['time(s)', 'tablet(s)', 'tablespoon(s)', 'teaspoon(s)', 'drop(s)'],
+            frequencyTime: 'a day',
+            frequencyTimes: ['a day', 'a week', 'an hour', 'every 2 hours', 'every 3 hours', 'every 4 hours', 'every 6 hours', 'every morning', 'every evening', 'before meals', 'after meals', 'every other day', ],
         }
     }
     componentWillMount() {
-        db.transaction((tx) => {
-            tx.executeSql("SELECT genericMedicine.name as generic, medicines.properName as brand, medicineDosages.form, medicineDosages.dosage, medicineDosages.frequency FROM medicineDosages OUTER LEFT JOIN medicines ON medicines.id = medicineDosages.medicineID OUTER LEFT JOIN genericMedicine ON genericMedicine.id = medicines.genericMedicineID ORDER BY generic ASC, brand ASC", [], (tx, rs) => {
-                db.data = rs.rows
-            })
-        }, (err) => {
-            alert(err.message)
-        }, () => {
-            var medicine = [];
-            medicine.push({
-                label: 'Presciption Template',
-                generic: '',
-                brand: '',
-                form: '',
-                dosage: '',
-                frequency: '',
-            })
-            _.forEach(db.data, (v, i) => {
-                var obj = db.data.item(i);
-                obj['label'] = db.data.item(i).generic+' ('+db.data.item(i).brand+') '+db.data.item(i).form+' / '+db.data.item(i).dosage+' / '+db.data.item(i).frequency;
-                medicine.push(obj);
-            })
-            this.setState({medicine: medicine})
-        })
         RNFS.exists(this.props.patientAvatar).then((exist) => {
             if (exist)
                 RNFS.readFile(this.props.patientAvatar, 'base64').then((rs) => {
@@ -86,87 +81,261 @@ class AddPrescription extends Component {
                 <View style={[Styles.subTolbar, {marginTop: 24}]}>
                     <Text style={Styles.subTitle}>Add Prescription</Text>
                 </View>
+                <Modal
+                    animationType={'fade'}
+                    transparent={true}
+                    visible={this.state.modalVisible}
+                    onRequestClose={() => this.setState({modalVisible: false})}>
+                    <View style={{flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)'}}>
+                        <View style={{flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#2979FF', zIndex: 3}}>
+                            <TouchableOpacity
+                                style={{padding: 18, paddingRight: 20, paddingLeft: 20}}
+                                onPress={() => this.setState({selectedValue: {index: '', modal: ''}, modalVisible: false})}>
+                                <Text style={{color: '#FFF'}}>CANCEL</Text></TouchableOpacity>
+                            <TouchableOpacity
+                                style={{padding: 16, paddingRight: 20, paddingLeft: 20}}
+                                onPress={() => {
+                                    var value = '';
+                                    if (this.state.selectedValue.modal == 'dosageVisible') {
+                                        value = _.toInteger(this.state.firstDigit +''+ this.state.secondDigit +''+ this.state.thirdDigit +''+ this.state.fourthDigit);
+                                        value = _.toString(value) +' '+this.state.massValue;
+                                    }
+                                    if (this.state.selectedValue.modal == 'frequencyVisible') {
+                                        value = this.state.frequencyDigit +' '+ this.state.frequencyAmount +' '+  this.state.frequencyTime;
+                                    }
+                                    this.onSetState(value, this.state.selectedValue.index, this.state.selectedValue.name)
+                                    this.setState({
+                                        selectedValue: {index: '', modal: ''},
+                                        modalVisible: false
+                                    })
+                                }}>
+                                <Text style={{color: '#FFF'}}>OK</Text></TouchableOpacity>
+                        </View>
+                        {(this.state.selectedValue.modal == 'dosageVisible') ? (
+                            <View style={{flexDirection: 'column'}}>
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#FFF', padding: 1}}>
+                                    <View style={{flex: 1, flexDirection: 'column', margin: 1}}>
+                                        <TouchableOpacity
+                                            style={{padding: 5, flex: 1, alignItems: 'stretch', justifyContent: 'center', backgroundColor: '#FAFAFA', borderRadius: 2}}
+                                            onPress={() => this.firstDigit.moveTo((this.state.firstDigit) ? (this.state.firstDigit - 1) : 0)}>
+                                            <Icon name={'keyboard-arrow-up'} size={40} color={'#212121'} style={{textAlign: 'center'}}/>
+                                        </TouchableOpacity>
+                                        <Picker
+                                            pickerStyle={{height: 140, paddingTop: 5}}
+                                            ref={ref => this.firstDigit = ref}
+                                            selectedValue={this.state.firstDigit}
+                                            onValueChange={(value) => this.setState({firstDigit: value})}>
+                                            {_.map(this.state.numbers, (v, i) => (<Picker.Item key={i} value={v} label={v}/>))}
+                                        </Picker>
+                                        <TouchableOpacity
+                                            style={{padding: 5, flex: 1, alignItems: 'stretch', justifyContent: 'center', backgroundColor: '#FAFAFA', borderRadius: 2}}
+                                            onPress={() => this.firstDigit.moveDown()}>
+                                            <Icon name={'keyboard-arrow-down'} size={40} color={'#212121'} style={{textAlign: 'center'}}/>
+                                        </TouchableOpacity>
+                                    </View>
+                                    <View style={{flex: 1, flexDirection: 'column', margin: 1}}>
+                                        <TouchableOpacity
+                                            style={{padding: 5, flex: 1, alignItems: 'stretch', justifyContent: 'center', backgroundColor: '#FAFAFA', borderRadius: 2}}
+                                            onPress={() => this.secondDigit.moveTo((this.state.secondDigit) ? (this.state.secondDigit - 1) : 0)}>
+                                            <Icon name={'keyboard-arrow-up'} size={40} color={'#212121'} style={{textAlign: 'center'}}/>
+                                        </TouchableOpacity>
+                                        <Picker
+                                            pickerStyle={{height: 140, paddingTop: 5}}
+                                            ref={ref => this.secondDigit = ref}
+                                            selectedValue={this.state.secondDigit}
+                                            onValueChange={(value) => this.setState({secondDigit: value})}>
+                                            {_.map(this.state.numbers, (v, i) => (<Picker.Item key={i} value={v} label={v}/>))}
+                                        </Picker>
+                                        <TouchableOpacity
+                                            style={{padding: 5, flex: 1, alignItems: 'stretch', justifyContent: 'center', backgroundColor: '#FAFAFA', borderRadius: 2}}
+                                            onPress={() => this.secondDigit.moveDown()}>
+                                            <Icon name={'keyboard-arrow-down'} size={40} color={'#212121'} style={{textAlign: 'center'}}/>
+                                        </TouchableOpacity>
+                                    </View>
+                                    <View style={{flex: 1, flexDirection: 'column', margin: 1}}>
+                                        <TouchableOpacity
+                                            style={{padding: 5, flex: 1, alignItems: 'stretch', justifyContent: 'center', backgroundColor: '#FAFAFA', borderRadius: 2}}
+                                            onPress={() => this.thirdDigit.moveTo((this.state.thirdDigit) ? (this.state.thirdDigit - 1) : 0)}>
+                                            <Icon name={'keyboard-arrow-up'} size={40} color={'#212121'} style={{textAlign: 'center'}}/>
+                                        </TouchableOpacity>
+                                        <Picker
+                                            pickerStyle={{height: 140, paddingTop: 5}}
+                                            ref={ref => this.thirdDigit = ref}
+                                            selectedValue={this.state.thirdDigit}
+                                            onValueChange={(value) => this.setState({thirdDigit: value})}>
+                                            {_.map(this.state.numbers, (v, i) => (<Picker.Item key={i} value={v} label={v}/>))}
+                                        </Picker>
+                                        <TouchableOpacity
+                                            style={{padding: 5, flex: 1, alignItems: 'stretch', justifyContent: 'center', backgroundColor: '#FAFAFA', borderRadius: 2}}
+                                            onPress={() => this.thirdDigit.moveDown()}>
+                                            <Icon name={'keyboard-arrow-down'} size={40} color={'#212121'} style={{textAlign: 'center'}}/>
+                                        </TouchableOpacity>
+                                    </View>
+                                    <View style={{flex: 1, flexDirection: 'column', margin: 1}}>
+                                        <TouchableOpacity
+                                            style={{padding: 5, flex: 1, alignItems: 'stretch', justifyContent: 'center', backgroundColor: '#FAFAFA', borderRadius: 2}}
+                                            onPress={() => this.fourthDigit.moveTo((this.state.fourthDigit) ? (this.state.fourthDigit - 1) : 0)}>
+                                            <Icon name={'keyboard-arrow-up'} size={40} color={'#212121'} style={{textAlign: 'center'}}/>
+                                        </TouchableOpacity>
+                                        <Picker
+                                            pickerStyle={{height: 140, paddingTop: 5}}
+                                            ref={ref => this.fourthDigit = ref}
+                                            selectedValue={this.state.fourthDigit}
+                                            onValueChange={(value) => this.setState({fourthDigit: value})}>
+                                            {_.map(this.state.numbers, (v, i) => (<Picker.Item key={i} value={v} label={v}/>))}
+                                        </Picker>
+                                        <TouchableOpacity
+                                            style={{padding: 5, flex: 1, alignItems: 'stretch', justifyContent: 'center', backgroundColor: '#FAFAFA', borderRadius: 2}}
+                                            onPress={() => this.fourthDigit.moveDown()}>
+                                            <Icon name={'keyboard-arrow-down'} size={40} color={'#212121'} style={{textAlign: 'center'}}/>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#FFF', padding: 1, paddingTop: 0}}>
+                                    <View style={{flex: 1, flexDirection: 'column', margin: 1}}>
+                                        <TouchableOpacity
+                                            style={{padding: 5, flex: 1, alignItems: 'stretch', justifyContent: 'center', backgroundColor: '#FAFAFA', borderRadius: 2}}
+                                            onPress={() => (this.state.massAccro.indexOf(this.state.massValue) > 0) ?  this.massValue.moveTo(this.state.massAccro.indexOf(this.state.massValue) - 1) : ''}>
+                                            <Icon name={'keyboard-arrow-up'} size={40} color={'#212121'} style={{textAlign: 'center'}}/>
+                                        </TouchableOpacity>
+                                        <Picker
+                                            pickerStyle={{height: 140, paddingTop: 5}}
+                                            ref={ref => this.massValue = ref}
+                                            selectedValue={this.state.massValue}
+                                            onValueChange={(value) => this.setState({massValue: value})}>
+                                            {_.map(this.state.massAccro, (v, i) => (<Picker.Item key={i} value={v} label={this.state.masses[v]}/>))}
+                                        </Picker>
+                                        <TouchableOpacity
+                                            style={{padding: 5, flex: 1, alignItems: 'stretch', justifyContent: 'center', backgroundColor: '#FAFAFA', borderRadius: 2}}
+                                            onPress={() => this.massValue.moveDown()}>
+                                            <Icon name={'keyboard-arrow-down'} size={40} color={'#212121'} style={{textAlign: 'center'}}/>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </View>
+                        ) : (<View/>)}
+                        {(this.state.selectedValue.modal == 'frequencyVisible') ? (
+                            <View style={{flexDirection: 'column'}}>
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#FFF', padding: 1}}>
+                                    <View style={{width: 80, flexDirection: 'column', margin: 1}}>
+                                        <TouchableOpacity
+                                            style={{padding: 5, flex: 1, alignItems: 'stretch', justifyContent: 'center', backgroundColor: '#FAFAFA', borderRadius: 2}}
+                                            onPress={() => this.frequencyDigit.moveTo((this.state.frequencyDigit) ? (this.state.frequencyDigit - 1) : 0)}>
+                                            <Icon name={'keyboard-arrow-up'} size={40} color={'#212121'} style={{textAlign: 'center'}}/>
+                                        </TouchableOpacity>
+                                        <Picker
+                                            pickerStyle={{height: 140, paddingTop: 5}}
+                                            ref={ref => this.frequencyDigit = ref}
+                                            selectedValue={this.state.frequencyDigit}
+                                            onValueChange={(value) => this.setState({frequencyDigit: value})}>
+                                            {_.map(this.state.numbers, (v, i) => (<Picker.Item key={i} value={v} label={v}/>))}
+                                        </Picker>
+                                        <TouchableOpacity
+                                            style={{padding: 5, flex: 1, alignItems: 'stretch', justifyContent: 'center', backgroundColor: '#FAFAFA', borderRadius: 2}}
+                                            onPress={() => this.frequencyDigit.moveDown()}>
+                                            <Icon name={'keyboard-arrow-down'} size={40} color={'#212121'} style={{textAlign: 'center'}}/>
+                                        </TouchableOpacity>
+                                    </View>
+                                    <View style={{flex: 1, flexDirection: 'column', margin: 1}}>
+                                        <TouchableOpacity
+                                            style={{padding: 5, flex: 1, alignItems: 'stretch', justifyContent: 'center', backgroundColor: '#FAFAFA', borderRadius: 2}}
+                                            onPress={() => (this.state.frequencyAmounts.indexOf(this.state.frequencyAmount) > 0) ?  this.frequencyAmount.moveTo(this.state.frequencyAmounts.indexOf(this.state.frequencyAmount) - 1) : ''}>
+                                            <Icon name={'keyboard-arrow-up'} size={40} color={'#212121'} style={{textAlign: 'center'}}/>
+                                        </TouchableOpacity>
+                                        <Picker
+                                            pickerStyle={{height: 140, paddingTop: 5}}
+                                            ref={ref => this.frequencyAmount = ref}
+                                            selectedValue={this.state.frequencyAmount}
+                                            onValueChange={(value) => this.setState({frequencyAmount: value})}>
+                                            {_.map(this.state.frequencyAmounts, (v, i) => (<Picker.Item key={i} value={v} label={v}/>))}
+                                        </Picker>
+                                        <TouchableOpacity
+                                            style={{padding: 5, flex: 1, alignItems: 'stretch', justifyContent: 'center', backgroundColor: '#FAFAFA', borderRadius: 2}}
+                                            onPress={() => this.frequencyAmount.moveDown()}>
+                                            <Icon name={'keyboard-arrow-down'} size={40} color={'#212121'} style={{textAlign: 'center'}}/>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#FFF', padding: 1, paddingTop: 0,}}>
+                                    <View style={{flex: 1, flexDirection: 'column', margin: 1}}>
+                                        <TouchableOpacity
+                                            style={{padding: 5, flex: 1, alignItems: 'stretch', justifyContent: 'center', backgroundColor: '#FAFAFA', borderRadius: 2}}
+                                            onPress={() => (this.state.frequencyTimes.indexOf(this.state.frequencyTime) > 0) ?  this.frequencyTime.moveTo(this.state.frequencyTimes.indexOf(this.state.frequencyTime) - 1) : ''}>
+                                            <Icon name={'keyboard-arrow-up'} size={40} color={'#212121'} style={{textAlign: 'center'}}/>
+                                        </TouchableOpacity>
+                                        <Picker
+                                            pickerStyle={{height: 140, paddingTop: 5}}
+                                            ref={ref => this.frequencyTime = ref}
+                                            selectedValue={this.state.frequencyTime}
+                                            onValueChange={(value) => this.setState({frequencyTime: value})}>
+                                            {_.map(this.state.frequencyTimes, (v, i) => (<Picker.Item key={i} value={v} label={v}/>))}
+                                        </Picker>
+                                        <TouchableOpacity
+                                            style={{padding: 5, flex: 1, alignItems: 'stretch', justifyContent: 'center', backgroundColor: '#FAFAFA', borderRadius: 2}}
+                                            onPress={() => this.frequencyTime.moveDown()}>
+                                            <Icon name={'keyboard-arrow-down'} size={40} color={'#212121'} style={{textAlign: 'center'}}/>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </View>
+                        ) : (<View/>)}
+                    </View>
+                </Modal>
                 <ScrollView
-                    keyboardShouldPersistTaps={true}
-                    refreshControl={
-                        <RefreshControl
-                            refreshing={this.state.refreshing}
-                            />
-                    }>
-                    <View style={{flex: 1, justifyContent: 'center',}}>
+                    keyboardShouldPersistTaps={true}>
+                    <View style={{flex: 1, justifyContent: 'center'}}>
                         {_.map(this.state.prescription, (v, i) => {
                             return (
-                                <View key={i} style={{margin: 5}}>
-                                    <View style={{margin: 16, padding: 14, paddingTop: 20, paddingBottom: 20, backgroundColor: '#FFF'}}>
-                                        <View style={styles.select}>
-                                            <Picker
-                                                selectedValue={0}
-                                                onValueChange={(index) => {
-                                                    this.onSetState(this.state.medicine[index].generic, i, 'generic')
-                                                    this.onSetState(this.state.medicine[index].brand, i, 'brand')
-                                                    this.onSetState(this.state.medicine[index].form, i, 'form')
-                                                    this.onSetState(this.state.medicine[index].dosage, i, 'dosage')
-                                                    this.onSetState(this.state.medicine[index].frequency, i, 'frequency')
-                                                }}>
-                                                {_.map(this.state.medicine, (v, i) => {
-                                                    return (
-                                                        <Picker.Item key={i} label={v.label} value={i} />
-                                                    )
-                                                })}
-                                            </Picker>
-                                        </View>
-                                        <View style={{flexDirection: 'row', marginTop: 10}}>
-                                            <View style={{flex: 1, alignItems: 'stretch'}}>
-                                                <Text style={styles.label} >Generic Name</Text>
-                                                <TextInput
-                                                    placeholder={'Text Here...'}
-                                                    style={[styles.textInput]}
-                                                    autoCapitalize={'words'}
-                                                    value={this.state.prescription[i].generic}
-                                                    placeholderTextColor={'#E0E0E0'}
-                                                    onChangeText={(text) => this.onSetState(text, i , 'generic')} />
-                                            </View>
-                                            <View style={{flex: 1, alignItems: 'stretch'}}>
-                                                <Text style={styles.label} >Brand Name</Text>
-                                                <TextInput
-                                                    placeholder={'Text Here...'}
-                                                    style={[styles.textInput]}
-                                                    autoCapitalize={'words'}
-                                                    value={this.state.prescription[i].brand}
-                                                    placeholderTextColor={'#E0E0E0'}
-                                                    onChangeText={(text) => this.onSetState(text, i , 'brand')} />
-                                            </View>
-                                        </View>
-                                        <View style={{flexDirection: 'row'}}>
-                                            <View style={{flex: 1, alignItems: 'stretch'}}>
-                                                <Text style={styles.label} >Form</Text>
-                                                <TextInput
-                                                    placeholder={'Text Here...'}
-                                                    style={[styles.textInput]}
-                                                    autoCapitalize={'words'}
-                                                    value={this.state.prescription[i].form}
-                                                    placeholderTextColor={'#E0E0E0'}
-                                                    onChangeText={(text) => this.onSetState(text, i , 'form')} />
-                                            </View>
-                                            <View style={{flex: 1, alignItems: 'stretch'}}>
-                                                <Text style={styles.label} >Dosage</Text>
-                                                <TextInput
-                                                    placeholder={'Text Here...'}
-                                                    style={[styles.textInput]}
-                                                    autoCapitalize={'words'}
-                                                    value={this.state.prescription[i].dosage}
-                                                    placeholderTextColor={'#E0E0E0'}
-                                                    onChangeText={(text) => this.onSetState(text, i , 'dosage')} />
-                                            </View>
-                                        </View>
-                                        <Text style={styles.label} >Frequency</Text>
+                                <View key={i} style={{padding: 5, marginBottom: 5, backgroundColor: '#FFF'}}>
+                                    <View style={{margin: 11, padding: 0, paddingTop: 20, paddingBottom: 20, backgroundColor: '#FFF'}}>
+                                        <Text style={styles.label} >Generic Name</Text>
                                         <TextInput
                                             placeholder={'Text Here...'}
                                             style={[styles.textInput]}
                                             autoCapitalize={'words'}
-                                            value={this.state.prescription[i].frequency}
+                                            value={this.state.prescription[i].generic}
                                             placeholderTextColor={'#E0E0E0'}
-                                            onChangeText={(text) => this.onSetState(text, i , 'frequency')} />
+                                            onChangeText={(text) => this.onSetState(text, i , 'generic')} />
+                                        <Text style={styles.label} >Brand Name</Text>
+                                        <TextInput
+                                            placeholder={'Text Here...'}
+                                            style={[styles.textInput]}
+                                            autoCapitalize={'words'}
+                                            value={this.state.prescription[i].brand}
+                                            placeholderTextColor={'#E0E0E0'}
+                                            onChangeText={(text) => this.onSetState(text, i , 'brand')} />
+                                        <Text style={styles.label} >Dosage</Text>
+                                        <View style={{flex: 1, flexDirection: 'row'}}>
+                                            <View style={{flex: 1, flexDirection: 'row', alignItems: 'stretch'}}>
+                                                <TextInput
+                                                    placeholder={'Text Here...'}
+                                                    style={[styles.textInput, {flex: 1, alignItems: 'stretch', paddingRight: 50}]}
+                                                    value={this.state.prescription[i].dosage}
+                                                    placeholderTextColor={'#E0E0E0'}
+                                                    onChangeText={(text) => this.onSetState(text, i , 'dosage')} />
+                                                <TouchableOpacity
+                                                    style={{position: 'absolute', right: 0, padding: 13}}
+                                                    onPress={() => this.setState({selectedValue: {index: i, modal: 'dosageVisible', name: 'dosage'}, modalVisible: true})}>
+                                                    <Icon name={'arrow-drop-down'} size={40} color={'#212121'} style={{marginTop: -8}}/>
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
+                                        <Text style={styles.label} >Frequency</Text>
+                                        <View style={{flex: 1, flexDirection: 'row'}}>
+                                            <View style={{flex: 1, flexDirection: 'row', alignItems: 'stretch'}}>
+                                                <TextInput
+                                                    placeholder={'Text Here...'}
+                                                    style={[styles.textInput, {flex: 1, alignItems: 'stretch', paddingRight: 50}]}
+                                                    value={this.state.prescription[i].frequency}
+                                                    placeholderTextColor={'#E0E0E0'}
+                                                    onChangeText={(text) => this.onSetState(text, i , 'frequency')} />
+                                                <TouchableOpacity
+                                                    style={{position: 'absolute', right: 0, padding: 13}}
+                                                    onPress={() => this.setState({selectedValue: {index: i, modal: 'frequencyVisible', name: 'frequency'}, modalVisible: true})}>
+                                                    <Icon name={'arrow-drop-down'} size={40} color={'#212121'} style={{marginTop: -8}}/>
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
                                         <Text style={styles.label} >Note</Text>
                                         <TextInput
                                             placeholder={'Text Here...'}
@@ -179,24 +348,24 @@ class AddPrescription extends Component {
                                             onChangeText={(text) => this.onSetState(text, i, 'notes')} />
                                     </View>
                                     <TouchableOpacity
-                                        style={{position: 'absolute', top: 0, right: 0, padding: 8, borderRadius: 50, backgroundColor: '#E91E63'}}
+                                        style={{position: 'absolute', top: 10, right: 10, padding: 8, borderRadius: 50, backgroundColor: '#F5F5F5' }}
                                         onPress={() => {
                                             var prescriptions = this.state.prescription
                                             this.setState({refreshing: true, prescription: []})
                                             _.pullAt(prescriptions, [i])
                                             this.setState({refreshing: false, prescription: prescriptions})
                                         }}>
-                                        <Icon name={'close'} size={18} color={'#FFF'}/>
+                                        <Icon name={'close'} size={18} color={'#E91E63'}/>
                                     </TouchableOpacity>
                                 </View>
                             )
                         })}
-                        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flexDirection: 'row', justifyContent: 'center', marginTop: 15}}>
                             <TouchableOpacity
                                 style={{width: 40, height: 40, borderRadius: 30, backgroundColor: '#FFF', justifyContent: 'center', alignItems: 'center', marginBottom: 25, marginTop: (_.size(this.state.prescription) > 0) ? 0 : 25}}
                                 onPress={() => {
                                         var prescription = this.state.prescription
-                                        prescription.push({ generic: '', brand: '', form: '', dosage: '', frequency: '', notes: ''});
+                                        prescription.push({ generic: '', brand: '', form: '', dosageValue: '', dosageMass: '', frequency: '', notes: ''});
                                         this.setState(prescription)
                                 }}>
                                 <Icon name={'add'}  size={15}/>

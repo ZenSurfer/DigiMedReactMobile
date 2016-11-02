@@ -85,7 +85,7 @@ class AddPatient extends Component {
                 drawerWidth={300}
                 drawerPosition={DrawerLayoutAndroid.positions.Left}
                 renderNavigationView={() => {
-                    return (<DrawerPage navigator={this.props.navigator}></DrawerPage>)
+                    return (<DrawerPage navigator={this.props.navigator} routeName={'patients'}></DrawerPage>)
                 }}
                 statusBarBackgroundColor={'#2962FF'}
                 ref={this.drawerInstance}

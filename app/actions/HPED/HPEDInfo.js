@@ -201,6 +201,10 @@ class HPEDInfo extends Component {
                         })}>
                         <Icon name={'edit'} color={'#FFFFFF'} size={30}/>
                     </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[Styles.buttonFab, {backgroundColor: 'rgba(0,0,0,0.1)', bottom: 80, elevation: 0}]}>
+                        <Icon name={'event-note'} color={'#616161'} size={30}/>
+                    </TouchableOpacity>
                 </View>
                 <View style={{position: 'absolute', bottom: 0, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                     <TouchableNativeFeedback
@@ -301,7 +305,7 @@ class HPEDInfo extends Component {
             break;
             case 2:
                 return (
-                    <View style={{backgroundColor: '#FFFFFF', marginTop: 10}}>
+                    <View style={{backgroundColor: '#FFFFFF', marginTop: 10, marginBottom: 20}}>
                         <View style={[styles.rows, {flexDirection: 'row'}]}>
                             <Text style={[styles.label, {color: (this.state.rowData.accident > 0) ? '#EC407A': '#757575'}]}>Is Accident?</Text>
                             <TouchableOpacity onPress={this.openModal.bind(this, 'Is Accident?', (this.state.rowData.accident > 0) ? 'Yes / Pain Level '+this.state.rowData.painLevel : 'No')}>
@@ -515,14 +519,7 @@ var NavigationBarRouteMapper = (patientName, props, avatar) => ({
                                     ToastAndroid.show("Error occured while deleting!", 3000)
                                 }, () => {
                                     ToastAndroid.show("Successfully deleted!", 3000)
-                                    navigator.parentNavigator.replacePreviousAndPop({
-                                        id: 'HPEDPage',
-                                        passProps: {
-                                            patientID: props.patientID,
-                                            patientAvatar: this.props.patientAvatar,
-                                            patientName: props.patientName
-                                        },
-                                    })
+                                    navigator.parentNavigator.pop()
                                 })
                             }},
                         ]

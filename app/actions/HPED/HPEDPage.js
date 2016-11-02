@@ -47,6 +47,16 @@ class HPEDPage extends Component {
                 })
         })
     }
+    componentWillReceiveProps(nextProps) {
+        if (_.size(nextProps.navigator.getCurrentRoutes(0)) > 3) {
+            this.setState({lastRoute: nextProps.navigator.getCurrentRoutes(0)[3].id})
+        } else {
+            if (this.state.lastRoute == 'HPEDInfo') {
+                this.setState({lastRoute: ''});
+                this.onRefresh();
+            }
+        }
+    }
     render() {
         return (
             <Navigator
@@ -140,25 +150,54 @@ class HPEDPage extends Component {
     }
     renderListView(rowData, rowID) {
         return (
-            <TouchableNativeFeedback onPress={() => {
-                    this.props.navigator.push({
-                        id: 'HPEDInfo',
-                        passProps: {
-                            diagnosisID: rowData.id,
-                            patientID: this.props.patientID,
-                            patientAvatar: this.props.patientAvatar,
-                            patientName: this.props.patientName,
-                        }
-                    })
-                }}>
-                <View style={styles.listView}>
-                    <View style={styles.listText}>
-                        <Text style={styles.listItem}>{(rowData.date) ? moment(rowData.date).format('MMMM DD, YYYY') : ''}</Text>
-                        <Text style={styles.listItemHead}>{rowData.chiefComplaint}</Text>
-                        <Text style={styles.listItem}>{rowData.doctorName}</Text>
+            <View style={{borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}>
+                <TouchableNativeFeedback onPress={() => {
+                        this.props.navigator.push({
+                            id: 'HPEDInfo',
+                            passProps: {
+                                diagnosisID: rowData.id,
+                                patientID: this.props.patientID,
+                                patientAvatar: this.props.patientAvatar,
+                                patientName: this.props.patientName,
+                            }
+                        })
+                    }}>
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFF', borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}>
+                        <TouchableOpacity
+                            style={{justifyContent: 'center', padding: 12, borderRadius: 50, backgroundColor: '#FFEB3B', marginLeft: 16}}
+                            onPress={() => this.props.navigator.push({
+                                id: 'FollowupPage',
+                                passProps: {
+                                    diagnosisID: rowData.id,
+                                    patientID: this.props.patientID,
+                                    patientAvatar: this.props.patientAvatar,
+                                    patientName: this.props.patientName,
+                                }
+                            })}>
+                            <Icon style={{textAlignVertical: 'center', textAlign: 'center', color: '#616161'}} name='date-range' size={20}/>
+                        </TouchableOpacity>
+                        <View style={[styles.listView, {elevation: 0, flex: 1, alignItems: 'stretch'}]}>
+                            <View style={styles.listText}>
+                                <Text style={styles.listItem}>{(rowData.date) ? moment(rowData.date).format('MMMM DD, YYYY') : ''}</Text>
+                                <Text style={styles.listItemHead}>{rowData.chiefComplaint}</Text>
+                                {/* <Text style={styles.listItem}>{rowData.doctorName}</Text> */}
+                            </View>
+                        </View>
                     </View>
+                </TouchableNativeFeedback>
+                <View style={{flexDirection: 'column', backgroundColor: '#FFEB3B'}}>
+                    <View style={{padding: 16, paddingTop: 5, paddingBottom: 5, borderBottomWidth: 0.5, borderBottomColor: '#FFF176'}}>
+                        <Text style={{color: '#616161', fontWeight: 'bold'}}>Previous Followup</Text>
+                    </View>
+                    <TouchableNativeFeedback>
+                        <View style={{flexDirection: 'row',padding: 16, paddingTop: 5, paddingBottom: 5, borderBottomWidth: 0.5, borderBottomColor: '#FFF176'}}>
+                            <Text style={{color: '#616161', textAlignVertical: 'top'}}>02-10-2016</Text>
+                            <Text style={{color: '#616161', flex:1, alignItems: 'stretch', marginLeft: 10}}>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</Text>
+                        </View>
+                    </TouchableNativeFeedback>
                 </View>
-            </TouchableNativeFeedback>
+            </View>
+
         )
     }
     onRefresh() {
@@ -195,9 +234,6 @@ var styles = StyleSheet.create({
     },
     listView: {
         borderStyle: 'solid',
-        borderBottomWidth: 0.5,
-        borderBottomColor: '#E0E0E0',
-        backgroundColor: '#FFF',
         elevation: 10,
     },
     listText: {

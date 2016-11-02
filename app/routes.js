@@ -32,6 +32,12 @@ import ViewImage from './actions/Image/ViewImage'
 import AddImage from './actions/Image/AddImage'
 import EditImage from './actions/Image/EditImage'
 
+import AppointmentPage from './actions/Appointment/AppointmentPage'
+import AddAppointment from './actions/Appointment/AddAppointment'
+
+import FollowupPage from './actions/Followup/FollowupPage'
+import AddFollowup from './actions/Followup/AddFollowup'
+
 import Styles from './assets/Styles'
 
 module.exports = (route, navigator, state) => {
@@ -183,6 +189,36 @@ module.exports = (route, navigator, state) => {
             <EditImage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
             </EditImage>
+        )
+    }
+    //appointment page
+    if (routeId === 'AppointmentPage') {
+        return (
+            <AppointmentPage navigator={navigator} {...route.passProps}>
+                <StatusBar backgroundColor='#2962FF' translucent={true}/>
+            </AppointmentPage>
+        )
+    }
+    if (routeId === 'AddAppointment') {
+        return (
+            <AddAppointment navigator={navigator} {...route.passProps}>
+                <StatusBar backgroundColor='#2962FF'/>
+            </AddAppointment>
+        )
+    }
+    //followup page
+    if (routeId === 'FollowupPage') {
+        return (
+            <FollowupPage navigator={navigator} {...route.passProps}>
+                <StatusBar backgroundColor='#2962FF'/>
+            </FollowupPage>
+        )
+    }
+    if (routeId === 'AddFollowup') {
+        return (
+            <AddFollowup navigator={navigator} {...route.passProps}>
+                <StatusBar backgroundColor='#2962FF'/>
+            </AddFollowup>
         )
     }
 

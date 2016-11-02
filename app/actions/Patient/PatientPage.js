@@ -52,13 +52,23 @@ class PatientPage extends Component {
             this.setState({refreshing: false, rowData: rowData})
         })
     }
+    componentWillReceiveProps(nextProps) {
+        if (_.size(nextProps.navigator.getCurrentRoutes(0)) > 1) {
+            this.setState({lastRoute: nextProps.navigator.getCurrentRoutes(0)[1].id})
+        } else {
+            if (this.state.lastRoute == 'PatientProfile' || this.state.lastRoute == 'AddPatient') {
+                this.setState({lastRoute: ''});
+                this.onRefresh();
+            }
+        }
+    }
     render() {
         return (
             <DrawerLayoutAndroid
                 drawerWidth={300}
                 drawerPosition={DrawerLayoutAndroid.positions.Left}
                 renderNavigationView={() => {
-                    return (<DrawerPage navigator={this.props.navigator}></DrawerPage>)
+                    return (<DrawerPage navigator={this.props.navigator} routeName={'patients'}></DrawerPage>)
                 }}
                 statusBarBackgroundColor={'#2962FF'}
                 ref={this.drawerInstance} >
