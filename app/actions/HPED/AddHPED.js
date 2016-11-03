@@ -421,7 +421,7 @@ class AddHPED extends Component {
                         <Text style={styles.label} >Services</Text>
                         <View style={styles.select}>
                             <Picker
-                                mode={'dropdown'}
+                                mode={'dialog'}
                                 selectedValue={this.state.services}
                                 onValueChange={(value) => this.setState({services: value})} >
                                     <Picker.Item value={'Adult'} label={'Adult'}/>
@@ -435,7 +435,7 @@ class AddHPED extends Component {
                         <Text style={styles.label} >Type</Text>
                         <View style={styles.select}>
                             <Picker
-                                mode={'dropdown'}
+                                mode={'dialog'}
                                 selectedValue={this.state.type}
                                 onValueChange={(value) => this.setState({type: value})} >
                                     <Picker.Item value={'Consult'} label={'Consult'}/>
@@ -451,7 +451,7 @@ class AddHPED extends Component {
                         <Text style={styles.label} >Code</Text>
                         <View style={styles.select}>
                             <Picker
-                                mode={'dropdown'}
+                                mode={'dialog'}
                                 selectedValue={this.state.code}
                                 onValueChange={(value) => this.setState({code: value})} >
                                     <Picker.Item value={'Medical'} label={'MED'}/>
@@ -479,7 +479,7 @@ class AddHPED extends Component {
                         <Text style={styles.label} >Payment Mode</Text>
                         <View style={styles.select}>
                             <Picker
-                                mode={'dropdown'}
+                                mode={'dialog'}
                                 selectedValue={this.state.pay}
                                 onValueChange={(value) => this.setState({pay: value})} >
                                     <Picker.Item value={'charity'} label={'Charity'}/>

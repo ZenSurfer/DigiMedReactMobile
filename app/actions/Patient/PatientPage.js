@@ -1,7 +1,7 @@
 'use strict'
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, Image, View, AsyncStorage, Navigator, StatusBar, ProgressBarAndroid, DrawerLayoutAndroid, InteractionManager, TouchableNativeFeedback, TouchableOpacity, ListView, RefreshControl} from 'react-native'
+import {StyleSheet, Text, Image, View, AsyncStorage, Navigator, StatusBar, ProgressBarAndroid, DrawerLayoutAndroid, InteractionManager, TouchableNativeFeedback, TouchableOpacity, ListView, RefreshControl, Modal, TouchableHighlight, TextInput} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import RNFS from 'react-native-fs'
 import moment from 'moment'
@@ -21,14 +21,18 @@ class PatientPage extends Component {
         super(props)
         this.state = {
             refreshing: false,
+            query: '',
+            queryText: '',
             search: 'ORDER BY firstname ASC',
+            searchType: 'firstname',
+            modalVisible: false,
             rowData: [],
         }
     }
     componentWillMount() {
         this.setState({refreshing: true})
         db.transaction((tx) => {
-            tx.executeSql("SELECT * FROM patients WHERE (deleted_at in (null, 'NULL', '') OR deleted_at is null) "+((this.props.query) ? this.props.query : this.state.search), [], function(tx, rs) {
+            tx.executeSql("SELECT * FROM patients WHERE (deleted_at in (null, 'NULL', '') OR deleted_at is null) "+this.state.query+" "+this.state.search, [], function(tx, rs) {
                 db.data = rs.rows
             }, function(error) {
                 console.log('SELECT SQL statement ERROR: ' + error.message);
@@ -77,7 +81,7 @@ class PatientPage extends Component {
                     navigator={this.props.navigator}
                     navigationBar={
                         <Navigator.NavigationBar style={Styles.navigationBar}
-                            routeMapper={NavigationBarRouteMapper} />
+                            routeMapper={NavigationBarRouteMapper(this)} />
                     }
                     />
             </DrawerLayoutAndroid>
@@ -89,7 +93,36 @@ class PatientPage extends Component {
                 <View style={Styles.subTolbar}>
                     <Text style={Styles.subTitle}>Patient</Text>
                 </View>
+                <Modal
+                    transparent={true}
+                    visible={this.state.modalVisible}
+                    onRequestClose={() => this.setState({modalVisible: false})}>
+                    <TouchableOpacity
+                        activeOpacity={1}
+                        style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.5)'}}
+                        onPress={() => this.setState({modalVisible: false})}>
+                        <View style={{backgroundColor: '#FFF', elevation: 5}}>
+                            <TextInput
+                                placeholder={'Text Here...'}
+                                style={[styles.textInput, {fontSize: 18, padding: 8, margin: 0}]}
+                                autoCapitalize={'words'}
+                                value={this.state.queryText}
+                                autoFocus={true}
+                                placeholderTextColor={'#E0E0E0'}
+                                underlineColorAndroid={'#FFF'}
+                                returnKeyType={'search'}
+                                selectTextOnFocus={true}
+                                onChangeText={(text) => this.setState({queryText: text})}
+                                onSubmitEditing={() => {
+                                    this.setState({modalVisible: false, refreshing: true, query: 'AND (firstname like "'+this.state.queryText+'%" OR lastname like "'+this.state.queryText+'%" OR middlename like "'+this.state.queryText+'%") '})
+                                    this.onRefresh();
+                                }}/>
+
+                        </View>
+                    </TouchableOpacity>
+                </Modal>
                 <ListView
+                    style={{marginBottom: 42}}
                     dataSource={ds.cloneWithRows(this.state.rowData)}
                     renderRow={(rowData, sectionID, rowID) => this.renderListView(rowData, rowID)}
                     enableEmptySections={true}
@@ -108,6 +141,56 @@ class PatientPage extends Component {
                     })}>
                     <Icon name={'person-add'} color={'#FFFFFF'} size={30}/>
                 </TouchableOpacity>
+                <View style={{position: 'absolute', bottom: 0, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                    <TouchableNativeFeedback
+                        onPress={() => {
+                            this.setState({refreshing: true, searchType: 'firstname'})
+                            if (this.state.search == 'ORDER BY firstname ASC')
+                                this.setState({search: 'ORDER BY firstname DESC'})
+                            else
+                                this.setState({search: 'ORDER BY firstname ASC'})
+                            this.onRefresh()
+                        }}>
+                        <View style={{flex: 1, alignItems: 'stretch', padding: 10, borderColor: '#EEEEEE', borderRightWidth: 0.5, backgroundColor: (this.state.searchType=='firstname') ? '#EEEEEE' : '#FAFAFA'}}>
+                            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                                <Text style={{color: (this.state.searchType=='firstname') ? '#424242' : '#9E9E9E', textAlign: 'center', textAlignVertical: 'center', paddingRight: 5}}>FNAME</Text>
+                                <Text style={{color: (this.state.searchType=='firstname') ? '#424242' : '#9E9E9E', textAlign: 'center'}}><Icon name={'sort-by-alpha'} size={25} /></Text>
+                            </View>
+                        </View>
+                    </TouchableNativeFeedback>
+                    <TouchableNativeFeedback
+                        onPress={() => {
+                            this.setState({refreshing: true, searchType: 'middlename'})
+                            if (this.state.search == 'ORDER BY middlename ASC')
+                                this.setState({search: 'ORDER BY middlename DESC'})
+                            else
+                                this.setState({search: 'ORDER BY middlename ASC'})
+                            this.onRefresh()
+                        }}>
+                        <View style={{flex: 1, alignItems: 'stretch', padding: 10, borderColor: '#EEEEEE', borderRightWidth: 0.5, backgroundColor: (this.state.searchType=='middlename') ? '#EEEEEE' : '#FAFAFA'}}>
+                            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                                <Text style={{color: (this.state.searchType=='middlename') ? '#424242' : '#9E9E9E', textAlign: 'center', textAlignVertical: 'center', paddingRight: 5}}>MNAME</Text>
+                                <Text style={{color: (this.state.searchType=='middlename') ? '#424242' : '#9E9E9E', textAlign: 'center'}}><Icon name={'sort-by-alpha'} size={25} /></Text>
+                            </View>
+                        </View>
+                    </TouchableNativeFeedback>
+                    <TouchableNativeFeedback
+                        onPress={() => {
+                            this.setState({refreshing: true, searchType: 'lastname'})
+                            if (this.state.search == 'ORDER BY lastname ASC')
+                                this.setState({search: 'ORDER BY lastname DESC'})
+                            else
+                                this.setState({search: 'ORDER BY lastname ASC'})
+                            this.onRefresh()
+                        }}>
+                        <View style={{flex: 1, alignItems: 'stretch', padding: 10, backgroundColor: (this.state.searchType=='lastname') ? '#EEEEEE' : '#FAFAFA'}}>
+                            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                                <Text style={{color: (this.state.searchType=='lastname') ? '#424242' : '#9E9E9E', textAlign: 'center', textAlignVertical: 'center', paddingRight: 5}}>LNAME</Text>
+                                <Text style={{color: (this.state.searchType=='lastname') ? '#424242' : '#9E9E9E', textAlign: 'center'}}><Icon name={'sort-by-alpha'} size={25} /></Text>
+                            </View>
+                        </View>
+                    </TouchableNativeFeedback>
+                </View>
             </View>
         )
     }
@@ -115,7 +198,7 @@ class PatientPage extends Component {
         return (
             <TouchableNativeFeedback
                 onPress={() => this.gotoPatientProfile(rowData)}>
-                <View style={[styles.listView]}>
+                <View style={[styles.listView, {paddingTop: 0, paddingBottom: 0}]}>
                     {(rowData.imagePath) ? ((this.state['patient'+rowData.id]) ? (<Image source={{uri: this.state['patient'+rowData.id]}} style={styles.avatarImage}/>) : ((<Icon name={'account-circle'} color={'grey'} size={80}  style={styles.avatarIcon}/>))) : (<Icon name={'account-circle'} color={'grey'} size={80}  style={styles.avatarIcon}/>)}
                     <View style={[styles.listText, {justifyContent: 'center'}]}>
                         <Text style={styles.listItemHead}>{rowData.firstname+' '+rowData.middlename+' '+rowData.lastname}</Text>
@@ -129,7 +212,7 @@ class PatientPage extends Component {
     onRefresh() {
         this.setState({refreshing: true})
         db.transaction((tx) => {
-            tx.executeSql("SELECT * FROM patients WHERE (deleted_at in (null, 'NULL', '') OR deleted_at is null) "+((this.props.query) ? this.props.query : this.state.search), [], function(tx, rs) {
+            tx.executeSql("SELECT * FROM patients WHERE (deleted_at in (null, 'NULL', '') OR deleted_at is null) "+this.state.query+" "+this.state.search, [], function(tx, rs) {
                 db.data = rs.rows
             }, function(error) {
                 console.log('SELECT SQL statement ERROR: ' + error.message);
@@ -216,7 +299,7 @@ var styles = StyleSheet.create({
     },
 })
 
-var NavigationBarRouteMapper = {
+var NavigationBarRouteMapper = (state) => ({
     LeftButton(route, navigator, index, navState) {
         return (
             <TouchableOpacity style={Styles.leftButton}
@@ -230,10 +313,7 @@ var NavigationBarRouteMapper = {
     RightButton(route, navigator, index, navState) {
         return (
             <TouchableOpacity style={Styles.rightButton}
-                onPress={() => navigator.parentNavigator.push({
-                        id: 'SearchPage',
-                        sceneConfig: Navigator.SceneConfigs.FloatFromBottomAndroid,
-                })} >
+                onPress={() => state.setState({modalVisible: true})} >
                 <Text style={Styles.rightButtonText}>
                     <Icon name="search" size={30} color="#FFF" />
                 </Text>
@@ -247,6 +327,6 @@ var NavigationBarRouteMapper = {
             </TouchableOpacity>
         )
     }
-}
+})
 
 module.exports = PatientPage

@@ -206,7 +206,7 @@ class AddPatient extends Component {
                         <Text style={styles.label} >Sex</Text>
                         <View style={styles.select}>
                             <Picker
-                                mode={'dropdown'}
+                                mode={'dialog'}
                                 selectedValue={this.state.sex}
                                 onValueChange={(value) => this.setState({sex: value})} >
                                 <Picker.Item label="Male" value="1" />
@@ -216,7 +216,7 @@ class AddPatient extends Component {
                         <Text style={styles.label} >Status</Text>
                         <View style={styles.select}>
                             <Picker
-                                mode={'dropdown'}
+                                mode={'dialog'}
                                 selectedValue={this.state.status}
                                 onValueChange={(value) => this.setState({status: value})} >
                                 <Picker.Item label="Single" value="Single" />
@@ -261,7 +261,7 @@ class AddPatient extends Component {
                         <Text style={styles.label} >Category</Text>
                         <View style={styles.select}>
                             <Picker
-                                mode={'dropdown'}
+                                mode={'dialog'}
                                 selectedValue={this.state.category}
                                 onValueChange={(value) => this.setState({category: value})} >
                                 <Picker.Item label="Resident" value="Resident" />

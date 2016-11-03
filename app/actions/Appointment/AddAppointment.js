@@ -313,7 +313,7 @@ class AppointmentPage extends Component {
             date: currentDate,
             timeStart: moment(this.state.presetText+' '+this.state.presetStart.presetTime).format('HH:mm:00'),
             timeEnd: moment(this.state.presetText+' '+this.state.presetEnd.presetTime).format('HH:mm:00'),
-            patientID: this.props.patientID,
+            patientID: (this.props.patientID) ? this.props.patientID : this.state.patientID,
             doctorID: this.state.doctorID,
             hospitalID: '',
             type: this.state.setType,
