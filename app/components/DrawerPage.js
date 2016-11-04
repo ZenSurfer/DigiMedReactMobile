@@ -31,11 +31,12 @@ class DrawerPage extends Component {
                                     <Text style={styles.drawerImageEmail}>donaldbenas@gmail.com</Text>
                                 </View>
                                 <TouchableOpacity
-                                    style={{justifyContent: 'center', width: 40, height: 40, backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: 30}}
-                                    onPress={() => {
-                                        
-                                    }}>
-                                    <Icon name={'arrow-drop-down'} size={25} color={'#FFF'} style={{textAlign: 'center', textAlignVertical: 'center'}}/>
+                                        style={{justifyContent: 'center', width: 40, height: 40, backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: 30}}
+                                        onPress={() => this.props.navigator.replace({
+                                            id: 'UserProfilePage'
+                                        })
+                                    }>
+                                    <Icon name={'mode-edit'} size={25} color={'#FFF'} style={{textAlign: 'center', textAlignVertical: 'center'}}/>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -85,8 +86,12 @@ class DrawerPage extends Component {
                         </TouchableNativeFeedback>
                         <View style={{marginTop: 5, marginBottom: 5, borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}></View>
                         <Text style={styles.drawerLabel}>Dashboard</Text>
-                        <TouchableNativeFeedback>
-                            <View style={styles.drawerViewWrapper}>
+                        <TouchableNativeFeedback
+                            onPress={() => this.props.navigator.replace({
+                                id: 'UserSettingPage',
+                            })
+                        }>
+                            <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'settings') ? '#EEEEEE' : '#FFFFFF'}]}>
                                 <View style={styles.iconWrapper}>
                                     <Icon name='settings' style={styles.icon} />
                                 </View>

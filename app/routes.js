@@ -41,6 +41,10 @@ import FollowupPage from './actions/Followup/FollowupPage'
 import AddFollowup from './actions/Followup/AddFollowup'
 import EditFollowup from './actions/Followup/EditFollowup'
 
+import UserSettingPage from './actions/User/UserSettingPage'
+import EditUserSetting from './actions/User/EditUserSetting'
+import UserProfilePage from './actions/User/UserProfilePage'
+
 import Styles from './assets/Styles'
 
 module.exports = (route, navigator, state) => {
@@ -245,7 +249,28 @@ module.exports = (route, navigator, state) => {
             </EditFollowup>
         )
     }
-
+   //user profile/setting page
+   if (routeId === 'UserSettingPage') {
+       return (
+           <UserSettingPage navigator={navigator} {...route.passProps}>
+               <StatusBar backgroundColor='#2962FF'/>
+           </UserSettingPage>
+       )
+   }
+   if (routeId === 'EditUserSetting') {
+       return (
+           <EditUserSetting navigator={navigator} {...route.passProps}>
+               <StatusBar backgroundColor='#2962FF'/>
+           </EditUserSetting>
+       )
+   }
+   if (routeId === 'UserProfilePage') {
+       return (
+           <UserProfilePage navigator={navigator} {...route.passProps}>
+               <StatusBar backgroundColor='#2962FF'/>
+           </UserProfilePage>
+       )
+   }
 
     // frontdesk page
     if (routeId === 'FrontPage') {
@@ -255,7 +280,6 @@ module.exports = (route, navigator, state) => {
             </FrontPage>
         )
     }
-
 
     return (
         <View style={{flex: 1, alignItems: 'stretch', justifyContent: 'center'}}>
