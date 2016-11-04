@@ -113,7 +113,7 @@ class EditUserSetting extends Component {
                         animationType={"slide"}
                         transparent={false}
                         visible={this.state.modalVisible}
-                        onRequestClose={() => {alert("Modal has been closed.")}}
+                        onRequestClose={() => this.setState({modalVisible: false})}
                     >
                         <View style={{flex: 1, alignItems: 'stretch'}}>
                             <View style={{flex: 1, backgroundColor: '#FFF'}}>
