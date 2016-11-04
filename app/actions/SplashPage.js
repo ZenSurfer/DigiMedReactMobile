@@ -75,7 +75,8 @@ class SplashPage extends Component {
         }, () => {
             setTimeout(() => {
                 this.props.navigator.replace({
-                    id: 'MainPage',
+                    // id: 'MainPage',
+                    id: 'AppointmentPage',
                     sceneConfig: Navigator.SceneConfigs.FadeAndroid
                 });
             }, 1000);

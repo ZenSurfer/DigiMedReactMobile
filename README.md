@@ -1,5 +1,24 @@
 #REACT NATIVE 0.33.0
 
+file:node_modules/react-native-bcrypt/dist/bcrypt.js
+line:50
+    var bcrypt = {};
+    +var _ = require('lodash');
+
+line:68
+    function random(len) {
+        /* fallback */
+        if (!randomFallback) {
+            console.warn("Using Math.random is not cryptographically secure! Use bcrypt.setRandomFallback to set a PRNG.");
+            var buf = new Uint8Array(len);
+            -return buf.map((item) => Math.floor(Math.random() * (256 - 1 + 1) + 1));
+            +return _.map(buf, (v, i) => {
+            +    return Math.floor(Math.random() * (256 - 1 + 1) + 1);
+            +});
+        }
+        return randomFallback(len);
+    }
+
 file:node_modules/react-native-chart-android/android/src/main/java/cn/mandata/react_native_mpchart/MPBarLineChartManager.java  
 line:176
 
