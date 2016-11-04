@@ -336,8 +336,8 @@ var styles = StyleSheet.create({
         elevation: 1,
     },
     text: {
-        color: '#424242',
-        fontSize: 20,
+        color: '#212121',
+        fontSize: 17,
     },
 })
 

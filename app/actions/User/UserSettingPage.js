@@ -22,32 +22,23 @@ class UserSettingPage extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            userID: EnvInstance.getDoctor().userID,
-            id: EnvInstance.getDoctor().id,
-            doctorName: '',
             rowData: [],
-
-            password: '',
-            newPassword: '',
-            cnewPassword: '',
             updated_at: moment().format('YYYY-MM-DD'),
-
             refreshing: true,
+            renderPlaceholderOnly: true,
         }
     }
     componentWillMount() {
         this.setState({refreshing: true});
         db.transaction((tx) => {
-            tx.executeSql("SELECT `doctors`.`id` as `doctorID`, `doctors`.`userID` as `userID`, `doctors`.`email` as email, `doctors`.`firstname` as `firstname`, `doctors`.`lastname` as `lastname`, `doctors`.`middlename` as `middlename`, `doctors`.`initial` as initial, `doctors`.`rank` as rank, `doctors`.`type` as type, `doctors`.`code` as code, `doctors`.`licenseID` as licenseID, `users`.`username` as `username`, `users`.`password` as `password` FROM `doctors` LEFT OUTER JOIN `users` ON `users`.`id` = `doctors`.`userID` WHERE `doctors`.`userID`= ? LIMIT 1", [this.state.userID], function(tx, rs) {
-                // alert(JSON.stringify(rs.rows.item(0)));
+            tx.executeSql("SELECT `doctors`.`id` as `doctorID`, `doctors`.`userID` as `userID`, `doctors`.`email` as email, `doctors`.`firstname` as `firstname`, `doctors`.`lastname` as `lastname`, `doctors`.`middlename` as `middlename`, `doctors`.`initial` as initial, `doctors`.`rank` as rank, `doctors`.`type` as type, `doctors`.`code` as code, `doctors`.`licenseID` as licenseID, `users`.`username` as `username`, `users`.`password` as `password` FROM `doctors` LEFT OUTER JOIN `users` ON `users`.`id` = `doctors`.`userID` WHERE `doctors`.`userID`= ? LIMIT 1", [this.props.userID], function(tx, rs) {
                 db.data = rs.rows.item(0);
             });
         }, (err) => {
             ToastAndroid.show("Error occured while loading!", 3000);
         }, () => {
             var rowData = db.data;
-            var doctorName = "Dr. "+rowData.firstname+" "+((rowData.middlename) ? rowData.middlename+" ":"")+" "+rowData.lastname;
-            this.setState({refreshing: false, rowData: rowData, doctorName: doctorName});
+            this.setState({refreshing: false, rowData: rowData});
         });
     }
     render() {
@@ -61,7 +52,7 @@ class UserSettingPage extends Component {
                 statusBarBackgroundColor={'#2962FF'}
                 ref={this.drawerInstance} >
                 <Navigator
-                    renderScene={this.renderScene.bind(this)}
+                    renderScene={(this.state.renderPlaceholderOnly) ? this.renderPlaceholderView.bind(this) : this.renderScene.bind(this)}
                     navigator={this.props.navigator}
                     navigationBar={
                         <Navigator.NavigationBar style={Styles.navigationBar}
@@ -76,26 +67,33 @@ class UserSettingPage extends Component {
             this.setState({renderPlaceholderOnly: false, progress: 1});
         });
     }
+    renderPlaceholderView() {
+        return (
+            <View style={Styles.containerStyle}>
+                {this.props.children}
+                <View style={[Styles.subTolbar, {marginTop: 24}]}>
+                    <Text style={Styles.subTitle}>Patient Information</Text>
+                </View>
+                <View style={Styles.loading}>
+                    <View style={Styles.horizontal}><ActivityIndicator color="#212121" size={23}/></View>
+                </View>
+            </View>
+        );
+    }
     renderScene(route, navigator) {
         return (
             <View style={{flex: 1}}>
                 <View style={Styles.containerStyle}>
                     {this.props.children}
                     <View style={Styles.subTolbar}>
-                            <Text style={Styles.subTitle}>{this.state.doctorName}</Text>
+                            <Text style={Styles.subTitle}>{this.props.doctorName}</Text>
                     </View>
-                    <ScrollView
-                        style={{marginBottom: 30, marginTop: 0,}}
-                        refreshControl={
-                            <RefreshControl
-                                style={{marginTop: 20}}
-                                refreshing={this.state.refreshing}
-                                progressViewOffset={0}
-                                onRefresh={this.onRefresh.bind(this)}
-                                />
-                        }>
-                        <View style={[styles.person, {backgroundColor: '#FFFFFF'}]}>
+                    <ScrollView>
+                        <View style={[styles.person, {backgroundColor: '#FFFFFF', borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}]}>
                             <View style={{backgroundColor: '#FFFFFF', marginTop: 10}}>
+                                <View style={[styles.rows, {flexDirection: 'column'}]}>
+                                    <Text style={[styles.label, {fontSize: 25, color:'#424242'}]}>User Settings</Text>
+                                </View>
                                 <View style={[styles.rows, {flexDirection: 'column'}]}>
                                     <Text style={styles.label}>Username</Text>
                                     <View style={styles.textWrapper}><Text style={styles.text}>{this.state.rowData.username}</Text></View>
@@ -104,22 +102,32 @@ class UserSettingPage extends Component {
                                     <Text style={styles.label}>Password</Text>
                                     <View style={styles.textWrapper}><Text style={styles.text}>***************************</Text></View>
                                 </View>
-                                <View style={styles.hr}></View>
-                                <View style={[styles.rows, {flexDirection: 'column', paddingTop: 5}]}>
-                                    <Text style={styles.label}>Initial</Text>
-                                    <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.initial != '' ? this.state.rowData.initial : '-')}</Text></View>
-                                </View>
+                            </View>
+                        </View>
+                        <View style={[styles.person, {backgroundColor: '#FFFFFF', paddingTop: 20}]}>
+                            <View>
                                 <View style={[styles.rows, {flexDirection: 'column'}]}>
-                                    <Text style={styles.label}>Rank</Text>
-                                    <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.rank != '' ? this.state.rowData.rank : '-')}</Text></View>
+                                    <Text style={[styles.label, {fontSize: 25, color:'#424242'}]}>Account Settings</Text>
                                 </View>
-                                <View style={[styles.rows, {flexDirection: 'column'}]}>
-                                    <Text style={styles.label}>Specialization</Text>
-                                    <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.type != '' ? this.state.rowData.type : '-')}</Text></View>
+                                <View style={{flexDirection: 'row'}}>
+                                    <View style={[styles.rows, {flex: 1, alignItems: 'stretch', flexDirection: 'column', paddingTop: 5}]}>
+                                        <Text style={styles.label}>Initial</Text>
+                                        <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.initial != '' ? this.state.rowData.initial : '-')}</Text></View>
+                                    </View>
+                                    <View style={[styles.rows, {flex: 1, alignItems: 'stretch', flexDirection: 'column'}]}>
+                                        <Text style={styles.label}>Rank</Text>
+                                        <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.rank != '' ? this.state.rowData.rank : '-')}</Text></View>
+                                    </View>
                                 </View>
-                                <View style={[styles.rows, {flexDirection: 'column'}]}>
-                                    <Text style={styles.label}>Code</Text>
-                                    <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.code != '' ? this.state.rowData.code : '-')}</Text></View>
+                                <View style={{flexDirection: 'row'}}>
+                                    <View style={[styles.rows, {flex: 1, alignItems: 'stretch', flexDirection: 'column'}]}>
+                                        <Text style={styles.label}>Specialization</Text>
+                                        <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.type != '' ? this.state.rowData.type : '-')}</Text></View>
+                                    </View>
+                                    <View style={[styles.rows, {flex: 1, alignItems: 'stretch', flexDirection: 'column'}]}>
+                                        <Text style={styles.label}>Code</Text>
+                                        <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.code != '' ? this.state.rowData.code : '-')}</Text></View>
+                                    </View>
                                 </View>
                                 <View style={[styles.rows, {flexDirection: 'column'}]}>
                                     <Text style={styles.label}>License ID</Text>
@@ -145,16 +153,14 @@ class UserSettingPage extends Component {
     onRefresh() {
         this.setState({refreshing: true});
         db.transaction((tx) => {
-            tx.executeSql("SELECT `doctors`.`id` as `doctorID`, `doctors`.`userID` as `userID`, `doctors`.`email` as email, `doctors`.`firstname` as `firstname`, `doctors`.`lastname` as `lastname`, `doctors`.`middlename` as `middlename`, `doctors`.`initial` as initial, `doctors`.`rank` as rank, `doctors`.`type` as type, `doctors`.`code` as code, `doctors`.`licenseID` as licenseID, `users`.`username` as `username`, `users`.`password` as `password` FROM `doctors` LEFT OUTER JOIN `users` ON `users`.`id` = `doctors`.`userID` WHERE `doctors`.`userID`= ? LIMIT 1", [this.state.userID], function(tx, rs) {
-                //alert(JSON.stringify(rs.rows.item(0)));
+            tx.executeSql("SELECT `doctors`.`id` as `doctorID`, `doctors`.`userID` as `userID`, `doctors`.`email` as email, `doctors`.`firstname` as `firstname`, `doctors`.`lastname` as `lastname`, `doctors`.`middlename` as `middlename`, `doctors`.`initial` as initial, `doctors`.`rank` as rank, `doctors`.`type` as type, `doctors`.`code` as code, `doctors`.`licenseID` as licenseID, `users`.`username` as `username`, `users`.`password` as `password` FROM `doctors` LEFT OUTER JOIN `users` ON `users`.`id` = `doctors`.`userID` WHERE `doctors`.`userID`= ? LIMIT 1", [this.props.userID], function(tx, rs) {
                 db.data = rs.rows.item(0);
             });
         }, (err) => {
             ToastAndroid.show("Error occured while loading!", 3000);
         }, () => {
             var rowData = db.data;
-            var doctorName = "Dr. "+rowData.firstname+" "+((rowData.middlename) ? rowData.middlename+" ":"")+" "+rowData.lastname;
-            this.setState({refreshing: false, rowData: rowData, doctorName: doctorName});
+            this.setState({refreshing: false, rowData: rowData});
         });
     }
     drawerInstance(instance) {
@@ -189,8 +195,8 @@ var styles = StyleSheet.create({
         borderRadius: 2,
     },
     text: {
-        color: '#616161',
-        fontSize: 20,
+        color: '#212121',
+        fontSize: 17,
     },
     hr: {
       flex: 1,

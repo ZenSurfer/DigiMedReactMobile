@@ -468,8 +468,8 @@ var styles = StyleSheet.create({
         borderRadius: 2,
     },
     text: {
-        color: '#616161',
-        fontSize: 20,
+        color: '#212121',
+        fontSize: 17,
     },
     steps: {
         flex:1 ,

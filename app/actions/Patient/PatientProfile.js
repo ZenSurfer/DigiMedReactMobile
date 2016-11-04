@@ -22,7 +22,6 @@ class PatientProfile extends Component {
             refreshing: false,
             rowData: [],
             renderPlaceholderOnly: true,
-            progress: 0,
             fullProfile: false,
             fullContact: false,
             fullOther: false,
@@ -475,8 +474,8 @@ var styles = StyleSheet.create({
         paddingBottom: 5,
     },
     text: {
-        color: '#424242',
-        fontSize: 20,
+        color: '#212121',
+        fontSize: 17,
     },
 })
 

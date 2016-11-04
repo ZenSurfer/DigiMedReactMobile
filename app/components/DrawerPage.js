@@ -3,12 +3,22 @@
 import React, {Component} from 'react'
 import {StyleSheet, Text, View, TouchableNativeFeedback, TouchableHighlight, Image, StatusBar, ScrollView, Navigator, TouchableOpacity} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import Env from '../env'
 
 import Styles from '../assets/Styles'
+const EnvInstance = new Env()
+const db = EnvInstance.db()
 
 class DrawerPage extends Component {
     constructor(props) {
         super(props)
+        this.state = {
+            userID: EnvInstance.getDoctor().userID,
+            doctorID: EnvInstance.getDoctor().id,
+            doctorName: EnvInstance.getDoctor().name,
+            doctorType: EnvInstance.getDoctor().type,
+            doctorInitial: EnvInstance.getDoctor().initial,
+        }
     }
     render() {
         return (
@@ -27,8 +37,8 @@ class DrawerPage extends Component {
                             </View>
                             <View style={{flexDirection: 'row'}}>
                                 <View style={{flex: 1, flexDirection: 'column'}}>
-                                    <Text style={styles.drawerImageName}>Donald P Benas</Text>
-                                    <Text style={styles.drawerImageEmail}>donaldbenas@gmail.com</Text>
+                                    <Text style={styles.drawerImageName}>{this.state.doctorName} ({this.state.doctorInitial})</Text>
+                                    <Text style={styles.drawerImageEmail}>{this.state.doctorType}</Text>
                                 </View>
                                 <TouchableOpacity
                                         style={{justifyContent: 'center', width: 40, height: 40, backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: 30}}
@@ -89,6 +99,11 @@ class DrawerPage extends Component {
                         <TouchableNativeFeedback
                             onPress={() => this.props.navigator.replace({
                                 id: 'UserSettingPage',
+                                passProps: {
+                                    userID: this.state.userID,
+                                    doctorID: this.state.doctorID,
+                                    doctorName: this.state.doctorName,
+                                }
                             })
                         }>
                             <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'settings') ? '#EEEEEE' : '#FFFFFF'}]}>

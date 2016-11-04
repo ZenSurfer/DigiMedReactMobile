@@ -5,9 +5,9 @@ function Env() {
     this.doctor = {
         userID: 29,
         id: 3,
-        name: 'Don',
-        type: '',
-        initial: '',
+        name: 'Dr. Donald Platino Benas',
+        type: 'Neurologist',
+        initial: 'DPB',
     }
     this.db = function () {
         return SQLite.openDatabase({name : "testDB"})
