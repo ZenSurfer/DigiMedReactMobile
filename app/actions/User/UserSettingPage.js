@@ -105,6 +105,10 @@ class UserSettingPage extends Component {
                                 </View>
                                 <View style={styles.hr}></View>
                                 <View style={[styles.rows, {flexDirection: 'column', paddingTop: 5}]}>
+                                    <Text style={styles.label}>Initial</Text>
+                                    <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.initial != '' ? this.state.rowData.initial : '-')}</Text></View>
+                                </View>
+                                <View style={[styles.rows, {flexDirection: 'column'}]}>
                                     <Text style={styles.label}>Rank</Text>
                                     <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.rank != '' ? this.state.rowData.rank : '-')}</Text></View>
                                 </View>

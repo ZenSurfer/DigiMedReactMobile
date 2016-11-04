@@ -30,6 +30,7 @@ class EditUserSetting extends Component {
             password: '',
             newPassword: '',
             cnewPassword: '',
+            initial: '',
             rank: '',
             type: '',
             code: '',
@@ -48,8 +49,8 @@ class EditUserSetting extends Component {
     componentWillMount() {
         this.setState({refreshing: true});
         db.transaction((tx) => {
-            tx.executeSql("SELECT `doctors`.`id` as `doctorID`, `doctors`.`userID` as `userID`, `doctors`.`email` as email, `doctors`.`firstname` as `firstname`, `doctors`.`lastname` as `lastname`, `doctors`.`middlename` as `middlename`, `doctors`.`initial` as initial, `doctors`.`rank` as rank, `doctors`.`type` as type, `doctors`.`code` as code, `doctors`.`licenseID` as licenseID, `users`.`username` as `username`, `users`.`password` as `password` FROM `doctors` LEFT OUTER JOIN `users` ON `users`.`id` = `doctors`.`userID` WHERE `doctors`.`userID`= ? LIMIT 1", [this.props.doctorID], function(tx, rs) {
-                //alert(JSON.stringify(rs.rows.item(0)));
+            tx.executeSql("SELECT `doctors`.`id` as `doctorID`, `doctors`.`userID` as `userID`, `doctors`.`email` as email, `doctors`.`firstname` as `firstname`, `doctors`.`lastname` as `lastname`, `doctors`.`middlename` as `middlename`, `doctors`.`initial` as `initial`, `doctors`.`rank` as `rank`, `doctors`.`type` as `type`, `doctors`.`code` as `code`, `doctors`.`licenseID` as `licenseID`, `users`.`username` as `username`, `users`.`password` as `password` FROM `doctors` LEFT OUTER JOIN `users` ON `users`.`id` = `doctors`.`userID` WHERE `doctors`.`userID`= ? LIMIT 1", [this.props.doctorID], function(tx, rs) {
+                alert(JSON.stringify(rs.rows.item(0)));
                 db.data = rs.rows.item(0);
             });
         }, (err) => {
@@ -59,6 +60,7 @@ class EditUserSetting extends Component {
             this.setState({
                 refreshing: false,
                 username: rowData.username,
+                initial: rowData.initial,
                 rank: rowData.rank,
                 type: rowData.type,
                 code: rowData.code,
@@ -211,6 +213,14 @@ class EditUserSetting extends Component {
                                 value={_.toString(this.state.username)}
                                 placeholderTextColor={'#E0E0E0'}
                                 onChangeText={(text) => this.setState({username: text})} />
+                            <Text style={styles.label} >Initial</Text>
+                            <TextInput
+                                placeholder={'Text Here...'}
+                                style={styles.textInput}
+                                autoCapitalize={'words'}
+                                value={_.toString(this.state.initial)}
+                                placeholderTextColor={'#E0E0E0'}
+                                onChangeText={(text) => this.setState({initial: text})} />
                             <Text style={styles.label} >Rank</Text>
                             <TextInput
                                 placeholder={'Text Here...'}
@@ -271,8 +281,8 @@ class EditUserSetting extends Component {
                     console.log("updated users: " + rs.rowsAffected);
                 })
 
-                tx.executeSql("UPDATE `doctors` SET `rank` = ?, `type` = ?, `code` = ?, `licenseID` = ?, `updated_at` = ? WHERE `userID` = ?"
-                , [this.state.rank, this.state.type, this.state.code, this.state.licenseID, this.state.updated_at, this.props.doctorID]
+                tx.executeSql("UPDATE `doctors` SET `initial` = ?, `rank` = ?, `type` = ?, `code` = ?, `licenseID` = ?, `updated_at` = ? WHERE `userID` = ?"
+                , [this.state.initial, this.state.rank, this.state.type, this.state.code, this.state.licenseID, this.state.updated_at, this.props.doctorID]
                 , (tx, rs) => {
                     console.log("updated doctors: " + rs.rowsAffected);
                 })
