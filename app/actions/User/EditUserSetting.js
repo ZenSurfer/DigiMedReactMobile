@@ -110,24 +110,18 @@ class EditUserSetting extends Component {
                         <Text style={Styles.subTitle}>Edit Setting</Text>
                     </View>
                     <Modal
-                        animationType={"slide"}
-                        transparent={false}
+                        animationType={"fade"}
+                        transparent={true}
                         visible={this.state.modalVisible}
-                        onRequestClose={() => this.setState({modalVisible: false})}
-                    >
-                        <View style={{flex: 1, alignItems: 'stretch'}}>
-                            <View style={{flex: 1, backgroundColor: '#FFF'}}>
-                                <View style={{padding: 16, paddingRight: 0, paddingBottom: 16, paddingTop: 16, backgroundColor: '#2962FF', elevation: 2}}>
+                        onRequestClose={() => this.setState({modalVisible: false})}>
+                        <View style={{flex: 1, justifyContent: 'center', alignItems: 'stretch', backgroundColor: 'rgba(0,0,0,0.4)'}}>
+                            <View style={{backgroundColor: '#FFF', marginLeft: 20, marginRight: 20, elevation: 5, borderRadius: 2}}>
+                                <View style={{padding: 16, paddingRight: 0, paddingBottom: 16, paddingTop: 16}}>
                                     <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
-                                        <Text style={{color: '#FFF', fontSize: 26, textAlignVertical: 'center'}}>Change Password</Text>
-                                        <TouchableOpacity
-                                            style={{padding: 16, paddingTop: 0, paddingBottom: 0,}}
-                                            onPress={() => this.setState({modalVisible: false})}>
-                                            <Icon name={'close'} size={30} color={'#FFF'} style={{textAlignVertical: 'center'}}/>
-                                        </TouchableOpacity>
+                                        <Text style={{color: '#212121', fontSize: 26, textAlignVertical: 'center'}}>Change Password</Text>
                                     </View>
                                 </View>
-                                <View style={{flex: 1}}>
+                                <View style={{flex: 1, marginBottom: -10, marginTop: -10}}>
                                     <View style={{backgroundColor: '#FFFFFF', padding: 16}}>
                                         <Text style={styles.label} >Current Password</Text>
                                         <TextInput
@@ -149,10 +143,14 @@ class EditUserSetting extends Component {
                                             onChangeText={(text) => this.setState({cnewPassword: text})} />
                                     </View>
                                 </View>
-                                <View style={{flexDirection: 'row', alignItems: 'stretch'}}>
-                                    <TouchableOpacity
-                                        activeOpacity={0.9}
-                                        style={{flex: 1, alignItems: 'stretch'}}
+                                <View style={{margin: 5, flexDirection: 'row', justifyContent: 'space-between'}}>
+                                    <TouchableNativeFeedback
+                                        onPress={() => this.setState({modalVisible: false})}>
+                                        <View style={{padding: 15, justifyContent: 'center', width: 100}}>
+                                            <Text style={{textAlign: 'center'}}>CANCEL</Text>
+                                        </View>
+                                    </TouchableNativeFeedback>
+                                    <TouchableNativeFeedback
                                         onPress={() => {
                                             this.setState({refreshing: true})
                                             if (this.state.password !== '' && this.state.newPassword !== '' && this.state.cnewPassword !== '') {
@@ -195,71 +193,83 @@ class EditUserSetting extends Component {
                                             }
                                             this.setState({refreshing: false})
                                         }}>
-                                        <View style={{backgroundColor: '#4CAF50'}}>
-                                            <Text style={{textAlign: 'center', color: '#FFF', padding: 16, paddingTop: 20, paddingBottom: 20}}>SAVE</Text>
+                                        <View style={{padding: 15, justifyContent: 'center', width: 100}}>
+                                            <Text style={{textAlign: 'center', color: '#4CAF50'}}>SAVE</Text>
                                         </View>
-                                    </TouchableOpacity>
+                                    </TouchableNativeFeedback>
                                 </View>
                             </View>
                         </View>
                     </Modal>
                     <ScrollView
                         keyboardShouldPersistTaps={true}>
-                        <View style={{backgroundColor: '#FFFFFF', padding: 16}}>
-                            <Text style={styles.label} >Username</Text>
-                            <TextInput
-                                placeholder={'Text Here...'}
-                                style={styles.textInput}
-                                autoCapitalize={'words'}
-                                value={_.toString(this.state.username)}
-                                placeholderTextColor={'#E0E0E0'}
-                                onChangeText={(text) => this.setState({username: text})} />
-                            <Text style={styles.label} >Initial</Text>
-                            <TextInput
-                                placeholder={'Text Here...'}
-                                style={styles.textInput}
-                                autoCapitalize={'words'}
-                                value={_.toString(this.state.initial)}
-                                placeholderTextColor={'#E0E0E0'}
-                                onChangeText={(text) => this.setState({initial: text})} />
-                            <Text style={styles.label} >Rank</Text>
-                            <TextInput
-                                placeholder={'Text Here...'}
-                                style={styles.textInput}
-                                autoCapitalize={'words'}
-                                value={_.toString(this.state.rank)}
-                                placeholderTextColor={'#E0E0E0'}
-                                onChangeText={(text) => this.setState({rank: text})} />
-                            <Text style={styles.label} >Specialization</Text>
-                            <TextInput
-                                placeholder={'Text Here...'}
-                                style={styles.textInput}
-                                autoCapitalize={'words'}
-                                value={_.toString(this.state.type)}
-                                placeholderTextColor={'#E0E0E0'}
-                                onChangeText={(text) => this.setState({type: text})} />
-                            <Text style={styles.label} >Code</Text>
-                            <TextInput
-                                placeholder={'Text Here...'}
-                                style={styles.textInput}
-                                autoCapitalize={'words'}
-                                value={_.toString(this.state.code)}
-                                placeholderTextColor={'#E0E0E0'}
-                                onChangeText={(text) => this.setState({code: text})} />
-                            <Text style={styles.label} >LicenseID</Text>
-                            <TextInput
-                                placeholder={'Text Here...'}
-                                style={styles.textInput}
-                                autoCapitalize={'words'}
-                                value={_.toString(this.state.licenseID)}
-                                placeholderTextColor={'#E0E0E0'}
-                                onChangeText={(text) => this.setState({licenseID: text})} />
-                            <View style={{paddingTop: 10, paddingBottom: -5}}>
-                                <TouchableNativeFeedback onPress={() => { this.setState({modalVisible: true});}}>
-                                    <View style={{backgroundColor: '#E91E63', flex: 1, alignItems: 'stretch',  padding: 10}}>
-                                        <Text style={{textAlign: 'center', fontSize: 19, color: '#FFFFFF'}}><Icon name={'lock'} size={18} /> Change Password</Text>
+                        <View style={{backgroundColor: '#FFFFFF'}}>
+                            <View style={[{padding: 12, paddingRight: 16, backgroundColor: '#FFFFFF', borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}]}>
+                                <View style={[styles.rows, {flexDirection: 'column'}]}>
+                                    <Text style={[styles.label, {fontSize: 25, color:'#424242'}]}>User Settings</Text>
+                                </View>
+                                <Text style={styles.label} >Username</Text>
+                                <TextInput
+                                    placeholder={'Text Here...'}
+                                    style={styles.textInput}
+                                    autoCapitalize={'words'}
+                                    value={_.toString(this.state.username)}
+                                    placeholderTextColor={'#E0E0E0'}
+                                    onChangeText={(text) => this.setState({username: text})} />
+                                <TouchableNativeFeedback
+                                    onPress={() => { this.setState({modalVisible: true});}}>
+                                    <View style={{flex: 1, alignItems: 'center', padding: 15, backgroundColor: '#F5F5F5'}}>
+                                        <View style={{flexDirection: 'row' }}>
+                                            <Icon name={'lock'} size={20} color={'#424242'}/>
+                                            <Text style={{paddingLeft: 5, textAlignVertical: 'center', color: '#424242'}}>Change Password</Text>
+                                        </View>
                                     </View>
                                 </TouchableNativeFeedback>
+                            </View>
+                            <View style={[{padding: 12, paddingRight: 16, backgroundColor: '#FFFFFF', marginBottom: 80}]}>
+                                <View style={[styles.rows, {flexDirection: 'column', marginTop: 5}]}>
+                                    <Text style={[styles.label, {fontSize: 25, color:'#424242'}]}>Account Settings</Text>
+                                </View>
+                                <Text style={styles.label} >Initial</Text>
+                                <TextInput
+                                    placeholder={'Text Here...'}
+                                    style={styles.textInput}
+                                    autoCapitalize={'words'}
+                                    value={_.toString(this.state.initial)}
+                                    placeholderTextColor={'#E0E0E0'}
+                                    onChangeText={(text) => this.setState({initial: text})} />
+                                <Text style={styles.label} >Rank</Text>
+                                <TextInput
+                                    placeholder={'Text Here...'}
+                                    style={styles.textInput}
+                                    autoCapitalize={'words'}
+                                    value={_.toString(this.state.rank)}
+                                    placeholderTextColor={'#E0E0E0'}
+                                    onChangeText={(text) => this.setState({rank: text})} />
+                                <Text style={styles.label} >Specialization</Text>
+                                <TextInput
+                                    placeholder={'Text Here...'}
+                                    style={styles.textInput}
+                                    autoCapitalize={'words'}
+                                    value={_.toString(this.state.type)}
+                                    placeholderTextColor={'#E0E0E0'}
+                                    onChangeText={(text) => this.setState({type: text})} />
+                                <Text style={styles.label} >Code</Text>
+                                <TextInput
+                                    placeholder={'Text Here...'}
+                                    style={styles.textInput}
+                                    autoCapitalize={'words'}
+                                    value={_.toString(this.state.code)}
+                                    placeholderTextColor={'#E0E0E0'}
+                                    onChangeText={(text) => this.setState({code: text})} />
+                                <Text style={styles.label} >LicenseID</Text>
+                                <TextInput
+                                    placeholder={'Text Here...'}
+                                    style={styles.textInput}
+                                    autoCapitalize={'words'}
+                                    value={_.toString(this.state.licenseID)}
+                                    placeholderTextColor={'#E0E0E0'}
+                                    onChangeText={(text) => this.setState({licenseID: text})} />
                             </View>
                         </View>
                     </ScrollView>
@@ -292,9 +302,7 @@ class EditUserSetting extends Component {
                 ToastAndroid.show("Error occured while saving!", 3000)
             }, () => {
                 this.setState({refreshing: false})
-                this.props.navigator.replacePreviousAndPop({
-                    id: 'UserSettingPage',
-                });
+                this.props.navigator.pop();
                 ToastAndroid.show("Successfully saved!", 3000)
             })
         } else { // Required Fields
@@ -339,17 +347,24 @@ var styles = StyleSheet.create({
         color: '#212121',
         fontSize: 17,
     },
+    label: {
+        color: '#616161',
+        textAlign: 'left',
+        marginLeft: 4,
+        marginRight: 4,
+    },
+    textInput: {
+        fontSize: 16,
+        paddingTop: 5,
+        marginBottom: 5,
+    },
 })
 
-var NavigationBarRouteMapper = (doctorName) => ({
+var NavigationBarRouteMapper = (doctorName, props) => ({
     LeftButton(route, navigator, index, navState) {
         return (
             <TouchableOpacity style={{flex: 1, justifyContent: 'center'}}
-                onPress={() => {
-                    navigator.parentNavigator.replacePreviousAndPop({
-                        id: 'UserSettingPage'
-                    })
-                }}>
+                onPress={() => navigator.parentNavigator.pop()}>
                 <Text style={{color: 'white', margin: 10,}}>
                     <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                 </Text>

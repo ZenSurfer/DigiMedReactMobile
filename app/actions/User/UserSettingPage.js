@@ -52,7 +52,7 @@ class UserSettingPage extends Component {
                 statusBarBackgroundColor={'#2962FF'}
                 ref={this.drawerInstance} >
                 <Navigator
-                    renderScene={(this.state.renderPlaceholderOnly) ? this.renderPlaceholderView.bind(this) : this.renderScene.bind(this)}
+                    renderScene={this.renderScene.bind(this)}
                     navigator={this.props.navigator}
                     navigationBar={
                         <Navigator.NavigationBar style={Styles.navigationBar}
@@ -62,33 +62,20 @@ class UserSettingPage extends Component {
             </DrawerLayoutAndroid>
         )
     }
-    componentDidMount() {
-        InteractionManager.runAfterInteractions(() => {
-            this.setState({renderPlaceholderOnly: false, progress: 1});
-        });
-    }
-    renderPlaceholderView() {
-        return (
-            <View style={Styles.containerStyle}>
-                {this.props.children}
-                <View style={[Styles.subTolbar, {marginTop: 24}]}>
-                    <Text style={Styles.subTitle}>Patient Information</Text>
-                </View>
-                <View style={Styles.loading}>
-                    <View style={Styles.horizontal}><ActivityIndicator color="#212121" size={23}/></View>
-                </View>
-            </View>
-        );
-    }
     renderScene(route, navigator) {
         return (
             <View style={{flex: 1}}>
                 <View style={Styles.containerStyle}>
-                    {this.props.children}
                     <View style={Styles.subTolbar}>
                             <Text style={Styles.subTitle}>{this.props.doctorName}</Text>
                     </View>
-                    <ScrollView>
+                    <ScrollView
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={this.state.refreshing}
+                                onRefresh={this.onRefresh.bind(this)}
+                                />
+                        }>
                         <View style={[styles.person, {backgroundColor: '#FFFFFF', borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}]}>
                             <View style={{backgroundColor: '#FFFFFF', marginTop: 10}}>
                                 <View style={[styles.rows, {flexDirection: 'column'}]}>
@@ -96,7 +83,7 @@ class UserSettingPage extends Component {
                                 </View>
                                 <View style={[styles.rows, {flexDirection: 'column'}]}>
                                     <Text style={styles.label}>Username</Text>
-                                    <View style={styles.textWrapper}><Text style={styles.text}>{this.state.rowData.username}</Text></View>
+                                    <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.username) ? this.state.rowData.username : '-'}</Text></View>
                                 </View>
                                 <View style={[styles.rows, {flexDirection: 'column'}]}>
                                     <Text style={styles.label}>Password</Text>
@@ -112,26 +99,26 @@ class UserSettingPage extends Component {
                                 <View style={{flexDirection: 'row'}}>
                                     <View style={[styles.rows, {flex: 1, alignItems: 'stretch', flexDirection: 'column', paddingTop: 5}]}>
                                         <Text style={styles.label}>Initial</Text>
-                                        <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.initial != '' ? this.state.rowData.initial : '-')}</Text></View>
+                                        <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.initial) ? this.state.rowData.initial : '-'}</Text></View>
                                     </View>
                                     <View style={[styles.rows, {flex: 1, alignItems: 'stretch', flexDirection: 'column'}]}>
                                         <Text style={styles.label}>Rank</Text>
-                                        <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.rank != '' ? this.state.rowData.rank : '-')}</Text></View>
+                                        <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.rank) ? this.state.rowData.rank : '-'}</Text></View>
                                     </View>
                                 </View>
                                 <View style={{flexDirection: 'row'}}>
                                     <View style={[styles.rows, {flex: 1, alignItems: 'stretch', flexDirection: 'column'}]}>
                                         <Text style={styles.label}>Specialization</Text>
-                                        <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.type != '' ? this.state.rowData.type : '-')}</Text></View>
+                                        <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.type) ? this.state.rowData.type : '-'}</Text></View>
                                     </View>
                                     <View style={[styles.rows, {flex: 1, alignItems: 'stretch', flexDirection: 'column'}]}>
                                         <Text style={styles.label}>Code</Text>
-                                        <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.code != '' ? this.state.rowData.code : '-')}</Text></View>
+                                        <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.code) ? this.state.rowData.code : '-'}</Text></View>
                                     </View>
                                 </View>
                                 <View style={[styles.rows, {flexDirection: 'column'}]}>
                                     <Text style={styles.label}>License ID</Text>
-                                    <View style={styles.textWrapper}><Text style={styles.text}>{this.state.rowData.licenseID}</Text></View>
+                                    <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.licenseID) ? this.state.rowData.licenseID : '-'}</Text></View>
                                 </View>
                             </View>
                         </View>
@@ -141,7 +128,9 @@ class UserSettingPage extends Component {
                         onPress={() =>  this.props.navigator.push({
                             id: 'EditUserSetting',
                             passProps: {
-                                doctorName: this.state.doctorName
+                                userID: this.props.userID,
+                                doctorID: this.props.doctorID,
+                                doctorName: this.props.doctorName,
                             }
                         })}>
                         <Icon name={'edit'} color={'#FFFFFF'} size={30}/>

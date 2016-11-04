@@ -253,7 +253,7 @@ module.exports = (route, navigator, state) => {
    if (routeId === 'UserSettingPage') {
        return (
            <UserSettingPage navigator={navigator} {...route.passProps}>
-               <StatusBar backgroundColor='#2962FF'/>
+               <StatusBar backgroundColor='#2962FF' translucent={true}/>
            </UserSettingPage>
        )
    }
