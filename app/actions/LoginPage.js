@@ -1,13 +1,17 @@
 'use strict';
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, View, Navigator, TouchableHighlight, TouchableOpacity, TextInput, Image, Dimensions, ScrollView} from 'react-native'
+import {StyleSheet, Text, View, Navigator, TouchableHighlight, TouchableOpacity, TextInput, Image, Dimensions, ScrollView, TouchableNativeFeedback, ActivityIndicator, ToastAndroid} from 'react-native'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 import _ from 'lodash'
 import RNFS from 'react-native-fs'
 import Styles from '../assets/Styles'
+import bcrypt from 'react-native-bcrypt'
+import Env from '../env'
 
 const dirPath = RNFS.ExternalDirectoryPath
-const {height, width} = Dimensions.get('window');
+const EnvInstance = new Env()
+const db = EnvInstance.db()
 
 class LoginPage extends Component {
     constructor(props) {
@@ -16,81 +20,141 @@ class LoginPage extends Component {
             username: '',
             password: '',
             cloudUrl: '',
+            auth: false,
+            visibility: false,
         }
     }
     render() {
         return (
-            <Navigator
-                renderScene={this.renderScene.bind(this)}
-                />
-        );
-    }
-    renderScene(route, navigator) {
-        return (
-            <View style={{flex: 1, backgroundColor: '#2979FF'}}>
+            <View style={{flex: 1, backgroundColor: '#2962FF'}}>
                 {this.props.children}
-                <ScrollView>
-                    <View style={styles.scrollViewWrapper}>
-                        <View style={styles.imageWrapper}>
-                          <Image
-                              style={{width: 300, height: 160}}
-                              resizeMode={'contain'}
-                              source={require('../assets/images/logo.png')}
-                              />
+                <View style={{flex: 1, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', }}>
+                    <ScrollView
+                        keyboardShouldPersistTaps={true}>
+                        <View style={[styles.scrollViewWrapper]}>
+                            <View style={styles.imageWrapper}>
+                              <Image
+                                  style={{width: 300, height: 160}}
+                                  resizeMode={'contain'}
+                                  source={require('../assets/images/logo.png')}
+                                  />
+                            </View>
+                            <View style={{alignItems: 'center'}}>
+                                <View style={[styles.textInputWrapper, {width: 300}]}>
+                                    <TextInput
+                                        placeholder={'Username'}
+                                        style={[styles.textInput,{color: '#FFF', textAlign: 'center'}]}
+                                        value={this.state.username}
+                                        placeholderTextColor={'#90CAF9'}
+                                        underlineColorAndroid={'#2979FF'}
+                                        onChangeText={(text) => this.setState({username: text})}
+                                        returnKeyType={'next'}/>
+                                    <View>
+                                        <TextInput
+                                            placeholder={'Password'}
+                                            style={[styles.textInput,{color: '#FFF', textAlign: 'center'}]}
+                                            value={this.state.password}
+                                            secureTextEntry={!this.state.visibility}
+                                            placeholderTextColor={'#90CAF9'}
+                                            underlineColorAndroid={'#2979FF'}
+                                            onChangeText={(text) => this.setState({password: text})}
+                                            returnKeyType={'next'}/>
+                                        {(this.state.visibility) ? (
+                                            <TouchableOpacity
+                                                style={{position: 'absolute', top: 0, height: 50, right: 0, flex: 1, justifyContent: 'center'}}
+                                                onPress={() => this.setState({visibility: false})}>
+                                                <Icon size={25} name={'visibility-off'} color={'#90CAF9'} style={{padding: 10}}/>
+                                            </TouchableOpacity>
+                                        ) : (
+                                            <TouchableOpacity
+                                                style={{position: 'absolute', top: 0, height: 50, right: 0, flex: 1, justifyContent: 'center'}}
+                                                onPress={() => this.setState({visibility: true})}>
+                                                <Icon size={25} name={'visibility'} color={'#90CAF9'} style={{padding: 10}}/>
+                                            </TouchableOpacity>
+                                        )}
+                                    </View>
+                                    <TextInput
+                                        placeholder={'Cloud Url'}
+                                        style={[styles.textInput,{color: '#FFF', textAlign: 'center'}]}
+                                        value={this.state.cloudUrl}
+                                        placeholderTextColor={'#90CAF9'}
+                                        underlineColorAndroid={'#2979FF'}
+                                        onChangeText={(text) => this.setState({cloudUrl: text})}
+                                        returnKeyType={'next'}/>
+                                    <View style={[{flexDirection: 'column'}]}>
+                                        {(!this.state.auth) ? (
+                                            <TouchableNativeFeedback
+                                                onPress={() => {
+                                                    this.setState({auth: true})
+                                                    db.transaction((tx) => {
+                                                        db.passed = false;
+                                                        tx.executeSql("SELECT * FROM users WHERE username=? AND userType='doctor' AND accountVerified=1 AND (deleted_at in (null, 'NULL', '') OR deleted_at is null) LIMIT 1", [this.state.username], (tx, rs) => {
+                                                            if (bcrypt.compareSync(this.state.password, rs.rows.item(0).password)) {
+                                                                db.data = rs.rows.item(0);
+                                                                db.passed = true;
+                                                            }
+                                                        })
+                                                    }, (err) => {
+                                                        alert(err.message)
+                                                    }, () => {
+                                                        if(db.passed) {
+                                                            this.props.navigator.replace({
+                                                                id: 'SplashPage',
+                                                                passProps: {doctor: db.data},
+                                                                sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                                            })
+                                                            this.setState({auth: false})
+                                                        } else {
+                                                            ToastAndroid.show('Invalid username / password!', 1000);
+                                                            this.setState({auth: false})
+                                                        }
+                                                    })
+                                                }}>
+                                                <View style={[Styles.coloredButton, styles.button, {marginBottom: 0}]}>
+                                                    <Text style={{color: '#FFF'}}>LOGIN</Text>
+                                                </View>
+                                            </TouchableNativeFeedback>
+                                        ) : (
+                                            <View style={[Styles.coloredButton, styles.button, {marginBottom: 0}]}>
+                                                <Text style={{color: '#FFF'}}>AUTHENTICATING</Text>
+                                            </View>
+                                        )}
+                                        <TouchableNativeFeedback
+                                            onPress={() => {
+                                                this.props.navigator.replace({
+                                                    id: 'SplashPage',
+                                                    sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                                })
+                                            }}>
+                                            <View style={[Styles.coloredButton, styles.button, {backgroundColor: '#2962FF', marginTop: 0}]}>
+                                                <Text style={{color: '#90CAF9'}}>OFFLINE</Text>
+                                            </View>
+                                        </TouchableNativeFeedback>
+                                    </View>
+                                    {(this.state.auth) ? (
+                                        <View style={{position: 'absolute', height: 150, width: 280, top: 0}}>
+                                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#2962FF'}}>
+                                                <ActivityIndicator animating={true} size={'large'} color={'#FFF'}/>
+                                            </View>
+                                        </View>
+                                    ) : (<View/>)}
+                                </View>
+                            </View>
                         </View>
-                        <View style={styles.textInputWrapper}>
-                            <TextInput
-                                placeholder={'Username'}
-                                style={styles.textInput}
-                                value={this.state.username}
-                                placeholderTextColor={'#E0E0E0'}
-                                onChangeText={(text) => this.setState({username: text})}
-                                returnKeyType={'next'}/>
-                            <TextInput
-                                placeholder={'Password'}
-                                style={styles.textInput}
-                                value={this.state.password}
-                                secureTextEntry={true}
-                                placeholderTextColor={'#E0E0E0'}
-                                onChangeText={(text) => this.setState({password: text})}
-                                returnKeyType={'next'}/>
-                            <TextInput
-                                placeholder={'Cloud Url'}
-                                style={styles.textInput}
-                                value={this.state.cloudUrl}
-                                placeholderTextColor={'#E0E0E0'}
-                                onChangeText={(text) => this.setState({cloudUrl: text})}
-                                returnKeyType={'next'}/>
-                        </View>
-                        <View style={{flexDirection: 'row'}}>
-                            <TouchableOpacity
-                                style={[Styles.coloredButton, styles.button]}
-                                onPress={this.gotoNext.bind(this)}>
-                                <Text style={{color: '#FFF'}}>LOGIN</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </ScrollView>
+                    </ScrollView>
+                </View>
             </View>
         );
-    }
-    gotoNext() {
-        this.props.navigator.replace({
-            id: 'SplashPage',
-            sceneConfig: Navigator.SceneConfigs.FadeAndroid
-        });
     }
 }
 
 var styles = StyleSheet.create({
     button: {
         height: 50,
-        marginLeft: 16,
-        marginRight: 16,
-        backgroundColor: '#00C853'
+        backgroundColor: '#2979FF',
+        elevation: 0,
     },
     scrollViewWrapper: {
-        height: (height - 40),
         flexDirection: 'column',
         justifyContent: 'center',
         alignSelf: 'center',
@@ -102,25 +166,21 @@ var styles = StyleSheet.create({
         marginRight: 16,
     },
     imageWrapper: {
-        width: width,
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
     },
     textInputWrapper: {
-        backgroundColor: '#FFF',
-        borderRadius: 2,
         paddingLeft: 10,
         paddingRight: 10,
         paddingTop: 6,
         paddingBottom: 6,
         marginLeft: 16,
         marginRight: 16,
-        elevation: 1,
         marginTop: 5,
     },
     textInput: {
-        fontSize: 16,
+        fontSize: 17,
         paddingTop: 0,
         paddingBottom: 0,
         paddingLeft: 10,

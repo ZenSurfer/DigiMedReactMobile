@@ -16,6 +16,9 @@ const EnvInstance = new Env()
 const db = EnvInstance.db()
 
 class SplashPage extends Component {
+    constructor(props) {
+        super(props)
+    }
     componentWillMount() {
         RNFS.mkdir(RNFS.ExternalDirectoryPath + '/patient')
         RNFS.mkdir(RNFS.ExternalDirectoryPath + '/avatar')
