@@ -23,6 +23,8 @@ class EditUserSetting extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            userID: EnvInstance.getDoctor().userID,
+            id: EnvInstance.getDoctor().id,
             rowData: [],
             refreshing: true,
 
@@ -49,8 +51,8 @@ class EditUserSetting extends Component {
     componentWillMount() {
         this.setState({refreshing: true});
         db.transaction((tx) => {
-            tx.executeSql("SELECT `doctors`.`id` as `doctorID`, `doctors`.`userID` as `userID`, `doctors`.`email` as email, `doctors`.`firstname` as `firstname`, `doctors`.`lastname` as `lastname`, `doctors`.`middlename` as `middlename`, `doctors`.`initial` as `initial`, `doctors`.`rank` as `rank`, `doctors`.`type` as `type`, `doctors`.`code` as `code`, `doctors`.`licenseID` as `licenseID`, `users`.`username` as `username`, `users`.`password` as `password` FROM `doctors` LEFT OUTER JOIN `users` ON `users`.`id` = `doctors`.`userID` WHERE `doctors`.`userID`= ? LIMIT 1", [this.props.doctorID], function(tx, rs) {
-                alert(JSON.stringify(rs.rows.item(0)));
+            tx.executeSql("SELECT `doctors`.`id` as `doctorID`, `doctors`.`userID` as `userID`, `doctors`.`email` as email, `doctors`.`firstname` as `firstname`, `doctors`.`lastname` as `lastname`, `doctors`.`middlename` as `middlename`, `doctors`.`initial` as `initial`, `doctors`.`rank` as `rank`, `doctors`.`type` as `type`, `doctors`.`code` as `code`, `doctors`.`licenseID` as `licenseID`, `users`.`username` as `username`, `users`.`password` as `password` FROM `doctors` LEFT OUTER JOIN `users` ON `users`.`id` = `doctors`.`userID` WHERE `doctors`.`userID`= ? LIMIT 1", [this.state.userID], function(tx, rs) {
+                // alert(JSON.stringify(rs.rows.item(0)));
                 db.data = rs.rows.item(0);
             });
         }, (err) => {
@@ -77,7 +79,7 @@ class EditUserSetting extends Component {
                 navigationBar={
                     <Navigator.NavigationBar
                         style={[Styles.navigationBar,{marginTop: 24}]}
-                        routeMapper={NavigationBarRouteMapper(this.props.doctorID, this.props.doctorName)} />
+                        routeMapper={NavigationBarRouteMapper(this.props.doctorName)} />
                 }/>
         )
     }
@@ -160,7 +162,7 @@ class EditUserSetting extends Component {
                                                         newPassword = newPassword.replace('$2a$', '$2y$');
                                                         db.transaction((tx) => {
                                                             tx.executeSql("UPDATE `users` SET `password` = ?, `updated_at` = ? WHERE `id` = ?"
-                                                            , [newPassword, this.state.updated_at, this.props.doctorID]
+                                                            , [newPassword, this.state.updated_at, this.state.userID]
                                                             , (tx, rs) => {
                                                                 console.log("updated doctors: " + rs.rowsAffected);
                                                             })
@@ -170,8 +172,7 @@ class EditUserSetting extends Component {
                                                         }, () => {
                                                             this.setState({refreshing: false, modalVisible: false})
                                                             this.props.navigator.replacePreviousAndPop({
-                                                                id: 'UserSettingPage',
-                                                                passProps: { doctorID: this.props.doctorID }
+                                                                id: 'UserSettingPage'
                                                             });
                                                             ToastAndroid.show("Successfully changed password!", 3000)
                                                         })
@@ -276,13 +277,13 @@ class EditUserSetting extends Component {
         if (_.trim(this.state.username) !== '' && _.trim(this.state.licenseID) !== '') {
             db.transaction((tx) => {
                 tx.executeSql("UPDATE `users` SET `username` = ?, `updated_at` = ? WHERE `id` = ?"
-                , [this.state.username, this.state.updated_at, this.props.doctorID]
+                , [this.state.username, this.state.updated_at, this.state.userID]
                 , (tx, rs) => {
                     console.log("updated users: " + rs.rowsAffected);
                 })
 
-                tx.executeSql("UPDATE `doctors` SET `initial` = ?, `rank` = ?, `type` = ?, `code` = ?, `licenseID` = ?, `updated_at` = ? WHERE `userID` = ?"
-                , [this.state.initial, this.state.rank, this.state.type, this.state.code, this.state.licenseID, this.state.updated_at, this.props.doctorID]
+                tx.executeSql("UPDATE `doctors` SET `initial` = ?, `rank` = ?, `type` = ?, `code` = ?, `licenseID` = ?, `updated_at` = ? WHERE `id` = ?"
+                , [this.state.initial, this.state.rank, this.state.type, this.state.code, this.state.licenseID, this.state.updated_at, this.state.id]
                 , (tx, rs) => {
                     console.log("updated doctors: " + rs.rowsAffected);
                 })
@@ -293,7 +294,6 @@ class EditUserSetting extends Component {
                 this.setState({refreshing: false})
                 this.props.navigator.replacePreviousAndPop({
                     id: 'UserSettingPage',
-                    passProps: { doctorID: this.props.doctorID }
                 });
                 ToastAndroid.show("Successfully saved!", 3000)
             })
@@ -341,16 +341,13 @@ var styles = StyleSheet.create({
     },
 })
 
-var NavigationBarRouteMapper = (doctorID, doctorName) => ({
+var NavigationBarRouteMapper = (doctorName) => ({
     LeftButton(route, navigator, index, navState) {
         return (
             <TouchableOpacity style={{flex: 1, justifyContent: 'center'}}
                 onPress={() => {
                     navigator.parentNavigator.replacePreviousAndPop({
-                        id: 'UserSettingPage',
-                        passProps: {
-                            doctorID: doctorID
-                        }
+                        id: 'UserSettingPage'
                     })
                 }}>
                 <Text style={{color: 'white', margin: 10,}}>

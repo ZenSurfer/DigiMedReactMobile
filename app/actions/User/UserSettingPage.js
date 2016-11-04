@@ -22,7 +22,8 @@ class UserSettingPage extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            doctorID: EnvInstance.getDoctor().id,
+            userID: EnvInstance.getDoctor().userID,
+            id: EnvInstance.getDoctor().id,
             doctorName: '',
             rowData: [],
 
@@ -37,7 +38,7 @@ class UserSettingPage extends Component {
     componentWillMount() {
         this.setState({refreshing: true});
         db.transaction((tx) => {
-            tx.executeSql("SELECT `doctors`.`id` as `doctorID`, `doctors`.`userID` as `userID`, `doctors`.`email` as email, `doctors`.`firstname` as `firstname`, `doctors`.`lastname` as `lastname`, `doctors`.`middlename` as `middlename`, `doctors`.`initial` as initial, `doctors`.`rank` as rank, `doctors`.`type` as type, `doctors`.`code` as code, `doctors`.`licenseID` as licenseID, `users`.`username` as `username`, `users`.`password` as `password` FROM `doctors` LEFT OUTER JOIN `users` ON `users`.`id` = `doctors`.`userID` WHERE `doctors`.`userID`= ? LIMIT 1", [this.state.doctorID], function(tx, rs) {
+            tx.executeSql("SELECT `doctors`.`id` as `doctorID`, `doctors`.`userID` as `userID`, `doctors`.`email` as email, `doctors`.`firstname` as `firstname`, `doctors`.`lastname` as `lastname`, `doctors`.`middlename` as `middlename`, `doctors`.`initial` as initial, `doctors`.`rank` as rank, `doctors`.`type` as type, `doctors`.`code` as code, `doctors`.`licenseID` as licenseID, `users`.`username` as `username`, `users`.`password` as `password` FROM `doctors` LEFT OUTER JOIN `users` ON `users`.`id` = `doctors`.`userID` WHERE `doctors`.`userID`= ? LIMIT 1", [this.state.userID], function(tx, rs) {
                 // alert(JSON.stringify(rs.rows.item(0)));
                 db.data = rs.rows.item(0);
             });
@@ -132,8 +133,7 @@ class UserSettingPage extends Component {
                         onPress={() =>  this.props.navigator.push({
                             id: 'EditUserSetting',
                             passProps: {
-                                doctorID: this.state.doctorID,
-                                doctorName: this.state.doctorName,
+                                doctorName: this.state.doctorName
                             }
                         })}>
                         <Icon name={'edit'} color={'#FFFFFF'} size={30}/>
@@ -145,7 +145,7 @@ class UserSettingPage extends Component {
     onRefresh() {
         this.setState({refreshing: true});
         db.transaction((tx) => {
-            tx.executeSql("SELECT `doctors`.`id` as `doctorID`, `doctors`.`userID` as `userID`, `doctors`.`email` as email, `doctors`.`firstname` as `firstname`, `doctors`.`lastname` as `lastname`, `doctors`.`middlename` as `middlename`, `doctors`.`initial` as initial, `doctors`.`rank` as rank, `doctors`.`type` as type, `doctors`.`code` as code, `doctors`.`licenseID` as licenseID, `users`.`username` as `username`, `users`.`password` as `password` FROM `doctors` LEFT OUTER JOIN `users` ON `users`.`id` = `doctors`.`userID` WHERE `doctors`.`userID`= ? LIMIT 1", [this.state.doctorID], function(tx, rs) {
+            tx.executeSql("SELECT `doctors`.`id` as `doctorID`, `doctors`.`userID` as `userID`, `doctors`.`email` as email, `doctors`.`firstname` as `firstname`, `doctors`.`lastname` as `lastname`, `doctors`.`middlename` as `middlename`, `doctors`.`initial` as initial, `doctors`.`rank` as rank, `doctors`.`type` as type, `doctors`.`code` as code, `doctors`.`licenseID` as licenseID, `users`.`username` as `username`, `users`.`password` as `password` FROM `doctors` LEFT OUTER JOIN `users` ON `users`.`id` = `doctors`.`userID` WHERE `doctors`.`userID`= ? LIMIT 1", [this.state.userID], function(tx, rs) {
                 //alert(JSON.stringify(rs.rows.item(0)));
                 db.data = rs.rows.item(0);
             });
