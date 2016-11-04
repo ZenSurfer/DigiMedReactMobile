@@ -199,7 +199,7 @@ class PatientPage extends Component {
             <TouchableNativeFeedback
                 onPress={() => this.gotoPatientProfile(rowData)}>
                 <View style={[styles.listView, {paddingTop: 0, paddingBottom: 0}]}>
-                    {(rowData.imagePath) ? ((this.state['patient'+rowData.id]) ? (<Image source={{uri: this.state['patient'+rowData.id]}} style={styles.avatarImage}/>) : ((<Icon name={'account-circle'} color={'grey'} size={80}  style={styles.avatarIcon}/>))) : (<Icon name={'account-circle'} color={'grey'} size={80}  style={styles.avatarIcon}/>)}
+                    {(rowData.imagePath) ? ((this.state['patient'+rowData.id]) ? (<Image source={{uri: this.state['patient'+rowData.id]}} style={[styles.avatarImage, {marginLeft: 20, marginRight: 12}]}/>) : ((<Icon name={'account-circle'} color={'grey'} size={80}  style={styles.avatarIcon}/>))) : (<Icon name={'account-circle'} color={'grey'} size={80}  style={styles.avatarIcon}/>)}
                     <View style={[styles.listText, {justifyContent: 'center'}]}>
                         <Text style={styles.listItemHead}>{rowData.firstname+' '+rowData.middlename+' '+rowData.lastname}</Text>
                         <Text style={styles.listItem}>{moment().diff(rowData.birthdate, 'years')} yo / {rowData.sex ? 'Male' : 'Female'}</Text>
