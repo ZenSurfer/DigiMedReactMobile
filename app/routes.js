@@ -44,6 +44,7 @@ import EditFollowup from './actions/Followup/EditFollowup'
 import UserSettingPage from './actions/User/UserSettingPage'
 import EditUserSetting from './actions/User/EditUserSetting'
 import UserProfilePage from './actions/User/UserProfilePage'
+import EditUserProfile from './actions/User/EditUserProfile'
 
 import Styles from './assets/Styles'
 
@@ -269,6 +270,13 @@ module.exports = (route, navigator, state) => {
            <UserProfilePage navigator={navigator} {...route.passProps}>
                <StatusBar backgroundColor='#2962FF'/>
            </UserProfilePage>
+       )
+   }
+   if (routeId === 'EditUserProfile') {
+       return (
+           <EditUserProfile navigator={navigator} {...route.passProps}>
+               <StatusBar backgroundColor='#2962FF'/>
+           </EditUserProfile>
        )
    }
 

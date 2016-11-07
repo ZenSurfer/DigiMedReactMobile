@@ -1,0 +1,431 @@
+'use-strict'
+
+import React, {Component} from 'react'
+import {Text, View, StyleSheet, Navigator, Image, DrawerLayoutAndroid, ListView, TouchableOpacity, InteractionManager, ScrollView, RefreshControl, Dimensions, ActivityIndicator, TextInput, Picker, DatePickerAndroid, ToastAndroid} from 'react-native'
+import RNFS from 'react-native-fs'
+import ImagePicker from 'react-native-image-picker'
+import Icon from 'react-native-vector-icons/MaterialIcons'
+import _ from 'lodash'
+import moment from 'moment'
+import Env from '../../env'
+
+import Styles from '../../assets/Styles'
+import DrawerPage from '../../components/DrawerPage'
+
+const drawerRef = {}
+const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
+const EnvInstance = new Env()
+const db = EnvInstance.db()
+const {height, width} = Dimensions.get('window')
+const avatar = require('../../assets/images/banner.jpg')
+
+class EditUserProfile extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            userID: EnvInstance.getDoctor().userID,
+            id: EnvInstance.getDoctor().id,
+            doctorName: '',
+            rowData: [],
+
+            firstname: '',
+            middlename: '',
+            lastname: '',
+            nameSuffix: '',
+            birthdate: {
+                text: moment().format('MMMM DD, YYYY'),
+                date: Date.now(),
+            },
+            sex: 1,
+            status: 'Single',
+            address: '',
+            phone1: '',
+            phone2: '',
+            email: '',
+            updated_at: moment().format('YYYY-MM-DD'),
+
+            refreshing: false,
+        }
+    }
+    componentWillMount() {
+        this.setState({refreshing: true});
+        db.transaction((tx) => {
+            tx.executeSql("SELECT `id`, `groupID`, `patientID`, `userID`, `firstname`, `middlename`, `lastname`, `nameSuffix`, `birthdate`, `sex`, `status`, `address`, `phone1`, `phone2`, `email`, `imagePath`, `imageMime`, `allowAsPatient`, `schedule`, `deleted_at`, `created_at`, `updated_at` FROM doctors WHERE `doctors`.`id`= ?", [this.state.id], function(tx, rs) {
+                // alert(JSON.stringify(rs.rows.item(0)));
+                db.data = rs.rows.item(0);
+            });
+        }, (err) => {
+            alert(err.message);
+        }, () => {
+            var rowData = db.data;
+            var doctorName = "Dr. "+rowData.firstname+" "+((rowData.middlename) ? rowData.middlename+" ":"")+" "+rowData.lastname;
+            if (rowData.imagePath != '')
+                RNFS.exists(RNFS.ExternalDirectoryPath+'/avatar/'+rowData.imagePath).then((exist) => {
+                    if (exist)
+                        RNFS.readFile(RNFS.ExternalDirectoryPath+'/avatar/'+rowData.imagePath, 'base64').then((rs) => {
+                            this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')});
+                        })
+                })
+            alert(this.state.rowData.imagePath);
+            this.setState({
+                refreshing: false,
+                firstname: rowData.firstname,
+                middlename: rowData.middlename,
+                lastname: rowData.lastname,
+                nameSuffix: rowData.nameSuffix,
+                birthdate: {
+                    text: moment(rowData.birthdate).format('MMMM DD, YYYY'),
+                    date: new Date(rowData.birthdate),
+                },
+                sex: rowData.sex,
+                status: rowData.status,
+                address: rowData.address,
+                phone1: rowData.phone1,
+                phone2: rowData.phone2,
+                email: rowData.email,
+                doctorName: doctorName
+            });
+        });
+    }
+    render() {
+        return (
+            <Navigator
+                renderScene={(this.state.renderPlaceholderOnly) ? this.renderPlaceholderView.bind(this) : this.renderScene.bind(this)}
+                navigator={this.props.navigator}
+                navigationBar={
+                    <Navigator.NavigationBar
+                        style={[Styles.navigationBar,{marginTop: 24}]}
+                        routeMapper={NavigationBarRouteMapper(this.props.doctorName)} />
+                }/>
+        )
+    }
+    componentDidMount() {
+        InteractionManager.runAfterInteractions(() => {
+            this.setState({renderPlaceholderOnly: false, progress: 1});
+        });
+    }
+    async showPicker(stateKey, options) {
+        try {
+            const {action, year, month, day} = await DatePickerAndroid.open(options);
+            if (action !== DatePickerAndroid.dismissedAction) {
+                var date = new Date(year, month, day);
+                this.setState({
+                    birthdate: {
+                        text: moment(date).format('MMMM DD, YYYY'),
+                        date: date
+                    }
+                });
+            }
+        } catch ({code, message}) {
+            console.warn(`Error in example '${stateKey}': `, message);
+        }
+    }
+    renderPlaceholderView() {
+        return (
+            <View style={Styles.containerStyle}>
+                {this.props.children}
+                <View style={[Styles.subTolbar, {marginTop: 24}]}>
+                    <Text style={Styles.subTitle}>Edit User Profile</Text>
+                </View>
+                <View style={Styles.loading}>
+                    <View style={Styles.horizontal}><ActivityIndicator color="#212121" size={23}/></View>
+                </View>
+            </View>
+        );
+    }
+    renderScene() {
+        return (
+            <View style={{flex: 1}}>
+                <View style={Styles.containerStyle}>
+                    {this.props.children}
+                    <View style={[Styles.subTolbar, {marginTop: 24}]}>
+                        <Text style={Styles.subTitle}>Edit Profile</Text>
+                    </View>
+                    <ScrollView
+                        keyboardShouldPersistTaps={true}>
+                        <View style={{height: 250, backgroundColor: '#EEEEEE'}}>
+                            {(this.state.avatar) ? (
+                                <Image
+                                    style={{backgroundColor: '#EEEEEE', width: width, height: 250}}
+                                    resizeMode={'cover'}
+                                    source={{uri: this.state.avatar}} />
+                            ) : (<View/>)}
+                        </View>
+                        <TouchableOpacity
+                            style={[Styles.buttonFab, Styles.buttonFabCam]}
+                            onPress={() => {
+                                ImagePicker.launchCamera({maxWidth: 800}, (rs)  => {
+                                    this.setState({avatar: (rs.data) ? 'data:image/jpeg;base64,'+rs.data : this.state.avatar})
+                                });
+                            }}>
+                            <Icon name={'photo-camera'} color={'#FFFFFF'} size={30}/>
+                        </TouchableOpacity>
+                        <View style={{backgroundColor: '#FFFFFF', padding: 16}}>
+                            <Text style={styles.label} >Firstname</Text>
+                            <TextInput
+                                placeholder={'Text Here...'}
+                                style={styles.textInput}
+                                autoCapitalize={'words'}
+                                value={_.toString(this.state.firstname)}
+                                placeholderTextColor={'#E0E0E0'}
+                                onChangeText={(text) => this.setState({firstname: text})} />
+                            <Text style={styles.label} >Middlename</Text>
+                            <TextInput
+                                placeholder={'Text Here...'}
+                                style={styles.textInput}
+                                autoCapitalize={'words'}
+                                value={_.toString(this.state.middlename)}
+                                placeholderTextColor={'#E0E0E0'}
+                                onChangeText={(text) => this.setState({middlename: text})} />
+                            <Text style={styles.label} >Lastname</Text>
+                            <TextInput
+                                placeholder={'Text Here...'}
+                                style={styles.textInput}
+                                autoCapitalize={'words'}
+                                value={_.toString(this.state.lastname)}
+                                placeholderTextColor={'#E0E0E0'}
+                                onChangeText={(text) => this.setState({lastname: text})} />
+                            <Text style={styles.label} >Name Suffix</Text>
+                            <TextInput
+                                placeholder={'Text Here...'}
+                                style={styles.textInput}
+                                autoCapitalize={'words'}
+                                value={_.toString(this.state.nameSuffix)}
+                                placeholderTextColor={'#E0E0E0'}
+                                onChangeText={(text) => this.setState({nameSuffix: text})} />
+                            <Text style={styles.label} >Birth Date</Text>
+                            <TextInput
+                                placeholder={'Text Here...'}
+                                style={styles.textInput}
+                                value={_.toString(this.state.birthdate.text)}
+                                placeholderTextColor={'#E0E0E0'}
+                                onFocus={this.showPicker.bind(this, 'simple', {date: this.state.birthdate.date})} />
+                            <Text style={styles.label} >Gender</Text>
+                            <View style={styles.select}>
+                                <Picker
+                                    mode={'dialog'}
+                                    selectedValue={(this.state.sex) ? this.state.sex : "1"}
+                                    onValueChange={(value) => this.setState({sex: value})} >
+                                    <Picker.Item label="Male" value="1" />
+                                    <Picker.Item label="Female" value="0" />
+                                </Picker>
+                            </View>
+                            <Text style={styles.label} >Civil Status</Text>
+                            <View style={styles.select}>
+                                <Picker
+                                    mode={'dialog'}
+                                    selectedValue={(this.state.status) ? this.state.status : "Single"}
+                                    onValueChange={(value) => this.setState({status: value})} >
+                                    <Picker.Item label="Single" value="Single" />
+                                    <Picker.Item label="Married" value="Married" />
+                                    <Picker.Item label="Widowed" value="Widowed" />
+                                    <Picker.Item label="Separated" value="Separated" />
+                                    <Picker.Item label="Divorced" value="Divorced" />
+                                </Picker>
+                            </View>
+                            <Text style={styles.label} >Address</Text>
+                            <TextInput
+                                placeholder={'Text Here...'}
+                                style={[styles.textInput, {textAlignVertical: 'top'}]}
+                                autoCapitalize={'words'}
+                                value={this.state.address}
+                                placeholderTextColor={'#E0E0E0'}
+                                multiline={true}
+                                numberOfLines={4}
+                                onChangeText={(text) => this.setState({address: text})} />
+                            <Text style={styles.label} >Mobile Number</Text>
+                            <TextInput
+                                keyboardType={'phone-pad'}
+                                placeholder={'Text Here...'}
+                                style={styles.textInput}
+                                autoCapitalize={'words'}
+                                value={_.toString(this.state.phone1)}
+                                placeholderTextColor={'#E0E0E0'}
+                                onChangeText={(text) => this.setState({phone1: text})} />
+                            <Text style={styles.label} >Home Number</Text>
+                            <TextInput
+                                keyboardType={'phone-pad'}
+                                placeholder={'Text Here...'}
+                                style={styles.textInput}
+                                autoCapitalize={'words'}
+                                value={_.toString(this.state.phone2)}
+                                placeholderTextColor={'#E0E0E0'}
+                                onChangeText={(text) => this.setState({phone2: text})} />
+                            <Text style={styles.label} >Email</Text>
+                            <TextInput
+                                keyboardType={'email-address'}
+                                placeholder={'Text Here...'}
+                                style={styles.textInput}
+                                autoCapitalize={'words'}
+                                value={_.toString(this.state.email)}
+                                placeholderTextColor={'#E0E0E0'}
+                                onChangeText={(text) => this.setState({email: text})} />
+                        </View>
+                    </ScrollView>
+                </View>
+                <TouchableOpacity
+                    style={[Styles.buttonFab, {backgroundColor: '#4CAF50'}]}
+                    onPress={this.onSubmit.bind(this)}>
+                    <Icon name={'save'} color={'#FFFFFF'} size={30}/>
+                </TouchableOpacity>
+            </View>
+        )
+    }
+    onSubmit() {
+        alert(JSON.stringify(this.state));
+        this.setState({refreshing: true})
+        RNFS.mkdir(RNFS.ExternalDirectoryPath+ '/avatar');
+        if (_.trim(this.state.firstname) !== '' && _.trim(this.state.lastname) !== '' && _.trim(this.state.middlename) !== '' && _.trim(this.state.phone2) !== '') {
+            var path = ''; var mime = '';
+            if (this.state.avatar) {
+                path = RNFS.ExternalDirectoryPath + '/avatar/'+this.guid()+'.jpeg';
+                mime = 'jpeg';
+            }
+            var birthdate = moment(this.state.birthdate.date).format('YYYY-MM-DD');
+            var imagePath = path;
+            var imageMime = mime;
+
+            db.transaction((tx) => {
+                tx.executeSql("UPDATE `doctors` SET `firstname` = ?, `middlename` = ?, `lastname` = ?, `nameSuffix` = ?, `birthdate` = ?, `sex` = ?, `status` = ?, `address` = ?, `phone1` = ?, `phone2` = ?, `email` = ?, `imagePath` = ?, `imageMime` = ?, `updated_at` = ? WHERE id = ?"
+                , [this.state.firstname, this.state.middlename, this.state.lastname, this.state.nameSuffix, birthdate, this.state.sex, this.state.status, this.state.address, this.state.phone1, this.state.phone2, this.state.email, imagePath, imageMime, this.state.updated_at, this.state.id]
+                , (tx, rs) => {
+                    console.log("updated: " + rs.rowsAffected);
+                })
+            }, (err) => {
+                this.setState({refreshing: false})
+                ToastAndroid.show("Error occured while saving!", 3000)
+            }, () => {
+                this.setState({refreshing: false})
+                if (this.state.avatar) {
+                    RNFS.writeFile(path, this.state.avatar, 'base64').then((success) => {
+                        this.props.navigator.replacePreviousAndPop({
+                            id: 'UserProfilePage'
+                        });
+                        ToastAndroid.show("Successfully saved!", 3000)
+                    }).catch((err) => {
+                        this.props.navigator.replacePreviousAndPop({
+                            id: 'UserProfilePage'
+                        });
+                        ToastAndroid.show("Error occured while saving image!", 3000)
+                    });
+                } else {
+                    this.props.navigator.replacePreviousAndPop({
+                        id: 'UserProfilePage'
+                    });
+                    ToastAndroid.show("Successfully saved!", 3000)
+                }
+            })
+        } else {
+            if (_.trim(this.state.firstname) == '') {
+                ToastAndroid.show("Invalid Last Name!", 3000)
+            } else if ( _.trim(this.state.lastname) == '') {
+                ToastAndroid.show("Invalid First Name!", 3000)
+            } else if (_.trim(this.state.middlename) == '') {
+                ToastAndroid.show("Invalid Middle Name!", 3000)
+            } else {
+                ToastAndroid.show("Invalid Mobile Number!", 3000)
+            }
+        }
+    }
+    drawerInstance(instance) {
+        drawerRef = instance
+    }
+    guid() {
+        var s4 = () => {
+            return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+        }
+        return moment().utc() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
+    }
+}
+
+var styles = StyleSheet.create({
+    avatarImage: {
+        height:  250,
+        width: width,
+        // borderRadius: 100,
+        marginLeft: 16,
+        marginRight: 16,
+        marginBottom: 6,
+    },
+    person: {
+        backgroundColor: '#FFFFFF',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'stretch',
+        paddingLeft: 16,
+        paddingRight: 16,
+    },
+    personInformation: {
+        flex: 1,
+        // flexDirection: 'row',
+        alignItems: 'center',
+        margin: 10,
+        marginBottom: 20,
+        marginTop: 0,
+    },
+    rows: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 15,
+    },
+    label: {
+        color: '#757575',
+        paddingRight: 5,
+        textAlignVertical: 'center',
+        // textDecorationLine: 'underline'
+    },
+    textWrapper: {
+        backgroundColor: '#FFFFFF',
+        paddingTop: 5,
+        paddingBottom: 5,
+        borderRadius: 2,
+    },
+    text: {
+        color: '#616161',
+        fontSize: 20,
+    },
+    hr: {
+      flex: 1,
+      height: 1,
+      backgroundColor: '#b3b3b3',
+  },
+    select: {
+        borderBottomWidth: 1,
+        borderBottomColor: '#757575',
+        borderStyle: 'solid',
+        marginLeft: 4,
+        marginRight: 4,
+        marginBottom: 10,
+        paddingLeft: -5,
+    },
+})
+
+var NavigationBarRouteMapper = (doctorName) => ({
+    LeftButton(route, navigator, index, navState) {
+        return (
+            <TouchableOpacity style={{flex: 1, justifyContent: 'center'}}
+                onPress={() => {
+                    navigator.parentNavigator.replacePreviousAndPop({
+                        id: 'UserProfilePage'
+                    })
+                }}>
+                <Text style={{color: 'white', margin: 10,}}>
+                    <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
+                </Text>
+            </TouchableOpacity>
+        )
+    },
+    RightButton(route, navigator, index, navState) {
+        return null
+    },
+    Title(route, navigator, index, navState) {
+        return (
+            <TouchableOpacity style={Styles.title}>
+                <Text style={Styles.titleText}>{doctorName}</Text>
+            </TouchableOpacity>
+        )
+    }
+})
+
+module.exports = EditUserProfile
