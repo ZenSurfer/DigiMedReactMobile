@@ -1,16 +1,14 @@
 'use strict'
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, Image, View, Navigator, InteractionManager, StatusBar, TouchableOpacity, TouchableNativeFeedback, ScrollView, TextInput, ToastAndroid, Dimensions, RefreshControl, ListView, Alert, Modal} from 'react-native'
+import {StyleSheet, Text, Image, View, Navigator, InteractionManager, StatusBar, TouchableOpacity, TouchableNativeFeedback, ScrollView, TextInput, ToastAndroid, Dimensions, RefreshControl, ListView, Alert, Modal, AsyncStorage} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import RNFS from 'react-native-fs'
 import Picker from 'react-native-picker-android'
-
 import _ from 'lodash'
 import moment from 'moment'
 import ImagePicker from 'react-native-image-picker'
 import Env from '../../env'
-
 import Styles from '../../assets/Styles'
 import DrawerPage from '../../components/DrawerPage'
 
@@ -23,7 +21,7 @@ class EditPrescription extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            doctorID: EnvInstance.getDoctor().id,
+            doctorID: 0,
             prescription: {},
             avatar: false,
             modalVisible: false,
@@ -80,6 +78,17 @@ class EditPrescription extends Component {
                     this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')})
                 })
         })
+    }
+    componentDidMount() {
+        this.updateCredentials().done();
+    }
+    async updateCredentials() {
+        try {
+            var doctor = await AsyncStorage.getItem('doctor');
+            this.setState({doctorID: JSON.parse(doctor).id})
+        } catch (error) {
+            console.log('AsyncStorage error: ' + error.message);
+        }
     }
     render() {
         return (

@@ -1,7 +1,7 @@
 'use strict';
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, View, Navigator, TouchableHighlight, TouchableOpacity, TextInput, Image, Dimensions, ScrollView, TouchableNativeFeedback, ActivityIndicator, ToastAndroid} from 'react-native'
+import {StyleSheet, Text, View, Navigator, TouchableHighlight, TouchableOpacity, TextInput, Image, Dimensions, ScrollView, TouchableNativeFeedback, ActivityIndicator, ToastAndroid, AsyncStorage} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import _ from 'lodash'
 import RNFS from 'react-native-fs'
@@ -33,11 +33,11 @@ class LoginPage extends Component {
                         keyboardShouldPersistTaps={true}>
                         <View style={[styles.scrollViewWrapper]}>
                             <View style={styles.imageWrapper}>
-                              <Image
-                                  style={{width: 300, height: 160}}
-                                  resizeMode={'contain'}
-                                  source={require('../assets/images/logo.png')}
-                                  />
+                                <Image
+                                    style={{width: 300, height: 160}}
+                                    resizeMode={'contain'}
+                                    source={require('../assets/images/logo.png')}
+                                />
                             </View>
                             <View style={{alignItems: 'center'}}>
                                 <View style={[styles.textInputWrapper, {width: 300}]}>
@@ -65,7 +65,7 @@ class LoginPage extends Component {
                                                 onPress={() => this.setState({visibility: false})}>
                                                 <Icon size={25} name={'visibility-off'} color={'#90CAF9'} style={{padding: 10}}/>
                                             </TouchableOpacity>
-                                        ) : (
+                                            ) : (
                                             <TouchableOpacity
                                                 style={{position: 'absolute', top: 0, height: 50, right: 0, flex: 1, justifyContent: 'center'}}
                                                 onPress={() => this.setState({visibility: true})}>
@@ -74,7 +74,7 @@ class LoginPage extends Component {
                                         )}
                                     </View>
                                     <TextInput
-                                        placeholder={'Cloud Url'}
+                                        placeholder={'Cloud Server (Optional)'}
                                         style={[styles.textInput,{color: '#FFF', textAlign: 'center'}]}
                                         value={this.state.cloudUrl}
                                         placeholderTextColor={'#90CAF9'}
@@ -88,19 +88,20 @@ class LoginPage extends Component {
                                                     this.setState({auth: true})
                                                     db.transaction((tx) => {
                                                         db.passed = false;
-                                                        tx.executeSql("SELECT * FROM users WHERE username=? AND userType='doctor' AND accountVerified=1 AND (deleted_at in (null, 'NULL', '') OR deleted_at is null) LIMIT 1", [this.state.username], (tx, rs) => {
+                                                        tx.executeSql("SELECT `doctors`.`userID`, `doctors`.`id`, ('Dr. ' || `doctors`.`firstname` || ' ' || `doctors`.`middlename` || ' ' || `doctors`.`lastname`) as name, `doctors`.`type`, `doctors`.`initial`, `users`.`password` FROM `users` LEFT OUTER JOIN `doctors` ON `doctors`.`userID`=`users`.`id` WHERE `users`.`username`=? AND `users`.`userType`='doctor' AND `users`.`accountVerified`=1 AND (`users`.`deleted_at` in (null, 'NULL', '') OR `users`.`deleted_at` is null) LIMIT 1", [this.state.username], (tx, rs) => {
                                                             if (bcrypt.compareSync(this.state.password, rs.rows.item(0).password)) {
                                                                 db.data = rs.rows.item(0);
                                                                 db.passed = true;
+                                                                console.log('passed');
                                                             }
                                                         })
                                                     }, (err) => {
                                                         alert(err.message)
                                                     }, () => {
                                                         if(db.passed) {
+                                                            AsyncStorage.setItem('doctor', JSON.stringify(_.omit(db.data, ['password'])))
                                                             this.props.navigator.replace({
                                                                 id: 'SplashPage',
-                                                                passProps: {doctor: db.data},
                                                                 sceneConfig: Navigator.SceneConfigs.FadeAndroid
                                                             })
                                                             this.setState({auth: false})
@@ -114,22 +115,22 @@ class LoginPage extends Component {
                                                     <Text style={{color: '#FFF'}}>LOGIN</Text>
                                                 </View>
                                             </TouchableNativeFeedback>
-                                        ) : (
+                                            ) : (
                                             <View style={[Styles.coloredButton, styles.button, {marginBottom: 0}]}>
                                                 <Text style={{color: '#FFF'}}>AUTHENTICATING</Text>
                                             </View>
                                         )}
-                                        <TouchableNativeFeedback
+                                        {/* <TouchableNativeFeedback
                                             onPress={() => {
-                                                this.props.navigator.replace({
-                                                    id: 'SplashPage',
-                                                    sceneConfig: Navigator.SceneConfigs.FadeAndroid
-                                                })
+                                            this.props.navigator.replace({
+                                            id: 'SplashPage',
+                                            sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                            })
                                             }}>
                                             <View style={[Styles.coloredButton, styles.button, {backgroundColor: '#2962FF', marginTop: 0}]}>
-                                                <Text style={{color: '#90CAF9'}}>OFFLINE</Text>
+                                            <Text style={{color: '#90CAF9'}}>OFFLINE</Text>
                                             </View>
-                                        </TouchableNativeFeedback>
+                                        </TouchableNativeFeedback> */}
                                     </View>
                                     {(this.state.auth) ? (
                                         <View style={{position: 'absolute', height: 150, width: 280, top: 0}}>

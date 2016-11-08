@@ -1,13 +1,12 @@
 'use strict'
 
 import React, {Component} from 'react'
-import { Text, StyleSheet, View, DrawerLayoutAndroid, Navigator, ToastAndroid, ProgressBarAndroid, InteractionManager, TouchableOpacity, DatePickerAndroid, TimePickerAndroid, Picker, TextInput, ScrollView, ListView, Modal, RefreshControl, TouchableNativeFeedback, Alert} from 'react-native'
+import { Text, StyleSheet, View, DrawerLayoutAndroid, Navigator, ToastAndroid, ProgressBarAndroid, InteractionManager, TouchableOpacity, DatePickerAndroid, TimePickerAndroid, Picker, TextInput, ScrollView, ListView, Modal, RefreshControl, TouchableNativeFeedback, Alert, AsyncStorage} from 'react-native'
 import RNFS from 'react-native-fs'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import moment from 'moment'
 import _ from 'lodash'
 import Env from '../../env'
-
 import Styles from '../../assets/Styles'
 
 const EnvInstance = new Env()
@@ -18,7 +17,7 @@ class EditFollowup extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            doctorID: EnvInstance.getDoctor().id,
+            doctorID: 0,
             presetText: moment().format('MMMM DD, YYYY'),
             presetDate: Date.now(),
             presetStart: {
@@ -75,6 +74,17 @@ class EditFollowup extends Component {
                     this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')})
                 })
         })
+    }
+    componentDidMount() {
+        this.updateCredentials().done();
+    }
+    async updateCredentials() {
+        try {
+            var doctor = await AsyncStorage.getItem('doctor');
+            this.setState({doctorID: JSON.parse(doctor).id})
+        } catch (error) {
+            console.log('AsyncStorage error: ' + error.message);
+        }
     }
     async showPicker(stateKey, startFrom) {
         if (stateKey === 'date') {

@@ -12,8 +12,10 @@ function Env() {
     this.db = function () {
         return SQLite.openDatabase({name : "testDB"})
     }
-    this.setDoctor = function(id, name) {
-        this.doctor = {id: id, name: name}
+    this.setDoctor = function(v, i) {
+        var doctor = this.doctor;
+        doctor[i] = v;
+        this.doctor =  doctor;
     }
     this.getDoctor = function() {
         return this.doctor

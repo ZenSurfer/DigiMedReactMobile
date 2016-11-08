@@ -1,14 +1,13 @@
 'use-strict'
 
 import React, {Component} from 'react'
-import {Text, View, StyleSheet, Navigator, Image, DrawerLayoutAndroid, ListView, TouchableOpacity, InteractionManager, ScrollView, RefreshControl, Dimensions, ActivityIndicator, TextInput, Picker, DatePickerAndroid, ToastAndroid} from 'react-native'
+import {Text, View, StyleSheet, Navigator, Image, DrawerLayoutAndroid, ListView, TouchableOpacity, InteractionManager, ScrollView, RefreshControl, Dimensions, ActivityIndicator, TextInput, Picker, DatePickerAndroid, ToastAndroid, AsyncStorage} from 'react-native'
 import RNFS from 'react-native-fs'
 import ImagePicker from 'react-native-image-picker'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import _ from 'lodash'
 import moment from 'moment'
 import Env from '../../env'
-
 import Styles from '../../assets/Styles'
 import DrawerPage from '../../components/DrawerPage'
 
@@ -23,8 +22,6 @@ class EditUserProfile extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            userID: EnvInstance.getDoctor().userID,
-            id: EnvInstance.getDoctor().id,
             doctorName: '',
             rowData: [],
 
@@ -50,40 +47,35 @@ class EditUserProfile extends Component {
     componentWillMount() {
         this.setState({refreshing: true});
         db.transaction((tx) => {
-            tx.executeSql("SELECT `id`, `groupID`, `patientID`, `userID`, `firstname`, `middlename`, `lastname`, `nameSuffix`, `birthdate`, `sex`, `status`, `address`, `phone1`, `phone2`, `email`, `imagePath`, `imageMime`, `allowAsPatient`, `schedule`, `deleted_at`, `created_at`, `updated_at` FROM doctors WHERE `doctors`.`id`= ?", [this.state.id], function(tx, rs) {
-                // alert(JSON.stringify(rs.rows.item(0)));
+            tx.executeSql("SELECT `id`, `groupID`, `patientID`, `userID`, `firstname`, `middlename`, `lastname`, `nameSuffix`, `birthdate`, `sex`, `status`, `address`, `phone1`, `phone2`, `email`, `imagePath`, `imageMime`, `allowAsPatient`, `schedule`, `deleted_at`, `created_at`, `updated_at` FROM doctors WHERE `doctors`.`id`= ?", [this.props.doctorID], function(tx, rs) {
                 db.data = rs.rows.item(0);
             });
         }, (err) => {
             alert(err.message);
         }, () => {
-            var rowData = db.data;
-            var doctorName = "Dr. "+rowData.firstname+" "+((rowData.middlename) ? rowData.middlename+" ":"")+" "+rowData.lastname;
-            if (rowData.imagePath != '')
-                RNFS.exists(RNFS.ExternalDirectoryPath+'/avatar/'+rowData.imagePath).then((exist) => {
+            if (db.data.imagePath)
+                RNFS.exists(db.data.imagePath).then((exist) => {
                     if (exist)
-                        RNFS.readFile(RNFS.ExternalDirectoryPath+'/avatar/'+rowData.imagePath, 'base64').then((rs) => {
+                        RNFS.readFile(db.data.imagePath, 'base64').then((rs) => {
                             this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')});
                         })
                 })
-            alert(this.state.rowData.imagePath);
             this.setState({
                 refreshing: false,
-                firstname: rowData.firstname,
-                middlename: rowData.middlename,
-                lastname: rowData.lastname,
-                nameSuffix: rowData.nameSuffix,
+                firstname: db.data.firstname,
+                middlename: db.data.middlename,
+                lastname: db.data.lastname,
+                nameSuffix: db.data.nameSuffix,
                 birthdate: {
-                    text: moment(rowData.birthdate).format('MMMM DD, YYYY'),
-                    date: new Date(rowData.birthdate),
+                    text: moment(db.data.birthdate).format('MMMM DD, YYYY'),
+                    date: new Date(db.data.birthdate),
                 },
-                sex: rowData.sex,
-                status: rowData.status,
-                address: rowData.address,
-                phone1: rowData.phone1,
-                phone2: rowData.phone2,
-                email: rowData.email,
-                doctorName: doctorName
+                sex: db.data.sex,
+                status: db.data.status,
+                address: db.data.address,
+                phone1: db.data.phone1,
+                phone2: db.data.phone2,
+                email: db.data.email
             });
         });
     }
@@ -143,23 +135,37 @@ class EditUserProfile extends Component {
                     </View>
                     <ScrollView
                         keyboardShouldPersistTaps={true}>
-                        <View style={{height: 250, backgroundColor: '#EEEEEE'}}>
+                        <View style={{height: 300, backgroundColor: '#EEEEEE'}}>
                             {(this.state.avatar) ? (
                                 <Image
-                                    style={{backgroundColor: '#EEEEEE', width: width, height: 250}}
+                                    style={{backgroundColor: '#EEEEEE', width: width, height: 300}}
                                     resizeMode={'cover'}
                                     source={{uri: this.state.avatar}} />
-                            ) : (<View/>)}
+                                ) : (<View/>)}
                         </View>
-                        <TouchableOpacity
-                            style={[Styles.buttonFab, Styles.buttonFabCam]}
-                            onPress={() => {
-                                ImagePicker.launchCamera({maxWidth: 800}, (rs)  => {
-                                    this.setState({avatar: (rs.data) ? 'data:image/jpeg;base64,'+rs.data : this.state.avatar})
-                                });
-                            }}>
-                            <Icon name={'photo-camera'} color={'#FFFFFF'} size={30}/>
-                        </TouchableOpacity>
+
+                        <View style={{position: 'absolute', top: 0, flex: 1, flexDirection: 'row', justifyContent: 'center', zIndex: 2}}>
+                            <View style={{flex: 1, alignItems: 'center', height: 300, flexDirection: 'row', justifyContent: 'center'}}>
+                                <TouchableOpacity
+                                    style={{padding: 18, backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: 50, marginRight: 4}}
+                                    onPress={() => {
+                                        ImagePicker.launchCamera({maxWidth: 800}, (rs)  => {
+                                            this.setState({avatar: (rs.data) ? 'data:image/jpeg;base64,'+rs.data : this.state.avatar})
+                                        });
+                                    }}>
+                                    <Icon name={'photo-camera'} color={'#FFFFFF'} size={30}/>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={{padding: 18, backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: 50, marginLeft: 4}}
+                                    onPress={() => {
+                                        ImagePicker.launchImageLibrary({maxWidth: 800}, (rs)  => {
+                                            this.setState({avatar: (rs.data) ? 'data:image/jpeg;base64,'+rs.data : this.state.avatar})
+                                        });
+                                    }}>
+                                    <Icon name={'photo-library'} color={'#FFFFFF'} size={30}/>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
                         <View style={{backgroundColor: '#FFFFFF', padding: 16}}>
                             <Text style={styles.label} >Firstname</Text>
                             <TextInput
@@ -255,7 +261,7 @@ class EditUserProfile extends Component {
                             <TextInput
                                 keyboardType={'email-address'}
                                 placeholder={'Text Here...'}
-                                style={styles.textInput}
+                                style={[styles.textInput, {marginBottom: 80}]}
                                 autoCapitalize={'words'}
                                 value={_.toString(this.state.email)}
                                 placeholderTextColor={'#E0E0E0'}
@@ -272,7 +278,6 @@ class EditUserProfile extends Component {
         )
     }
     onSubmit() {
-        alert(JSON.stringify(this.state));
         this.setState({refreshing: true})
         RNFS.mkdir(RNFS.ExternalDirectoryPath+ '/avatar');
         if (_.trim(this.state.firstname) !== '' && _.trim(this.state.lastname) !== '' && _.trim(this.state.middlename) !== '' && _.trim(this.state.phone2) !== '') {
@@ -287,44 +292,48 @@ class EditUserProfile extends Component {
 
             db.transaction((tx) => {
                 tx.executeSql("UPDATE `doctors` SET `firstname` = ?, `middlename` = ?, `lastname` = ?, `nameSuffix` = ?, `birthdate` = ?, `sex` = ?, `status` = ?, `address` = ?, `phone1` = ?, `phone2` = ?, `email` = ?, `imagePath` = ?, `imageMime` = ?, `updated_at` = ? WHERE id = ?"
-                , [this.state.firstname, this.state.middlename, this.state.lastname, this.state.nameSuffix, birthdate, this.state.sex, this.state.status, this.state.address, this.state.phone1, this.state.phone2, this.state.email, imagePath, imageMime, this.state.updated_at, this.state.id]
+                , [this.state.firstname, this.state.middlename, this.state.lastname, this.state.nameSuffix, birthdate, this.state.sex, this.state.status, this.state.address, this.state.phone1, this.state.phone2, this.state.email, imagePath, imageMime, this.state.updated_at, this.props.doctorID]
                 , (tx, rs) => {
                     console.log("updated: " + rs.rowsAffected);
                 })
             }, (err) => {
                 this.setState({refreshing: false})
-                ToastAndroid.show("Error occured while saving!", 3000)
+                ToastAndroid.show("Error occured while saving!", 1000)
             }, () => {
                 this.setState({refreshing: false})
+                var doctor = {};
+                doctor['name'] = 'Dr. '+this.state.firstname+' '+this.state.middlename+' '+this.state.lastname;
+                this.updateCredentials(doctor).done()
                 if (this.state.avatar) {
                     RNFS.writeFile(path, this.state.avatar, 'base64').then((success) => {
-                        this.props.navigator.replacePreviousAndPop({
-                            id: 'UserProfilePage'
-                        });
+                        this.props.navigator.pop();
                         ToastAndroid.show("Successfully saved!", 3000)
                     }).catch((err) => {
-                        this.props.navigator.replacePreviousAndPop({
-                            id: 'UserProfilePage'
-                        });
-                        ToastAndroid.show("Error occured while saving image!", 3000)
+                        this.props.navigator.pop();
+                        ToastAndroid.show("Error occured while saving image!", 1000)
                     });
                 } else {
-                    this.props.navigator.replacePreviousAndPop({
-                        id: 'UserProfilePage'
-                    });
+                    this.props.navigator.pop();
                     ToastAndroid.show("Successfully saved!", 3000)
                 }
             })
         } else {
             if (_.trim(this.state.firstname) == '') {
-                ToastAndroid.show("Invalid Last Name!", 3000)
+                ToastAndroid.show("Invalid Last Name!", 1000)
             } else if ( _.trim(this.state.lastname) == '') {
-                ToastAndroid.show("Invalid First Name!", 3000)
+                ToastAndroid.show("Invalid First Name!", 1000)
             } else if (_.trim(this.state.middlename) == '') {
-                ToastAndroid.show("Invalid Middle Name!", 3000)
+                ToastAndroid.show("Invalid Middle Name!", 1000)
             } else {
-                ToastAndroid.show("Invalid Mobile Number!", 3000)
+                ToastAndroid.show("Invalid Mobile Number!", 1000)
             }
+        }
+    }
+    async updateCredentials(doctor) {
+        try {
+            await AsyncStorage.mergeItem('doctor', JSON.stringify(doctor));
+        } catch (error) {
+            alert('AsyncStorage error: ' + error.message);
         }
     }
     drawerInstance(instance) {
@@ -341,7 +350,7 @@ class EditUserProfile extends Component {
 
 var styles = StyleSheet.create({
     avatarImage: {
-        height:  250,
+        height:  300,
         width: width,
         // borderRadius: 100,
         marginLeft: 16,
@@ -406,9 +415,7 @@ var NavigationBarRouteMapper = (doctorName) => ({
         return (
             <TouchableOpacity style={{flex: 1, justifyContent: 'center'}}
                 onPress={() => {
-                    navigator.parentNavigator.replacePreviousAndPop({
-                        id: 'UserProfilePage'
-                    })
+                    navigator.parentNavigator.pop()
                 }}>
                 <Text style={{color: 'white', margin: 10,}}>
                     <Icon name="keyboard-arrow-left" size={30} color="#FFF" />

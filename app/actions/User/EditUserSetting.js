@@ -1,14 +1,13 @@
 'use-strict'
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, View, ScrollView, Navigator, TouchableOpacity, ListView, DrawerLayoutAndroid, RefreshControl, Dimensions, InteractionManager, ActivityIndicator, TextInput, ToastAndroid, Modal, TouchableNativeFeedback} from 'react-native'
+import {StyleSheet, Text, View, ScrollView, Navigator, TouchableOpacity, ListView, DrawerLayoutAndroid, RefreshControl, Dimensions, InteractionManager, ActivityIndicator, TextInput, ToastAndroid, Modal, TouchableNativeFeedback, AsyncStorage} from 'react-native'
 import RNFS from 'react-native-fs'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import moment from 'moment'
 import _ from 'lodash'
 import Env from '../../env'
 import bcrypt from 'react-native-bcrypt'
-
 import Styles from '../../assets/Styles'
 import DrawerPage from '../../components/DrawerPage'
 
@@ -23,8 +22,6 @@ class EditUserSetting extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            userID: EnvInstance.getDoctor().userID,
-            id: EnvInstance.getDoctor().id,
             rowData: [],
             refreshing: true,
 
@@ -51,7 +48,7 @@ class EditUserSetting extends Component {
     componentWillMount() {
         this.setState({refreshing: true});
         db.transaction((tx) => {
-            tx.executeSql("SELECT `doctors`.`id` as `doctorID`, `doctors`.`userID` as `userID`, `doctors`.`email` as email, `doctors`.`firstname` as `firstname`, `doctors`.`lastname` as `lastname`, `doctors`.`middlename` as `middlename`, `doctors`.`initial` as `initial`, `doctors`.`rank` as `rank`, `doctors`.`type` as `type`, `doctors`.`code` as `code`, `doctors`.`licenseID` as `licenseID`, `users`.`username` as `username`, `users`.`password` as `password` FROM `doctors` LEFT OUTER JOIN `users` ON `users`.`id` = `doctors`.`userID` WHERE `doctors`.`userID`= ? LIMIT 1", [this.state.userID], function(tx, rs) {
+            tx.executeSql("SELECT `doctors`.`id` as `doctorID`, `doctors`.`userID` as `userID`, `doctors`.`email` as email, `doctors`.`firstname` as `firstname`, `doctors`.`lastname` as `lastname`, `doctors`.`middlename` as `middlename`, `doctors`.`initial` as `initial`, `doctors`.`rank` as `rank`, `doctors`.`type` as `type`, `doctors`.`code` as `code`, `doctors`.`licenseID` as `licenseID`, `users`.`username` as `username`, `users`.`password` as `password` FROM `doctors` LEFT OUTER JOIN `users` ON `users`.`id` = `doctors`.`userID` WHERE `doctors`.`userID`= ? LIMIT 1", [this.props.userID], function(tx, rs) {
                 // alert(JSON.stringify(rs.rows.item(0)));
                 db.data = rs.rows.item(0);
             });
@@ -160,7 +157,7 @@ class EditUserSetting extends Component {
                                                         newPassword = newPassword.replace('$2a$', '$2y$');
                                                         db.transaction((tx) => {
                                                             tx.executeSql("UPDATE `users` SET `password` = ?, `updated_at` = ? WHERE `id` = ?"
-                                                            , [newPassword, this.state.updated_at, this.state.userID]
+                                                            , [newPassword, this.state.updated_at, this.props.userID]
                                                             , (tx, rs) => {
                                                                 console.log("updated doctors: " + rs.rowsAffected);
                                                             })
@@ -286,15 +283,11 @@ class EditUserSetting extends Component {
         this.setState({refreshing: true})
         if (_.trim(this.state.username) !== '' && _.trim(this.state.licenseID) !== '') {
             db.transaction((tx) => {
-                tx.executeSql("UPDATE `users` SET `username` = ?, `updated_at` = ? WHERE `id` = ?"
-                , [this.state.username, this.state.updated_at, this.state.userID]
-                , (tx, rs) => {
+                tx.executeSql("UPDATE `users` SET `username` = ?, `updated_at` = ? WHERE `id` = ?", [this.state.username,this.state.updated_at, this.props.userID], (tx, rs) => {
                     console.log("updated users: " + rs.rowsAffected);
                 })
 
-                tx.executeSql("UPDATE `doctors` SET `initial` = ?, `rank` = ?, `type` = ?, `code` = ?, `licenseID` = ?, `updated_at` = ? WHERE `id` = ?"
-                , [this.state.initial, this.state.rank, this.state.type, this.state.code, this.state.licenseID, this.state.updated_at, this.state.id]
-                , (tx, rs) => {
+                tx.executeSql("UPDATE `doctors` SET `initial` = ?, `rank` = ?, `type` = ?, `code` = ?, `licenseID` = ?, `updated_at` = ? WHERE `id` = ?", [this.state.initial, this.state.rank, this.state.type, this.state.code, this.state.licenseID, this.state.updated_at, this.props.doctorID], (tx, rs) => {
                     console.log("updated doctors: " + rs.rowsAffected);
                 })
             }, (err) => {
@@ -302,6 +295,10 @@ class EditUserSetting extends Component {
                 ToastAndroid.show("Error occured while saving!", 3000)
             }, () => {
                 this.setState({refreshing: false})
+                var doctor = {};
+                doctor['type'] = this.state.type;
+                doctor['initial'] = this.state.initial;
+                this.updateCredentials(doctor).done()
                 this.props.navigator.pop();
                 ToastAndroid.show("Successfully saved!", 3000)
             })
@@ -313,6 +310,13 @@ class EditUserSetting extends Component {
             } else {
                 ToastAndroid.show("An error occured!", 3000)
             }
+        }
+    }
+    async updateCredentials(doctor) {
+        try {
+            await AsyncStorage.mergeItem('doctor', JSON.stringify(doctor));
+        } catch (error) {
+            alert('AsyncStorage error: ' + error.message);
         }
     }
     drawerInstance(instance) {

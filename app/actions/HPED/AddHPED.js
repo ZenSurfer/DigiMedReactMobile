@@ -1,15 +1,13 @@
 'use strict'
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, Image, View, Navigator, InteractionManager, DrawerLayoutAndroid, StatusBar, TouchableOpacity, TouchableNativeFeedback, DatePickerAndroid, ScrollView, TextInput, Picker, TimePickerAndroid, Slider, Switch, ToastAndroid, Dimensions, Modal, RefreshControl, ListView} from 'react-native'
+import {StyleSheet, Text, Image, View, Navigator, InteractionManager, DrawerLayoutAndroid, StatusBar, TouchableOpacity, TouchableNativeFeedback, DatePickerAndroid, ScrollView, TextInput, Picker, TimePickerAndroid, Slider, Switch, ToastAndroid, Dimensions, Modal, RefreshControl, ListView, AsyncStorage} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import RNFS from 'react-native-fs'
-
 import _ from 'lodash'
 import moment from 'moment'
 import ImagePicker from 'react-native-image-picker'
 import Env from '../../env'
-
 import Styles from '../../assets/Styles'
 import DrawerPage from '../../components/DrawerPage'
 
@@ -24,7 +22,7 @@ class AddHPED extends Component {
         super(props)
         this.state = {
             patientID: '',
-            doctorID: EnvInstance.getDoctor().id,
+            doctorID: 0,
             appointmentID: '',
             preparedByID: '',
             chiefComplaint: '',
@@ -79,6 +77,17 @@ class AddHPED extends Component {
                     this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')})
                 })
         })
+    }
+    componentDidMount() {
+        this.updateCredentials().done();
+    }
+    async updateCredentials() {
+        try {
+            var doctor = await AsyncStorage.getItem('doctor');
+            this.setState({doctorID: JSON.parse(doctor).id})
+        } catch (error) {
+            console.log('AsyncStorage error: ' + error.message);
+        }
     }
     render() {
         return (

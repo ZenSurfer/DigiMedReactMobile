@@ -1,7 +1,7 @@
 'use strict';
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, View, ListView, RefreshControl, Navigator, Dimensions, ToastAndroid, TouchableOpacity, TouchableNativeFeedback, Image, Alert} from 'react-native'
+import {StyleSheet, Text, View, ListView, RefreshControl, Navigator, Dimensions, ToastAndroid, TouchableOpacity, TouchableNativeFeedback, Image, Alert, AsyncStorage} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import RNFS from 'react-native-fs'
 import _ from 'lodash'
@@ -18,31 +18,32 @@ class FollowupPage extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            doctorID: EnvInstance.getDoctor().id,
+            doctorID: 0,
             refreshing: false,
             rowData: [],
             avatar: false
         }
     }
     componentWillMount() {
-        this.setState({refreshing: true})
-        db.transaction((tx) => {
-            tx.executeSql("SELECT * FROM followup WHERE diagnosisID=? AND leadSurgeon=? AND (deleted_at in (null, 'NULL', '') OR deleted_at is null) ORDER BY date DESC, time DESC", [this.props.diagnosisID, this.state.doctorID], function(tx, rs) {
-                db.data = rs.rows
-            }, (err) =>  { alert(err.message); });
-        }, (err) => { alert(err.message); }, () => {
-            var rowData = [];
-            _.forEach(db.data, function(v, i) {
-                rowData.push(db.data.item(i))
-            })
-            this.setState({refreshing: false, rowData: rowData})
-        })
         RNFS.exists(this.props.patientAvatar).then((exist) => {
             if (exist)
                 RNFS.readFile(this.props.patientAvatar, 'base64').then((rs) => {
                     this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')})
                 })
         })
+    }
+    componentDidMount() {
+        this.updateCredentials().done();
+    }
+    async updateCredentials() {
+        try {
+            var doctor = await AsyncStorage.getItem('doctor');
+            this.setState({doctorID: JSON.parse(doctor).id})
+        } catch (error) {
+            console.log('AsyncStorage error: ' + error.message);
+        } finally {
+            this.onRefresh();
+        }
     }
     render() {
         return (

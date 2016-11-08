@@ -9,7 +9,7 @@ class AwesomeProject extends Component {
     render() {
         return (
             <Navigator
-                initialRoute={{id: 'PatientPage'}}
+                initialRoute={{id: 'LoginPage'}}
                 renderScene={this.renderScene.bind(this)}
                 configureScene={(route) => {
                     if (route.sceneConfig) {

@@ -1,13 +1,12 @@
 'use strict'
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, Image, View, Alert, DatePickerAndroid, Navigator, DrawerLayoutAndroid, TouchableNativeFeedback, TouchableOpacity, ListView, RefreshControl} from 'react-native'
+import {StyleSheet, Text, Image, View, Alert, DatePickerAndroid, Navigator, DrawerLayoutAndroid, TouchableNativeFeedback, TouchableOpacity, ListView, RefreshControl, AsyncStorage} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import _ from 'lodash'
 import moment from 'moment'
 import Env from '../../env'
 import Parser from 'react-native-html-parser'
-
 import Styles from '../../assets/Styles'
 import DrawerPage from '../../components/DrawerPage'
 
@@ -16,7 +15,6 @@ const DomParser = Parser.DOMParser
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 const EnvInstance = new Env()
 const db = EnvInstance.db()
-
 const months = [
   "January", "February", "March",
   "April", "May", "June", "July",
@@ -28,7 +26,7 @@ class AppointmentPage extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            doctorID: EnvInstance.getDoctor().id,
+            doctorID: 0,
             presetText: moment().format('MMMM DD, YYYY'),
             presetDate: Date.now(),
             refreshing: true,
@@ -48,94 +46,18 @@ class AppointmentPage extends Component {
             }
         }
     }
-    componentWillMount() {
-        this.setState({refreshing: true})
-        var appointments = {}; var currentDate = moment(this.state.presetDate).format("YYYY-MM-DD");
-        db.transaction((tx) => {
-            db.data = [];
-            tx.executeSql("SELECT `appointments`.`id` as `id`, `appointments`.`date` as date, `appointments`.`timeStart` as `time`, `appointments`.`notes` as `notes`, `patients`.`id` as `patientID`, `patients`.`imagePath` as `imagePath`, `patients`.`firstname` as `firstname`, `patients`.`middlename` as `middlename`, `patients`.`lastname` as `lastname`, `appointments`.`type` as `type`, `doctors`.`firstname` as `doctorFirstname`, `doctors`.`middlename` as `doctorMiddlename`, `doctors`.`lastname` as `doctorLastname` FROM `appointments` LEFT OUTER JOIN `patients` ON `patients`.`id` = `appointments`.`patientID` LEFT OUTER JOIN `doctors` on `doctors`.`id` = `appointments`.`doctorID` WHERE `doctors`.`id`= "+ this.state.doctorID +" AND (`appointments`.`deleted_at` in (null, 'NULL', '') OR `appointments`.`deleted_at` is null) AND `patients`.`deleted_at` in (null, 'NULL', '') AND `appointments`.`date` = ? ORDER BY `appointments`.`timeStart` ASC", [currentDate], function(tx, rs) {
-                if (rs.rows.length > 0) {
-                    _.forEach(rs.rows, (v, i) => {
-                        if (_.isEmpty(appointments[moment(rs.rows.item(i).date+' '+rs.rows.item(i).time).format("hh:mm A")])) {
-                            appointments[moment(rs.rows.item(i).date+' '+rs.rows.item(i).time).format("hh:mm A")] = [];
-                            appointments[moment(rs.rows.item(i).date+' '+rs.rows.item(i).time).format("hh:mm A")].push({
-                                'patientID': rs.rows.item(i).patientID,
-                                'imagePath': rs.rows.item(i).imagePath,
-                                'diagnosisID': null,
-                                'time': moment(rs.rows.item(i).date+' '+rs.rows.item(i).time).format("hh:mm A"),
-                                'patient': rs.rows.item(i).firstname+' '+rs.rows.item(i).middlename+' '+rs.rows.item(i).lastname,
-                                'note': rs.rows.item(i).notes,
-                                'type': rs.rows.item(i).type,
-                                'doctor': 'Dr. '+rs.rows.item(i).doctorFirstname+' '+((rs.rows.item(i).doctorMiddlename) ? rs.rows.item(i).doctorMiddlename+' ':'')+rs.rows.item(i).doctorLastname,
-                            })
-                        } else {
-                            appointments[moment(rs.rows.item(i).date+' '+rs.rows.item(i).time).format("hh:mm A")].push({
-                                'patientID': rs.rows.item(i).patientID,
-                                'imagePath': rs.rows.item(i).imagePath,
-                                'diagnosisID': null,
-                                'time': moment(rs.rows.item(i).date+' '+rs.rows.item(i).time).format("hh:mm A"),
-                                'patient': rs.rows.item(i).firstname+' '+rs.rows.item(i).middlename+' '+rs.rows.item(i).lastname,
-                                'note': rs.rows.item(i).notes,
-                                'type': rs.rows.item(i).type,
-                                'doctor': 'Dr. '+rs.rows.item(i).doctorFirstname+' '+((rs.rows.item(i).doctorMiddlename) ? rs.rows.item(i).doctorMiddlename+' ':'')+rs.rows.item(i).doctorLastname,
-                            })
-                        }
-                    })
-                }
-            })
-            tx.executeSql("SELECT `diagnosis`.`id` as diagnosisID, `followup`.`id` as `id`, `followup`.`description` as `description`, `patients`.`id` as `patientID`, `patients`.`imagePath` as `imagePath`, `diagnosis`.`id` as `diagnosisID`, `patients`.`firstname` as `firstname`, `patients`.`lastname` as `lastname`, `patients`.`middlename` as `middlename`, `doctors`.`firstname` as `doctorFirstname`, `doctors`.`middlename` as `doctorMiddlename`, `doctors`.`lastname` as `doctorLastname`, `followup`.`time` as `time`, `followup`.`date` as `date` FROM `followup` LEFT OUTER JOIN `diagnosis` ON `diagnosis`.`id` = `followup`.`diagnosisID` LEFT OUTER JOIN `doctors` ON `doctors`.`id` = `followup`.`leadSurgeon` LEFT OUTER JOIN `patients` ON `patients`.`id` = `diagnosis`.`patientID` WHERE `doctors`.`id`= "+ this.state.doctorID +" AND (`followup`.`deleted_at` in (null, 'NULL', '') OR `followup`.`deleted_at` is null) AND `followup`.`date` = ? AND `patients`.`deleted_at` in (null, 'NULL', '') ORDER BY `followup`.`time` ASC", [currentDate], function(tx, rs) {
-                if (rs.rows.length > 0) {
-                    _.forEach(rs.rows, (v, i) => {
-                        if (_.isEmpty(appointments[moment(rs.rows.item(i).date+' '+rs.rows.item(i).time).format("hh:mm A")])) {
-                            appointments[moment(rs.rows.item(i).date+' '+rs.rows.item(i).time).format("hh:mm A")] = [];
-                            appointments[moment(rs.rows.item(i).date+' '+rs.rows.item(i).time).format("hh:mm A")].push({
-                                'patientID': rs.rows.item(i).patientID,
-                                'imagePath': rs.rows.item(i).imagePath,
-                                'diagnosisID': rs.rows.item(i).diagnosisID,
-                                'time': moment(rs.rows.item(i).date+' '+rs.rows.item(i).time).format("hh:mm A"),
-                                'patient': rs.rows.item(i).firstname+' '+rs.rows.item(i).middlename+' '+rs.rows.item(i).lastname,
-                                'note': rs.rows.item(i).description,
-                                'type': 'follow-up',
-                                'doctor': 'Dr. '+rs.rows.item(i).doctorFirstname+' '+((rs.rows.item(i).doctorMiddlename) ? rs.rows.item(i).doctorMiddlename+' ':'')+rs.rows.item(i).doctorLastname,
-                            })
-                        } else {
-                            appointments[moment(rs.rows.item(i).date+' '+rs.rows.item(i).time).format("hh:mm A")].push({
-                                'patientID': rs.rows.item(i).patientID,
-                                'imagePath': rs.rows.item(i).imagePath,
-                                'diagnosisID': rs.rows.item(i).diagnosisID,
-                                'time': moment(rs.rows.item(i).date+' '+rs.rows.item(i).time).format("hh:mm A"),
-                                'patient': rs.rows.item(i).firstname+' '+rs.rows.item(i).middlename+' '+rs.rows.item(i).lastname,
-                                'note': rs.rows.item(i).description,
-                                'type': 'follow-up',
-                                'doctor': 'Dr. '+rs.rows.item(i).doctorFirstname+' '+((rs.rows.item(i).doctorMiddlename) ? rs.rows.item(i).doctorMiddlename+' ':'')+rs.rows.item(i).doctorLastname,
-                            })
-                        }
-                    })
-                }
-            })
-        }, (err) => {
-            alert(err.message);
-        }, () => {
-            var rowData = {}
-            var schedules = { morning: [], afternoon: [], evening: [], }
-            _.forEach(appointments, (v, i) => {
-                if (this.getTimeName(moment(this.state.presetText+' '+i)) === 'morning') {
-                    schedules.morning.push({time: i,value: v,});
-                } else if (this.getTimeName(moment(this.state.presetText+' '+i)) == 'afternoon') {
-                    schedules.afternoon.push({time: i,value: v,});
-                } else {
-                    schedules.evening.push({time: i,value: v,});
-                }
-            })
-            this.setState({
-                refreshing: false,
-                rowData: {
-                    morning: _.orderBy(schedules.morning, ['time'], ['asc']),
-                    afternoon: _.orderBy(schedules.afternoon, ['time'], ['asc']),
-                    evening: _.orderBy(schedules.evening, ['time'], ['asc']),
-                }
-            })
-        });
+    componentDidMount() {
+        this.updateCredentials().done();
+    }
+    async updateCredentials() {
+        try {
+            var doctor = await AsyncStorage.getItem('doctor');
+            this.setState({doctorID: JSON.parse(doctor).id})
+        } catch (error) {
+            console.log('AsyncStorage error: ' + error.message);
+        } finally {
+            this.onRefresh();
+        }
     }
     onRefresh() {
         this.setState({refreshing: true})

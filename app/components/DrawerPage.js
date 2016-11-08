@@ -1,9 +1,11 @@
 'use strict'
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, View, TouchableNativeFeedback, TouchableHighlight, Image, StatusBar, ScrollView, Navigator, TouchableOpacity} from 'react-native'
+import {StyleSheet, Text, View, TouchableNativeFeedback, TouchableHighlight, Image, StatusBar, ScrollView, Navigator, TouchableOpacity, AsyncStorage, RefreshControl} from 'react-native'
+import _ from 'lodash'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import Env from '../env'
+import RNFS from 'react-native-fs'
 
 import Styles from '../assets/Styles'
 const EnvInstance = new Env()
@@ -13,44 +15,122 @@ class DrawerPage extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            userID: EnvInstance.getDoctor().userID,
-            doctorID: EnvInstance.getDoctor().id,
-            doctorName: EnvInstance.getDoctor().name,
-            doctorType: EnvInstance.getDoctor().type,
-            doctorInitial: EnvInstance.getDoctor().initial,
+            refreshing: false,
+            avatar: false,
+        }
+    }
+    componentDidMount() {
+        this.updateCredentials().done();
+    }
+    componentWillReceiveProps(nextProps) {
+        if (_.size(nextProps.navigator.getCurrentRoutes(0)) > 1) {
+            this.setState({lastRoute: nextProps.navigator.getCurrentRoutes(0)[1].id})
+        } else {
+            if (this.state.lastRoute == 'EditUserProfile' || this.state.lastRoute == 'EditUserSetting') {
+                this.setState({lastRoute: ''});
+                this.updateCredentials().done();
+            }
+        }
+    }
+    onRefresh() {
+        this.setState({refreshing: true})
+        db.transaction((tx) => {
+            tx.executeSql("SELECT imagePath FROM doctors WHERE id=? LIMIT 1", [this.state.doctorID], (tx, rs) => {
+                db.data = rs.rows.item(0)
+            })
+        }, (err) => {
+            alert(err.message)
+        }, () => {
+            this.setState({refreshing: false})
+            RNFS.exists(db.data.imagePath).then((exist) => {
+                if (exist)
+                    RNFS.readFile(db.data.imagePath, 'base64').then((rs) => {
+                        this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')})
+                    })
+            })
+        })
+    }
+    async updateCredentials() {
+        try {
+            var doctor = await AsyncStorage.getItem('doctor');
+            this.setState({
+                userID: JSON.parse(doctor).userID,
+                doctorID: JSON.parse(doctor).id,
+                doctorName: JSON.parse(doctor).name,
+                doctorType: JSON.parse(doctor).type,
+                doctorInitial: JSON.parse(doctor).initial
+            })
+        } catch (error) {
+            console.log('AsyncStorage error: ' + error.message);
+        } finally {
+            this.onRefresh();
         }
     }
     render() {
         return (
-            <ScrollView>
+            <ScrollView
+                refreshControl={
+                    <RefreshControl
+                        style={{marginTop: 20}}
+                        refreshing={this.state.refreshing}
+                        onRefresh={this.onRefresh.bind(this)}
+                    />
+                }>
                 <View style={styles.drawerView}>
-                    <Image
-                        style={{height: 200, width: 300, overlayColor: 'rgba(0,0,0,1)'}}
-                        source={{uri: 'https://avatars.io/facebook/donald/large'}}
-                        resizeMode={'cover'}>
-                        <View style={{position: 'absolute', height: 200, width: 300, backgroundColor: 'rgba(0,0,0,0.25)'}}></View>
-                        <View style={styles.drawerImageContainer}>
-                            <View style={{borderRadius: 40, width: 80, marginTop: 6, marginBottom: 10}}>
-                                <Image
-                                    style={[styles.drawerImageAvatar, {borderRadius: 40}]}
-                                    source={{uri: 'https://avatars.io/facebook/donald/large'}}/>
-                            </View>
-                            <View style={{flexDirection: 'row'}}>
-                                <View style={{flex: 1, flexDirection: 'column'}}>
-                                    <Text style={styles.drawerImageName}>{this.state.doctorName} ({this.state.doctorInitial})</Text>
-                                    <Text style={styles.drawerImageEmail}>{this.state.doctorType}</Text>
+                    {(this.state.avatar) ? (
+                        <Image
+                            style={{height: 200, width: 300, overlayColor: 'rgba(0,0,0,1)'}}
+                            source={{uri: this.state.avatar}}
+                            resizeMode={'cover'}>
+                            <View style={{position: 'absolute', height: 200, width: 300, backgroundColor: 'rgba(0,0,0,0.25)'}}></View>
+                            <View style={styles.drawerImageContainer}>
+                                <View style={{borderRadius: 40, width: 80, marginTop: 6, marginBottom: 10}}>
+                                    <Image
+                                        style={[styles.drawerImageAvatar, {borderRadius: 40}]}
+                                        source={{uri: this.state.avatar}}/>
                                 </View>
-                                <TouchableOpacity
+                                <View style={{flexDirection: 'row'}}>
+                                    <View style={{flex: 1, flexDirection: 'column'}}>
+                                        <Text style={styles.drawerImageName}>{this.state.doctorName}</Text>
+                                        <Text style={styles.drawerImageEmail}>{this.state.doctorInitial} / {this.state.doctorType}</Text>
+                                    </View>
+                                    <TouchableOpacity
                                         style={{justifyContent: 'center', width: 40, height: 40, backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: 30}}
                                         onPress={() => this.props.navigator.replace({
-                                            id: 'UserProfilePage'
+                                            id: 'UserProfilePage',
+                                            passProps: {
+                                                userID: this.state.userID,
+                                                doctorID: this.state.doctorID,
+                                                doctorName: this.state.doctorName,
+                                            }
                                         })
-                                    }>
-                                    <Icon name={'mode-edit'} size={25} color={'#FFF'} style={{textAlign: 'center', textAlignVertical: 'center'}}/>
-                                </TouchableOpacity>
+                                        }>
+                                        <Icon name={'arrow-drop-down'} size={25} color={'#FFF'} style={{textAlign: 'center', textAlignVertical: 'center'}}/>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
+                        </Image>
+                        ) : (
+                        <View style={{flexDirection: 'row', padding: 16, paddingTop: 40, backgroundColor: '#2979FF'}}>
+                            <View style={{flex: 1, flexDirection: 'column'}}>
+                                <Text style={[styles.drawerImageName]}>{this.state.doctorName}</Text>
+                                <Text style={[styles.drawerImageEmail]}>{this.state.doctorInitial} / {this.state.doctorType}</Text>
+                            </View>
+                            <TouchableOpacity
+                                style={{justifyContent: 'center', width: 40, height: 40, backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: 30}}
+                                onPress={() => this.props.navigator.replace({
+                                    id: 'UserProfilePage',
+                                    passProps: {
+                                        userID: this.state.userID,
+                                        doctorID: this.state.doctorID,
+                                        doctorName: this.state.doctorName,
+                                    }
+                                })
+                                }>
+                                <Icon name={'arrow-drop-down'} size={25} color={'#FFF'} style={{textAlign: 'center', textAlignVertical: 'center'}}/>
+                            </TouchableOpacity>
                         </View>
-                    </Image>
+                    )}
                     <View style={[styles.drawerContainer, {marginTop: 5}]}>
                         <TouchableNativeFeedback
                                 onPress={() => this.props.navigator.replace({

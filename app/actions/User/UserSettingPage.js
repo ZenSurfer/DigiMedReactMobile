@@ -41,6 +41,16 @@ class UserSettingPage extends Component {
             this.setState({refreshing: false, rowData: rowData});
         });
     }
+    componentWillReceiveProps(nextProps) {
+        if (_.size(nextProps.navigator.getCurrentRoutes(0)) > 1) {
+            this.setState({lastRoute: nextProps.navigator.getCurrentRoutes(0)[1].id})
+        } else {
+            if (this.state.lastRoute == 'EditUserSetting') {
+                this.setState({lastRoute: ''});
+                this.onRefresh();
+            }
+        }
+    }
     render() {
         return (
             <DrawerLayoutAndroid
@@ -67,14 +77,14 @@ class UserSettingPage extends Component {
             <View style={{flex: 1}}>
                 <View style={Styles.containerStyle}>
                     <View style={Styles.subTolbar}>
-                            <Text style={Styles.subTitle}>{this.props.doctorName}</Text>
+                        <Text style={Styles.subTitle}>{this.props.doctorName}</Text>
                     </View>
                     <ScrollView
                         refreshControl={
                             <RefreshControl
                                 refreshing={this.state.refreshing}
                                 onRefresh={this.onRefresh.bind(this)}
-                                />
+                            />
                         }>
                         <View style={[styles.person, {backgroundColor: '#FFFFFF', borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}]}>
                             <View style={{backgroundColor: '#FFFFFF', marginTop: 10}}>

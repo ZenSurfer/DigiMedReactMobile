@@ -1,7 +1,7 @@
 'use strict';
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, View, ListView, RefreshControl, Navigator, Dimensions, ToastAndroid, TouchableOpacity, TouchableNativeFeedback, Image, Alert} from 'react-native'
+import {StyleSheet, Text, View, ListView, RefreshControl, Navigator, Dimensions, ToastAndroid, TouchableOpacity, TouchableNativeFeedback, Image, Alert, AsyncStorage} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import RNFS from 'react-native-fs'
 import _ from 'lodash'
@@ -18,29 +18,13 @@ class HPEDPage extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            doctorID: EnvInstance.getDoctor().id,
+            doctorID: 0,
             refreshing: false,
             rowData: [],
             avatar: false
         }
     }
     componentWillMount() {
-        this.setState({refreshing: true})
-        db.transaction((tx) => {
-            tx.executeSql("SELECT `diagnosis`.`id` AS `id`, ('Dr. ' || `doctors`.`firstname` || ' ' || `doctors`.`middlename` || ' ' || `doctors`.`lastname`)  AS `doctorName`, `diagnosis`.`date` AS `date`, `diagnosis`.`chiefComplaint` AS `chiefComplaint`, (SELECT (`followup`.`date`|| ' ' ||`followup`.`time`|| '@@' ||`followup`.`name` || '@@' || `followup`.`description`) as description FROM `followup` WHERE `followup`.`leadSurgeon`="+this.state.doctorID+" AND `followup`.`diagnosisID` = `diagnosis`.`id` AND (`followup`.`date` || ' ' || `followup`.`time`) >= '"+moment().format('YYYY-MM-DD HH:mm:SS')+"' AND (`followup`.`deleted_at` in (null, 'NULL', '') OR `followup`.`deleted_at` is null) ORDER BY `followup`.`date` ASC, `followup`.`time` ASC LIMIT 1) as upcoming, (SELECT (`followup`.`date`|| ' ' ||`followup`.`time`|| '@@' ||`followup`.`name` || '@@' || `followup`.`description`) as description  FROM `followup` WHERE `followup`.`leadSurgeon`="+this.state.doctorID+" AND `followup`.`diagnosisID` = `diagnosis`.`id` AND (`followup`.`date` || ' ' || `followup`.`time`) < '"+moment().format('YYYY-MM-DD HH:mm:SS')+"' AND (`followup`.`deleted_at` in (null, 'NULL', '') OR `followup`.`deleted_at` is null) ORDER BY `followup`.`date` DESC, `followup`.`time` DESC LIMIT 1) as last FROM `diagnosis` LEFT OUTER JOIN `patients` on `diagnosis`.`patientID` = `patients`.`id` LEFT OUTER JOIN `doctors` on `diagnosis`.`doctorID` = `doctors`.`id` WHERE (`diagnosis`.`deleted_at` in (null, 'NULL', '') OR `diagnosis`.`deleted_at` is null) AND `diagnosis`.`patientID` = ? ORDER BY `diagnosis`.`date` DESC, `diagnosis`.`timeStart` DESC", [this.props.patientID], function(tx, rs) {
-                db.data = rs.rows
-            }, function(error) {
-                alert(error.message);
-            });
-        }, (error) => {
-            alert(error.message);
-        }, () => {
-            var rowData = [];
-            _.forEach(db.data, function(v, i) {
-                rowData.push(db.data.item(i))
-            })
-            this.setState({refreshing: false, rowData: rowData})
-        })
         RNFS.exists(this.props.patientAvatar).then((exist) => {
             if (exist)
                 RNFS.readFile(this.props.patientAvatar, 'base64').then((rs) => {
@@ -56,6 +40,19 @@ class HPEDPage extends Component {
                 this.setState({lastRoute: ''});
                 this.onRefresh();
             }
+        }
+    }
+    componentDidMount() {
+        this.updateCredentials().done();
+    }
+    async updateCredentials() {
+        try {
+            var doctor = await AsyncStorage.getItem('doctor');
+            this.setState({doctorID: JSON.parse(doctor).id})
+        } catch (error) {
+            console.log('AsyncStorage error: ' + error.message);
+        } finally {
+            this.onRefresh()
         }
     }
     render() {
