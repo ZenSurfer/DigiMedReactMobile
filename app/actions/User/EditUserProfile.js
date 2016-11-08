@@ -143,7 +143,6 @@ class EditUserProfile extends Component {
                                     source={{uri: this.state.avatar}} />
                                 ) : (<View/>)}
                         </View>
-
                         <View style={{position: 'absolute', top: 0, flex: 1, flexDirection: 'row', justifyContent: 'center', zIndex: 2}}>
                             <View style={{flex: 1, alignItems: 'center', height: 300, flexDirection: 'row', justifyContent: 'center'}}>
                                 <TouchableOpacity

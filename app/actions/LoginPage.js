@@ -24,6 +24,16 @@ class LoginPage extends Component {
             visibility: false,
         }
     }
+    componentDidMount() {
+        this.removeCredentials().done();
+    }
+    async removeCredentials() {
+        try {
+            var doctor = await AsyncStorage.removeItem('doctor');
+        } catch (error) {
+            console.log('AsyncStorage error: ' + error.message);
+        }
+    }
     render() {
         return (
             <View style={{flex: 1, backgroundColor: '#2962FF'}}>
@@ -120,21 +130,15 @@ class LoginPage extends Component {
                                                 <Text style={{color: '#FFF'}}>AUTHENTICATING</Text>
                                             </View>
                                         )}
-                                        {/* <TouchableNativeFeedback
-                                            onPress={() => {
-                                            this.props.navigator.replace({
-                                            id: 'SplashPage',
-                                            sceneConfig: Navigator.SceneConfigs.FadeAndroid
-                                            })
-                                            }}>
+                                        <TouchableNativeFeedback>
                                             <View style={[Styles.coloredButton, styles.button, {backgroundColor: '#2962FF', marginTop: 0}]}>
-                                            <Text style={{color: '#90CAF9'}}>OFFLINE</Text>
+                                                <Text style={{color: '#90CAF9'}}>FORGET PASSWORD</Text>
                                             </View>
-                                        </TouchableNativeFeedback> */}
+                                        </TouchableNativeFeedback>
                                     </View>
                                     {(this.state.auth) ? (
                                         <View style={{position: 'absolute', height: 150, width: 280, top: 0}}>
-                                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#2962FF'}}>
+                                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#2962FF', paddingBottom: 20}}>
                                                 <ActivityIndicator animating={true} size={'large'} color={'#FFF'}/>
                                             </View>
                                         </View>

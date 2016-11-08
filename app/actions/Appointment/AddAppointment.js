@@ -1,7 +1,7 @@
 'use strict'
 
 import React, {Component} from 'react'
-import { Text, StyleSheet, View, DrawerLayoutAndroid, Navigator, ToastAndroid, ProgressBarAndroid, InteractionManager, TouchableOpacity, DatePickerAndroid, TimePickerAndroid, Picker, TextInput, ScrollView, ListView, Modal, RefreshControl, TouchableNativeFeedback, AsyncStorage} from 'react-native'
+import { Text, StyleSheet, View, DrawerLayoutAndroid, Navigator, ToastAndroid, ProgressBarAndroid, InteractionManager, TouchableOpacity, DatePickerAndroid, TimePickerAndroid, Picker, TextInput, ScrollView, ListView, Modal, RefreshControl, TouchableNativeFeedback, AsyncStorage, Image} from 'react-native'
 import RNFS from 'react-native-fs'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import moment from 'moment'
@@ -51,20 +51,6 @@ class AppointmentPage extends Component {
                         this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')})
                     })
             })
-        else
-            db.transaction((tx) => {
-                tx.executeSql("SELECT * FROM patients WHERE (deleted_at in (null, 'NULL', '') OR deleted_at is null) ORDER BY firstname ASC", [], (tx, rs) => {
-                    db.data = rs.rows
-                })
-            }, (err) => {
-                alert(err.message)
-            }, () => {
-                var patients = [];
-                _.forEach(db.data, (v, i) => {
-                    patients.push(db.data.item(i))
-                })
-                this.setState({patients: patients, refreshing: false})
-            })
     }
     componentDidMount() {
         this.updateCredentials().done();
@@ -75,6 +61,8 @@ class AppointmentPage extends Component {
             this.setState({doctorID: JSON.parse(doctor).id})
         } catch (error) {
             console.log('AsyncStorage error: ' + error.message);
+        } finally {
+            this.updatePatients()
         }
     }
     async showPicker(stateKey, startFrom) {

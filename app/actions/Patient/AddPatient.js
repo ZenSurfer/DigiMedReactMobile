@@ -129,23 +129,36 @@ class AddPatient extends Component {
                 </View>
                 <ScrollView
                     keyboardShouldPersistTaps={true}>
-                    <View style={{height: 250, backgroundColor: '#EEEEEE'}}>
+                    <View style={{height: 300, backgroundColor: '#EEEEEE'}}>
                         {(this.state.avatar) ? (
                             <Image
-                                style={{backgroundColor: '#EEEEEE', width: width, height: 250}}
+                                style={{backgroundColor: '#EEEEEE', width: width, height: 300}}
                                 resizeMode={'cover'}
                                 source={{uri: this.state.avatar}} />
-                        ) : (<View/>)}
+                            ) : (<View/>)}
                     </View>
-                    <TouchableOpacity
-                        style={[Styles.buttonFab, Styles.buttonFabCam]}
-                        onPress={() => {
-                            ImagePicker.launchCamera({maxWidth: 800}, (rs)  => {
-                                this.setState({avatar: (rs.data) ? 'data:image/jpeg;base64,'+rs.data : this.state.avatar})
-                            });
-                        }}>
-                        <Icon name={'photo-camera'} color={'#FFFFFF'} size={30}/>
-                    </TouchableOpacity>
+                    <View style={{position: 'absolute', top: 0, flex: 1, flexDirection: 'row', justifyContent: 'center', zIndex: 2}}>
+                        <View style={{flex: 1, alignItems: 'center', height: 300, flexDirection: 'row', justifyContent: 'center'}}>
+                            <TouchableOpacity
+                                style={{padding: 18, backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: 50, marginRight: 4}}
+                                onPress={() => {
+                                    ImagePicker.launchCamera({maxWidth: 800}, (rs)  => {
+                                        this.setState({avatar: (rs.data) ? 'data:image/jpeg;base64,'+rs.data : this.state.avatar})
+                                    });
+                                }}>
+                                <Icon name={'photo-camera'} color={'#FFFFFF'} size={30}/>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={{padding: 18, backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: 50, marginLeft: 4}}
+                                onPress={() => {
+                                    ImagePicker.launchImageLibrary({maxWidth: 800}, (rs)  => {
+                                        this.setState({avatar: (rs.data) ? 'data:image/jpeg;base64,'+rs.data : this.state.avatar})
+                                    });
+                                }}>
+                                <Icon name={'photo-library'} color={'#FFFFFF'} size={30}/>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
                     <View style={{backgroundColor: '#FFFFFF', paddingLeft: 16, paddingRight: 16, paddingTop: 16}}>
                         <Text style={styles.heading}>Patient Profile</Text>
                         <Text style={styles.label} >Patient Code</Text>
@@ -600,9 +613,9 @@ var NavigationBarRouteMapper = {
     LeftButton(route, navigator, index, navState) {
         return (
             <TouchableOpacity style={Styles.leftButton}
-                onPress={() => drawerRef.openDrawer()}>
+                onPress={() => navigator.parentNavigator.pop()}>
                 <Text style={Styles.leftButtonText}>
-                    <Icon name="menu" size={30} color="#FFF" />
+                    <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                 </Text>
             </TouchableOpacity>
         )

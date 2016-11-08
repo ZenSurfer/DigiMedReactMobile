@@ -130,14 +130,13 @@ class PatientPage extends Component {
                         <RefreshControl
                             refreshing={this.state.refreshing}
                             onRefresh={this.onRefresh.bind(this)}
-                            />
+                        />
                     }
-                    />
+                />
                 <TouchableOpacity
                     style={[Styles.buttonFab, Styles.subTolbarButton]}
-                    onPress={() => this.props.navigator.replace({
+                    onPress={() => this.props.navigator.push({
                         id: 'AddPatient',
-                        sceneConfig: Navigator.SceneConfigs.FadeAndroid,
                     })}>
                     <Icon name={'person-add'} color={'#FFFFFF'} size={30}/>
                 </TouchableOpacity>

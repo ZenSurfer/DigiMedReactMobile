@@ -1,7 +1,7 @@
 'use strict'
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, View, TouchableNativeFeedback, TouchableHighlight, Image, StatusBar, ScrollView, Navigator, TouchableOpacity, AsyncStorage, RefreshControl} from 'react-native'
+import {StyleSheet, Text, View, TouchableNativeFeedback, TouchableHighlight, Image, StatusBar, ScrollView, Navigator, TouchableOpacity, AsyncStorage} from 'react-native'
 import _ from 'lodash'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import Env from '../env'
@@ -15,7 +15,6 @@ class DrawerPage extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            refreshing: false,
             avatar: false,
         }
     }
@@ -33,7 +32,6 @@ class DrawerPage extends Component {
         }
     }
     onRefresh() {
-        this.setState({refreshing: true})
         db.transaction((tx) => {
             tx.executeSql("SELECT imagePath FROM doctors WHERE id=? LIMIT 1", [this.state.doctorID], (tx, rs) => {
                 db.data = rs.rows.item(0)
@@ -41,7 +39,6 @@ class DrawerPage extends Component {
         }, (err) => {
             alert(err.message)
         }, () => {
-            this.setState({refreshing: false})
             RNFS.exists(db.data.imagePath).then((exist) => {
                 if (exist)
                     RNFS.readFile(db.data.imagePath, 'base64').then((rs) => {
@@ -68,14 +65,7 @@ class DrawerPage extends Component {
     }
     render() {
         return (
-            <ScrollView
-                refreshControl={
-                    <RefreshControl
-                        style={{marginTop: 20}}
-                        refreshing={this.state.refreshing}
-                        onRefresh={this.onRefresh.bind(this)}
-                    />
-                }>
+            <ScrollView>
                 <View style={styles.drawerView}>
                     {(this.state.avatar) ? (
                         <Image

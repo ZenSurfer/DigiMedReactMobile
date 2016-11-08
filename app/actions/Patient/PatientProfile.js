@@ -95,15 +95,15 @@ class PatientProfile extends Component {
                                 refreshing={this.state.refreshing}
                                 progressViewOffset={0}
                                 onRefresh={this.onRefresh.bind(this)}
-                                />
+                            />
                         }>
                         <View style={[styles.person]}>
-                            <View style={[styles.personInformation, {height: 250, justifyContent: 'center'}]}>
+                            <View style={[styles.personInformation, {height: 300, justifyContent: 'center'}]}>
                                 {(this.state.avatar) ? (
                                     <Image
                                         style={[styles.avatarImage, {marginTop: 5}]}
                                         source={{uri: this.state.avatar}} />
-                                ) : (
+                                    ) : (
                                     <View>
                                         <Icon name={'account-circle'} size={200} color={'#EEEEEE'}/>
                                     </View>
@@ -186,7 +186,7 @@ class PatientProfile extends Component {
                                             <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.category) ? _.upperFirst(this.state.rowData.category) : '-'}</Text></View>
                                         </View>
                                     </View>
-                                ) : (
+                                    ) : (
                                     <TouchableOpacity
                                         style={{flex: 1, flexDirection: 'row', justifyContent: 'center', marginBottom: 20}}
                                         onPress={() =>  this.setState({fullProfile: true}) }>
@@ -240,7 +240,7 @@ class PatientProfile extends Component {
                                             <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.personAddress) ? this.state.rowData.personAddress : '-'}</Text></View>
                                         </View>
                                     </View>
-                                ) : (
+                                    ) : (
                                     <TouchableOpacity
                                         style={{flex: 1, flexDirection: 'row', justifyContent: 'center', marginBottom: 20}}
                                         onPress={() =>  this.setState({fullContact: true}) }>
@@ -275,7 +275,7 @@ class PatientProfile extends Component {
                                             <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.companyAddress) ? this.state.rowData.companyAddress : '-'}</Text></View>
                                         </View>
                                     </View>
-                                ) : (<View/>)}
+                                    ) : (<View/>)}
                                 <View style={{flexDirection: 'row'}}>
                                     <View style={[styles.rows, {flex: 1, alignItems: 'stretch', flexDirection: 'column'}]}>
                                         <Text style={styles.label}>HMO</Text>
@@ -303,7 +303,7 @@ class PatientProfile extends Component {
                                             </View>
                                         </View>
                                     </View>
-                                ) : (<View/>)}
+                                    ) : (<View/>)}
                                 <View style={[styles.rows, {flexDirection: 'column'}]}>
                                     <Text style={styles.label}>Is infant?</Text>
                                     <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.isPedia) ? 'Yes' : 'No'}</Text></View>
@@ -327,7 +327,7 @@ class PatientProfile extends Component {
                                             <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.spouseName) ? this.state.rowData.spouseName : '-'}</Text></View>
                                         </View>
                                     </View>
-                                ) : (<View/>)}
+                                    ) : (<View/>)}
                                 <View style={[styles.rows, {flexDirection: 'column'}]}>
                                     <Text style={styles.label}>Primary Physician</Text>
                                     <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.hmo) ? '-' : '-'}</Text></View>
@@ -424,7 +424,7 @@ class PatientProfile extends Component {
 
 var styles = StyleSheet.create({
     avatarImage: {
-        height:  250,
+        height:  300,
         width: width,
         // borderRadius: 100,
         marginLeft: 16,
