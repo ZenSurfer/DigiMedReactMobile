@@ -66,6 +66,13 @@ line:676
         +underlineColorAndroid={(this.props.underlineColorAndroid) ? this.props.underlineColorAndroid : '#757575'}
     />;
 
+
+
+## REVISION 11-09-2016
+
+npm install
+react-native link react-native-fcm
+
 ## REVISION 10-14-2016
 
 Initial commit for beta testing.
