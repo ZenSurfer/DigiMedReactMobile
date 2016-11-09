@@ -8,6 +8,7 @@ import RNFS from 'react-native-fs'
 import Styles from '../assets/Styles'
 import bcrypt from 'react-native-bcrypt'
 import Env from '../env'
+import FCM from 'react-native-fcm';
 
 const dirPath = RNFS.ExternalDirectoryPath
 const EnvInstance = new Env()

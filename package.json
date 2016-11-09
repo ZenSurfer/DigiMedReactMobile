@@ -13,6 +13,7 @@
     "react-native": "0.33.0",
     "react-native-bcrypt": "^2.4.0",
     "react-native-chart-android": "^1.0.4",
+    "react-native-fcm": "^2.3.2",
     "react-native-fs": "^2.0.1-rc.2",
     "react-native-html-parser": "0.0.3",
     "react-native-image-picker": "^0.22.7",

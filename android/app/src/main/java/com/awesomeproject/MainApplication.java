@@ -4,6 +4,7 @@ import android.app.Application;
 import android.util.Log;
 
 import com.facebook.react.ReactApplication;
+import com.evollu.react.fcm.FIRMessagingPackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -38,7 +39,8 @@ public class MainApplication extends Application implements ReactApplication {
           new ReactMaterialKitPackage(),
           new ImagePickerPackage(),
           new MPChartPackage(),
-          new MainReactPackage()
+          new MainReactPackage(),
+            new FIRMessagingPackage()
       );
     }
   };
