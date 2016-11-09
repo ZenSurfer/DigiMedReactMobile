@@ -198,7 +198,9 @@ class PatientPage extends Component {
             <TouchableNativeFeedback
                 onPress={() => this.gotoPatientProfile(rowData)}>
                 <View style={[styles.listView, {paddingTop: 0, paddingBottom: 0}]}>
-                    {(rowData.imagePath) ? ((this.state['patient'+rowData.id]) ? (<Image source={{uri: this.state['patient'+rowData.id]}} style={[styles.avatarImage, {marginLeft: 20, marginRight: 12}]}/>) : ((<Icon name={'account-circle'} color={'grey'} size={80}  style={styles.avatarIcon}/>))) : (<Icon name={'account-circle'} color={'grey'} size={80}  style={styles.avatarIcon}/>)}
+                    <View style={{height: 70, justifyContent: 'center'}}>
+                        {(rowData.imagePath) ? ((this.state['patient'+rowData.id]) ? (<Image source={{uri: this.state['patient'+rowData.id]}} style={[styles.avatarImage, {marginLeft: 20, marginRight: 12}]}/>) : ((<Icon name={'account-circle'} color={'grey'} size={80}  style={styles.avatarIcon}/>))) : (<Icon name={'account-circle'} color={'grey'} size={80}  style={styles.avatarIcon}/>)}
+                    </View>
                     <View style={[styles.listText, {justifyContent: 'center'}]}>
                         <Text style={styles.listItemHead}>{rowData.firstname+' '+rowData.middlename+' '+rowData.lastname}</Text>
                         <Text style={styles.listItem}>{moment().diff(rowData.birthdate, 'years')} yo / {rowData.sex ? 'Male' : 'Female'}</Text>
@@ -250,14 +252,10 @@ var styles = StyleSheet.create({
         width: 60,
         marginLeft: 16,
         marginRight: 16,
-        marginTop: 6,
-        marginBottom: 6,
     },
     avatarIcon: {
         marginLeft: 16,
         marginRight: 8,
-        marginTop: 2,
-        marginBottom: 2,
     },
     textResult: {
         margin: 6,

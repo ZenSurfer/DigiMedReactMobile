@@ -109,7 +109,9 @@ class LoginPage extends Component {
                                                         alert(err.message)
                                                     }, () => {
                                                         if(db.passed) {
-                                                            AsyncStorage.setItem('doctor', JSON.stringify(_.omit(db.data, ['password'])))
+                                                            var doctor = _.omit(db.data, ['password']);
+                                                            doctor['cloudUrl'] = this.state.cloudUrl;
+                                                            AsyncStorage.setItem('doctor', JSON.stringify(doctor))
                                                             this.props.navigator.replace({
                                                                 id: 'SplashPage',
                                                                 sceneConfig: Navigator.SceneConfigs.FadeAndroid

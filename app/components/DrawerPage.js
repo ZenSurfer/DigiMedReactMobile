@@ -55,7 +55,8 @@ class DrawerPage extends Component {
                 doctorID: JSON.parse(doctor).id,
                 doctorName: JSON.parse(doctor).name,
                 doctorType: JSON.parse(doctor).type,
-                doctorInitial: JSON.parse(doctor).initial
+                doctorInitial: JSON.parse(doctor).initial,
+                cloudUrl: JSON.parse(doctor).cloudUrl,
             })
         } catch (error) {
             console.log('AsyncStorage error: ' + error.message);
@@ -123,21 +124,9 @@ class DrawerPage extends Component {
                     )}
                     <View style={[styles.drawerContainer, {marginTop: 5}]}>
                         <TouchableNativeFeedback
-                                onPress={() => this.props.navigator.replace({
-                                    id: 'PatientPage',
-                                })
-                            }>
-                            <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'patients') ? '#EEEEEE' : '#FFFFFF'}]}>
-                                <View style={styles.iconWrapper}>
-                                    <Icon name='group' style={[styles.icon, {color: '#2979FF'}]}/>
-                                </View>
-                                <Text style={styles.drawerViewText}>Patients</Text>
-                            </View>
-                        </TouchableNativeFeedback>
-                        <TouchableNativeFeedback
-                                onPress={() => this.props.navigator.replace({
-                                    id: 'AppointmentPage',
-                                })
+                            onPress={() => this.props.navigator.replace({
+                                id: 'AppointmentPage',
+                            })
                             }>
                             <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'appointments') ? '#EEEEEE' : '#FFFFFF'}]}>
                                 <View style={styles.iconWrapper}>
@@ -146,10 +135,22 @@ class DrawerPage extends Component {
                                 <Text style={styles.drawerViewText}>Appointments</Text>
                             </View>
                         </TouchableNativeFeedback>
+                        <TouchableNativeFeedback
+                            onPress={() => this.props.navigator.replace({
+                                id: 'PatientPage',
+                            })
+                            }>
+                            <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'patients') ? '#EEEEEE' : '#FFFFFF'}]}>
+                                <View style={styles.iconWrapper}>
+                                    <Icon name='group' style={[styles.icon, {color: '#2979FF'}]}/>
+                                </View>
+                                <Text style={styles.drawerViewText}>Patients</Text>
+                            </View>
+                        </TouchableNativeFeedback>
                         <View style={{marginTop: 5, marginBottom: 5, borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}></View>
-                        <Text style={styles.drawerLabel}>Syncing</Text>
+                        <Text style={[styles.drawerLabel]}>Syncing (<Text style={{fontStyle: 'italic'}}>{(this.state.cloudUrl) ? this.state.cloudUrl : '-'}</Text>)</Text>
                         <TouchableNativeFeedback>
-                            <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'imports') ? '#EEEEEE' : '#FFFFFF'}]}>
+                            <View style={[styles.drawerViewWrapper, {opacity: (this.state.cloudUrl) ? 1 : 0.2, backgroundColor: (this.props.routeName == 'imports') ? '#EEEEEE' : '#FFFFFF'}]}>
                                 <View style={styles.iconWrapper}>
                                     <Icon name='cloud-download' style={[styles.icon, {color: '#FF5722'}]} />
                                 </View>
@@ -157,7 +158,7 @@ class DrawerPage extends Component {
                             </View>
                         </TouchableNativeFeedback>
                         <TouchableNativeFeedback>
-                            <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'exports') ? '#EEEEEE' : '#FFFFFF'}]}>
+                            <View style={[styles.drawerViewWrapper, {opacity: (this.state.cloudUrl) ? 1 : 0.2, backgroundColor: (this.props.routeName == 'exports') ? '#EEEEEE' : '#FFFFFF'}]}>
                                 <View style={styles.iconWrapper}>
                                     <Icon name='cloud-upload' style={[styles.icon, {color: '#01579B'}]} />
                                 </View>

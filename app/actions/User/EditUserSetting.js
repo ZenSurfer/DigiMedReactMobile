@@ -65,6 +65,9 @@ class EditUserSetting extends Component {
                 code: rowData.code,
                 licenseID: rowData.licenseID,
                 rowData: rowData,
+                cVisibility: false,
+                nVisibility: false,
+                cnVisibility: false,
             });
         });
     }
@@ -121,23 +124,74 @@ class EditUserSetting extends Component {
                                 <View style={{flex: 1, marginBottom: -10, marginTop: -10}}>
                                     <View style={{backgroundColor: '#FFFFFF', padding: 16}}>
                                         <Text style={styles.label} >Current Password</Text>
-                                        <TextInput
-                                            secureTextEntry={true}
-                                            placeholder={'Text Here...'}
-                                            placeholderTextColor={'#E0E0E0'}
-                                            onChangeText={(text) => this.setState({password: text})} />
+                                        <View>
+                                            <TextInput
+                                                style={styles.textInput}
+                                                secureTextEntry={!this.state.cVisibility}
+                                                placeholder={'Text Here...'}
+                                                placeholderTextColor={'#E0E0E0'}
+                                                onChangeText={(text) => this.setState({password: text})}
+                                                returnKeyType={'next'}/>
+                                            {(this.state.cVisibility) ? (
+                                                <TouchableOpacity
+                                                    style={{position: 'absolute', top: 0, height: 50, right: 0, flex: 1, justifyContent: 'center'}}
+                                                    onPress={() => this.setState({cVisibility: false})}>
+                                                    <Icon size={25} name={'visibility-off'} color={'#616161'} style={{padding: 10}}/>
+                                                </TouchableOpacity>
+                                                ) : (
+                                                <TouchableOpacity
+                                                    style={{position: 'absolute', top: 0, height: 50, right: 0, flex: 1, justifyContent: 'center'}}
+                                                    onPress={() => this.setState({cVisibility: true})}>
+                                                    <Icon size={25} name={'visibility'} color={'#616161'} style={{padding: 10}}/>
+                                                </TouchableOpacity>
+                                            )}
+                                        </View>
                                         <Text style={styles.label} >New Password</Text>
-                                        <TextInput
-                                            secureTextEntry={true}
-                                            placeholder={'Text Here...'}
-                                            placeholderTextColor={'#E0E0E0'}
-                                            onChangeText={(text) => this.setState({newPassword: text})} />
+                                        <View>
+                                            <TextInput
+                                                style={styles.textInput}
+                                                secureTextEntry={!this.state.nVisibility}
+                                                placeholder={'Text Here...'}
+                                                placeholderTextColor={'#E0E0E0'}
+                                                onChangeText={(text) => this.setState({newPassword: text})}
+                                                returnKeyType={'next'}/>
+                                            {(this.state.nVisibility) ? (
+                                                <TouchableOpacity
+                                                    style={{position: 'absolute', top: 0, height: 50, right: 0, flex: 1, justifyContent: 'center'}}
+                                                    onPress={() => this.setState({nVisibility: false})}>
+                                                    <Icon size={25} name={'visibility-off'} color={'#616161'} style={{padding: 10}}/>
+                                                </TouchableOpacity>
+                                                ) : (
+                                                <TouchableOpacity
+                                                    style={{position: 'absolute', top: 0, height: 50, right: 0, flex: 1, justifyContent: 'center'}}
+                                                    onPress={() => this.setState({nVisibility: true})}>
+                                                    <Icon size={25} name={'visibility'} color={'#616161'} style={{padding: 10}}/>
+                                                </TouchableOpacity>
+                                            )}
+                                        </View>
                                         <Text style={styles.label} >Confirm New Password</Text>
-                                        <TextInput
-                                            secureTextEntry={true}
-                                            placeholder={'Text Here...'}
-                                            placeholderTextColor={'#E0E0E0'}
-                                            onChangeText={(text) => this.setState({cnewPassword: text})} />
+                                        <View>
+                                            <TextInput
+                                                style={styles.textInput}
+                                                secureTextEntry={!this.state.cnVisibility}
+                                                placeholder={'Text Here...'}
+                                                placeholderTextColor={'#E0E0E0'}
+                                                onChangeText={(text) => this.setState({cnewPassword: text})}
+                                                returnKeyType={'next'}/>
+                                            {(this.state.cnVisibility) ? (
+                                                <TouchableOpacity
+                                                    style={{position: 'absolute', top: 0, height: 50, right: 0, flex: 1, justifyContent: 'center'}}
+                                                    onPress={() => this.setState({cnVisibility: false})}>
+                                                    <Icon size={25} name={'visibility-off'} color={'#616161'} style={{padding: 10}}/>
+                                                </TouchableOpacity>
+                                                ) : (
+                                                <TouchableOpacity
+                                                    style={{position: 'absolute', top: 0, height: 50, right: 0, flex: 1, justifyContent: 'center'}}
+                                                    onPress={() => this.setState({cnVisibility: true})}>
+                                                    <Icon size={25} name={'visibility'} color={'#616161'} style={{padding: 10}}/>
+                                                </TouchableOpacity>
+                                            )}
+                                        </View>
                                     </View>
                                 </View>
                                 <View style={{margin: 5, flexDirection: 'row', justifyContent: 'space-between'}}>
