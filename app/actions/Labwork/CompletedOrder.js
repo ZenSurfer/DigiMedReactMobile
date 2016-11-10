@@ -36,22 +36,25 @@ class PendingOrder extends Component {
     onRefresh() {
         this.setState({refreshing: true})
         db.transaction((tx) => {
-            tx.executeSql("SELECT (`patients`.`firstname` || ' ' || `patients`.`middlename` || ' ' || `patients`.`lastname`) as `patientName`, `labwork`.`id` as `id`, `labwork`.`orderDate`, `labwork`.`labData` FROM `labwork` OUTER LEFT JOIN `patients` ON `patients`.`id`=`labwork`.`patientID` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND `labwork`.`completionDate` IS NOT NULL AND `labwork`.`userID`=? ORDER BY `labwork`.`orderDate` DESC, `labwork`.`created_at` DESC", [this.props.userID], (tx, rs) => {
+            tx.executeSql("SELECT (`patients`.`firstname` || ' ' || `patients`.`middlename` || ' ' || `patients`.`lastname`) as `patientName`, `labwork`.`id` as `id`, `labwork`.`orderDate`, `labwork`.`labData`, `labwork`.`completionDate` FROM `labwork` OUTER LEFT JOIN `patients` ON `patients`.`id`=`labwork`.`patientID` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND `labwork`.`completionDate` IS NOT NULL AND `labwork`.`userID`=? ORDER BY `labwork`.`orderDate` DESC, `labwork`.`created_at` DESC", [this.props.userID], (tx, rs) => {
                 db.completedItem = [];
                 _.forEach(rs.rows, (v, i) => {
                     var completedItemObj = {};
                     completedItemObj['orderDate'] = rs.rows.item(i).orderDate;
+                    completedItemObj['completionDate'] = rs.rows.item(i).completionDate;
                     completedItemObj['patientName'] = rs.rows.item(i).patientName;
                     completedItemObj['labworkID'] = rs.rows.item(i).id;
                     var labData = _.split(_.split(rs.rows.item(i).labData, ':::')[1], '@@');
                     tx.executeSql("SELECT `labItem`.`name`, `labItem`.`unit`, `labItem`.`normalMinValue`, `labItem`.`normalMaxValue`, `labItem`.`isNumeric` FROM `labItem` WHERE `labItem`.`id` in ("+_.join(_.split(_.split(rs.rows.item(i).labData, ':::')[0], '@@'), ',')+")", [], (tx, rs) => {
-                        var items = []; var values = [];
+                        var items = []; var values = []; var units = [];
                         _.forEach(rs.rows, (v, i) => {
                             items.push(rs.rows.item(i).name);
                             values.push(labData[i]);
+                            units.push(rs.rows.item(i).unit);
                         })
                         completedItemObj['items'] = items;
                         completedItemObj['values'] = values;
+                        completedItemObj['units'] = units;
                     })
                     db.completedItem.push(completedItemObj)
                 })
@@ -105,16 +108,19 @@ class PendingOrder extends Component {
         return (
             <View>
                 <View style={[styles.listView, {flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}]}>
-                    <View style={{flex: 1, alignItems: 'stretch', flexDirection: 'row', paddingTop: 5, paddingBottom: 5}}>
+                    <View style={{flex: 1, justifyContent: 'center', flexDirection: 'row', paddingTop: 5, paddingBottom: 5}}>
                         <View style={{flex: 1, alignItems: 'stretch', paddingRight: 16}}>
-                            <Text>{rowData.orderDate}</Text>
+                            <Text>{moment(rowData.orderDate).format('MMMM DD, YYYY')}</Text>
                             <Text style={styles.listItemHead}>{rowData.patientName}</Text>
+                            <Text style={{fontStyle: 'italic', color: '#FF5722'}}>updated last {rowData.completionDate}</Text>
                         </View>
-                        <TouchableOpacity
-                            style={{backgroundColor: '#4CAF50', padding: 10, paddingLeft: 12, paddingRight: 12, borderRadius: 100}}
-                            onPress={() => this.updateCompletedOrder(rowData.labworkID)}>
-                            <Icon name={'check'} size={22} color={'#FFF'}/>
-                        </TouchableOpacity>
+                        <View style={{justifyContent: 'center'}}>
+                            <TouchableOpacity
+                                style={{backgroundColor: '#4CAF50', padding: 10, borderRadius: 100}}
+                                onPress={() => this.updateCompletedOrder(rowData.labworkID)}>
+                                <Icon name={'check'} size={22} color={'#FFF'}/>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                     <View style={{flexDirection: 'row'}}>
                         <Text style={{flex: 1, alignItems: 'stretch', fontWeight: 'bold'}}>Laboratory Items</Text>
@@ -126,7 +132,7 @@ class PendingOrder extends Component {
                         return (
                             <View key={i} style={{flexDirection: 'row', padding: 5, paddingLeft: 16, paddingRight: 16, borderStyle: 'solid', borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0',}}>
                                 <Text style={{flex: 1, alignItems: 'stretch'}}>{v}</Text>
-                                <Text style={{flex: 1, alignItems: 'stretch'}}>{rowData.values[i]}</Text>
+                                <Text style={{flex: 1, alignItems: 'stretch'}}>{(rowData.values[i]) ? rowData.values[i] : '-'} {rowData.units[i]}</Text>
                             </View>
                         )
                     })}

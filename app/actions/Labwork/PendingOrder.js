@@ -103,7 +103,7 @@ class PendingOrder extends Component {
         return (
             <View style={[styles.listView, {alignItems: 'center', justifyContent: 'center'}]}>
                 <View style={{flex: 1, alignItems: 'stretch', paddingRight: 16}}>
-                    <Text>{rowData.orderDate}</Text>
+                    <Text>{moment(rowData.orderDate).format('MMMM DD, YYYY')}</Text>
                     <Text style={styles.listItemHead}>{rowData.patientName}</Text>
                     <Text style={{color: '#FF5722'}}>{_.join(rowData.items, ', ')}</Text>
                 </View>
