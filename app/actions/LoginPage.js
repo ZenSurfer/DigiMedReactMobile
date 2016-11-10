@@ -99,7 +99,7 @@ class LoginPage extends Component {
                                                     this.setState({auth: true})
                                                     db.transaction((tx) => {
                                                         db.passed = false;
-                                                        tx.executeSql("SELECT `doctors`.`userID`, `doctors`.`id`, ('Dr. ' || `doctors`.`firstname` || ' ' || `doctors`.`middlename` || ' ' || `doctors`.`lastname`) as name, `doctors`.`type`, `doctors`.`initial`, `users`.`password` FROM `users` LEFT OUTER JOIN `doctors` ON `doctors`.`userID`=`users`.`id` WHERE `users`.`username`=? AND `users`.`userType`='doctor' AND `users`.`accountVerified`=1 AND (`users`.`deleted_at` in (null, 'NULL', '') OR `users`.`deleted_at` is null) LIMIT 1", [this.state.username], (tx, rs) => {
+                                                        tx.executeSql("SELECT `doctors`.`userID`, `doctors`.`id`, ('Dr. ' || `doctors`.`firstname` || ' ' || `doctors`.`middlename` || ' ' || `doctors`.`lastname`) as name, `doctors`.`type`, `doctors`.`initial`, `users`.`password`, `doctors`.`imagePath` FROM `users` LEFT OUTER JOIN `doctors` ON `doctors`.`userID`=`users`.`id` WHERE `users`.`username`=? AND `users`.`userType`='doctor' AND `users`.`accountVerified`=1 AND (`users`.`deleted_at` in (null, 'NULL', '') OR `users`.`deleted_at` is null) LIMIT 1", [this.state.username], (tx, rs) => {
                                                             if (bcrypt.compareSync(this.state.password, rs.rows.item(0).password)) {
                                                                 db.data = rs.rows.item(0);
                                                                 db.passed = true;

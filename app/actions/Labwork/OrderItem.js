@@ -97,7 +97,7 @@ class OrderItem extends Component {
                                                 <View style={{flex: 1, flexDirection: 'row'}}>
                                                     {(this.state.modalItems[i].unit) ? (
                                                         <Text style={{marginTop: 13, fontSize: 16, paddingLeft: 4, paddingRight: 5, fontWeight: 'bold'}}>{this.state.modalItems[i].unit}:</Text>
-                                                    ):(<View/>)}
+                                                        ):(<View/>)}
                                                     <View style={{flex: 1, alignItems: 'stretch'}}>
                                                         <TextInput
                                                             placeholder={'Text Here...'}
@@ -152,7 +152,7 @@ class OrderItem extends Component {
                                                 labData[1] = _.join(_.flatMap(this.state.modalItems, (n) => {
                                                     return n.value
                                                 }), '@@');
-                                                tx.executeSql("UPDATE labwork SET labData='"+_.join(labData, ':::')+"' WHERE id=?",[this.state.modalLabworkID], (tx, rs) => {
+                                                tx.executeSql("UPDATE labwork SET completionDate='"+moment().format('YYYY-MM-DD')+"', labData='"+_.join(labData, ':::')+"' WHERE id=?",[this.state.modalLabworkID], (tx, rs) => {
                                                     console.log(rs.rowsAffected)
                                                 }, (err) => alert(err.message))
                                             }, (err) => alert(err.message))
@@ -593,7 +593,7 @@ class OrderItem extends Component {
             var values = _.join(_.fill(Array(_.size(labItems))), '@@') ;
             var data = _.join(labItems, '@@');
             var labData = data+':::'+values;
-            var insert = [this.props.patientID, 0, moment().format('YYYY-MM-DD'), null, null, labData, null, null, moment().format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss')];
+            var insert = [this.props.patientID, this.props.doctorUserID, moment().format('YYYY-MM-DD'), null, null, labData, null, null, moment().format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss')];
             db.transaction((tx) => {
                 tx.executeSql("INSERT INTO `labwork` (`patientID`, `userID`, `orderDate`, `completionDate`, `completed`, `labData`, `viewed`, `deleted_at`, `created_at`, `updated_at`) VALUES (?,?,?,?,?,?,?,?,?,?)", insert, (tx, rs) => {
                     console.log('insert:', rs.insertId)

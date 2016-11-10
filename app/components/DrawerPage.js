@@ -16,6 +16,8 @@ class DrawerPage extends Component {
         super(props)
         this.state = {
             avatar: false,
+            pendingCount: 0,
+            completedCount: 0,
         }
     }
     componentDidMount() {
@@ -31,22 +33,6 @@ class DrawerPage extends Component {
             }
         }
     }
-    onRefresh() {
-        db.transaction((tx) => {
-            tx.executeSql("SELECT imagePath FROM doctors WHERE id=? LIMIT 1", [this.state.doctorID], (tx, rs) => {
-                db.data = rs.rows.item(0)
-            })
-        }, (err) => {
-            alert(err.message)
-        }, () => {
-            RNFS.exists(db.data.imagePath).then((exist) => {
-                if (exist)
-                    RNFS.readFile(db.data.imagePath, 'base64').then((rs) => {
-                        this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')})
-                    })
-            })
-        })
-    }
     async updateCredentials() {
         try {
             var doctor = await AsyncStorage.getItem('doctor');
@@ -58,10 +44,20 @@ class DrawerPage extends Component {
                 doctorInitial: JSON.parse(doctor).initial,
                 cloudUrl: JSON.parse(doctor).cloudUrl,
             })
+            RNFS.exists(JSON.parse(doctor).imagePath).then((exist) => {
+                if (exist)
+                    RNFS.readFile(JSON.parse(doctor).imagePath, 'base64').then((rs) => {
+                        this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')})
+                    })
+            })
+            db.transaction((tx) => {
+                tx.executeSql("SELECT count(*) as pendingCount FROM labwork WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND (`labwork`.`completed` in (null, 'NULL', '') OR `labwork`.`completed` is null) AND `labwork`.`userID`=?", [JSON.parse(doctor).userID], (tx, rs) => db.pendingCount = rs.rows.item(0).pendingCount)
+                tx.executeSql("SELECT count(*) as completedCount FROM `labwork` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND `labwork`.`completionDate` IS NOT NULL AND `labwork`.`userID`=?", [JSON.parse(doctor).userID], (tx, rs) => db.completedCount = rs.rows.item(0).completedCount)
+            }, (err) => alert(err.message), () => {
+                this.setState({pendingCount: db.pendingCount, completedCount: db.completedCount})
+            })
         } catch (error) {
             console.log('AsyncStorage error: ' + error.message);
-        } finally {
-            this.onRefresh();
         }
     }
     render() {
@@ -73,7 +69,7 @@ class DrawerPage extends Component {
                             style={{height: 200, width: 300, overlayColor: 'rgba(0,0,0,1)'}}
                             source={{uri: this.state.avatar}}
                             resizeMode={'cover'}>
-                            <View style={{position: 'absolute', height: 200, width: 300, backgroundColor: 'rgba(0,0,0,0.25)'}}></View>
+                            <View style={{position: 'absolute', height: 200, width: 300, backgroundColor: 'rgba(0,0,0,0.4)'}}></View>
                             <View style={styles.drawerImageContainer}>
                                 <View style={{borderRadius: 40, width: 80, marginTop: 6, marginBottom: 10}}>
                                     <Image
@@ -86,17 +82,18 @@ class DrawerPage extends Component {
                                         <Text style={styles.drawerImageEmail}>{this.state.doctorInitial} / {this.state.doctorType}</Text>
                                     </View>
                                     <TouchableOpacity
-                                        style={{justifyContent: 'center', width: 40, height: 40, backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: 30}}
+                                        style={{justifyContent: 'center', width: 40, height: 40, borderRadius: 30}}
                                         onPress={() => this.props.navigator.replace({
                                             id: 'UserProfilePage',
                                             passProps: {
                                                 userID: this.state.userID,
                                                 doctorID: this.state.doctorID,
                                                 doctorName: this.state.doctorName,
-                                            }
+                                            },
+                                            sceneConfig: Navigator.SceneConfigs.FadeAndroid
                                         })
                                         }>
-                                        <Icon name={'arrow-drop-down'} size={25} color={'#FFF'} style={{textAlign: 'center', textAlignVertical: 'center'}}/>
+                                        <Icon name={'arrow-drop-down'} size={30} color={'#FFF'} style={{textAlign: 'center', textAlignVertical: 'center'}}/>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -115,7 +112,8 @@ class DrawerPage extends Component {
                                         userID: this.state.userID,
                                         doctorID: this.state.doctorID,
                                         doctorName: this.state.doctorName,
-                                    }
+                                    },
+                                    sceneConfig: Navigator.SceneConfigs.FadeAndroid
                                 })
                                 }>
                                 <Icon name={'arrow-drop-down'} size={25} color={'#FFF'} style={{textAlign: 'center', textAlignVertical: 'center'}}/>
@@ -126,6 +124,7 @@ class DrawerPage extends Component {
                         <TouchableNativeFeedback
                             onPress={() => this.props.navigator.replace({
                                 id: 'AppointmentPage',
+                                sceneConfig: Navigator.SceneConfigs.FadeAndroid
                             })
                             }>
                             <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'appointments') ? '#EEEEEE' : '#FFFFFF'}]}>
@@ -138,6 +137,7 @@ class DrawerPage extends Component {
                         <TouchableNativeFeedback
                             onPress={() => this.props.navigator.replace({
                                 id: 'PatientPage',
+                                sceneConfig: Navigator.SceneConfigs.FadeAndroid
                             })
                             }>
                             <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'patients') ? '#EEEEEE' : '#FFFFFF'}]}>
@@ -145,6 +145,55 @@ class DrawerPage extends Component {
                                     <Icon name='group' style={[styles.icon, {color: '#2979FF'}]}/>
                                 </View>
                                 <Text style={styles.drawerViewText}>Patients</Text>
+                            </View>
+                        </TouchableNativeFeedback>
+                        <View style={{marginTop: 5, marginBottom: 5, borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}></View>
+                        <Text style={[styles.drawerLabel]}>Labworks</Text>
+                        <TouchableNativeFeedback
+                            onPress={() => this.props.navigator.replace({
+                                id: 'PendingOrder',
+                                passProps: {
+                                    userID: this.state.userID,
+                                },
+                                sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                            })
+                            }>
+                            <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'pending') ? '#EEEEEE' : '#FFFFFF'}]}>
+                                <View style={[styles.iconWrapper]}>
+                                    <Icon name='sms' style={[styles.icon, {color: '#F44336', textAlignVertical: 'center'}]}/>
+                                </View>
+                                <View style={{flex: 1, justifyContent: 'space-between', flexDirection: 'row'}}>
+                                    <Text style={styles.drawerViewText}>Pending Orders</Text>
+                                    {(this.state.pendingCount) ? (
+                                        <View style={{borderRadius: 10, backgroundColor: '#FAFAFA', padding: 5, paddingLeft: 9, paddingRight: 9}}>
+                                            <Text style={[styles.drawerViewText, {textAlign: 'center', color: '#F44336'}]}>{this.state.pendingCount}</Text>
+                                        </View>
+                                        ) : (<View/>)}
+                                </View>
+                            </View>
+                        </TouchableNativeFeedback>
+                        <TouchableNativeFeedback
+                            onPress={() => this.props.navigator.replace({
+                                id: 'CompletedOrder',
+                                passProps: {
+                                    userID: this.state.userID,
+                                },
+                                sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                            })
+                            }>
+                            <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'completed') ? '#EEEEEE' : '#FFFFFF'}]}>
+                                <View style={styles.iconWrapper}>
+                                    <Icon name='done-all' style={[styles.icon, {color: '#4CAF50'}]}/>
+                                </View>
+                                <View style={{flex: 1, justifyContent: 'space-between', flexDirection: 'row'}}>
+                                    <Text style={styles.drawerViewText}>Completed Orders</Text>
+                                    {(this.state.completedCount) ? (
+                                        <View style={{borderRadius: 10, backgroundColor: '#FAFAFA', padding: 5, paddingLeft: 9, paddingRight: 9}}>
+                                            <Text style={[styles.drawerViewText, {textAlign: 'center', color: '#4CAF50'}]}>{this.state.completedCount}</Text>
+                                        </View>
+                                        ) : (<View/>)}
+
+                                </View>
                             </View>
                         </TouchableNativeFeedback>
                         <View style={{marginTop: 5, marginBottom: 5, borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}></View>
@@ -174,9 +223,10 @@ class DrawerPage extends Component {
                                     userID: this.state.userID,
                                     doctorID: this.state.doctorID,
                                     doctorName: this.state.doctorName,
-                                }
+                                },
+                                sceneConfig: Navigator.SceneConfigs.FadeAndroid
                             })
-                        }>
+                            }>
                             <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'settings') ? '#EEEEEE' : '#FFFFFF'}]}>
                                 <View style={styles.iconWrapper}>
                                     <Icon name='settings' style={styles.icon} />
@@ -187,7 +237,7 @@ class DrawerPage extends Component {
                         <TouchableNativeFeedback
                             onPress={() => this.props.navigator.replace({
                                 id: 'LoginPage',
-                                sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                sceneConfig: Navigator.SceneConfigs.FloatFromLeft
                             })
                         }>
                             <View style={styles.drawerViewWrapper}>

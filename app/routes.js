@@ -22,6 +22,8 @@ import HPEDInfo from './actions/HPED/HPEDInfo'
 import EditHPED from './actions/HPED/EditHPED'
 
 import OrderItem from './actions/Labwork/OrderItem'
+import PendingOrder from './actions/Labwork/PendingOrder'
+import CompletedOrder from './actions/Labwork/CompletedOrder'
 
 import PrescriptionPage from './actions/Prescription/PrescriptionPage'
 import AddPrescription from './actions/Prescription/AddPrescription'
@@ -146,6 +148,20 @@ module.exports = (route, navigator, state) => {
             <OrderItem navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
             </OrderItem>
+        )
+    }
+    if (routeId === 'PendingOrder') {
+        return (
+            <PendingOrder navigator={navigator} {...route.passProps}>
+                <StatusBar backgroundColor='#2962FF' translucent={true}/>
+            </PendingOrder>
+        )
+    }
+    if (routeId === 'CompletedOrder') {
+        return (
+            <CompletedOrder navigator={navigator} {...route.passProps}>
+                <StatusBar backgroundColor='#2962FF' translucent={true}/>
+            </CompletedOrder>
         )
     }
     //prescription

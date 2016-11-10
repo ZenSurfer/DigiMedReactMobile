@@ -48,7 +48,10 @@ class HPEDPage extends Component {
     async updateCredentials() {
         try {
             var doctor = await AsyncStorage.getItem('doctor');
-            this.setState({doctorID: JSON.parse(doctor).id})
+            this.setState({
+                doctorID: JSON.parse(doctor).id,
+                doctorUserID: JSON.parse(doctor).userID,
+            })
         } catch (error) {
             console.log('AsyncStorage error: ' + error.message);
         } finally {
@@ -82,9 +85,9 @@ class HPEDPage extends Component {
                         <RefreshControl
                             refreshing={this.state.refreshing}
                             onRefresh={this.onRefresh.bind(this)}
-                            />
+                        />
                     }
-                    />
+                />
                 <TouchableOpacity
                     style={[Styles.buttonFab, Styles.subTolbarButton, {marginTop: 24}]}
                     onPress={() => this.props.navigator.push({
@@ -105,7 +108,9 @@ class HPEDPage extends Component {
                                 diagnosisID: this.props.diagnosisID,
                                 patientID: this.props.patientID,
                                 patientAvatar: this.props.patientAvatar,
-                                patientName: this.props.patientName }
+                                patientName: this.props.patientName,
+                                doctorUserID: this.state.doctorUserID,
+                            }
                         })}>
                         <View style={{backgroundColor: '#E91E63',  flex: 1, alignItems: 'stretch', padding: 10, borderColor: '#EC407A', borderStyle: 'solid', borderRightWidth: 1}}>
                             <Text style={{textAlign: 'center'}}><Icon name={'schedule'} color={'#FFFFFF'} size={34} /></Text>
