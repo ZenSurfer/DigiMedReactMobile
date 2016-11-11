@@ -48,9 +48,11 @@ import EditUserSetting from './actions/User/EditUserSetting'
 import UserProfilePage from './actions/User/UserProfilePage'
 import EditUserProfile from './actions/User/EditUserProfile'
 
+import DoctorPage from './actions/Doctor/DoctorPage'
+
 import Styles from './assets/Styles'
 
-module.exports = (route, navigator, state) => {
+module.exports = (route, navigator, self) => {
 
     var routeId = route.id
 
@@ -293,6 +295,20 @@ module.exports = (route, navigator, state) => {
            <EditUserProfile navigator={navigator} {...route.passProps}>
                <StatusBar backgroundColor='#2962FF'/>
            </EditUserProfile>
+       )
+   }
+   // doctors page
+   if (routeId === 'DoctorPage') {
+       return (
+           <DoctorPage navigator={navigator} {...route.passProps}>
+               {(self.state.completed) ? (
+                   <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                       <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
+                           <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                       </View>
+                   </View>
+                   ) : (<View/>)}
+           </DoctorPage>
        )
    }
 

@@ -4,6 +4,7 @@ import React, {Component} from 'react'
 import {StyleSheet, Text, View, TouchableNativeFeedback, TouchableHighlight, Image, StatusBar, ScrollView, Navigator, TouchableOpacity, AsyncStorage} from 'react-native'
 import _ from 'lodash'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import IconAwesome from 'react-native-vector-icons/FontAwesome'
 import Env from '../env'
 import RNFS from 'react-native-fs'
 
@@ -142,9 +143,22 @@ class DrawerPage extends Component {
                             }>
                             <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'patients') ? '#EEEEEE' : '#FFFFFF'}]}>
                                 <View style={styles.iconWrapper}>
-                                    <Icon name='group' style={[styles.icon, {color: '#2979FF'}]}/>
+                                    <Icon name='face' style={[styles.icon, {color: '#2979FF'}]}/>
                                 </View>
                                 <Text style={styles.drawerViewText}>Patients</Text>
+                            </View>
+                        </TouchableNativeFeedback>
+                        <TouchableNativeFeedback
+                            onPress={() => this.props.navigator.replace({
+                                id: 'DoctorPage',
+                                sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                            })
+                            }>
+                            <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'doctors') ? '#EEEEEE' : '#FFFFFF'}]}>
+                                <View style={styles.iconWrapper}>
+                                    <IconAwesome name='stethoscope' style={[styles.icon, {fontSize: 25, color: '#2979FF'}]}/>
+                                </View>
+                                <Text style={styles.drawerViewText}>Doctors</Text>
                             </View>
                         </TouchableNativeFeedback>
                         <View style={{marginTop: 5, marginBottom: 5, borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}></View>

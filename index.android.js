@@ -6,6 +6,12 @@ import FCM from 'react-native-fcm';
 import routes from './app/routes'
 
 class AwesomeProject extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            completed: false
+        }
+    }
     componentDidMount() {
         FCM.requestPermissions(); // for iOS
         FCM.getFCMToken().then(token => {
@@ -15,6 +21,10 @@ class AwesomeProject extends Component {
         this.notificationUnsubscribe = FCM.on('notification', (notif) => {
             // there are two parts of notif. notif.notification contains the notification payload, notif.data contains data payload
             console.log(notif)
+            this.setState({completed : true})
+            setTimeout(() => {
+                this.setState({completed: false})
+            }, 2000)
             if(notif.local_notification){
                 //this is a local notification
             }
