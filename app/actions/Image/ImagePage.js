@@ -158,7 +158,7 @@ class ImagePage extends Component {
                                                     {text: 'CANCEL'},
                                                     {text: 'OK', onPress: () => {
                                                         db.transaction((tx) => {
-                                                            tx.executeSql("UPDATE patientImages SET deleted_at = ?, updated_at = ? where id = ?", [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD'), this.state.imaging[i].id], (tx, rs) => {
+                                                            tx.executeSql("UPDATE patientImages SET deleted_at = ?, updated_at = ? where id = ?", [moment().format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss'), this.state.imaging[i].id], (tx, rs) => {
                                                                 console.log("deleted: " + rs.rowsAffected);
                                                             }, (tx, err) => {
                                                                 console.log('DELETE error: ' + err.message);
@@ -239,7 +239,7 @@ class ImagePage extends Component {
                                                                         {text: 'CANCEL'},
                                                                         {text: 'OK', onPress: () => {
                                                                             db.transaction((tx) => {
-                                                                                tx.executeSql("UPDATE patientImages SET deleted_at = ?, updated_at = ? where id = ?", [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD'), this.state.imaging[i+1].id], (tx, rs) => {
+                                                                                tx.executeSql("UPDATE patientImages SET deleted_at = ?, updated_at = ? where id = ?", [moment().format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss'), this.state.imaging[i+1].id], (tx, rs) => {
                                                                                     console.log("deleted: " + rs.rowsAffected);
                                                                                 }, (tx, err) => {
                                                                                     console.log('DELETE error: ' + err.message);

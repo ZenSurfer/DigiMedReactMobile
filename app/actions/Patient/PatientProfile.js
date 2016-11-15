@@ -504,7 +504,7 @@ var NavigationBarRouteMapper = (patientID) => ({
                             {text: 'CANCEL'},
                             {text: 'OK', onPress: () => {
                                 db.transaction((tx) => {
-                                    tx.executeSql("UPDATE patients SET deleted_at = ?, updated_at = ? where id = ?", [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD'), patientID], (tx, rs) => {
+                                    tx.executeSql("UPDATE patients SET deleted_at = ?, updated_at = ? where id = ?", [moment().format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss'), patientID], (tx, rs) => {
                                         console.log("deleted: " + rs.rowsAffected);
                                     }, (err) => {
                                         alert(err.message)

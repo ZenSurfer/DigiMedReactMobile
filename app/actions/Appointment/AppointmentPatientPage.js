@@ -120,7 +120,7 @@ class AppointmentPatientPage extends Component {
                             <Icon style={{textAlignVertical: 'center', textAlign: 'center', color: '#FFF'}} name='announcement' size={20}/>
                         </TouchableOpacity>
                         <View style={[styles.listText, {flex: 1, alignItems: 'stretch'}]}>
-                            <Text style={styles.listItem}>{moment(rowData.date+' '+rowData.timeStart).format('MMMM DD, YYYY')}</Text>
+                            <Text style={styles.listItem}>{rowData.id} {moment(rowData.date+' '+rowData.timeStart).format('MMMM DD, YYYY')}</Text>
                             <Text style={styles.listItemHead}>{this.state.appointmentType[rowData.type]}</Text>
                             <Text style={styles.listItem}>{moment(rowData.date+' '+rowData.timeStart).format('hh:mm A')} <Text style={{fontStyle: 'italic'}}>to</Text> {moment(rowData.date+' '+rowData.timeEnd).format('hh:mm A')} </Text>
                             {/* <Text style={styles.listItem}>{rowData.id} {rowData.diagnosisID}</Text> */}

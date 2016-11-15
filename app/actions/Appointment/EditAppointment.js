@@ -240,7 +240,7 @@ class EditAppointment extends Component {
                                     {text: 'CANCEL'},
                                     {text: 'OK', onPress: () => {
                                         db.transaction((tx) => {
-                                            tx.executeSql("UPDATE appointments SET deleted_at = ?, updated_at = ? where id = ?", [moment(new Date()).format('YYYY-MM-DD'), moment(new Date()).format('YYYY-MM-DD'), this.props.appointmentID], (tx, rs) => {
+                                            tx.executeSql("UPDATE appointments  ?, updated_at = ? where id = ?", [moment().format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss'), this.props.appointmentID], (tx, rs) => {
                                                 console.log("deleted: " + rs.rowsAffected);
                                             }, (tx, err) => {
                                                 console.log('DELETE error: ' + err.message);
@@ -276,7 +276,7 @@ class EditAppointment extends Component {
             timeEnd: moment(this.state.presetText+' '+this.state.presetEnd.presetTime).format('HH:mm:00'),
             type: this.state.setType,
             notes: this.state.notes,
-            updated_at: moment().format('YYYY-MM-DD'),
+            updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
             appointmentID: this.props.appointmentID,
         }
         db.transaction((tx) => {

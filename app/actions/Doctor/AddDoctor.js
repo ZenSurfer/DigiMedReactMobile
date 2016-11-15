@@ -18,7 +18,7 @@ const db = EnvInstance.db()
 const {height, width} = Dimensions.get('window')
 const avatar = require('../../assets/images/banner.jpg')
 
-class EditUserProfile extends Component {
+class AddDoctor extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -35,49 +35,19 @@ class EditUserProfile extends Component {
             },
             sex: 1,
             status: 'Single',
+            rank: '',
+            type: '',
+            code: '',
+            licenseID: '',
             address: '',
             phone1: '',
             phone2: '',
             email: '',
+            created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
             updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
 
             refreshing: false,
         }
-    }
-    componentWillMount() {
-        this.setState({refreshing: true});
-        db.transaction((tx) => {
-            tx.executeSql("SELECT `id`, `groupID`, `patientID`, `userID`, `firstname`, `middlename`, `lastname`, `nameSuffix`, `birthdate`, `sex`, `status`, `address`, `phone1`, `phone2`, `email`, `imagePath`, `imageMime`, `allowAsPatient`, `schedule`, `deleted_at`, `created_at`, `updated_at` FROM doctors WHERE `doctors`.`id`= ?", [this.props.doctorID], function(tx, rs) {
-                db.data = rs.rows.item(0);
-            });
-        }, (err) => {
-            alert(err.message);
-        }, () => {
-            if (db.data.imagePath)
-                RNFS.exists(db.data.imagePath).then((exist) => {
-                    if (exist)
-                        RNFS.readFile(db.data.imagePath, 'base64').then((rs) => {
-                            this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')});
-                        })
-                })
-            this.setState({
-                refreshing: false,
-                firstname: db.data.firstname,
-                middlename: db.data.middlename,
-                lastname: db.data.lastname,
-                nameSuffix: db.data.nameSuffix,
-                birthdate: {
-                    text: moment(db.data.birthdate).format('MMMM DD, YYYY'),
-                    date: new Date(db.data.birthdate),
-                },
-                sex: db.data.sex,
-                status: db.data.status,
-                address: db.data.address,
-                phone1: db.data.phone1,
-                phone2: db.data.phone2,
-                email: db.data.email
-            });
-        });
     }
     render() {
         return (
@@ -87,7 +57,7 @@ class EditUserProfile extends Component {
                 navigationBar={
                     <Navigator.NavigationBar
                         style={[Styles.navigationBar,{marginTop: 24}]}
-                        routeMapper={NavigationBarRouteMapper(this.props.doctorName)} />
+                        routeMapper={NavigationBarRouteMapper} />
                 }/>
         )
     }
@@ -131,7 +101,7 @@ class EditUserProfile extends Component {
                 <View style={Styles.containerStyle}>
                     {this.props.children}
                     <View style={[Styles.subTolbar, {marginTop: 24}]}>
-                        <Text style={Styles.subTitle}>Edit Profile</Text>
+                        <Text style={Styles.subTitle}>Add Doctor</Text>
                     </View>
                     <ScrollView
                         keyboardShouldPersistTaps={true}>
@@ -166,6 +136,7 @@ class EditUserProfile extends Component {
                             </View>
                         </View>
                         <View style={{backgroundColor: '#FFFFFF', padding: 16}}>
+                            <Text style={styles.heading}>Doctor Profile</Text>
                             <Text style={styles.label} >Firstname</Text>
                             <TextInput
                                 placeholder={'Text Here...'}
@@ -228,7 +199,7 @@ class EditUserProfile extends Component {
                                     <Picker.Item label="Divorced" value="Divorced" />
                                 </Picker>
                             </View>
-                            <Text style={styles.label} >Address</Text>
+                            <Text style={styles.label}>Address</Text>
                             <TextInput
                                 placeholder={'Text Here...'}
                                 style={[styles.textInput, {textAlignVertical: 'top'}]}
@@ -260,11 +231,44 @@ class EditUserProfile extends Component {
                             <TextInput
                                 keyboardType={'email-address'}
                                 placeholder={'Text Here...'}
-                                style={[styles.textInput, {marginBottom: 80}]}
+                                style={[styles.textInput]}
                                 autoCapitalize={'words'}
                                 value={_.toString(this.state.email)}
                                 placeholderTextColor={'#E0E0E0'}
                                 onChangeText={(text) => this.setState({email: text})} />
+                            <Text style={[styles.heading, {paddingTop: 10}]}>Doctor Information</Text>
+                            <Text style={styles.label} >Rank</Text>
+                            <TextInput
+                                placeholder={'Text Here...'}
+                                style={styles.textInput}
+                                autoCapitalize={'words'}
+                                value={_.toString(this.state.rank)}
+                                placeholderTextColor={'#E0E0E0'}
+                                onChangeText={(text) => this.setState({rank: text})} />
+                            <Text style={styles.label} >Specialization</Text>
+                            <TextInput
+                                placeholder={'Text Here...'}
+                                style={styles.textInput}
+                                autoCapitalize={'words'}
+                                value={_.toString(this.state.type)}
+                                placeholderTextColor={'#E0E0E0'}
+                                onChangeText={(text) => this.setState({type: text})} />
+                            <Text style={styles.label} >Code</Text>
+                            <TextInput
+                                placeholder={'Text Here...'}
+                                style={styles.textInput}
+                                autoCapitalize={'words'}
+                                value={_.toString(this.state.code)}
+                                placeholderTextColor={'#E0E0E0'}
+                                onChangeText={(text) => this.setState({code: text})} />
+                            <Text style={styles.label} >LicenseID</Text>
+                            <TextInput
+                                placeholder={'Text Here...'}
+                                style={[styles.textInput, {marginBottom: 80}]}
+                                autoCapitalize={'words'}
+                                value={_.toString(this.state.licenseID)}
+                                placeholderTextColor={'#E0E0E0'}
+                                onChangeText={(text) => this.setState({licenseID: text})} />
                         </View>
                     </ScrollView>
                 </View>
@@ -290,19 +294,17 @@ class EditUserProfile extends Component {
             var imageMime = mime;
 
             db.transaction((tx) => {
-                tx.executeSql("UPDATE `doctors` SET `firstname` = ?, `middlename` = ?, `lastname` = ?, `nameSuffix` = ?, `birthdate` = ?, `sex` = ?, `status` = ?, `address` = ?, `phone1` = ?, `phone2` = ?, `email` = ?, `imagePath` = ?, `imageMime` = ?, `updated_at` = ? WHERE id = ?"
-                , [this.state.firstname, this.state.middlename, this.state.lastname, this.state.nameSuffix, birthdate, this.state.sex, this.state.status, this.state.address, this.state.phone1, this.state.phone2, this.state.email, imagePath, imageMime, this.state.updated_at, this.props.doctorID]
+                tx.executeSql("INSERT INTO doctors (firstname, middlename, lastname, nameSuffix, birthdate, sex, status, address, phone1, phone2, email, imagePath, imageMime, created_at, updated_at, rank, type, code, licenseID) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+                , [this.state.firstname, this.state.middlename, this.state.lastname, this.state.nameSuffix, birthdate, this.state.sex, this.state.status, this.state.address, this.state.phone1, this.state.phone2, this.state.email, imagePath, imageMime, this.state.created_at, this.state.updated_at, this.state.rank, this.state.type, this.state.code, this.state.licenseID]
                 , (tx, rs) => {
                     console.log("updated: " + rs.rowsAffected);
                 })
             }, (err) => {
                 this.setState({refreshing: false})
+                alert(err.message)
                 ToastAndroid.show("Error occured while saving!", 1000)
             }, () => {
                 this.setState({refreshing: false})
-                var doctor = {};
-                doctor['name'] = 'Dr. '+this.state.firstname+' '+this.state.middlename+' '+this.state.lastname;
-                this.updateCredentials(doctor).done()
                 if (this.state.avatar) {
                     RNFS.writeFile(path, this.state.avatar, 'base64').then((success) => {
                         this.props.navigator.pop();
@@ -328,16 +330,6 @@ class EditUserProfile extends Component {
             }
         }
     }
-    async updateCredentials(doctor) {
-        try {
-            await AsyncStorage.mergeItem('doctor', JSON.stringify(doctor));
-        } catch (error) {
-            alert('AsyncStorage error: ' + error.message);
-        }
-    }
-    drawerInstance(instance) {
-        drawerRef = instance
-    }
     guid() {
         var s4 = () => {
             return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
@@ -355,6 +347,13 @@ var styles = StyleSheet.create({
         marginLeft: 16,
         marginRight: 16,
         marginBottom: 6,
+    },
+    heading: {
+        fontSize: 34,
+        color: '#424242',
+        marginBottom: 10,
+        marginLeft: 4,
+        marginRight: 4,
     },
     person: {
         backgroundColor: '#FFFFFF',
@@ -410,7 +409,7 @@ var styles = StyleSheet.create({
     },
 })
 
-var NavigationBarRouteMapper = (doctorName) => ({
+var NavigationBarRouteMapper = {
     LeftButton(route, navigator, index, navState) {
         return (
             <TouchableOpacity style={{flex: 1, justifyContent: 'center'}}
@@ -429,10 +428,10 @@ var NavigationBarRouteMapper = (doctorName) => ({
     Title(route, navigator, index, navState) {
         return (
             <TouchableOpacity style={Styles.title}>
-                <Text style={Styles.titleText}>{doctorName}</Text>
+                <Text style={Styles.titleText}>Doctor</Text>
             </TouchableOpacity>
         )
     }
-})
+}
 
-module.exports = EditUserProfile
+module.exports = AddDoctor

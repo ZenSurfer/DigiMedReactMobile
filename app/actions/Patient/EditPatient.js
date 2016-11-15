@@ -70,8 +70,8 @@ class EditPatient extends Component {
             guardianName: '',
             spouseName: '',
             deleted_at: '',
-            created_at: moment().format('YYYY-MM-DD'),
-            updated_at: moment().format('YYYY-MM-DD'),
+            created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+            updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
 
             animationType: 'slide',
             avatar: '',
@@ -531,7 +531,7 @@ class EditPatient extends Component {
                                 {text: 'CANCEL'},
                                 {text: 'OK', onPress: () => {
                                     db.transaction((tx) => {
-                                        tx.executeSql("update patients set deleted_at = ?, updated_at = ? where id = ?", [moment(new Date()).format('YYYY-MM-DD'), moment(new Date()).format('YYYY-MM-DD'), this.props.patientID], (tx, rs) => {
+                                        tx.executeSql("update patients  ?, updated_at = ? where id = ?", [moment().format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss'), this.props.patientID], (tx, rs) => {
                                             console.log("deleted: " + rs.rowsAffected);
                                         }, (tx, err) => {
                                             console.log('DELETE error: ' + err.message);

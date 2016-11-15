@@ -23,7 +23,7 @@ class UserSettingPage extends Component {
         super(props)
         this.state = {
             rowData: [],
-            updated_at: moment().format('YYYY-MM-DD'),
+            updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
             refreshing: true,
             renderPlaceholderOnly: true,
         }
@@ -75,6 +75,7 @@ class UserSettingPage extends Component {
     renderScene(route, navigator) {
         return (
             <View style={{flex: 1}}>
+                {this.props.children}
                 <View style={Styles.containerStyle}>
                     <View style={Styles.subTolbar}>
                         <Text style={Styles.subTitle}>{this.props.doctorName}</Text>

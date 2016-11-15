@@ -34,7 +34,7 @@ class EditUserSetting extends Component {
             type: '',
             code: '',
             licenseID: '',
-            updated_at: moment().format('YYYY-MM-DD'),
+            updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
 
             animationType: 'slide',
             avatar: '',

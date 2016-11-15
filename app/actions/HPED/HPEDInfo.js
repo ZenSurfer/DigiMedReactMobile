@@ -519,7 +519,7 @@ var NavigationBarRouteMapper = (patientName, props, avatar) => ({
                             {text: 'CANCEL'},
                             {text: 'OK', onPress: () => {
                                 db.transaction((tx) => {
-                                    tx.executeSql("UPDATE diagnosis SET deleted_at = ?, updated_at = ? where id = ?", [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD'), props.diagnosisID], (tx, rs) => {
+                                    tx.executeSql("UPDATE diagnosis SET deleted_at = ?, updated_at = ? where id = ?", [moment().format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss'), props.diagnosisID], (tx, rs) => {
                                         console.log("deleted: " + rs.rowsAffected);
                                     }, (tx, err) => {
                                         console.log('DELETE error: ' + err.message);

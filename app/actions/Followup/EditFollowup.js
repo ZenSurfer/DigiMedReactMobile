@@ -221,13 +221,13 @@ class EditFollowup extends Component {
                         style={[Styles.buttonFab, Styles.subTolbarButton, {marginTop: 25}]}
                         onPress={() => (
                             Alert.alert(
-                                'Delete Confirmation',
-                                'Are you sure you want to delete?',
-                                [
-                                    {text: 'CANCEL'},
-                                    {text: 'OK', onPress: () => {
-                                        db.transaction((tx) => {
-                                            tx.executeSql("UPDATE followup SET deleted_at = ?, updated_at = ? where id = ?", [moment(new Date()).format('YYYY-MM-DD'), moment(new Date()).format('YYYY-MM-DD'), this.props.followupID], (tx, rs) => {
+                            'Delete Confirmation',
+                            'Are you sure you want to delete?',
+                            [
+                            {text: 'CANCEL'},
+                            {text: 'OK', onPress: () => {
+                                db.transaction((tx) => {
+                                    tx.executeSql("UPDATE followup  ?, updated_at = ? where id = ?", [moment().format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss'), this.props.followupID], (tx, rs) => {
                                                 console.log("deleted: " + rs.rowsAffected);
                                             }, (tx, err) => {
                                                 console.log('DELETE error: ' + err.message);
@@ -294,7 +294,7 @@ class EditFollowup extends Component {
             description: this.state.description,
             name: this.state.name,
             emergencyOrElective: this.state.emergencyOrElective,
-            updated_at: moment().format('YYYY-MM-DD'),
+            updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
             id: this.props.followupID,
         }
         if (!this.state.name) {

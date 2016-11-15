@@ -84,6 +84,7 @@ class PendingOrder extends Component {
     renderScene(route, navigator) {
         return (
             <View style={Styles.containerStyle}>
+                {this.props.children}
                 <View style={Styles.subTolbar}>
                     <Text style={Styles.subTitle}>Pending Order</Text>
                 </View>
@@ -123,7 +124,7 @@ class PendingOrder extends Component {
     updatePendingOrder(labworkID) {
        var values = {
            orderDate: moment().format('YYYY-MM-DD'),
-           updated_at: moment().format('YYYY-MM-DD'),
+           updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
            labworkID: labworkID,
        };
        db.transaction((tx) => {
@@ -143,7 +144,7 @@ class PendingOrder extends Component {
             {text: 'CANCEL'},
             {text: 'OK', onPress: () => {
                 db.transaction((tx) => {
-                    tx.executeSql("UPDATE labworkID SET deleted_at = ?, updated_at = ? WHERE id = ?", [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD'), labworkID], (tx, rs) => {
+                    tx.executeSql("UPDATE labworkID SET deleted_at = ?, updated_at = ? where id = ?", [moment().format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss'), labworkID], (tx, rs) => {
                         console.log("deleted: " + rs.rowsAffected);
                     }, (tx, err) => {
                         console.log('DELETE error: ' + err.message);

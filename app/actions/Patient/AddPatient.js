@@ -70,8 +70,8 @@ class AddPatient extends Component {
             guardianName: '',
             spouseName: '',
             deleted_at: '',
-            created_at: moment().format('YYYY-MM-DD'),
-            updated_at: moment().format('YYYY-MM-DD'),
+            created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+            updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
 
             animationType: 'slide',
             modalVisible: false,
@@ -81,25 +81,15 @@ class AddPatient extends Component {
     }
     render() {
         return (
-            <DrawerLayoutAndroid
-                drawerWidth={300}
-                drawerPosition={DrawerLayoutAndroid.positions.Left}
-                renderNavigationView={() => {
-                    return (<DrawerPage navigator={this.props.navigator} routeName={'patients'}></DrawerPage>)
-                }}
-                statusBarBackgroundColor={'#2962FF'}
-                ref={this.drawerInstance}
-                >
-                <Navigator
-                    renderScene={this.renderScene.bind(this)}
-                    navigator={this.props.navigator}
-                    navigationBar={
-                        <Navigator.NavigationBar style={Styles.navigationBar}
-                            routeMapper={NavigationBarRouteMapper} />
-                    }
-                    configureScene = {this.configureScene}
-                    />
-            </DrawerLayoutAndroid>
+            <Navigator
+                renderScene={this.renderScene.bind(this)}
+                navigator={this.props.navigator}
+                navigationBar={
+                    <Navigator.NavigationBar style={Styles.navigationBar}
+                        routeMapper={NavigationBarRouteMapper} />
+                }
+                configureScene = {this.configureScene}
+            />
         )
     }
     async showPicker(stateKey, options) {

@@ -18,7 +18,7 @@ const db = EnvInstance.db()
 const {height, width} = Dimensions.get('window')
 const avatar = require('../../assets/images/banner.jpg')
 
-class UserProfilePage extends Component {
+class DoctorProfile extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -28,25 +28,6 @@ class UserProfilePage extends Component {
             refreshing: false,
             renderPlaceholderOnly: true,
         }
-    }
-    componentWillMount() {
-        this.setState({refreshing: true});
-        db.transaction((tx) => {
-            tx.executeSql("SELECT `id`, `groupID`, `patientID`, `userID`, `firstname`, `middlename`, `lastname`, `nameSuffix`, `birthdate`, `sex`, `status`, `address`, `phone1`, `phone2`, `email`, `imagePath`, `imageMime`, `allowAsPatient`, `schedule`, `deleted_at`, `created_at`, `updated_at` FROM doctors WHERE `doctors`.`id`= ?", [this.props.doctorID], function(tx, rs) {
-                db.data = rs.rows.item(0);
-            });
-        }, (err) => {
-            alert(err.message);
-        }, () => {
-            if (db.data.imagePath)
-                RNFS.exists(db.data.imagePath).then((exist) => {
-                    if (exist)
-                        RNFS.readFile(db.data.imagePath, 'base64').then((rs) => {
-                            this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')});
-                        })
-                })
-            this.setState({refreshing: false, rowData: db.data});
-        });
     }
     render() {
         return (
@@ -72,8 +53,8 @@ class UserProfilePage extends Component {
     componentDidMount() {
         InteractionManager.runAfterInteractions(() => {
             setTimeout(() => { this.setState({renderPlaceholderOnly: false, progress: 1}) }, 500)
-
         });
+        this.onRefresh()
     }
     componentWillReceiveProps(nextProps) {
         if (_.size(nextProps.navigator.getCurrentRoutes(0)) > 1) {
@@ -122,13 +103,14 @@ class UserProfilePage extends Component {
                                     <Image
                                         style={[styles.avatarImage, {marginTop: 5}]}
                                         source={{uri: this.state.avatar}} />
-                                ) : (
+                                    ) : (
                                     <View>
                                         <Icon name={'account-circle'} size={200} color={'#EEEEEE'}/>
                                     </View>
                                 )}
                             </View>
                             <View style={{backgroundColor: '#FFFFFF', marginBottom: 10, marginTop: -10}}>
+                                <Text style={styles.heading}>Doctor Profile</Text>
                                 <View style={{flexDirection: 'row'}}>
                                     <View style={[styles.rows, {flex: 1, alignItems: 'stretch', flexDirection: 'column'}]}>
                                         <Text style={styles.label}>Firstname</Text>
@@ -185,15 +167,35 @@ class UserProfilePage extends Component {
                                     <Text style={styles.label}>Email Address</Text>
                                     <View style={styles.textWrapper}><Text style={styles.text}>{this.state.rowData.email}</Text></View>
                                 </View>
+                                <Text style={[styles.heading]}>Doctor Information</Text>
+                                <View style={{flexDirection: 'row'}}>
+                                    <View style={[styles.rows, {flex: 1, alignItems: 'stretch', flexDirection: 'column', paddingTop: 5}]}>
+                                        <Text style={styles.label}>License ID</Text>
+                                        <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.licenseID) ? this.state.rowData.licenseID : '-'}</Text></View>
+                                    </View>
+                                    <View style={[styles.rows, {flex: 1, alignItems: 'stretch', flexDirection: 'column'}]}>
+                                        <Text style={styles.label}>Rank</Text>
+                                        <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.rank) ? this.state.rowData.rank : '-'}</Text></View>
+                                    </View>
+                                </View>
+                                <View style={{flexDirection: 'row'}}>
+                                    <View style={[styles.rows, {flex: 1, alignItems: 'stretch', flexDirection: 'column'}]}>
+                                        <Text style={styles.label}>Specialization</Text>
+                                        <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.type) ? this.state.rowData.type : '-'}</Text></View>
+                                    </View>
+                                    <View style={[styles.rows, {flex: 1, alignItems: 'stretch', flexDirection: 'column'}]}>
+                                        <Text style={styles.label}>Code</Text>
+                                        <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.code) ? this.state.rowData.code : '-'}</Text></View>
+                                    </View>
+                                </View>
                             </View>
                         </View>
                     </ScrollView>
                     <TouchableOpacity
                         style={[Styles.buttonFab, Styles.subTolbarButton, {marginTop: 5}]}
                         onPress={() =>  this.props.navigator.push({
-                            id: 'EditUserProfile',
+                            id: 'EditDoctor',
                             passProps: {
-                                userID: this.props.userID,
                                 doctorID: this.props.doctorID,
                                 doctorName: this.props.doctorName,
                             }
@@ -207,7 +209,7 @@ class UserProfilePage extends Component {
     onRefresh() {
         this.setState({refreshing: true});
         db.transaction((tx) => {
-            tx.executeSql("SELECT `id`, `groupID`, `patientID`, `userID`, `firstname`, `middlename`, `lastname`, `nameSuffix`, `birthdate`, `sex`, `status`, `address`, `phone1`, `phone2`, `email`, `imagePath`, `imageMime`, `allowAsPatient`, `schedule`, `deleted_at`, `created_at`, `updated_at` FROM doctors WHERE `doctors`.`id`= ?", [this.props.doctorID], function(tx, rs) {
+            tx.executeSql("SELECT * FROM doctors WHERE `doctors`.`id`= ?", [this.props.doctorID], function(tx, rs) {
                 db.data = rs.rows.item(0);
             });
         }, (err) => {
@@ -237,6 +239,13 @@ var styles = StyleSheet.create({
         marginLeft: 16,
         marginRight: 16,
         marginBottom: 6,
+    },
+    heading: {
+        fontSize: 34,
+        color: '#424242',
+        marginBottom: 10,
+        marginLeft: 4,
+        marginRight: 4,
     },
     person: {
         backgroundColor: '#FFFFFF',
@@ -288,9 +297,9 @@ var NavigationBarRouteMapper = {
     LeftButton(route, navigator, index, navState) {
         return (
             <TouchableOpacity style={Styles.leftButton}
-                onPress={() => drawerRef.openDrawer()}>
+                onPress={() => navigator.parentNavigator.pop()}>
                 <Text style={Styles.leftButtonText}>
-                    <Icon name="menu" size={30} color="#FFF" />
+                    <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                 </Text>
             </TouchableOpacity>
         )
@@ -301,10 +310,10 @@ var NavigationBarRouteMapper = {
     Title(route, navigator, index, navState) {
         return (
             <TouchableOpacity style={Styles.title}>
-                <Text style={Styles.titleText}>User Profile</Text>
+                <Text style={Styles.titleText}>Doctor</Text>
             </TouchableOpacity>
         )
     }
 }
 
-module.exports = UserProfilePage
+module.exports = DoctorProfile

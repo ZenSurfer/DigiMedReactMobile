@@ -151,6 +151,9 @@ class DrawerPage extends Component {
                         <TouchableNativeFeedback
                             onPress={() => this.props.navigator.replace({
                                 id: 'DoctorPage',
+                                passProps: {
+                                    doctorID: this.state.doctorID
+                                },
                                 sceneConfig: Navigator.SceneConfigs.FadeAndroid
                             })
                             }>

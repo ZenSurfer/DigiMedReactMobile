@@ -1,7 +1,7 @@
 'use-strict'
 
 import React, {Component} from 'react'
-import {Text, View, StyleSheet, Navigator, Image, DrawerLayoutAndroid, ListView, TouchableOpacity, InteractionManager, ScrollView, RefreshControl, Dimensions, ActivityIndicator, TextInput, Picker, DatePickerAndroid, ToastAndroid, AsyncStorage} from 'react-native'
+import {Text, View, StyleSheet, Navigator, Image, DrawerLayoutAndroid, ListView, TouchableOpacity, InteractionManager, ScrollView, RefreshControl, Dimensions, ActivityIndicator, TextInput, Picker, DatePickerAndroid, ToastAndroid, AsyncStorage, Alert} from 'react-native'
 import RNFS from 'react-native-fs'
 import ImagePicker from 'react-native-image-picker'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -18,7 +18,7 @@ const db = EnvInstance.db()
 const {height, width} = Dimensions.get('window')
 const avatar = require('../../assets/images/banner.jpg')
 
-class EditUserProfile extends Component {
+class EditDoctor extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -35,10 +35,19 @@ class EditUserProfile extends Component {
             },
             sex: 1,
             status: 'Single',
+            rank: '',
+            type: '',
+            code: '',
+            licenseID: '',
             address: '',
             phone1: '',
             phone2: '',
+            type: '',
+            rank: '',
+            code: '',
+            licenseID: '',
             email: '',
+            created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
             updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
 
             refreshing: false,
@@ -47,7 +56,7 @@ class EditUserProfile extends Component {
     componentWillMount() {
         this.setState({refreshing: true});
         db.transaction((tx) => {
-            tx.executeSql("SELECT `id`, `groupID`, `patientID`, `userID`, `firstname`, `middlename`, `lastname`, `nameSuffix`, `birthdate`, `sex`, `status`, `address`, `phone1`, `phone2`, `email`, `imagePath`, `imageMime`, `allowAsPatient`, `schedule`, `deleted_at`, `created_at`, `updated_at` FROM doctors WHERE `doctors`.`id`= ?", [this.props.doctorID], function(tx, rs) {
+            tx.executeSql("SELECT `id`, `groupID`, `patientID`, `userID`, `firstname`, `middlename`, `lastname`, `nameSuffix`, `birthdate`, `sex`, `status`, `address`, `phone1`, `phone2`, `email`, `imagePath`, `imageMime`, `allowAsPatient`, `schedule`, `deleted_at`, `created_at`, `updated_at`, `rank`, `type`, `code`, `licenseID` FROM doctors WHERE `doctors`.`id`= ?", [this.props.doctorID], function(tx, rs) {
                 db.data = rs.rows.item(0);
             });
         }, (err) => {
@@ -75,7 +84,11 @@ class EditUserProfile extends Component {
                 address: db.data.address,
                 phone1: db.data.phone1,
                 phone2: db.data.phone2,
-                email: db.data.email
+                email: db.data.email,
+                rank: db.data.rank,
+                code: db.data.code,
+                type: db.data.type,
+                licenseID: db.data.licenseID,
             });
         });
     }
@@ -117,7 +130,7 @@ class EditUserProfile extends Component {
             <View style={Styles.containerStyle}>
                 {this.props.children}
                 <View style={[Styles.subTolbar, {marginTop: 24}]}>
-                    <Text style={Styles.subTitle}>Edit User Profile</Text>
+                    <Text style={Styles.subTitle}>Edit Doctor</Text>
                 </View>
                 <View style={Styles.loading}>
                     <View style={Styles.horizontal}><ActivityIndicator color="#212121" size={23}/></View>
@@ -131,7 +144,7 @@ class EditUserProfile extends Component {
                 <View style={Styles.containerStyle}>
                     {this.props.children}
                     <View style={[Styles.subTolbar, {marginTop: 24}]}>
-                        <Text style={Styles.subTitle}>Edit Profile</Text>
+                        <Text style={Styles.subTitle}>Edit Doctor</Text>
                     </View>
                     <ScrollView
                         keyboardShouldPersistTaps={true}>
@@ -166,6 +179,7 @@ class EditUserProfile extends Component {
                             </View>
                         </View>
                         <View style={{backgroundColor: '#FFFFFF', padding: 16}}>
+                            <Text style={styles.heading}>Doctor Profile</Text>
                             <Text style={styles.label} >Firstname</Text>
                             <TextInput
                                 placeholder={'Text Here...'}
@@ -228,7 +242,7 @@ class EditUserProfile extends Component {
                                     <Picker.Item label="Divorced" value="Divorced" />
                                 </Picker>
                             </View>
-                            <Text style={styles.label} >Address</Text>
+                            <Text style={styles.label}>Address</Text>
                             <TextInput
                                 placeholder={'Text Here...'}
                                 style={[styles.textInput, {textAlignVertical: 'top'}]}
@@ -260,13 +274,73 @@ class EditUserProfile extends Component {
                             <TextInput
                                 keyboardType={'email-address'}
                                 placeholder={'Text Here...'}
-                                style={[styles.textInput, {marginBottom: 80}]}
+                                style={[styles.textInput]}
                                 autoCapitalize={'words'}
                                 value={_.toString(this.state.email)}
                                 placeholderTextColor={'#E0E0E0'}
                                 onChangeText={(text) => this.setState({email: text})} />
+                            <Text style={[styles.heading, {paddingTop: 10}]}>Doctor Information</Text>
+                            <Text style={styles.label} >Rank</Text>
+                            <TextInput
+                                placeholder={'Text Here...'}
+                                style={styles.textInput}
+                                autoCapitalize={'words'}
+                                value={_.toString(this.state.rank)}
+                                placeholderTextColor={'#E0E0E0'}
+                                onChangeText={(text) => this.setState({rank: text})} />
+                            <Text style={styles.label} >Specialization</Text>
+                            <TextInput
+                                placeholder={'Text Here...'}
+                                style={styles.textInput}
+                                autoCapitalize={'words'}
+                                value={_.toString(this.state.type)}
+                                placeholderTextColor={'#E0E0E0'}
+                                onChangeText={(text) => this.setState({type: text})} />
+                            <Text style={styles.label} >Code</Text>
+                            <TextInput
+                                placeholder={'Text Here...'}
+                                style={styles.textInput}
+                                autoCapitalize={'words'}
+                                value={_.toString(this.state.code)}
+                                placeholderTextColor={'#E0E0E0'}
+                                onChangeText={(text) => this.setState({code: text})} />
+                            <Text style={styles.label} >LicenseID</Text>
+                            <TextInput
+                                placeholder={'Text Here...'}
+                                style={[styles.textInput, {marginBottom: 80}]}
+                                autoCapitalize={'words'}
+                                value={_.toString(this.state.licenseID)}
+                                placeholderTextColor={'#E0E0E0'}
+                                onChangeText={(text) => this.setState({licenseID: text})} />
                         </View>
                     </ScrollView>
+                    <TouchableOpacity
+                        style={[Styles.buttonFab, Styles.subTolbarButton, {marginTop: 25}]}
+                        onPress={() => (
+                            Alert.alert(
+                            'Delete Confirmation',
+                            'Are you sure you want to delete?',
+                            [
+                            {text: 'CANCEL'},
+                            {text: 'OK', onPress: () => {
+                                db.transaction((tx) => {
+                                    tx.executeSql("update doctors  ?, updated_at = ? where id = ?", [moment().format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss'), this.props.doctorID], (tx, rs) => {
+                                        console.log("deleted: " + rs.rowsAffected);
+                                    }, (tx, err) => {
+                                        console.log('DELETE error: ' + err.message);
+                                    });
+                                }, (err) => {
+                                    ToastAndroid.show("Error occured while deleting!", 3000)
+                                }, () => {
+                                    ToastAndroid.show("Successfully deleted!", 3000)
+                                    this.props.navigator.pop()
+                                })
+                            }},
+                            ]
+                            )
+                        )}>
+                        <Icon name={'delete'} color={'#FFFFFF'} size={30}/>
+                    </TouchableOpacity>
                 </View>
                 <TouchableOpacity
                     style={[Styles.buttonFab, {backgroundColor: '#4CAF50'}]}
@@ -290,19 +364,17 @@ class EditUserProfile extends Component {
             var imageMime = mime;
 
             db.transaction((tx) => {
-                tx.executeSql("UPDATE `doctors` SET `firstname` = ?, `middlename` = ?, `lastname` = ?, `nameSuffix` = ?, `birthdate` = ?, `sex` = ?, `status` = ?, `address` = ?, `phone1` = ?, `phone2` = ?, `email` = ?, `imagePath` = ?, `imageMime` = ?, `updated_at` = ? WHERE id = ?"
-                , [this.state.firstname, this.state.middlename, this.state.lastname, this.state.nameSuffix, birthdate, this.state.sex, this.state.status, this.state.address, this.state.phone1, this.state.phone2, this.state.email, imagePath, imageMime, this.state.updated_at, this.props.doctorID]
+                tx.executeSql("UPDATE `doctors` SET `firstname` = ?, `middlename` = ?, `lastname` = ?, `nameSuffix` = ?, `birthdate` = ?, `sex` = ?, `status` = ?, `address` = ?, `phone1` = ?, `phone2` = ?, `email` = ?, `imagePath` = ?, `imageMime` = ?, `updated_at` = ?, `rank` = ?, `type` = ?, `code` = ?, `licenseID` = ?  WHERE id = ?"
+                , [this.state.firstname, this.state.middlename, this.state.lastname, this.state.nameSuffix, birthdate, this.state.sex, this.state.status, this.state.address, this.state.phone1, this.state.phone2, this.state.email, imagePath, imageMime, this.state.updated_at, this.state.rank, this.state.type, this.state.code, this.state.licenseID, this.props.doctorID]
                 , (tx, rs) => {
                     console.log("updated: " + rs.rowsAffected);
                 })
             }, (err) => {
                 this.setState({refreshing: false})
+                alert(err.message)
                 ToastAndroid.show("Error occured while saving!", 1000)
             }, () => {
                 this.setState({refreshing: false})
-                var doctor = {};
-                doctor['name'] = 'Dr. '+this.state.firstname+' '+this.state.middlename+' '+this.state.lastname;
-                this.updateCredentials(doctor).done()
                 if (this.state.avatar) {
                     RNFS.writeFile(path, this.state.avatar, 'base64').then((success) => {
                         this.props.navigator.pop();
@@ -328,16 +400,6 @@ class EditUserProfile extends Component {
             }
         }
     }
-    async updateCredentials(doctor) {
-        try {
-            await AsyncStorage.mergeItem('doctor', JSON.stringify(doctor));
-        } catch (error) {
-            alert('AsyncStorage error: ' + error.message);
-        }
-    }
-    drawerInstance(instance) {
-        drawerRef = instance
-    }
     guid() {
         var s4 = () => {
             return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
@@ -355,6 +417,13 @@ var styles = StyleSheet.create({
         marginLeft: 16,
         marginRight: 16,
         marginBottom: 6,
+    },
+    heading: {
+        fontSize: 34,
+        color: '#424242',
+        marginBottom: 10,
+        marginLeft: 4,
+        marginRight: 4,
     },
     person: {
         backgroundColor: '#FFFFFF',
@@ -435,4 +504,4 @@ var NavigationBarRouteMapper = (doctorName) => ({
     }
 })
 
-module.exports = EditUserProfile
+module.exports = EditDoctor

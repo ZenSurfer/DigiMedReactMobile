@@ -248,8 +248,8 @@ class AddFollowup extends Component {
             pay: 'personal',
             leadSurgeon: this.state.doctorID,
             deleted_at: '',
-            created_at: moment().format('YYYY-MM-DD'),
-            updated_at: moment().format('YYYY-MM-DD'),
+            created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+            updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
         }
         if (!this.state.name) {
             ToastAndroid.show('Cannot be empty brief description!', 3000);

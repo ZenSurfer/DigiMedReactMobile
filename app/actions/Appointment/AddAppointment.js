@@ -317,8 +317,8 @@ class AppointmentPage extends Component {
             type: this.state.setType,
             notes: this.state.notes,
             deleted_at: '',
-            created_at: moment().format('YYYY-MM-DD'),
-            updated_at: moment().format('YYYY-MM-DD'),
+            created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+            updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
         }
         db.transaction((tx) => {
             db.duplicate = false;

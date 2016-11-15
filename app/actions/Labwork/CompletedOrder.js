@@ -89,6 +89,7 @@ class PendingOrder extends Component {
     renderScene(route, navigator) {
         return (
             <View style={Styles.containerStyle}>
+                {this.props.children}
                 <View style={Styles.subTolbar}>
                     <Text style={Styles.subTitle}>Completed Order</Text>
                 </View>
@@ -148,7 +149,7 @@ class PendingOrder extends Component {
             {text: 'CANCEL'},
             {text: 'OK', onPress: () => {
                 var values = {
-                    updated_at: moment().format('YYYY-MM-DD'),
+                    updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
                     labworkID: labworkID,
                 };
                 db.transaction((tx) => {

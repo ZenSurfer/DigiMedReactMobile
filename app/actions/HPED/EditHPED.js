@@ -245,7 +245,7 @@ class EditHPED extends Component {
                                 {text: 'CANCEL'},
                                 {text: 'OK', onPress: () => {
                                     db.transaction((tx) => {
-                                        tx.executeSql("UPDATE diagnosis SET deleted_at = ?, updated_at = ? where id = ?", [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD'), this.props.diagnosisID], (tx, rs) => {
+                                        tx.executeSql("UPDATE diagnosis SET deleted_at = ?, updated_at = ? where id = ?", [moment().format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss'), this.props.diagnosisID], (tx, rs) => {
                                             console.log("deleted: " + rs.rowsAffected);
                                         }, (tx, err) => {
                                             console.log('DELETE error: ' + err.message);
@@ -578,7 +578,7 @@ class EditHPED extends Component {
             })
             tx.executeSql("DELETE FROM `diagnosisIcds` WHERE `diagnosisID`=? ", [this.props.diagnosisID], (tx, rs) => {
                 _.forEach(icds, (v, i) => {
-                    tx.executeSql("INSERT INTO `diagnosisIcds` (`diagnosisID`, `icdID`, `deleted_at`, `created_at`, `updated_at`) VALUES ("+this.props.diagnosisID+", "+i+", null, '"+moment().format('YYYY-MM-DD')+"', '"+moment().format('YYYY-MM-DD')+"')", [], (tx, rs) => {
+                    tx.executeSql("INSERT INTO `diagnosisIcds` (`diagnosisID`, `icdID`, `deleted_at`, `created_at`, `updated_at`) VALUES ("+this.props.diagnosisID+", "+i+", null, '"+moment().format('YYYY-MM-DD HH:mm:ss')+"', '"+moment().format('YYYY-MM-DD HH:mm:ss')+"')", [], (tx, rs) => {
                         console.log("created: " + rs.rowsAffected);
                     }, (err) => {
                         console.log(':'+ err.message)

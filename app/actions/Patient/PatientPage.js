@@ -29,32 +29,8 @@ class PatientPage extends Component {
             rowData: [],
         }
     }
-    componentWillMount() {
-        this.setState({refreshing: true})
-        db.transaction((tx) => {
-            tx.executeSql("SELECT * FROM patients WHERE (deleted_at in (null, 'NULL', '') OR deleted_at is null) "+this.state.query+" "+this.state.search, [], function(tx, rs) {
-                db.data = rs.rows
-            }, function(error) {
-                console.log('SELECT SQL statement ERROR: ' + error.message);
-            });
-        }, (error) => {
-            console.log('transaction error: ' + error.message);
-        }, () => {
-            var rowData = []; var self = this;
-            _.forEach(db.data, function(v, i) {
-                rowData.push(db.data.item(i))
-                if (db.data.item(i).imagePath != '')
-                    RNFS.exists(db.data.item(i).imagePath).then((exist) => {
-                        if (exist)
-                            RNFS.readFile(db.data.item(i).imagePath, 'base64').then((rs) => {
-                                var obj = {};
-                                obj['patient'+db.data.item(i).id] = _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,');
-                                self.setState(obj);
-                            })
-                    })
-            })
-            this.setState({refreshing: false, rowData: rowData})
-        })
+    componentDidMount() {
+        this.onRefresh();
     }
     componentWillReceiveProps(nextProps) {
         if (_.size(nextProps.navigator.getCurrentRoutes(0)) > 1) {
@@ -90,6 +66,7 @@ class PatientPage extends Component {
     renderScene(route, navigator) {
         return (
             <View style={Styles.containerStyle}>
+                {this.props.children}
                 <View style={Styles.subTolbar}>
                     <Text style={Styles.subTitle}>Patient</Text>
                 </View>
@@ -199,7 +176,7 @@ class PatientPage extends Component {
                 onPress={() => this.gotoPatientProfile(rowData)}>
                 <View style={[styles.listView, {paddingTop: 0, paddingBottom: 0}]}>
                     <View style={{height: 70, justifyContent: 'center'}}>
-                        {(rowData.imagePath) ? ((this.state['patient'+rowData.id]) ? (<Image source={{uri: this.state['patient'+rowData.id]}} style={[styles.avatarImage, {marginLeft: 20, marginRight: 12}]}/>) : ((<Icon name={'account-circle'} color={'grey'} size={80}  style={styles.avatarIcon}/>))) : (<Icon name={'account-circle'} color={'grey'} size={80}  style={styles.avatarIcon}/>)}
+                        {(rowData.imagePath) ? ((this.state['patient'+rowData.id]) ? (<Image source={{uri: this.state['patient'+rowData.id]}} style={[styles.avatarImage, {marginLeft: 20, marginRight: 12}]}/>) : ((<Icon name={'account-circle'} color={'#E0E0E0'} size={80}  style={styles.avatarIcon}/>))) : (<Icon name={'account-circle'} color={'#E0E0E0'} size={80}  style={styles.avatarIcon}/>)}
                     </View>
                     <View style={[styles.listText, {justifyContent: 'center'}]}>
                         <Text style={styles.listItemHead}>{rowData.firstname+' '+rowData.middlename+' '+rowData.lastname}</Text>

@@ -156,6 +156,7 @@ class FrontPage extends Component {
     renderScene(route, navigator) {
         return (
             <View style={Styles.containerStyle}>
+                {this.props.children}
                 <View style={Styles.subTolbar}>
                     <Text style={Styles.subTitle}>{this.state.presetText}</Text>
                 </View>

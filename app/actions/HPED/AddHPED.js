@@ -516,7 +516,7 @@ class AddHPED extends Component {
         db.transaction((tx) => {
             tx.executeSql("INSERT INTO diagnosis (`patientID`, `doctorID`, `appointmentID`, `preparedByID`, `chiefComplaint`, `historyIllness`, `bodyTemperature`, `bloodPressure`, `respirationRate`, `pulseRate`, `medicalHistory`, `initialDiagnosis`, `physicalExam`, `services`, `type`, `code`, `category`, `plan`, `pay`, `referringDoctor`, `labs`, `imaging`, `accident`, `painLevel`, `allergies`, `currentMedications`, `date`, `timeStart`, `timeEnd`, `certRemarks`, `certPurpose`, `deleted_at`, `created_at`, `updated_at`) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", values, (tx, rs) => {
                 _.forEach(icds, (v, i) => {
-                    tx.executeSql("INSERT INTO `diagnosisIcds` (`diagnosisID`, `icdID`, `deleted_at`, `created_at`, `updated_at`) VALUES ("+rs.insertId+", "+i+", null, '"+moment().format('YYYY-MM-DD')+"', '"+moment().format('YYYY-MM-DD')+"')", [], (tx, rs) => {
+                    tx.executeSql("INSERT INTO `diagnosisIcds` (`diagnosisID`, `icdID`, `deleted_at`, `created_at`, `updated_at`) VALUES ("+rs.insertId+", "+i+", null, '"+moment().format('YYYY-MM-DD HH:mm:ss')+"', '"+moment().format('YYYY-MM-DD HH:mm:ss')+"')", [], (tx, rs) => {
                         console.log("created: " + rs.rowsAffected);
                     }, (err) => {
                         console.log(':'+ err.message)
