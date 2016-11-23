@@ -53,6 +53,8 @@ import AddDoctor from './actions/Doctor/AddDoctor'
 import EditDoctor from './actions/Doctor/EditDoctor'
 import DoctorProfile from './actions/Doctor/DoctorProfile'
 
+import ExportPage from './actions/Syncing/ExportPage'
+
 import Styles from './assets/Styles'
 
 module.exports = (route, navigator, self) => {
@@ -61,21 +63,21 @@ module.exports = (route, navigator, self) => {
 
     if (routeId === 'SplashPage') {
         return (
-            <SplashPage navigator={navigator}>
+            <SplashPage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
             </SplashPage>
         )
     }
     if (routeId === 'LoginPage') {
         return (
-            <LoginPage navigator={navigator}>
+            <LoginPage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
             </LoginPage>
         )
     }
     if (routeId === 'SearchPage') {
         return (
-            <SearchPage navigator={navigator}>
+            <SearchPage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -566,7 +568,14 @@ module.exports = (route, navigator, self) => {
            </DoctorProfile>
        )
    }
-
+    // export page
+    if (routeId === 'ExportPage') {
+        return (
+            <ExportPage navigator={navigator} {...route.passProps}>
+                <StatusBar backgroundColor='#2962FF'/>
+            </ExportPage>
+        )
+    }
     // frontdesk page
     if (routeId === 'FrontPage') {
         return (

@@ -18,9 +18,9 @@ class LoginPage extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            username: '',
-            password: '',
-            cloudUrl: '',
+            username: 'VDD',
+            password: 'doctor1',
+            cloudUrl: 'http://192.168.1.40/imd5/public/',
             auth: false,
             visibility: false,
         }
@@ -107,11 +107,26 @@ class LoginPage extends Component {
                                                             }
                                                         })
                                                     }, (err) => {
-                                                        alert(err.message)
+                                                        var param = this.jsonToQueryString({
+                                                            username: this.state.username,
+                                                            password: this.state.password,
+                                                        })
+                                                        this.login(param).then((data) => {
+                                                            this.setState({auth: false})
+                                                            if (data.auth)
+                                                                this.props.navigator.replace({
+                                                                    id: 'SplashPage',
+                                                                    passProps: {initial: true},
+                                                                    sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                                                })
+                                                            else
+                                                                ToastAndroid.show('Invalid username / password!', 1000);
+
+                                                        }).done();
                                                     }, () => {
                                                         if(db.passed) {
                                                             var doctor = _.omit(db.data, ['password']);
-                                                            doctor['cloudUrl'] = this.state.cloudUrl;
+                                                            doctor['cloudUrl'] = _.trimEnd(this.state.cloudUrl, '/');
                                                             AsyncStorage.setItem('doctor', JSON.stringify(doctor))
                                                             this.props.navigator.replace({
                                                                 id: 'SplashPage',
@@ -153,6 +168,22 @@ class LoginPage extends Component {
                 </View>
             </View>
         );
+    }
+    async login(param) {
+        try {
+            return await fetch(_.trimEnd(this.state.cloudUrl, '/')+'/api/v2/login?'+param).then((response) => {
+                return response.json()
+            });
+        } catch (err) {
+            this.setState({auth: false})
+            ToastAndroid.show('No internet connection!', 1000)
+            console.log(err.message)
+        }
+    }
+    jsonToQueryString(json) {
+        return Object.keys(json).map(function(key) {
+            return encodeURIComponent(key) + '=' + encodeURIComponent(json[key]);
+        }).join('&');
     }
 }
 

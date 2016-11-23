@@ -254,7 +254,7 @@ class OrderItem extends Component {
     pendingItemUpdate() {
         this.setState({refreshing: true, pendingItem: {}})
         db.transaction((tx) => {
-            tx.executeSql("SELECT `labwork`.`id` as `id`, `labwork`.`orderDate`, `labwork`.`labData` FROM `labwork` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND (`labwork`.`completed` in (null, 'NULL', '') OR `labwork`.`completed` is null) AND `labwork`.`patientID` = ? ORDER BY `labwork`.`orderDate` DESC, `labwork`.`created_at` DESC", [this.props.patientID], (tx, rs) => {
+            tx.executeSql("SELECT `labwork`.`id` as `id`, `labwork`.`orderDate`, `labwork`.`labData` FROM `labwork` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND (`labwork`.`completed` in (null, 'NULL', '') OR `labwork`.`completed` is null) AND `labwork`.`patientID` = ? AND `labwork`.`userID` = ?  ORDER BY `labwork`.`orderDate` DESC, `labwork`.`created_at` DESC", [this.props.patientID, this.props.doctorUserID], (tx, rs) => {
                 var pendingItemObj = {};
                 _.forEach(rs.rows, (v, i) => {
                     var orderDate = rs.rows.item(i).orderDate;
@@ -285,7 +285,7 @@ class OrderItem extends Component {
     recentItemUpdate() {
         this.setState({refreshing: true, recentItem: {}})
         db.transaction((tx) => {
-            tx.executeSql("SELECT `labwork`.`completionDate`, `labwork`.`labData` FROM `labwork` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND `labwork`.`completed` = 1 AND `labwork`.`patientID` = ? ORDER BY `labwork`.`completionDate` DESC, `labwork`.`created_at` DESC", [this.props.patientID], (tx, rs) => {
+            tx.executeSql("SELECT `labwork`.`completionDate`, `labwork`.`labData` FROM `labwork` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND `labwork`.`completed` = 1 AND `labwork`.`patientID` = ? AND `labwork`.`userID` = ? ORDER BY `labwork`.`completionDate` DESC, `labwork`.`created_at` DESC", [this.props.patientID, this.props.doctorUserID], (tx, rs) => {
                 var recentItemObj = {};
                 _.forEach(rs.rows, (v, i) => {
                     var completionDate = rs.rows.item(i).completionDate;

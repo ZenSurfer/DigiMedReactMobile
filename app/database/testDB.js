@@ -14,7 +14,7 @@ export default {
       "surgery": "2016-04-04 02:00:00",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 19:01:42",
-      "updated_at": "2016-03-28 22:45:43');"
+      "updated_at": "2016-03-28 22:45:43"
     },
     {
       "id": "2",
@@ -28,7 +28,7 @@ export default {
       "surgery": "2016-04-03 01:00:00",
       "deleted_at": "NULL",
       "created_at": "2016-04-03 18:37:56",
-      "updated_at": "2016-04-03 18:37:56');"
+      "updated_at": "2016-04-03 18:37:56"
     },
     {
       "id": "3",
@@ -42,7 +42,7 @@ export default {
       "surgery": "2016-04-04 22:41:05",
       "deleted_at": "2016-04-04 22:41:19",
       "created_at": "2016-04-04 22:39:50",
-      "updated_at": "2016-04-04 22:41:19');"
+      "updated_at": "2016-04-04 22:41:19"
     },
     {
       "id": "4",
@@ -56,7 +56,7 @@ export default {
       "surgery": "2016-04-04 22:41:39",
       "deleted_at": "2016-04-04 22:41:55",
       "created_at": "2016-04-04 22:41:39",
-      "updated_at": "2016-04-04 22:41:55');"
+      "updated_at": "2016-04-04 22:41:55"
     },
     {
       "id": "5",
@@ -70,7 +70,7 @@ export default {
       "surgery": "2016-04-04 22:42:36",
       "deleted_at": "NULL",
       "created_at": "2016-04-04 22:42:36",
-      "updated_at": "2016-04-04 22:42:36');"
+      "updated_at": "2016-04-04 22:42:36"
     },
     {
       "id": "6",
@@ -84,7 +84,7 @@ export default {
       "surgery": "2016-04-04 23:13:06",
       "deleted_at": "2016-04-04 23:13:13",
       "created_at": "2016-04-04 23:13:06",
-      "updated_at": "2016-04-04 23:13:13');"
+      "updated_at": "2016-04-04 23:13:13"
     },
     {
       "id": "7",
@@ -98,7 +98,7 @@ export default {
       "surgery": "2016-04-04 23:14:55",
       "deleted_at": "2016-04-04 23:15:35",
       "created_at": "2016-04-04 23:14:55",
-      "updated_at": "2016-04-04 23:15:35');"
+      "updated_at": "2016-04-04 23:15:35"
     },
     {
       "id": "8",
@@ -112,7 +112,7 @@ export default {
       "surgery": "2016-04-05 23:43:00",
       "deleted_at": "2016-04-05 00:05:26",
       "created_at": "2016-04-04 23:43:14",
-      "updated_at": "2016-04-05 00:05:26');"
+      "updated_at": "2016-04-05 00:05:26"
     },
     {
       "id": "9",
@@ -126,7 +126,7 @@ export default {
       "surgery": "2016-05-03 00:47:00",
       "deleted_at": "NULL",
       "created_at": "2016-05-03 00:47:55",
-      "updated_at": "2016-05-03 00:48:27');"
+      "updated_at": "2016-05-03 00:48:27"
     }
   ],
   "appointments": [
@@ -148,7 +148,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 00:54:31",
-      "updated_at": "2016-03-28 00:54:31');"
+      "updated_at": "2016-03-28 00:54:31"
     },
     {
       "id": "3",
@@ -168,7 +168,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 19:16:02",
-      "updated_at": "2016-03-28 19:16:09');"
+      "updated_at": "2016-03-28 19:16:09"
     },
     {
       "id": "4",
@@ -188,7 +188,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-03-31 01:19:48",
-      "updated_at": "2016-03-31 01:19:48');"
+      "updated_at": "2016-03-31 01:19:48"
     },
     {
       "id": "5",
@@ -208,7 +208,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-04-03 18:28:40",
-      "updated_at": "2016-04-03 18:28:40');"
+      "updated_at": "2016-04-03 18:28:40"
     },
     {
       "id": "6",
@@ -228,7 +228,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-04-03 18:40:00",
-      "updated_at": "2016-04-03 18:40:05');"
+      "updated_at": "2016-04-03 18:40:05"
     },
     {
       "id": "7",
@@ -248,7 +248,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-04-03 23:28:15",
-      "updated_at": "2016-04-05 00:22:11');"
+      "updated_at": "2016-04-05 00:22:11"
     },
     {
       "id": "8",
@@ -268,7 +268,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-04-04 00:22:48",
-      "updated_at": "2016-04-04 00:22:48');"
+      "updated_at": "2016-04-04 00:22:48"
     },
     {
       "id": "9",
@@ -288,7 +288,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-04-04 01:59:11",
-      "updated_at": "2016-04-04 01:59:11');"
+      "updated_at": "2016-04-04 01:59:11"
     },
     {
       "id": "10",
@@ -308,7 +308,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-04-04 01:59:33",
-      "updated_at": "2016-04-04 01:59:33');"
+      "updated_at": "2016-04-04 01:59:33"
     },
     {
       "id": "11",
@@ -328,7 +328,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "2016-04-04 02:00:54",
       "created_at": "2016-04-04 01:59:50",
-      "updated_at": "2016-04-04 02:00:54');"
+      "updated_at": "2016-04-04 02:00:54"
     },
     {
       "id": "12",
@@ -348,7 +348,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-04-04 02:00:09",
-      "updated_at": "2016-04-04 02:00:09');"
+      "updated_at": "2016-04-04 02:00:09"
     },
     {
       "id": "13",
@@ -368,7 +368,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-04-04 17:40:12",
-      "updated_at": "2016-04-06 00:50:23');"
+      "updated_at": "2016-04-06 00:50:23"
     },
     {
       "id": "14",
@@ -388,7 +388,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "2016-04-04 17:41:39",
       "created_at": "2016-04-04 17:40:48",
-      "updated_at": "2016-04-04 17:41:39');"
+      "updated_at": "2016-04-04 17:41:39"
     },
     {
       "id": "15",
@@ -408,7 +408,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "2016-04-04 23:17:55",
       "created_at": "2016-04-04 17:57:10",
-      "updated_at": "2016-04-04 23:17:55');"
+      "updated_at": "2016-04-04 23:17:55"
     },
     {
       "id": "16",
@@ -428,7 +428,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-04-04 17:58:30",
-      "updated_at": "2016-04-06 00:50:43');"
+      "updated_at": "2016-04-06 00:50:43"
     },
     {
       "id": "17",
@@ -448,7 +448,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-04-04 18:31:03",
-      "updated_at": "2016-04-04 18:31:03');"
+      "updated_at": "2016-04-04 18:31:03"
     },
     {
       "id": "18",
@@ -468,7 +468,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-04-04 18:31:44",
-      "updated_at": "2016-04-04 18:31:44');"
+      "updated_at": "2016-04-04 18:31:44"
     },
     {
       "id": "19",
@@ -488,7 +488,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-04-06 00:51:40",
-      "updated_at": "2016-04-06 00:51:40');"
+      "updated_at": "2016-04-06 00:51:40"
     },
     {
       "id": "20",
@@ -508,7 +508,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "2016-04-14 23:43:55",
       "created_at": "2016-04-14 23:26:31",
-      "updated_at": "2016-04-14 23:43:55');"
+      "updated_at": "2016-04-14 23:43:55"
     },
     {
       "id": "21",
@@ -528,7 +528,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-04-14 23:47:06",
-      "updated_at": "2016-04-14 23:47:06');"
+      "updated_at": "2016-04-14 23:47:06"
     },
     {
       "id": "22",
@@ -548,7 +548,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "2016-05-03 17:36:19",
       "created_at": "2016-05-03 00:54:16",
-      "updated_at": "2016-05-03 17:36:19');"
+      "updated_at": "2016-05-03 17:36:19"
     },
     {
       "id": "23",
@@ -568,7 +568,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-05-03 17:35:15",
-      "updated_at": "2016-05-03 17:35:15');"
+      "updated_at": "2016-05-03 17:35:15"
     },
     {
       "id": "24",
@@ -588,7 +588,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-05-03 17:51:15",
-      "updated_at": "2016-05-03 17:53:41');"
+      "updated_at": "2016-05-03 17:53:41"
     },
     {
       "id": "25",
@@ -608,7 +608,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-05-03 17:55:55",
-      "updated_at": "2016-05-03 17:55:55');"
+      "updated_at": "2016-05-03 17:55:55"
     },
     {
       "id": "26",
@@ -628,7 +628,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-05-03 17:56:32",
-      "updated_at": "2016-05-03 17:56:32');"
+      "updated_at": "2016-05-03 17:56:32"
     },
     {
       "id": "27",
@@ -648,7 +648,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-05-04 19:36:24",
-      "updated_at": "2016-05-04 19:36:24');"
+      "updated_at": "2016-05-04 19:36:24"
     },
     {
       "id": "28",
@@ -668,7 +668,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-05-04 19:37:04",
-      "updated_at": "2016-05-04 19:37:04');"
+      "updated_at": "2016-05-04 19:37:04"
     },
     {
       "id": "29",
@@ -688,7 +688,7 @@ export default {
       "roomAssignment": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-05-29 23:21:07",
-      "updated_at": "2016-05-29 23:21:07');"
+      "updated_at": "2016-05-29 23:21:07"
     }
   ],
   "bmiRecords": [],
@@ -704,12 +704,12 @@ export default {
     "chiefComplaint": "The patient comes to the clinic complaining of two days of severe diarrhea and vomiting.",
     "historyIllness": "The patient is a 41-year-old male who comes in for a consultation.",
     "bodyTemperature": "37.5",
-    "bloodPressure": "120\\/90",
+    "bloodPressure": "120/90",
     "respirationRate": "18",
     "pulseRate": "80",
     "medicalHistory": "The patient has no past medical history. ",
     "initialDiagnosis": "Bacterial Gastroenteritis",
-    "physicalExam": "<p><br><\\/p>",
+    "physicalExam": "",
     "services": "Adult",
     "type": "Consult",
     "code": "Gastro Intestinal Track",
@@ -741,12 +741,12 @@ export default {
     "chiefComplaint": "vomiting, abdominal pain and loose bowel movements ",
     "historyIllness": "The patient came to the clinic today due to severe vomiting, abdominal pain and loose bowel movements ",
     "bodyTemperature": "37.4",
-    "bloodPressure": "130\\/80",
+    "bloodPressure": "130/80",
     "respirationRate": "16",
     "pulseRate": "75",
     "medicalHistory": "The patient has had asthma when he was a child",
     "initialDiagnosis": "Bacterial Gastroenteritis",
-    "physicalExam": "<p><br><\\/p>",
+    "physicalExam": "",
     "services": "Adult",
     "type": "Consult",
     "code": "Medical",
@@ -778,12 +778,12 @@ export default {
     "chiefComplaint": "wheezes DOB",
     "historyIllness": "The patient feels tired all day with occasional wheezes",
     "bodyTemperature": "37",
-    "bloodPressure": "120\\/70",
+    "bloodPressure": "120/70",
     "respirationRate": "15",
     "pulseRate": "75",
     "medicalHistory": "asthma on mother's side",
     "initialDiagnosis": "bronchial asthma",
-    "physicalExam": "<p><br><\\/p>",
+    "physicalExam": "",
     "services": "Adult",
     "type": "Consult",
     "code": "Medical",
@@ -815,12 +815,12 @@ export default {
     "chiefComplaint": "DOB palpitations high BP for two days now",
     "historyIllness": "The patient comes to the clinic with the above complaints",
     "bodyTemperature": "37",
-    "bloodPressure": "145\\/100",
+    "bloodPressure": "145/100",
     "respirationRate": "19",
     "pulseRate": "90",
     "medicalHistory": "cardiovascular problems in both parent",
     "initialDiagnosis": "pre-hypertension",
-    "physicalExam": "<p><br><\\/p>",
+    "physicalExam": "",
     "services": "Adult",
     "type": "Consult",
     "code": "Cardio",
@@ -852,7 +852,7 @@ export default {
     "chiefComplaint": "cough",
     "historyIllness": "The px comes to the clinic with complaints of coughing episodes for x days ",
     "bodyTemperature": "37",
-    "bloodPressure": "120\\/80",
+    "bloodPressure": "120/80",
     "respirationRate": "17",
     "pulseRate": "75",
     "medicalHistory": "test",
@@ -889,12 +889,12 @@ export default {
     "chiefComplaint": "Diarrhea",
     "historyIllness": "loose bowel movement",
     "bodyTemperature": "36",
-    "bloodPressure": "120\\/80",
+    "bloodPressure": "120/80",
     "respirationRate": "23",
     "pulseRate": "80",
     "medicalHistory": "",
     "initialDiagnosis": "ameobaiasis",
-    "physicalExam": "<p><br><\\/p>",
+    "physicalExam": "",
     "services": "Adult",
     "type": "Consult",
     "code": "Medical",
@@ -926,12 +926,12 @@ export default {
     "chiefComplaint": "elbow pain\r\n",
     "historyIllness": "basketball injury. fell on elbow. pain felt when rotating arm.",
     "bodyTemperature": "36",
-    "bloodPressure": "110\\/80",
+    "bloodPressure": "110/80",
     "respirationRate": "22",
     "pulseRate": "88",
     "medicalHistory": "",
     "initialDiagnosis": "elbow sprain",
-    "physicalExam": "<p><br><\\/p>",
+    "physicalExam": "",
     "services": "Sports Injury",
     "type": "X-Ray",
     "code": "Ortho",
@@ -968,7 +968,7 @@ export default {
     "pulseRate": "",
     "medicalHistory": "",
     "initialDiagnosis": "",
-    "physicalExam": "<span style=\"font-weight: bold;\">qwe<\\/span>",
+    "physicalExam": "<span style=font-weight: bold;>qwe<\\/span>",
     "services": "Adult",
     "type": "Consult",
     "code": "Medical",
@@ -1110,7 +1110,7 @@ export default {
       "icdID": "1987",
       "deleted_at": "NULL",
       "created_at": "2016-03-22 21:28:41",
-      "updated_at": "2016-03-22 21:28:41');"
+      "updated_at": "2016-03-22 21:28:41"
     },
     {
       "id": "7",
@@ -1118,7 +1118,7 @@ export default {
       "icdID": "1957",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 01:49:08",
-      "updated_at": "2016-03-28 01:49:08');"
+      "updated_at": "2016-03-28 01:49:08"
     },
     {
       "id": "13",
@@ -1126,7 +1126,7 @@ export default {
       "icdID": "1952",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 18:52:41",
-      "updated_at": "2016-03-28 18:52:41');"
+      "updated_at": "2016-03-28 18:52:41"
     },
     {
       "id": "20",
@@ -1134,7 +1134,7 @@ export default {
       "icdID": "1950",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 21:43:35",
-      "updated_at": "2016-03-28 21:43:35');"
+      "updated_at": "2016-03-28 21:43:35"
     },
     {
       "id": "23",
@@ -1142,7 +1142,7 @@ export default {
       "icdID": "1946",
       "deleted_at": "NULL",
       "created_at": "2016-04-03 18:34:11",
-      "updated_at": "2016-04-03 18:34:11');"
+      "updated_at": "2016-04-03 18:34:11"
     },
     {
       "id": "27",
@@ -1150,7 +1150,7 @@ export default {
       "icdID": "1949",
       "deleted_at": "2016-04-04 01:38:55",
       "created_at": "2016-04-04 01:37:04",
-      "updated_at": "2016-04-04 01:38:55');"
+      "updated_at": "2016-04-04 01:38:55"
     },
     {
       "id": "28",
@@ -1158,7 +1158,7 @@ export default {
       "icdID": "1950",
       "deleted_at": "2016-04-04 01:38:55",
       "created_at": "2016-04-04 01:37:04",
-      "updated_at": "2016-04-04 01:38:55');"
+      "updated_at": "2016-04-04 01:38:55"
     },
     {
       "id": "29",
@@ -1166,7 +1166,7 @@ export default {
       "icdID": "1948",
       "deleted_at": "2016-04-04 01:38:55",
       "created_at": "2016-04-04 01:37:04",
-      "updated_at": "2016-04-04 01:38:55');"
+      "updated_at": "2016-04-04 01:38:55"
     },
     {
       "id": "30",
@@ -1174,7 +1174,7 @@ export default {
       "icdID": "1946",
       "deleted_at": "2016-04-04 01:38:55",
       "created_at": "2016-04-04 01:37:04",
-      "updated_at": "2016-04-04 01:38:55');"
+      "updated_at": "2016-04-04 01:38:55"
     },
     {
       "id": "33",
@@ -1182,7 +1182,7 @@ export default {
       "icdID": "1987",
       "deleted_at": "NULL",
       "created_at": "2016-04-04 18:54:38",
-      "updated_at": "2016-04-04 18:54:38');"
+      "updated_at": "2016-04-04 18:54:38"
     }
   ],
   "discharging": [
@@ -1195,7 +1195,7 @@ export default {
       "date": "2016-03-29",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 22:55:22",
-      "updated_at": "2016-03-28 22:55:22');"
+      "updated_at": "2016-03-28 22:55:22"
     },
     {
       "id": "4",
@@ -1206,7 +1206,7 @@ export default {
       "date": "2016-04-04",
       "deleted_at": "NULL",
       "created_at": "2016-04-03 18:40:20",
-      "updated_at": "2016-04-03 18:40:20');"
+      "updated_at": "2016-04-03 18:40:20"
     },
     {
       "id": "5",
@@ -1217,7 +1217,7 @@ export default {
       "date": "2016-04-05",
       "deleted_at": "NULL",
       "created_at": "2016-04-04 22:44:59",
-      "updated_at": "2016-04-04 22:44:59');"
+      "updated_at": "2016-04-04 22:44:59"
     },
     {
       "id": "6",
@@ -1228,7 +1228,7 @@ export default {
       "date": "2016-04-05",
       "deleted_at": "NULL",
       "created_at": "2016-04-04 23:44:51",
-      "updated_at": "2016-04-04 23:44:51');"
+      "updated_at": "2016-04-04 23:44:51"
     },
     {
       "id": "7",
@@ -1239,7 +1239,7 @@ export default {
       "date": "2016-05-03",
       "deleted_at": "NULL",
       "created_at": "2016-05-03 00:55:15",
-      "updated_at": "2016-05-03 00:55:15');"
+      "updated_at": "2016-05-03 00:55:15"
     }
   ],
   "doctors": [
@@ -1299,7 +1299,7 @@ export default {
       "schedule": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 16:47:04",
-      "updated_at": "2016-03-28 16:54:57');"
+      "updated_at": "2016-03-28 16:54:57"
     },
     {
       "id": "3",
@@ -1328,7 +1328,7 @@ export default {
       "schedule": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 16:52:20",
-      "updated_at": "2016-08-15 23:30:53');"
+      "updated_at": "2016-08-15 23:30:53"
     },
     {
       "id": "4",
@@ -1357,7 +1357,7 @@ export default {
       "schedule": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-05-03 18:09:12",
-      "updated_at": "2016-05-03 18:09:12');"
+      "updated_at": "2016-05-03 18:09:12"
     }
   ],
   "followup": [
@@ -1380,7 +1380,7 @@ export default {
       "xrays": "",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 01:49:08",
-      "updated_at": "2016-03-28 01:49:08');"
+      "updated_at": "2016-03-28 01:49:08"
     },
     {
       "id": "3",
@@ -1401,7 +1401,7 @@ export default {
       "xrays": "",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 17:39:51",
-      "updated_at": "2016-03-28 17:39:51');"
+      "updated_at": "2016-03-28 17:39:51"
     },
     {
       "id": "4",
@@ -1422,7 +1422,7 @@ export default {
       "xrays": "",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 18:50:37",
-      "updated_at": "2016-03-28 18:51:00');"
+      "updated_at": "2016-03-28 18:51:00"
     },
     {
       "id": "5",
@@ -1443,7 +1443,7 @@ export default {
       "xrays": "",
       "deleted_at": "NULL",
       "created_at": "2016-04-03 18:33:59",
-      "updated_at": "2016-04-03 18:34:11');"
+      "updated_at": "2016-04-03 18:34:11"
     },
     {
       "id": "6",
@@ -1464,7 +1464,7 @@ export default {
       "xrays": "",
       "deleted_at": "NULL",
       "created_at": "2016-04-06 17:25:02",
-      "updated_at": "2016-04-06 17:25:02');"
+      "updated_at": "2016-04-06 17:25:02"
     },
     {
       "id": "7",
@@ -1485,7 +1485,7 @@ export default {
       "xrays": "",
       "deleted_at": "NULL",
       "created_at": "2016-05-03 00:42:47",
-      "updated_at": "2016-05-03 00:42:47');"
+      "updated_at": "2016-05-03 00:42:47"
     },
     {
       "id": "8",
@@ -1506,7 +1506,7 @@ export default {
       "xrays": "asdf",
       "deleted_at": "NULL",
       "created_at": "2016-05-03 17:50:37",
-      "updated_at": "2016-05-03 17:53:22');"
+      "updated_at": "2016-05-03 17:53:22"
     }
   ],
   "followupIcds": [],
@@ -1544,56 +1544,56 @@ export default {
       "value": "Blood Chemistry",
       "deleted_at": "NULL",
       "created_at": "0000-00-00 00:00:00",
-      "updated_at": "0000-00-00 00:00:00');"
+      "updated_at": "0000-00-00 00:00:00"
     },
     {
       "id": "2",
       "value": "Cardiovascular",
       "deleted_at": "NULL",
       "created_at": "0000-00-00 00:00:00",
-      "updated_at": "0000-00-00 00:00:00');"
+      "updated_at": "0000-00-00 00:00:00"
     },
     {
       "id": "3",
       "value": "Culture",
       "deleted_at": "NULL",
       "created_at": "0000-00-00 00:00:00",
-      "updated_at": "0000-00-00 00:00:00');"
+      "updated_at": "0000-00-00 00:00:00"
     },
     {
       "id": "4",
       "value": "Special Exams",
       "deleted_at": "NULL",
       "created_at": "0000-00-00 00:00:00",
-      "updated_at": "0000-00-00 00:00:00');"
+      "updated_at": "0000-00-00 00:00:00"
     },
     {
       "id": "5",
       "value": "Standard Labs",
       "deleted_at": "NULL",
       "created_at": "0000-00-00 00:00:00",
-      "updated_at": "0000-00-00 00:00:00');"
+      "updated_at": "0000-00-00 00:00:00"
     },
     {
       "id": "6",
       "value": "Ultrasonogram",
       "deleted_at": "NULL",
       "created_at": "0000-00-00 00:00:00",
-      "updated_at": "0000-00-00 00:00:00');"
+      "updated_at": "0000-00-00 00:00:00"
     },
     {
       "id": "7",
       "value": "X-ray Examinations",
       "deleted_at": "NULL",
       "created_at": "0000-00-00 00:00:00",
-      "updated_at": "0000-00-00 00:00:00');"
+      "updated_at": "0000-00-00 00:00:00"
     },
     {
       "id": "8",
       "value": "Unclassified Lab Item",
       "deleted_at": "NULL",
       "created_at": "0000-00-00 00:00:00",
-      "updated_at": "0000-00-00 00:00:00');"
+      "updated_at": "0000-00-00 00:00:00"
     }
   ],
   "labwork": [
@@ -1608,7 +1608,7 @@ export default {
       "viewed": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 01:45:15",
-      "updated_at": "2016-03-28 01:45:15');"
+      "updated_at": "2016-03-28 01:45:15"
     },
     {
       "id": "2",
@@ -1621,7 +1621,7 @@ export default {
       "viewed": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 01:45:25",
-      "updated_at": "2016-03-28 01:45:25');"
+      "updated_at": "2016-03-28 01:45:25"
     },
     {
       "id": "3",
@@ -1634,7 +1634,7 @@ export default {
       "viewed": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 18:35:46",
-      "updated_at": "2016-03-28 18:35:46');"
+      "updated_at": "2016-03-28 18:35:46"
     },
     {
       "id": "4",
@@ -1647,7 +1647,7 @@ export default {
       "viewed": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 19:14:21",
-      "updated_at": "2016-03-28 19:14:21');"
+      "updated_at": "2016-03-28 19:14:21"
     },
     {
       "id": "5",
@@ -1660,7 +1660,7 @@ export default {
       "viewed": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-04-03 18:35:29",
-      "updated_at": "2016-04-04 02:01:26');"
+      "updated_at": "2016-04-04 02:01:26"
     },
     {
       "id": "6",
@@ -1673,7 +1673,7 @@ export default {
       "viewed": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-04-03 23:07:47",
-      "updated_at": "2016-04-04 02:01:37');"
+      "updated_at": "2016-04-04 02:01:37"
     },
     {
       "id": "7",
@@ -1686,7 +1686,7 @@ export default {
       "viewed": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-04-03 23:08:07",
-      "updated_at": "2016-04-06 18:02:29');"
+      "updated_at": "2016-04-06 18:02:29"
     },
     {
       "id": "8",
@@ -1699,7 +1699,7 @@ export default {
       "viewed": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-05-03 00:40:59",
-      "updated_at": "2016-05-03 00:50:23');"
+      "updated_at": "2016-05-03 00:50:23"
     }
   ],
   "medicineDosages": [
@@ -1976,7 +1976,7 @@ export default {
       "schedule": "0",
       "deleted_at": "NULL",
       "created_at": "2016-03-27 18:06:36",
-      "updated_at": "2016-03-27 18:07:48');"
+      "updated_at": "2016-03-27 18:07:48"
     },
     {
       "id": "2",
@@ -2003,7 +2003,7 @@ export default {
       "schedule": "0",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 01:36:54",
-      "updated_at": "2016-03-28 01:36:54');"
+      "updated_at": "2016-03-28 01:36:54"
     }
   ],
   "password_resets": [],
@@ -2020,7 +2020,7 @@ export default {
       "imageModule": "diagnosis",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 17:11:10",
-      "updated_at": "2016-03-28 17:13:15');"
+      "updated_at": "2016-03-28 17:13:15"
     },
     {
       "id": "2",
@@ -2034,7 +2034,7 @@ export default {
       "imageModule": "follow-up",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 18:48:01",
-      "updated_at": "2016-03-28 18:50:37');"
+      "updated_at": "2016-03-28 18:50:37"
     },
     {
       "id": "3",
@@ -2048,7 +2048,7 @@ export default {
       "imageModule": "diagnosis",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 18:52:35",
-      "updated_at": "2016-03-28 18:52:35');"
+      "updated_at": "2016-03-28 18:52:35"
     },
     {
       "id": "4",
@@ -2062,7 +2062,7 @@ export default {
       "imageModule": "diagnosis",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 22:39:15",
-      "updated_at": "2016-03-28 22:39:15');"
+      "updated_at": "2016-03-28 22:39:15"
     },
     {
       "id": "5",
@@ -2076,7 +2076,7 @@ export default {
       "imageModule": "diagnosis",
       "deleted_at": "NULL",
       "created_at": "2016-04-04 17:35:07",
-      "updated_at": "2016-04-04 17:35:07');"
+      "updated_at": "2016-04-04 17:35:07"
     },
     {
       "id": "6",
@@ -2090,7 +2090,7 @@ export default {
       "imageModule": "NULL",
       "deleted_at": "2016-05-03 00:59:37",
       "created_at": "2016-05-03 00:58:36",
-      "updated_at": "2016-05-03 00:59:37');"
+      "updated_at": "2016-05-03 00:59:37"
     }
   ],
   "patients": [
@@ -2145,7 +2145,7 @@ export default {
       "spouseName": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-03-22 20:32:47",
-      "updated_at": "2016-03-22 20:35:08');"
+      "updated_at": "2016-03-22 20:35:08"
     },
     {
       "id": "3",
@@ -2198,7 +2198,7 @@ export default {
       "spouseName": "",
       "deleted_at": "NULL",
       "created_at": "2016-03-22 21:25:48",
-      "updated_at": "2016-08-16 18:16:42');"
+      "updated_at": "2016-08-16 18:16:42"
     },
     {
       "id": "4",
@@ -2251,7 +2251,7 @@ export default {
       "spouseName": "",
       "deleted_at": "NULL",
       "created_at": "2016-03-23 18:17:56",
-      "updated_at": "2016-03-28 22:20:30');"
+      "updated_at": "2016-03-28 22:20:30"
     },
     {
       "id": "5",
@@ -2304,7 +2304,7 @@ export default {
       "spouseName": "",
       "deleted_at": "NULL",
       "created_at": "2016-03-23 19:15:54",
-      "updated_at": "2016-03-28 22:40:30');"
+      "updated_at": "2016-03-28 22:40:30"
     },
     {
       "id": "7",
@@ -2357,7 +2357,7 @@ export default {
       "spouseName": "",
       "deleted_at": "NULL",
       "created_at": "2016-04-03 22:59:18",
-      "updated_at": "2016-08-16 18:20:00');"
+      "updated_at": "2016-08-16 18:20:00"
     },
     {
       "id": "8",
@@ -2410,7 +2410,7 @@ export default {
       "spouseName": "",
       "deleted_at": "2016-04-14 23:36:55",
       "created_at": "2016-04-14 23:21:08",
-      "updated_at": "2016-04-14 23:36:55');"
+      "updated_at": "2016-04-14 23:36:55"
     },
     {
       "id": "9",
@@ -2463,7 +2463,7 @@ export default {
       "spouseName": "",
       "deleted_at": "2016-05-03 17:35:35",
       "created_at": "2016-04-14 23:21:09",
-      "updated_at": "2016-05-03 17:35:35');"
+      "updated_at": "2016-05-03 17:35:35"
     },
     {
       "id": "10",
@@ -2516,7 +2516,7 @@ export default {
       "spouseName": "wife",
       "deleted_at": "2016-05-03 17:36:45",
       "created_at": "2016-05-03 00:33:39",
-      "updated_at": "2016-05-03 17:36:45');"
+      "updated_at": "2016-05-03 17:36:45"
     },
     {
       "id": "11",
@@ -2569,7 +2569,7 @@ export default {
       "spouseName": "",
       "deleted_at": "2016-05-03 17:54:50",
       "created_at": "2016-05-03 17:49:45",
-      "updated_at": "2016-05-03 17:54:50');"
+      "updated_at": "2016-05-03 17:54:50"
     }
   ],
   "peCategories": [
@@ -2578,14 +2578,14 @@ export default {
       "value": "",
       "deleted_at": "2016-03-28 22:35:18",
       "created_at": "2016-03-22 21:21:09",
-      "updated_at": "2016-03-28 22:35:18');"
+      "updated_at": "2016-03-28 22:35:18"
     },
     {
       "id": "2",
       "value": "Physical Exam",
       "deleted_at": "NULL",
       "created_at": "2016-03-22 21:21:20",
-      "updated_at": "2016-03-22 21:21:20');"
+      "updated_at": "2016-03-22 21:21:20"
     }
   ],
   "peTemplates": [
@@ -2598,7 +2598,7 @@ export default {
       "peCategories3ID": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-03-22 21:20:55",
-      "updated_at": "2016-03-28 22:35:29');"
+      "updated_at": "2016-03-28 22:35:29"
     }
   ],
   "postDiagnosis": [
@@ -2624,7 +2624,7 @@ export default {
       "relatedImages": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 22:55:22",
-      "updated_at": "2016-03-28 22:55:22');"
+      "updated_at": "2016-03-28 22:55:22"
     },
     {
       "id": "7",
@@ -2648,7 +2648,7 @@ export default {
       "relatedImages": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-04-03 18:40:20",
-      "updated_at": "2016-04-03 18:40:20');"
+      "updated_at": "2016-04-03 18:40:20"
     },
     {
       "id": "8",
@@ -2672,7 +2672,7 @@ export default {
       "relatedImages": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-04-04 22:44:59",
-      "updated_at": "2016-04-04 22:44:59');"
+      "updated_at": "2016-04-04 22:44:59"
     },
     {
       "id": "9",
@@ -2696,7 +2696,7 @@ export default {
       "relatedImages": "NULL",
       "deleted_at": "2016-04-05 00:05:26",
       "created_at": "2016-04-04 23:44:51",
-      "updated_at": "2016-04-05 00:05:26');"
+      "updated_at": "2016-04-05 00:05:26"
     },
     {
       "id": "10",
@@ -2720,7 +2720,7 @@ export default {
       "relatedImages": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-05-03 00:55:15",
-      "updated_at": "2016-05-03 00:55:15');"
+      "updated_at": "2016-05-03 00:55:15"
     }
   ],
   "prescriptions": [],
@@ -2732,7 +2732,7 @@ export default {
       "cptID": "599",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 19:00:17",
-      "updated_at": "2016-03-28 19:00:17');"
+      "updated_at": "2016-03-28 19:00:17"
     },
     {
       "id": "2",
@@ -2740,7 +2740,7 @@ export default {
       "cptID": "585",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 19:00:17",
-      "updated_at": "2016-03-28 19:00:17');"
+      "updated_at": "2016-03-28 19:00:17"
     },
     {
       "id": "3",
@@ -2748,7 +2748,7 @@ export default {
       "cptID": "581",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 19:00:17",
-      "updated_at": "2016-03-28 19:00:17');"
+      "updated_at": "2016-03-28 19:00:17"
     },
     {
       "id": "4",
@@ -2756,7 +2756,7 @@ export default {
       "cptID": "529",
       "deleted_at": "NULL",
       "created_at": "2016-05-03 00:44:34",
-      "updated_at": "2016-05-03 00:44:34');"
+      "updated_at": "2016-05-03 00:44:34"
     }
   ],
   "procedureDoctors": [
@@ -2767,7 +2767,7 @@ export default {
       "role": "surgeon1",
       "deleted_at": "NULL",
       "created_at": "2016-03-31 00:49:32",
-      "updated_at": "2016-03-31 00:49:32');"
+      "updated_at": "2016-03-31 00:49:32"
     },
     {
       "id": "10",
@@ -2776,7 +2776,7 @@ export default {
       "role": "surgeon2",
       "deleted_at": "NULL",
       "created_at": "2016-03-31 00:49:32",
-      "updated_at": "2016-03-31 00:49:32');"
+      "updated_at": "2016-03-31 00:49:32"
     },
     {
       "id": "11",
@@ -2785,7 +2785,7 @@ export default {
       "role": "surgeon3",
       "deleted_at": "NULL",
       "created_at": "2016-03-31 00:49:32",
-      "updated_at": "2016-03-31 00:49:32');"
+      "updated_at": "2016-03-31 00:49:32"
     },
     {
       "id": "12",
@@ -2794,7 +2794,7 @@ export default {
       "role": "anesthes",
       "deleted_at": "NULL",
       "created_at": "2016-03-31 00:49:32",
-      "updated_at": "2016-03-31 00:49:32');"
+      "updated_at": "2016-03-31 00:49:32"
     },
     {
       "id": "13",
@@ -2803,7 +2803,7 @@ export default {
       "role": "surgeon1",
       "deleted_at": "NULL",
       "created_at": "2016-04-03 18:37:24",
-      "updated_at": "2016-04-03 18:37:24');"
+      "updated_at": "2016-04-03 18:37:24"
     },
     {
       "id": "14",
@@ -2812,7 +2812,7 @@ export default {
       "role": "surgeon2",
       "deleted_at": "NULL",
       "created_at": "2016-04-03 18:37:24",
-      "updated_at": "2016-04-03 18:37:24');"
+      "updated_at": "2016-04-03 18:37:24"
     },
     {
       "id": "15",
@@ -2821,7 +2821,7 @@ export default {
       "role": "surgeon3",
       "deleted_at": "NULL",
       "created_at": "2016-04-03 18:37:24",
-      "updated_at": "2016-04-03 18:37:24');"
+      "updated_at": "2016-04-03 18:37:24"
     },
     {
       "id": "16",
@@ -2830,7 +2830,7 @@ export default {
       "role": "anesthes",
       "deleted_at": "NULL",
       "created_at": "2016-04-03 18:37:24",
-      "updated_at": "2016-04-03 18:37:24');"
+      "updated_at": "2016-04-03 18:37:24"
     },
     {
       "id": "17",
@@ -2839,7 +2839,7 @@ export default {
       "role": "surgeon1",
       "deleted_at": "NULL",
       "created_at": "2016-04-04 18:18:29",
-      "updated_at": "2016-04-04 18:18:29');"
+      "updated_at": "2016-04-04 18:18:29"
     },
     {
       "id": "18",
@@ -2848,7 +2848,7 @@ export default {
       "role": "surgeon2",
       "deleted_at": "NULL",
       "created_at": "2016-04-04 18:18:29",
-      "updated_at": "2016-04-04 18:18:29');"
+      "updated_at": "2016-04-04 18:18:29"
     },
     {
       "id": "19",
@@ -2857,7 +2857,7 @@ export default {
       "role": "surgeon3",
       "deleted_at": "NULL",
       "created_at": "2016-04-04 18:18:29",
-      "updated_at": "2016-04-04 18:18:29');"
+      "updated_at": "2016-04-04 18:18:29"
     },
     {
       "id": "20",
@@ -2866,7 +2866,7 @@ export default {
       "role": "anesthes",
       "deleted_at": "NULL",
       "created_at": "2016-04-04 18:18:29",
-      "updated_at": "2016-04-04 18:18:29');"
+      "updated_at": "2016-04-04 18:18:29"
     },
     {
       "id": "21",
@@ -2875,7 +2875,7 @@ export default {
       "role": "surgeon1",
       "deleted_at": "NULL",
       "created_at": "2016-04-04 18:19:19",
-      "updated_at": "2016-04-04 18:19:19');"
+      "updated_at": "2016-04-04 18:19:19"
     },
     {
       "id": "22",
@@ -2884,7 +2884,7 @@ export default {
       "role": "surgeon2",
       "deleted_at": "NULL",
       "created_at": "2016-04-04 18:19:19",
-      "updated_at": "2016-04-04 18:19:19');"
+      "updated_at": "2016-04-04 18:19:19"
     },
     {
       "id": "23",
@@ -2893,7 +2893,7 @@ export default {
       "role": "surgeon3",
       "deleted_at": "NULL",
       "created_at": "2016-04-04 18:19:19",
-      "updated_at": "2016-04-04 18:19:19');"
+      "updated_at": "2016-04-04 18:19:19"
     },
     {
       "id": "24",
@@ -2902,7 +2902,7 @@ export default {
       "role": "anesthes",
       "deleted_at": "NULL",
       "created_at": "2016-04-04 18:19:19",
-      "updated_at": "2016-04-04 18:19:19');"
+      "updated_at": "2016-04-04 18:19:19"
     },
     {
       "id": "25",
@@ -2911,7 +2911,7 @@ export default {
       "role": "surgeon1",
       "deleted_at": "NULL",
       "created_at": "2016-05-03 00:44:34",
-      "updated_at": "2016-05-03 00:44:34');"
+      "updated_at": "2016-05-03 00:44:34"
     },
     {
       "id": "26",
@@ -2920,7 +2920,7 @@ export default {
       "role": "surgeon2",
       "deleted_at": "NULL",
       "created_at": "2016-05-03 00:44:34",
-      "updated_at": "2016-05-03 00:44:34');"
+      "updated_at": "2016-05-03 00:44:34"
     },
     {
       "id": "27",
@@ -2929,7 +2929,7 @@ export default {
       "role": "surgeon3",
       "deleted_at": "NULL",
       "created_at": "2016-05-03 00:44:34",
-      "updated_at": "2016-05-03 00:44:34');"
+      "updated_at": "2016-05-03 00:44:34"
     },
     {
       "id": "28",
@@ -2938,7 +2938,7 @@ export default {
       "role": "anesthes",
       "deleted_at": "NULL",
       "created_at": "2016-05-03 00:44:34",
-      "updated_at": "2016-05-03 00:44:34');"
+      "updated_at": "2016-05-03 00:44:34"
     }
   ],
   "procedureTemplates": [],
@@ -2956,10 +2956,10 @@ export default {
       "implants": "none",
       "antibiotics": "co-amoxiclav 500mg 1-0-1",
       "transfusion": "none",
-      "proDescription": "<p><span style=\"color: rgb(51",
+      "proDescription": "<p><span style=color: rgb(51",
       "proName": "51",
       "emergencyOrElective": "51); font-family: Roboto",
-      "pay": "sans-serif; font-size: 12px; line-height: 18px;\">steroid injection in my wrist and wore a brace to immobilize the wrist and thumb</span><br></p>",
+      "pay": "sans-serif; font-size: 12px; line-height: 18px;>steroid injection in my wrist and wore a brace to immobilize the wrist and thumb</span><br></p>",
       "leadSurgeon": "de quervain tenosynovitis release",
       "otherDoctors": "elective",
       "deleted_at": "hmo",
@@ -2987,7 +2987,7 @@ export default {
       "otherDoctors": "",
       "deleted_at": "NULL",
       "created_at": "2016-04-03 18:37:24",
-      "updated_at": "2016-04-03 18:37:24');"
+      "updated_at": "2016-04-03 18:37:24"
     },
     {
       "id": "3",
@@ -3010,7 +3010,7 @@ export default {
       "otherDoctors": "JPI",
       "deleted_at": "NULL",
       "created_at": "2016-04-04 18:18:29",
-      "updated_at": "2016-04-04 18:18:29');"
+      "updated_at": "2016-04-04 18:18:29"
     },
     {
       "id": "4",
@@ -3033,7 +3033,7 @@ export default {
       "otherDoctors": "",
       "deleted_at": "NULL",
       "created_at": "2016-04-04 18:19:19",
-      "updated_at": "2016-04-04 18:19:19');"
+      "updated_at": "2016-04-04 18:19:19"
     },
     {
       "id": "5",
@@ -3056,7 +3056,7 @@ export default {
       "otherDoctors": "",
       "deleted_at": "NULL",
       "created_at": "2016-05-03 00:44:34",
-      "updated_at": "2016-05-03 00:44:34');"
+      "updated_at": "2016-05-03 00:44:34"
     }
   ],
   "staff": [
@@ -3084,7 +3084,7 @@ export default {
       "schedule": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-03-22 21:06:41",
-      "updated_at": "2016-03-27 18:07:48');"
+      "updated_at": "2016-03-27 18:07:48"
     },
     {
       "id": "2",
@@ -3110,2673 +3110,10 @@ export default {
       "schedule": "NULL",
       "deleted_at": "NULL",
       "created_at": "2016-03-22 21:09:24",
-      "updated_at": "2016-03-27 18:07:48');"
+      "updated_at": "2016-03-27 18:07:48"
     }
   ],
-  "tableLogger": [
-    {
-      "id": "1",
-      "userID": "25",
-      "name": "patients",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "2",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-22 20:32:47",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "2",
-      "userID": "25",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "2",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-22 20:32:47",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "3",
-      "userID": "25",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "2",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-22 20:35:08",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "4",
-      "userID": "25",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "2",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-22 20:35:08",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "5",
-      "userID": "25",
-      "name": "diagnosis",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-22 20:47:43",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "6",
-      "userID": "25",
-      "name": "diagnosis",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-22 20:50:23",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "7",
-      "userID": "25",
-      "name": "followup",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-22 20:52:43",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "8",
-      "userID": "25",
-      "name": "followup",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-22 20:53:09",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "9",
-      "userID": "25",
-      "name": "prescriptions",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-22 21:01:25",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "10",
-      "userID": "25",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-22 21:02:25",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "11",
-      "userID": "25",
-      "name": "patients",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-22 21:25:48",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "12",
-      "userID": "25",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-22 21:25:48",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "13",
-      "userID": "25",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-22 21:25:48",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "14",
-      "userID": "12",
-      "name": "diagnosis",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-22 21:28:08",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "15",
-      "userID": "12",
-      "name": "followup",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-22 21:28:41",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "16",
-      "userID": "25",
-      "name": "patients",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "4",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-23 18:17:56",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "17",
-      "userID": "25",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "4",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-23 18:17:56",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "18",
-      "userID": "24",
-      "name": "patients",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "5",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-23 19:15:55",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "19",
-      "userID": "24",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "5",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-23 19:15:55",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "20",
-      "userID": "23",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "2",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 00:54:31",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "21",
-      "userID": "26",
-      "name": "labwork",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 01:45:15",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "22",
-      "userID": "26",
-      "name": "labwork",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "2",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 01:45:25",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "23",
-      "userID": "26",
-      "name": "diagnosis",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "2",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 01:45:57",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "24",
-      "userID": "26",
-      "name": "followup",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "2",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 01:49:08",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "25",
-      "userID": "12",
-      "name": "patients",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "6",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 16:47:04",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "26",
-      "userID": "28",
-      "name": "diagnosis",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 17:13:15",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "27",
-      "userID": "28",
-      "name": "diagnosis",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 17:13:28",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "28",
-      "userID": "28",
-      "name": "diagnosis",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 17:31:58",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "29",
-      "userID": "28",
-      "name": "followup",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 17:39:51",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "30",
-      "userID": "28",
-      "name": "labwork",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 18:35:46",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "31",
-      "userID": "28",
-      "name": "diagnosis",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "4",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 18:45:14",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "32",
-      "userID": "28",
-      "name": "followup",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "4",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 18:50:37",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "33",
-      "userID": "28",
-      "name": "followup",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "4",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 18:51:00",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "34",
-      "userID": "28",
-      "name": "prescriptions",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "2",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 18:56:30",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "35",
-      "userID": "28",
-      "name": "procedures",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 19:00:17",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "36",
-      "userID": "28",
-      "name": "admitting",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 19:01:42",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "37",
-      "userID": "28",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 19:02:13",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "38",
-      "userID": "28",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 19:02:18",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "39",
-      "userID": "28",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 19:02:26",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "40",
-      "userID": "28",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 19:02:38",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "41",
-      "userID": "28",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 19:03:24",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "42",
-      "userID": "28",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 19:03:29",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "43",
-      "userID": "28",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 19:03:35",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "44",
-      "userID": "28",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 19:03:40",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "45",
-      "userID": "28",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 19:03:49",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "46",
-      "userID": "28",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 19:05:11",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "47",
-      "userID": "28",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 19:05:18",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "48",
-      "userID": "28",
-      "name": "labwork",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "4",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 19:14:21",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "49",
-      "userID": "28",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 19:16:02",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "50",
-      "userID": "28",
-      "name": "appointments",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 19:16:09",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "51",
-      "userID": "28",
-      "name": "postDiagnosis",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 19:16:16",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "52",
-      "userID": "12",
-      "name": "diagnosis",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 21:10:04",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "53",
-      "userID": "12",
-      "name": "diagnosis",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 21:10:23",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "54",
-      "userID": "12",
-      "name": "diagnosis",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 21:18:59",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "55",
-      "userID": "12",
-      "name": "diagnosis",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 21:21:00",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "56",
-      "userID": "12",
-      "name": "diagnosis",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 21:21:38",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "57",
-      "userID": "12",
-      "name": "diagnosis",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 21:39:51",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "58",
-      "userID": "12",
-      "name": "diagnosis",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 21:43:35",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "59",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "5",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 21:53:22",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "60",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "5",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 21:54:12",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "61",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "4",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 22:20:30",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "62",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "5",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 22:40:30",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "63",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "5",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 22:40:30",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "64",
-      "userID": "12",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 22:43:37",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "65",
-      "userID": "12",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 22:43:47",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "66",
-      "userID": "12",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 22:43:54",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "67",
-      "userID": "12",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 22:44:00",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "68",
-      "userID": "12",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 22:44:04",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "69",
-      "userID": "12",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 22:45:29",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "70",
-      "userID": "12",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 22:45:34",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "71",
-      "userID": "12",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 22:45:39",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "72",
-      "userID": "12",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 22:45:43",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "73",
-      "userID": "12",
-      "name": "postDiagnosis",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "2",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 22:47:41",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "74",
-      "userID": "12",
-      "name": "postDiagnosis",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 22:48:38",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "75",
-      "userID": "12",
-      "name": "postDiagnosis",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "4",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 22:48:57",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "76",
-      "userID": "12",
-      "name": "postDiagnosis",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "5",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 22:50:35",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "77",
-      "userID": "12",
-      "name": "postDiagnosis",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "6",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-28 22:55:22",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "78",
-      "userID": "12",
-      "name": "procedures",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "1",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-31 00:49:32",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "79",
-      "userID": "12",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "4",
-      "deleted_at": "NULL",
-      "created_at": "2016-03-31 01:19:48",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "80",
-      "userID": "12",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "5",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-03 18:28:40",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "81",
-      "userID": "12",
-      "name": "diagnosis",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "5",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-03 18:32:22",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "82",
-      "userID": "12",
-      "name": "followup",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "5",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-03 18:33:59",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "83",
-      "userID": "12",
-      "name": "followup",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "5",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-03 18:34:11",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "84",
-      "userID": "12",
-      "name": "labwork",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "5",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-03 18:35:29",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "85",
-      "userID": "12",
-      "name": "labwork",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "5",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-03 18:36:09",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "86",
-      "userID": "12",
-      "name": "procedures",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "2",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-03 18:37:24",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "87",
-      "userID": "12",
-      "name": "admitting",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "2",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-03 18:37:56",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "88",
-      "userID": "12",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "6",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-03 18:40:00",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "89",
-      "userID": "12",
-      "name": "appointments",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "6",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-03 18:40:05",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "90",
-      "userID": "12",
-      "name": "postDiagnosis",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-03 18:40:20",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "91",
-      "userID": "12",
-      "name": "prescriptions",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-03 18:41:14",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "92",
-      "userID": "30",
-      "name": "patients",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-03 22:59:18",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "93",
-      "userID": "30",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-03 22:59:18",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "94",
-      "userID": "30",
-      "name": "labwork",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "6",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-03 23:07:47",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "95",
-      "userID": "30",
-      "name": "labwork",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-03 23:08:07",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "96",
-      "userID": "30",
-      "name": "diagnosis",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "6",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-03 23:09:27",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "97",
-      "userID": "30",
-      "name": "prescriptions",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "4",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-03 23:20:48",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "98",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-03 23:28:15",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "99",
-      "userID": "30",
-      "name": "diagnosis",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "6",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-03 23:45:24",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "100",
-      "userID": "31",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "8",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 00:22:48",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "101",
-      "userID": "30",
-      "name": "diagnosis",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 00:48:15",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "102",
-      "userID": "31",
-      "name": "diagnosis",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "8",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 00:49:52",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "103",
-      "userID": "30",
-      "name": "diagnosis",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 01:23:53",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "104",
-      "userID": "30",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 01:25:08",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "105",
-      "userID": "30",
-      "name": "diagnosis",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "6",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 01:26:08",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "106",
-      "userID": "31",
-      "name": "diagnosis",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "9",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 01:37:04",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "107",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 01:37:53",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "108",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 01:38:18",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "109",
-      "userID": "31",
-      "name": "diagnosis",
-      "operation": "delete",
-      "sqlExecuted": "",
-      "entryKey": "9",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 01:38:55",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "110",
-      "userID": "31",
-      "name": "diagnosis",
-      "operation": "delete",
-      "sqlExecuted": "",
-      "entryKey": "8",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 01:39:01",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "111",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 01:39:19",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "112",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 01:40:30",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "113",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 01:42:27",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "114",
-      "userID": "31",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "9",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 01:59:11",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "115",
-      "userID": "31",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "10",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 01:59:33",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "116",
-      "userID": "31",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "11",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 01:59:50",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "117",
-      "userID": "31",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "12",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 02:00:09",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "118",
-      "userID": "31",
-      "name": "appointments",
-      "operation": "delete",
-      "sqlExecuted": "",
-      "entryKey": "11",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 02:00:54",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "119",
-      "userID": "31",
-      "name": "labwork",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "5",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 02:01:26",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "120",
-      "userID": "31",
-      "name": "labwork",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "6",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 02:01:37",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "121",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 17:39:04",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "122",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "13",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 17:40:12",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "123",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "14",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 17:40:48",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "124",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "delete",
-      "sqlExecuted": "",
-      "entryKey": "14",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 17:41:39",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "125",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "13",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 17:42:03",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "126",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 17:53:57",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "127",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "15",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 17:57:10",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "128",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "16",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 17:58:30",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "129",
-      "userID": "30",
-      "name": "diagnosis",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "6",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 18:15:35",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "130",
-      "userID": "30",
-      "name": "diagnosis",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "6",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 18:16:18",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "131",
-      "userID": "30",
-      "name": "procedures",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 18:18:29",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "132",
-      "userID": "30",
-      "name": "procedures",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "4",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 18:19:19",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "133",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "17",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 18:31:03",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "134",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "18",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 18:31:44",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "135",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 18:33:01",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "136",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 18:33:20",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "137",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 18:33:39",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "138",
-      "userID": "30",
-      "name": "diagnosis",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "6",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 18:54:38",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "139",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 19:14:59",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "140",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 19:15:20",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "141",
-      "userID": "30",
-      "name": "admitting",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 22:39:50",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "142",
-      "userID": "30",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 22:40:07",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "143",
-      "userID": "30",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 22:40:40",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "144",
-      "userID": "30",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 22:40:50",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "145",
-      "userID": "30",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 22:41:05",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "146",
-      "userID": "30",
-      "name": "admitting",
-      "operation": "delete",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 22:41:19",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "147",
-      "userID": "30",
-      "name": "admitting",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "4",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 22:41:39",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "148",
-      "userID": "30",
-      "name": "admitting",
-      "operation": "delete",
-      "sqlExecuted": "",
-      "entryKey": "4",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 22:41:55",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "149",
-      "userID": "30",
-      "name": "admitting",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "5",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 22:42:36",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "150",
-      "userID": "30",
-      "name": "postDiagnosis",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "8",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 22:44:59",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "151",
-      "userID": "30",
-      "name": "admitting",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "6",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 23:13:06",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "152",
-      "userID": "30",
-      "name": "admitting",
-      "operation": "delete",
-      "sqlExecuted": "",
-      "entryKey": "6",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 23:13:13",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "153",
-      "userID": "30",
-      "name": "admitting",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 23:14:55",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "154",
-      "userID": "30",
-      "name": "admitting",
-      "operation": "delete",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 23:15:35",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "155",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "delete",
-      "sqlExecuted": "",
-      "entryKey": "15",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 23:17:55",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "156",
-      "userID": "30",
-      "name": "admitting",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "8",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 23:43:14",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "157",
-      "userID": "30",
-      "name": "postDiagnosis",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "9",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 23:44:51",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "158",
-      "userID": "30",
-      "name": "diagnosis",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 23:50:35",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "159",
-      "userID": "30",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "8",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-04 23:51:13",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "160",
-      "userID": "30",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "8",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-05 00:02:28",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "161",
-      "userID": "30",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "8",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-05 00:04:09",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "162",
-      "userID": "30",
-      "name": "admitting",
-      "operation": "delete",
-      "sqlExecuted": "",
-      "entryKey": "8",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-05 00:05:26",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "163",
-      "userID": "30",
-      "name": "postDiagnosis",
-      "operation": "delete",
-      "sqlExecuted": "",
-      "entryKey": "9",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-05 00:05:26",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "164",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "13",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-05 00:11:27",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "165",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "13",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-05 00:12:01",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "166",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-05 00:22:11",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "167",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "13",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-06 00:50:23",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "168",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "16",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-06 00:50:43",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "169",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "19",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-06 00:51:40",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "170",
-      "userID": "30",
-      "name": "followup",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "6",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-06 17:25:02",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "171",
-      "userID": "30",
-      "name": "labwork",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-06 18:02:21",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "172",
-      "userID": "30",
-      "name": "labwork",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-06 18:02:29",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "173",
-      "userID": "30",
-      "name": "patients",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "8",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-14 23:21:08",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "174",
-      "userID": "30",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "8",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-14 23:21:08",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "175",
-      "userID": "30",
-      "name": "patients",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "9",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-14 23:21:09",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "176",
-      "userID": "30",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "9",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-14 23:21:09",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "177",
-      "userID": "30",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "9",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-14 23:22:54",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "178",
-      "userID": "30",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "9",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-14 23:24:14",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "179",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "20",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-14 23:26:31",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "180",
-      "userID": "30",
-      "name": "prescriptions",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "5",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-14 23:30:15",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "181",
-      "userID": "30",
-      "name": "patients",
-      "operation": "delete",
-      "sqlExecuted": "",
-      "entryKey": "8",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-14 23:36:55",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "182",
-      "userID": "30",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "9",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-14 23:39:10",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "183",
-      "userID": "30",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "9",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-14 23:40:10",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "184",
-      "userID": "30",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "9",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-14 23:40:10",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "185",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "delete",
-      "sqlExecuted": "",
-      "entryKey": "20",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-14 23:43:55",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "186",
-      "userID": "30",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "21",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-14 23:47:06",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "187",
-      "userID": "30",
-      "name": "patients",
-      "operation": "delete",
-      "sqlExecuted": "",
-      "entryKey": "9",
-      "deleted_at": "NULL",
-      "created_at": "2016-04-15 00:05:42",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "188",
-      "userID": "12",
-      "name": "patients",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "10",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:33:39",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "189",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "10",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:33:39",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "190",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "10",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:33:39",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "191",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "10",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:34:51",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "192",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "10",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:38:40",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "193",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "10",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:39:15",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "194",
-      "userID": "12",
-      "name": "labwork",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "8",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:40:59",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "195",
-      "userID": "12",
-      "name": "diagnosis",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "10",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:41:14",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "196",
-      "userID": "12",
-      "name": "followup",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:42:47",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "197",
-      "userID": "12",
-      "name": "procedures",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "5",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:44:34",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "198",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "10",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:45:44",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "199",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "10",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:46:14",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "200",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "10",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:47:10",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "201",
-      "userID": "12",
-      "name": "admitting",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "9",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:47:55",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "202",
-      "userID": "12",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "9",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:48:04",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "203",
-      "userID": "12",
-      "name": "admitting",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "9",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:48:27",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "204",
-      "userID": "12",
-      "name": "labwork",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "8",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:50:15",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "205",
-      "userID": "12",
-      "name": "labwork",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "8",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:50:23",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "206",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "10",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:51:06",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "207",
-      "userID": "12",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "22",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:54:16",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "208",
-      "userID": "12",
-      "name": "postDiagnosis",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "10",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:55:15",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "209",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "10",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:57:05",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "210",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "10",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:57:33",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "211",
-      "userID": "12",
-      "name": "prescriptions",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "6",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:58:21",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "212",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "10",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:58:55",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "213",
-      "userID": "12",
-      "name": "prescriptions",
-      "operation": "delete",
-      "sqlExecuted": "",
-      "entryKey": "6",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 00:59:57",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "214",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "10",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 01:01:16",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "215",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "10",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 01:02:07",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "216",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "10",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 01:02:20",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "217",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "10",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 01:02:54",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "218",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "10",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 01:03:05",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "219",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "10",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 01:04:56",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "220",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "10",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 01:05:08",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "221",
-      "userID": "12",
-      "name": "patients",
-      "operation": "delete",
-      "sqlExecuted": "",
-      "entryKey": "10",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 01:10:00",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "222",
-      "userID": "12",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "23",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 17:35:15",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "223",
-      "userID": "12",
-      "name": "patients",
-      "operation": "delete",
-      "sqlExecuted": "",
-      "entryKey": "9",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 17:35:35",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "224",
-      "userID": "12",
-      "name": "appointments",
-      "operation": "delete",
-      "sqlExecuted": "",
-      "entryKey": "22",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 17:36:19",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "225",
-      "userID": "12",
-      "name": "patients",
-      "operation": "delete",
-      "sqlExecuted": "",
-      "entryKey": "10",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 17:36:45",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "226",
-      "userID": "12",
-      "name": "patients",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "11",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 17:49:45",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "227",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "11",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 17:49:45",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "228",
-      "userID": "12",
-      "name": "diagnosis",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "11",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 17:50:13",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "229",
-      "userID": "12",
-      "name": "followup",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "8",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 17:50:37",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "230",
-      "userID": "12",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "24",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 17:51:15",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "231",
-      "userID": "12",
-      "name": "followup",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "8",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 17:53:22",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "232",
-      "userID": "12",
-      "name": "appointments",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "24",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 17:53:41",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "233",
-      "userID": "12",
-      "name": "patients",
-      "operation": "delete",
-      "sqlExecuted": "",
-      "entryKey": "11",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 17:54:50",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "234",
-      "userID": "12",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "25",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 17:55:55",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "235",
-      "userID": "12",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "26",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 17:56:32",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "236",
-      "userID": "12",
-      "name": "patients",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "12",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-03 18:09:12",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "237",
-      "userID": "29",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "27",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-04 19:36:24",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "238",
-      "userID": "29",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "28",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-04 19:37:04",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "239",
-      "userID": "12",
-      "name": "prescriptions",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-29 22:58:30",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "240",
-      "userID": "12",
-      "name": "appointments",
-      "operation": "create",
-      "sqlExecuted": "",
-      "entryKey": "29",
-      "deleted_at": "NULL",
-      "created_at": "2016-05-29 23:21:07",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "241",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "3",
-      "deleted_at": "NULL",
-      "created_at": "2016-08-16 18:16:42",
-      "updated_at": "0000-00-00 00:00:00');"
-    },
-    {
-      "id": "242",
-      "userID": "12",
-      "name": "patients",
-      "operation": "update",
-      "sqlExecuted": "",
-      "entryKey": "7",
-      "deleted_at": "NULL",
-      "created_at": "2016-08-16 18:20:00",
-      "updated_at": "0000-00-00 00:00:00');"
-    }
-  ],
+  "tableLogger": [],
   "userAccessLevel": [],
   "users": [
     {
@@ -5797,7 +3134,7 @@ export default {
       "remember_token": "BG1nAC3tkcDtbWWVPzsmkZQsIVngKWDNIb6JsCE1fDoeXShC3tBReeuZGdtR",
       "deleted_at": "NULL",
       "created_at": "0000-00-00 00:00:00",
-      "updated_at": "2016-08-16 18:14:33');"
+      "updated_at": "2016-08-16 18:14:33"
     },
     {
       "id": "23",
@@ -5817,7 +3154,7 @@ export default {
       "remember_token": "fMEKMbovadzvjYAdhE4YXLPcICrFEgvsFuIJg5ytQWLYdTP0W3uw79SAVzYh",
       "deleted_at": "NULL",
       "created_at": "2016-03-20 23:48:03",
-      "updated_at": "2016-04-03 17:38:21');"
+      "updated_at": "2016-04-03 17:38:21"
     },
     {
       "id": "24",
@@ -5837,7 +3174,7 @@ export default {
       "remember_token": "rHALsb2K5c5IvdNv2fcLiPncHUR4xXp0mOy2A5dlTvfb3anoGFNsEPvgrg0d",
       "deleted_at": "NULL",
       "created_at": "2016-03-20 23:48:27",
-      "updated_at": "2016-03-23 19:30:54');"
+      "updated_at": "2016-03-23 19:30:54"
     },
     {
       "id": "25",
@@ -5857,7 +3194,7 @@ export default {
       "remember_token": "CIDnHQMJC3KPegPkmq65d88JskNdqgBLC89XN9josHZPs4eO5IQ079V9EhkW",
       "deleted_at": "NULL",
       "created_at": "2016-03-20 23:48:54",
-      "updated_at": "2016-03-28 01:31:48');"
+      "updated_at": "2016-03-28 01:31:48"
     },
     {
       "id": "26",
@@ -5877,7 +3214,7 @@ export default {
       "remember_token": "C71aR2fDEtSgstcy534sWWRfkuzHWDxJOjv4LX5BTj9h2fVJJRxsi98C8FbB",
       "deleted_at": "NULL",
       "created_at": "2016-03-22 21:14:20",
-      "updated_at": "2016-04-01 00:27:08');"
+      "updated_at": "2016-04-01 00:27:08"
     },
     {
       "id": "27",
@@ -5897,7 +3234,7 @@ export default {
       "remember_token": "YLnZHZHzicz5qDFlcwIdUMe8Ng4dS7otGHy25kztkD0hU4hCDK3C3BXoWWpQ",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 01:37:58",
-      "updated_at": "2016-03-28 01:39:33');"
+      "updated_at": "2016-03-28 01:39:33"
     },
     {
       "id": "28",
@@ -5917,7 +3254,7 @@ export default {
       "remember_token": "zWX7MuG0tXijCkZpwfTnDxa6ynm8bj11sbPPPgqX7nOQkuqjaPWW6hOnYXuy",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 16:48:20",
-      "updated_at": "2016-03-28 19:25:28');"
+      "updated_at": "2016-03-28 19:25:28"
     },
     {
       "id": "29",
@@ -5937,7 +3274,7 @@ export default {
       "remember_token": "rR83v4GqKpiNzu97FEOopWWSDC7v6D1egqIJB3qMcKtHQqmYB6TXPEY0iUse",
       "deleted_at": "NULL",
       "created_at": "2016-03-28 16:49:17",
-      "updated_at": "2016-08-15 23:38:55');"
+      "updated_at": "2016-08-15 23:38:55"
     },
     {
       "id": "30",
@@ -5957,7 +3294,7 @@ export default {
       "remember_token": "oU3A54PFrPVEyarCMDOXT6el3azqQWDnra7pjObSdrAspIqZwvaGwbWLaGrz",
       "deleted_at": "NULL",
       "created_at": "2016-04-03 22:46:14",
-      "updated_at": "2016-05-23 00:43:28');"
+      "updated_at": "2016-05-23 00:43:28"
     },
     {
       "id": "31",
@@ -5977,7 +3314,7 @@ export default {
       "remember_token": "rjE8e2eCyCzluC4l30x5AjkrTGkMKDFK1A73A9tT4NYygHQ3RQmRkCWsudNz",
       "deleted_at": "NULL",
       "created_at": "2016-04-03 22:52:40",
-      "updated_at": "2016-04-04 00:21:57');"
+      "updated_at": "2016-04-04 00:21:57"
     },
     {
       "id": "32",
@@ -5997,7 +3334,7 @@ export default {
       "remember_token": "UBcfzz0Xk18nZoWmHkMzdweKzqfVMxV1R7DEKo9Tarl6hF2Wcwr4sAyydT1a",
       "deleted_at": "NULL",
       "created_at": "2016-05-04 22:10:32",
-      "updated_at": "2016-05-04 22:11:07');"
+      "updated_at": "2016-05-04 22:11:07"
     }
   ],
   "vaccineRecords": [],

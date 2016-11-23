@@ -1,7 +1,7 @@
 'use strict';
 
 import React, {Component} from 'react'
-import {Text, View, Navigator, ActivityIndicator, StyleSheet, Dimensions, TouchableOpacity, AsyncStorage} from 'react-native'
+import {Text, View, Navigator, ActivityIndicator, StyleSheet, Dimensions, TouchableOpacity, AsyncStorage, ToastAndroid, ProgressBarAndroid} from 'react-native'
 import SQLite from 'react-native-sqlite-storage'
 import RNFS from 'react-native-fs'
 import Schema from '../database/schema.js'
@@ -18,80 +18,102 @@ const db = EnvInstance.db()
 class SplashPage extends Component {
     constructor(props) {
         super(props)
+        this.state = {
+            progress: 0,
+            title: 'Validating Requirements...',
+        }
     }
     componentWillMount() {
         RNFS.mkdir(RNFS.ExternalDirectoryPath + '/patient')
         RNFS.mkdir(RNFS.ExternalDirectoryPath + '/avatar')
     }
     componentDidMount() {
+        if (this.props.initial)
+            this.initial();
+        else
+            this.updateCredentials().done();
+    }
+    async updateCredentials() {
+        try {
+            var doctor = await AsyncStorage.getItem('doctor');
+            this.setState({
+                doctorID: JSON.parse(doctor).id,
+                doctorUserID: JSON.parse(doctor).userID,
+                cloudUrl: JSON.parse(doctor).cloudUrl,
+            })
+        } catch (error) {
+            console.log('AsyncStorage error: ' + error.message);
+        } finally {
+            this.validate();
+        }
+    }
+    initial() {
+        this.setState({title: 'Initial Configuration...'})
         db.transaction(function(tx) {
             _.forEach(Schema, (v, i) => {
-                if(i !== 'index')
-                    tx.executeSql("DROP TABLE IF EXISTS "+i);
-                tx.executeSql(v);
-            })
-            _.forEach(Demo, (v, i) => {
-                tx.executeSql("DELETE FROM "+i);
-                if (i !== 'migrations') {
-                    _.forEach(v, (vv, ii) => {
-                        tx.executeSql("SELECT * FROM "+i+" WHERE id="+vv.id, [], (tx, rs) => {
-                            if (_.keys(rs.rows.item(0)).length > 0) {
-                                console.log(i)
-                            } else {
-                                var type = _.join(_.fill(Array(_.keys(vv).length), '?'), ',');
-                                if (i === 'labItem' || i === 'labItemClass' || i === 'icds' || i === 'icdCategories' || i === 'cpts' || i === 'cptCategories' || (i === 'prescriptions' && _.keys(vv).length == 10)){
-                                    console.log('passed: ', i)
-                                } else {
-                                    tx.executeSql("INSERT INTO "+i+" VALUES ("+type+")", _.values(vv), function(tx, rs) {
-                                        console.log("insert: ", i);
-                                    });
-                                }
-                            }
-                        }, (tx, error) => {
-                        });
-                    })
-                }
-            })
-            _.forEach(Populate, (v, i) => {
-                tx.executeSql("DELETE FROM "+i);
-                if (i !== 'migrations') {
-                    _.forEach(v, (vv, ii) => {
-                        tx.executeSql("SELECT * FROM "+i+" WHERE id="+vv.id, [], (tx, rs) => {
-                            if (_.keys(rs.rows.item(0)).length > 0) {
-                                console.log(i)
-                            } else {
-                                var type = _.join(_.fill(Array(_.keys(vv).length), '?'), ',');
-                                if ((i === 'icds' && _.keys(vv).length == 4) ||  (i === 'prescriptions' && _.keys(vv).length == 10)){
-                                    console.log('passed: ', i)
-                                } else {
-                                    tx.executeSql("INSERT INTO "+i+" VALUES ("+type+")", _.values(vv), function(tx, rs) {
-                                        console.log("insert: ", i);
-                                    });
-                                }
-                            }
-                        }, (tx, error) => {
-                        });
-                    })
-                }
+                tx.executeSql(v, [], (rs) => {console.log('title: '+i)});
             })
         }, (error) => { console.log('Transaction ERROR: ' + error.message);
         }, () => {
-            setTimeout(() => {
-                this.props.navigator.replace({
-                    // id: 'MainPage',
-                    id: 'AppointmentPage',
-                    sceneConfig: Navigator.SceneConfigs.FadeAndroid
-                });
-            }, 1000);
+            // setTimeout(() => {
+            //     this.props.navigator.replace({
+            //         // id: 'MainPage',
+            //         id: 'AppointmentPage',
+            //         sceneConfig: Navigator.SceneConfigs.FadeAndroid
+            //     });
+            // }, 1000);
+            console.log(this.state)
+            ToastAndroid.show('Initial', 1000);
+        });
+        console.log('initial');
+    }
+    validate() {
+        this.setState({title: 'Validating Requirements...'})
+        db.transaction(function(tx) {
+            _.forEach(Schema, (v, i) => {
+                tx.executeSql("DROP TABLE IF EXISTS "+i);
+                // tx.executeSql(v, [], (rs) => {console.log('title: '+i)});
+            })
+        }, (error) => { console.log('Transaction ERROR: ' + error.message);
+        }, () => {
+            // setTimeout(() => {
+            //     this.props.navigator.replace({
+            //         // id: 'MainPage',
+            //         id: 'AppointmentPage',
+            //         sceneConfig: Navigator.SceneConfigs.FadeAndroid
+            //     });
+            // }, 1000);
+            console.log(this.state)
+            ToastAndroid.show('Clean', 1000);
         });
     }
     render() {
         return (
             <View style={{flex: 1, backgroundColor: '#2962FF', alignItems: 'center', justifyContent: 'center'}}>
                 {this.props.children}
-                <Text style={{color: 'white', fontSize: 28, paddingBottom: 20}}>Verifying Requirements...</Text>
-                <View style={styles.loading}>
-                    <ActivityIndicator style={[styles.progress, {transform: [{scale: 1.5}]}]} animating={true} size={'large'} color={'#FFF'}/>
+                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                    <TouchableOpacity
+                        style={{padding: 30, backgroundColor: '#FFF'}}
+                        onPress={() => this.initial()}>
+                        <Text>Initial</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={{padding: 30, backgroundColor: '#FFF'}}
+                        onPress={() => this.validate()}>
+                        <Text>Validate</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{position: 'absolute', bottom: 20, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                    <View style={{flex: 1, alignItems: 'stretch'}}>
+                        <Text style={{color: 'white', fontSize: 20, paddingBottom: 20, textAlign: 'center'}}>{this.state.title}</Text>
+                        <View style={[styles.loading]}>
+                            <ProgressBarAndroid
+                                progress={this.state.progress}
+                                indeterminate={!(this.state.progress > 0) ? true : false}
+                                styleAttr={'Horizontal'}
+                                color={'#FFF'}/>
+                        </View>
+                    </View>
                 </View>
             </View>
         );
@@ -100,12 +122,8 @@ class SplashPage extends Component {
 
 var styles = StyleSheet.create({
     loading: {
-        alignItems: 'center',
-        width: width,
-    },
-    progress: {
-        width: width,
-    },
+        alignItems: 'stretch',
+    }
 })
 
 module.exports = SplashPage;

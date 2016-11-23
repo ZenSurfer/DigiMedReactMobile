@@ -122,19 +122,19 @@ class DoctorPage extends Component {
                     }
                 })}>
                 <View style={{backgroundColor: '#FFFFFF', borderColor: '#E0E0E0', borderBottomWidth: 0.5}}>
-                    <View style={{flex: 1, flexDirection: 'row', padding: 16, justifyContent: 'center'}}>
-                        <View style={{flex: 1, justifyContent: 'center', marginRight: -100}}>
+                    <View style={{flex: 1, flexDirection: 'row', padding: 16, paddingTop: 0, paddingBottom: 0, height: 80, justifyContent: 'center'}}>
+                        <View style={{flex: 1, justifyContent: 'center', marginRight: -170}}>
                             {(rowData.imagePath) ? ((this.state['doctor'+rowData.id]) ? (
                                 <Image
                                     resizeMode={'cover'}
-                                    style={{width: 100, height: 100, borderRadius: 100}}
+                                    style={{width: 59, height: 59, borderRadius: 100}}
                                     source={{uri: this.state['doctor'+rowData.id]}}/>
-                                ) : ((<Icon name={'account-circle'} color={'#E0E0E0'} size={140}  style={{margin: -10}}/>))) : (<Icon name={'account-circle'} color={'#E0E0E0'} size={140}  style={{margin: -10}}/>)}
+                                ) : ((<Icon name={'account-circle'} color={'#E0E0E0'} size={80}  style={{margin: -5}}/>))) : (<Icon name={'account-circle'} color={'#E0E0E0'} size={80}  style={{margin: -5}}/>)}
                         </View>
                         <View style={{flex: 1, alignItems: 'stretch', flexDirection: 'column', justifyContent: 'center'}}>
                             <Text style={styles.listItemHead}>Dr. {rowData.firstname} {(rowData.middlename) ? rowData.middlename+' ' : ''}{rowData.lastname}</Text>
                             <Text style={[styles.listItem,(rowData.type) ? {color: '#424242'} : {}]}>{(rowData.type) ? rowData.type : '-'}</Text>
-                            <Text style={[styles.listItem, {paddingTop: 5}]}>{(rowData.address) ? rowData.address : '-'}</Text>
+                            {/* <Text style={[styles.listItem, {paddingTop: 5}]}>{(rowData.address) ? rowData.address : '-'}</Text> */}
                             <Text style={styles.listItem}>{(rowData.phone1) ? rowData.phone1 : ''} {(rowData.phone2) ? '/ '+rowData.phone2 : ''}</Text>
                         </View>
                     </View>
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
         paddingLeft: 16,
     },
     listItemHead: {
-        fontSize: 18,
+        fontSize: 19,
         color: '#424242'
     },
     listItem: {

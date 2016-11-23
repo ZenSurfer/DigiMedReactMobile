@@ -223,7 +223,17 @@ class DrawerPage extends Component {
                                 <Text style={styles.drawerViewText}>Import to Cloud</Text>
                             </View>
                         </TouchableNativeFeedback>
-                        <TouchableNativeFeedback>
+                        <TouchableNativeFeedback
+                            onPress={() => this.props.navigator.push({
+                                id: 'ExportPage',
+                                passProps: {
+                                    userID: this.state.userID,
+                                    doctorID: this.state.doctorID,
+                                    doctorName: this.state.doctorName,
+                                },
+                                sceneConfig: Navigator.SceneConfigs.PushFromRight
+                            })
+                            }>
                             <View style={[styles.drawerViewWrapper, {opacity: (this.state.cloudUrl) ? 1 : 0.2, backgroundColor: (this.props.routeName == 'exports') ? '#EEEEEE' : '#FFFFFF'}]}>
                                 <View style={styles.iconWrapper}>
                                     <Icon name='cloud-upload' style={[styles.icon, {color: '#01579B'}]} />

@@ -22,6 +22,7 @@ class AddPatient extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            groupID: 1,
             primaryDoc: '',
             secondaryDoc: '',
             referredByID: '',
@@ -488,19 +489,58 @@ class AddPatient extends Component {
     onSubmit() {
         this.setState({refreshing: true})
         if (_.trim(this.state.firstname) !== '' && _.trim(this.state.lastname) !== '' && _.trim(this.state.middlename) !== '' && _.trim(this.state.telMobile) !== '') {
-            var path = ''; var mime = '';
-            if (this.state.avatar) {
-                path = RNFS.ExternalDirectoryPath + '/avatar/'+this.guid()+'.jpeg';
-                mime = 'jpeg';
+            var insert = {
+                groupID: this.state.groupID,
+                primaryDoc: this.state.primaryDoc,
+                secondaryDoc: this.state.secondaryDoc,
+                referredByID: this.state.referredByID,
+                code: this.state.code,
+                category: this.state.category,
+                firstname: this.state.firstname,
+                lastname: this.state.lastname,
+                middlename: this.state.middlename,
+                nickname: this.state.nickname,
+                birthdate: moment(this.state.birthdate.date).format('YYYY-MM-DD'),
+                birthPlace: this.state.birthPlace,
+                religion: this.state.religion,
+                address: this.state.address,
+                status: this.state.status,
+                occupation: this.state.occupation,
+                sex: this.state.sex,
+                race: this.state.race,
+                nationality: this.state.nationality,
+                height: this.state.height,
+                hmoID: this.state.hmoID,
+                hmo: this.state.hmo,
+                hmoCode: this.state.hmoCode,
+                telHome: this.state.telHome,
+                telOffice: this.state.telOffice,
+                telMobile: this.state.telMobile,
+                email: this.state.email,
+                company: this.state.company,
+                companyAddress: this.state.companyAddress,
+                companyContact: this.state.companyContact,
+                companyID: this.state.companyID,
+                personNotify: this.state.personNotify,
+                personMobile: this.state.personMobile,
+                personRelation: this.state.personRelation,
+                personAddress: this.state.personAddress,
+                insuranceProvider: this.state.insuranceProvider,
+                accountVerified: this.state.accountVerified,
+                policyNumber: this.state.policyNumber,
+                imagePath: (this.state.avatar) ? RNFS.ExternalDirectoryPath + '/avatar/'+this.guid()+'.jpeg' : '',
+                imageMime: 'jpeg',
+                isPedia: this.state.isPedia,
+                fatherName: this.state.fatherName,
+                motherName: this.state.motherName,
+                guardianName: this.state.guardianName,
+                spouseName: this.state.spouseName,
+                deleted_at: this.state.deleted_at,
+                created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+                updated_at: moment().format('YYYY-MM-DD HH:mm:ss')
             }
-            var parse = _.map(_.values(this.state), (rs, i) => {
-                if (i == 9) return moment(rs.date).format('YYYY-MM-DD')
-                else if (i == 37) return path
-                else if (i == 38) return mime
-                else return rs
-            })
             db.transaction((tx) => {
-                tx.executeSql("insert into patients (`primaryDoc`, `secondaryDoc`, `referredByID`, `code`, `category`, `firstname`, `lastname`, `middlename`, `nickname`, `birthdate`, `birthPlace`, `religion`, `address`, `status`, `occupation`, `sex`, `race`, `nationality`, `height`, `hmoID`, `hmo`, `hmoCode`, `telHome`, `telOffice`, `telMobile`, `email`, `company`, `companyAddress`, `companyContact`, `companyID`, `personNotify`, `personMobile`, `personRelation`, `personAddress`, `insuranceProvider`, `accountVerified`, `policyNumber`, `imagePath`, `imageMime`, `isPedia`, `fatherName`, `motherName`, `guardianName`, `spouseName`, `deleted_at`, `created_at`, `updated_at`) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", _.dropRight(_(parse).value(), (_.size(parse) - 47)) , (tx, rs) => {
+                tx.executeSql("insert into patients (`groupID`, `primaryDoc`, `secondaryDoc`, `referredByID`, `code`, `category`, `firstname`, `lastname`, `middlename`, `nickname`, `birthdate`, `birthPlace`, `religion`, `address`, `status`, `occupation`, `sex`, `race`, `nationality`, `height`, `hmoID`, `hmo`, `hmoCode`, `telHome`, `telOffice`, `telMobile`, `email`, `company`, `companyAddress`, `companyContact`, `companyID`, `personNotify`, `personMobile`, `personRelation`, `personAddress`, `insuranceProvider`, `accountVerified`, `policyNumber`, `imagePath`, `imageMime`, `isPedia`, `fatherName`, `motherName`, `guardianName`, `spouseName`, `deleted_at`, `created_at`, `updated_at`) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", _.values(insert), (tx, rs) => {
                     console.log("created: " + rs.rowsAffected);
                     db.patientID = rs.insertId;
                 })
