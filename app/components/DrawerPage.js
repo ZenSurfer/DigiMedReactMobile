@@ -215,7 +215,18 @@ class DrawerPage extends Component {
                         </TouchableNativeFeedback>
                         <View style={{marginTop: 5, marginBottom: 5, borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}></View>
                         <Text style={[styles.drawerLabel]}>Syncing (<Text style={{fontStyle: 'italic'}}>{(this.state.cloudUrl) ? this.state.cloudUrl : '-'}</Text>)</Text>
-                        <TouchableNativeFeedback>
+                        <TouchableNativeFeedback
+                            onPress={() => this.props.navigator.push({
+                                id: 'ImportPage',
+                                passProps: {
+                                    userID: this.state.userID,
+                                    doctorID: this.state.doctorID,
+                                    doctorName: this.state.doctorName,
+                                    cloudUrl: this.state.cloudUrl,
+                                },
+                                sceneConfig: Navigator.SceneConfigs.PushFromRight
+                            })
+                            }>
                             <View style={[styles.drawerViewWrapper, {opacity: (this.state.cloudUrl) ? 1 : 0.2, backgroundColor: (this.props.routeName == 'imports') ? '#EEEEEE' : '#FFFFFF'}]}>
                                 <View style={styles.iconWrapper}>
                                     <Icon name='cloud-download' style={[styles.icon, {color: '#FF5722'}]} />

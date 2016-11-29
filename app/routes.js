@@ -4,6 +4,7 @@ import React from 'react'
 import {StatusBar, View, Text, TouchableOpacity, BackAndroid} from 'react-native'
 
 import SplashPage from './actions/SplashPage'
+import VerifyPage from './actions/VerifyPage'
 import LoginPage from './actions/LoginPage'
 import PersonPage from './actions/PersonPage'
 import SearchPage from './actions/SearchPage'
@@ -54,6 +55,7 @@ import EditDoctor from './actions/Doctor/EditDoctor'
 import DoctorProfile from './actions/Doctor/DoctorProfile'
 
 import ExportPage from './actions/Syncing/ExportPage'
+import ImportPage from './actions/Syncing/ImportPage'
 
 import Styles from './assets/Styles'
 
@@ -66,6 +68,13 @@ module.exports = (route, navigator, self) => {
             <SplashPage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
             </SplashPage>
+        )
+    }
+    if (routeId === 'VerifyPage') {
+        return (
+            <VerifyPage navigator={navigator} {...route.passProps}>
+                <StatusBar backgroundColor='#2962FF'/>
+            </VerifyPage>
         )
     }
     if (routeId === 'LoginPage') {
@@ -573,7 +582,28 @@ module.exports = (route, navigator, self) => {
         return (
             <ExportPage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
+                {(self.state.completed) ? (
+                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
+                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                        </View>
+                    </View>
+                    ) : (<View/>)}
             </ExportPage>
+        )
+    }
+    if (routeId === 'ImportPage') {
+        return (
+            <ImportPage navigator={navigator} {...route.passProps}>
+                <StatusBar backgroundColor='#2962FF'/>
+                {(self.state.completed) ? (
+                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
+                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                        </View>
+                    </View>
+                    ) : (<View/>)}
+            </ImportPage>
         )
     }
     // frontdesk page

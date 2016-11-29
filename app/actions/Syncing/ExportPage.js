@@ -46,7 +46,9 @@ class ExportPage extends Component {
         } catch (error) {
             console.log('AsyncStorage error: ' + error.message);
         } finally {
-            this.export();
+            setTimeout(() => {
+                this.export();
+            }, 1000)
         }
     }
     render() {
@@ -73,11 +75,11 @@ class ExportPage extends Component {
                             <Animated.View
                                 style={{paddingLeft: (this.state.progress * 220), opacity: (1 - this.state.progress), transform: [{scale: (1 - this.state.progress)}]}}>
                                 <Icon
-                                    name={'insert-drive-file'} color={'#FFF'} size={40}/>
+                                    name={'insert-drive-file'} color={'#FFF'} size={60}/>
                             </Animated.View>
                         </View>
                         <View style={{marginLeft: -60, justifyContent: 'center'}}>
-                            <IconFont name={'server'} size={40} color={'#FFF'}/>
+                            <IconFont name={'server'} size={35} color={'#FFF'}/>
                         </View>
                     </View>
                 )}
@@ -185,7 +187,7 @@ class ExportPage extends Component {
     }
     async post(rows, table) {
         try {
-            return await fetch('http://192.168.1.40/imd5/public/api/v2/test?table='+table, {
+            return await fetch('http://192.168.1.40/imd5/public/api/v2/export?table='+table, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',

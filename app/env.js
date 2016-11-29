@@ -13,7 +13,7 @@ function Env() {
         token: 'copcqjx3ikk:APA91bEQwo7KUNAVBcnhFmgfQuxe14Yzh2W07oqjSoaElS36IH2mQWCyuvJYrs0OIM7MjUhhe65CZ0KyyZWntBCRc200Fq5WslOKyAJ3dOVsOYGodQJFcvikPtBUSlc2CzlpVGdX6edb',
     }
     this.db = function () {
-        return SQLite.openDatabase({name : "testDB"})
+        return SQLite.openDatabase({name : "testDB3"})
     }
     this.setDoctor = function(v, i) {
         var doctor = this.doctor;

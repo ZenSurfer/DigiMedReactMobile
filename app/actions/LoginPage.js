@@ -99,43 +99,73 @@ class LoginPage extends Component {
                                                     this.setState({auth: true})
                                                     db.transaction((tx) => {
                                                         db.passed = false;
-                                                        tx.executeSql("SELECT `doctors`.`userID`, `doctors`.`id`, ('Dr. ' || `doctors`.`firstname` || ' ' || `doctors`.`middlename` || ' ' || `doctors`.`lastname`) as name, `doctors`.`type`, `doctors`.`initial`, `users`.`password`, `doctors`.`imagePath` FROM `users` LEFT OUTER JOIN `doctors` ON `doctors`.`userID`=`users`.`id` WHERE `users`.`username`=? AND `users`.`userType`='doctor' AND `users`.`accountVerified`=1 AND (`users`.`deleted_at` in (null, 'NULL', '') OR `users`.`deleted_at` is null) LIMIT 1", [this.state.username], (tx, rs) => {
-                                                            if (bcrypt.compareSync(this.state.password, rs.rows.item(0).password)) {
-                                                                db.data = rs.rows.item(0);
-                                                                db.passed = true;
-                                                                console.log('passed');
+                                                        tx.executeSql("SELECT `doctors`.`userID` FROM `users` LEFT OUTER JOIN `doctors` ON `doctors`.`userID`=`users`.`id` WHERE `users`.`username`=? AND `users`.`userType`='doctor' AND `users`.`accountVerified`=1 AND (`users`.`deleted_at` in (null, 'NULL', '') OR `users`.`deleted_at` is null) LIMIT 1", [this.state.username], (tx, rs) => {
+                                                            if (rs.rows.length == 0) {
+                                                                var param = this.jsonToQueryString({
+                                                                    username: this.state.username,
+                                                                    password: this.state.password,
+                                                                })
+                                                                this.login(param).then((data) => {
+                                                                    this.setState({auth: false})
+                                                                    if (data.auth) {
+                                                                        console.log(data)
+                                                                        this.props.navigator.replace({
+                                                                            id: 'SplashPage',
+                                                                            passProps: {
+                                                                                initial: true,
+                                                                                doctorUserID: data.userID,
+                                                                                cloudUrl: _.trimEnd(this.state.cloudUrl, '/'),
+                                                                            },
+                                                                            sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                                                        })
+                                                                    }
+                                                                    else
+                                                                        ToastAndroid.show('Invalid username / password!', 1000);
+
+                                                                }).done();
+                                                            } else {
+                                                                if (bcrypt.compareSync(this.state.password, rs.rows.item(0).password)) {
+                                                                    db.data = rs.rows.item(0);
+                                                                    db.passed = true;
+                                                                }
                                                             }
                                                         })
                                                     }, (err) => {
-                                                        var param = this.jsonToQueryString({
-                                                            username: this.state.username,
-                                                            password: this.state.password,
-                                                        })
-                                                        this.login(param).then((data) => {
-                                                            this.setState({auth: false})
-                                                            if (data.auth)
-                                                                this.props.navigator.replace({
-                                                                    id: 'SplashPage',
-                                                                    passProps: {initial: true},
-                                                                    sceneConfig: Navigator.SceneConfigs.FadeAndroid
-                                                                })
-                                                            else
-                                                                ToastAndroid.show('Invalid username / password!', 1000);
-
-                                                        }).done();
                                                     }, () => {
                                                         if(db.passed) {
-                                                            var doctor = _.omit(db.data, ['password']);
-                                                            doctor['cloudUrl'] = _.trimEnd(this.state.cloudUrl, '/');
-                                                            AsyncStorage.setItem('doctor', JSON.stringify(doctor))
                                                             this.props.navigator.replace({
                                                                 id: 'SplashPage',
+                                                                passProps: {
+                                                                    doctorUserID: data.userID,
+                                                                    cloudUrl: _.trimEnd(this.state.cloudUrl, '/'),
+                                                                },
                                                                 sceneConfig: Navigator.SceneConfigs.FadeAndroid
                                                             })
                                                             this.setState({auth: false})
                                                         } else {
-                                                            ToastAndroid.show('Invalid username / password!', 1000);
-                                                            this.setState({auth: false})
+                                                            var param = this.jsonToQueryString({
+                                                                username: this.state.username,
+                                                                password: this.state.password,
+                                                            })
+                                                            this.login(param).then((data) => {
+                                                                this.setState({auth: false})
+                                                                if (data.auth) {
+                                                                    this.props.navigator.replace({
+                                                                        id: 'SplashPage',
+                                                                        passProps: {
+                                                                            initial: true,
+                                                                            doctorUserID: data.userID,
+                                                                            cloudUrl: _.trimEnd(this.state.cloudUrl, '/'),
+                                                                        },
+                                                                        sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                                                    })
+                                                                }
+                                                                else
+                                                                    ToastAndroid.show('Invalid username / password!', 1000);
+
+                                                            }).done();
+                                                            // ToastAndroid.show('Invalid username / password!', 1000);
+                                                            // this.setState({auth: false})
                                                         }
                                                     })
                                                 }}>
