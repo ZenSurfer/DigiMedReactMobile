@@ -24,47 +24,28 @@ class PrescriptionPage extends Component {
         }
     }
     componentWillMount() {
-        this.setState({refreshing: true})
-        db.transaction((tx) => {
-            tx.executeSql("SELECT * FROM prescriptions WHERE patientID = ? AND (deleted_at in (null, 'NULL', '') OR deleted_at is null) ORDER BY dateIssued DESC", [this.props.patientID], function(tx, rs) {
-                db.data = rs.rows
-            }, function(error) {
-                console.log('SELECT SQL statement ERROR: ' + error.message);
-            });
-        }, (error) => {
-            console.log('transaction error: ' + error.message);
-        }, () => {
-            var rowData = [];
-            _.forEach(db.data, function(v, i) {
-                var genericName = _.split(db.data.item(i).genericName, '||');
-                var brandName = _.split(db.data.item(i).brandName, '||');
-                var frequency = _.split(db.data.item(i).frequency, '||');
-                var dosage = _.split(db.data.item(i).dosage, '||');
-                var form = _.split(db.data.item(i).form, '||');
-                var notes = _.split(db.data.item(i).notes, '||');
-                _.forEach(genericName, (vv, ii) => {
-                    var prescription = {
-                        prescriptionID: db.data.item(i).id,
-                        prescriptionRowID: ii,
-                        date: db.data.item(i).dateIssued,
-                        generic: genericName[ii],
-                        brand: brandName[ii],
-                        dosage: dosage[ii],
-                        form: form[ii],
-                        frequency: frequency[ii],
-                        note: notes[ii],
-                    }
-                    rowData.push(prescription)
-                })
-            })
-            this.setState({refreshing: false, rowData: rowData})
-        })
         RNFS.exists(this.props.patientAvatar).then((exist) => {
             if (exist)
                 RNFS.readFile(this.props.patientAvatar, 'base64').then((rs) => {
                     this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')})
                 })
         })
+    }
+    componentDidMount() {
+        this.updateCredentials().done();
+    }
+    async updateCredentials() {
+        try {
+            var doctor = await AsyncStorage.getItem('doctor');
+            this.setState({
+                doctorID: JSON.parse(doctor).id,
+                doctorUserID: JSON.parse(doctor).userID,
+            })
+        } catch (error) {
+            console.log('AsyncStorage error: ' + error.message);
+        } finally {
+            this.onRefresh()
+        }
     }
     render() {
         return (
@@ -151,7 +132,7 @@ class PrescriptionPage extends Component {
     onRefresh() {
         this.setState({refreshing: true})
         db.transaction((tx) => {
-            tx.executeSql("SELECT * FROM prescriptions WHERE patientID = ? AND (deleted_at in (null, 'NULL', '') OR deleted_at is null) ORDER BY dateIssued DESC", [this.props.patientID], function(tx, rs) {
+            tx.executeSql("SELECT * FROM prescriptions WHERE doctorID=? AND patientID = ? AND (deleted_at in (null, 'NULL', '') OR deleted_at is null) ORDER BY dateIssued DESC", [this.state.doctorID, this.props.patientID], function(tx, rs) {
                 db.data = rs.rows
             }, function(error) {
                 console.log('SELECT SQL statement ERROR: ' + error.message);

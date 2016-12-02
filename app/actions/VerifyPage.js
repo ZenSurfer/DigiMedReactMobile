@@ -19,49 +19,157 @@ class VerifyPage extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            email: '',
             code : '',
+            emailVerified: false,
+            verifying: false,
         }
+    }
+    emailVerified() {
+        this.setState({verifying: true})
+        this.pull('emailverification', this.jsonToQueryString({
+            email: this.state.email,
+            userID: this.props.doctorUserID,
+        })).then((data) => {
+            console.log(data)
+            if (data.success)
+                this.setState({verifying: false, emailVerified: true})
+            else {
+                ToastAndroid.show('Email missmatched!', 1000)
+                this.setState({verifying: false})
+            }
+        }).done()
+    }
+    codeVerified() {
+        this.setState({verifying: true})
+        this.pull('codeverification', this.jsonToQueryString({
+            code: this.state.code,
+            userID: this.props.doctorUserID,
+        })).then((data) => {
+            if (data.success) {
+                this.setState({verifying: false})
+                this.props.navigator.replace({
+                    id: 'SplashPage',
+                    passProps: {
+                        initial: true,
+                        doctorUserID: this.props.doctorUserID,
+                        cloudUrl: this.props.cloudUrl,
+                    },
+                    sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                })
+            } else
+                this.setState({verifying: false})
+        }).done()
     }
     render() {
         return (
             <View style={{flex: 1, backgroundColor: '#2962FF', alignItems: 'center', justifyContent: 'center'}}>
                 {this.props.children}
-                <View style={{flexDirection: 'row', justifyContent: 'space-between', }}>
-                    <View style={[styles.textInputWrapper, {width: 300}]}>
-                        <TextInput
-                            placeholder={'Verification Code'}
-                            style={[styles.textInput,{color: '#FFF', textAlign: 'center'}]}
-                            value={this.state.code}
-                            placeholderTextColor={'#90CAF9'}
-                            underlineColorAndroid={'#2979FF'}
-                            onChangeText={(text) => this.setState({code: text})}
-                            returnKeyType={'next'}/>
-                        <TouchableNativeFeedback>
-                            <View style={[Styles.coloredButton, styles.button, {marginBottom: 0}]}>
-                                <Text style={{color: '#FFF'}}>VERIFY</Text>
-                            </View>
-                        </TouchableNativeFeedback>
-                        <TouchableNativeFeedback onPress={() => this.props.navigator.replace({
-                                id: 'LoginPage',
-                                sceneConfig: Navigator.SceneConfigs.FadeAndroid
-                            })}>
-                            <View style={[Styles.coloredButton, styles.button, {backgroundColor: '#2962FF', marginTop: 0}]}>
-                                <Text style={{color: '#90CAF9'}}>LOGIN</Text>
-                            </View>
-                        </TouchableNativeFeedback>
+                {(this.state.emailVerified) ? (
+                    <View style={{flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center',}}>
+                        <Animatable.Text
+                            animation="pulse"
+                            iterationCount={'infinite'}
+                            easing="ease-out">
+                            <Icon name={'code'}  size={100} color={'#FFF'}/>
+                        </Animatable.Text>
+                        <View style={[styles.textInputWrapper, {width: 300}]}>
+                            {(this.state.verifying) ? (
+                                <View>
+                                    <ActivityIndicator animating={true} size={'large'} color={'#FFF'} style={{height: 50}}/>
+                                    <View style={[Styles.coloredButton, styles.button, {marginBottom: 0}]}>
+                                        <Text style={{color: '#FFF'}}>VERIFYING CODE</Text>
+                                    </View>
+                                </View>
+                            ) : (
+                                <View>
+                                    <TextInput
+                                        placeholder={'Verification Code'}
+                                        style={[styles.textInput,{color: '#FFF', textAlign: 'center'}]}
+                                        value={this.state.code}
+                                        placeholderTextColor={'#90CAF9'}
+                                        underlineColorAndroid={'#2979FF'}
+                                        onChangeText={(text) => this.setState({code: text})}/>
+                                    <TouchableNativeFeedback
+                                        onPress={() => this.codeVerified()}>
+                                        <View style={[Styles.coloredButton, styles.button, {marginBottom: 0}]}>
+                                            <Text style={{color: '#FFF'}}>VERIFY</Text>
+                                        </View>
+                                    </TouchableNativeFeedback>
+                                </View>
+                            )}
+                            <TouchableNativeFeedback onPress={() => this.props.navigator.replace({
+                                    id: 'LoginPage',
+                                    sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                })}>
+                                <View style={[Styles.coloredButton, styles.button, {backgroundColor: '#2962FF', marginTop: 0}]}>
+                                    <Text style={{color: '#90CAF9'}}>LOGIN</Text>
+                                </View>
+                            </TouchableNativeFeedback>
+                        </View>
                     </View>
-                </View>
+                ) : (
+                    <View style={{flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center',}}>
+                        <Animatable.Text
+                            animation="pulse"
+                            iterationCount={'infinite'}
+                            easing="ease-out">
+                            <Icon name={'link'}  size={100} color={'#FFF'}/>
+                        </Animatable.Text>
+                        <View style={[styles.textInputWrapper, {width: 300}]}>
+                            {(this.state.verifying) ? (
+                                <View>
+                                    <ActivityIndicator animating={true} size={'large'} color={'#FFF'} style={{height: 50}}/>
+                                    <View style={[Styles.coloredButton, styles.button, {marginBottom: 0}]}>
+                                        <Text style={{color: '#FFF'}}>VERIFYING EMAIL ADDRESS</Text>
+                                    </View>
+                                </View>
+                            ) : (
+                                <View>
+                                    <TextInput
+                                        placeholder={'Email Address'}
+                                        style={[styles.textInput,{color: '#FFF', textAlign: 'center'}]}
+                                        value={this.state.email}
+                                        keyboardType={'email-address'}
+                                        placeholderTextColor={'#90CAF9'}
+                                        underlineColorAndroid={'#2979FF'}
+                                        onChangeText={(text) => this.setState({email: text})}
+                                        returnKeyType={'next'}/>
+                                    <TouchableNativeFeedback
+                                        onPress={() => this.emailVerified()}>
+                                        <View style={[Styles.coloredButton, styles.button, {marginBottom: 0}]}>
+                                            <Text style={{color: '#FFF'}}>SEND VERIFICATION CODE</Text>
+                                        </View>
+                                    </TouchableNativeFeedback>
+                                </View>
+                            )}
+                            <TouchableNativeFeedback onPress={() => this.props.navigator.replace({
+                                    id: 'LoginPage',
+                                    sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                })}>
+                                <View style={[Styles.coloredButton, styles.button, {backgroundColor: '#2962FF', marginTop: 0}]}>
+                                    <Text style={{color: '#90CAF9'}}>LOGIN</Text>
+                                </View>
+                            </TouchableNativeFeedback>
+                        </View>
+                    </View>
+                )}
             </View>
         );
     }
-    async pull(param) {
+    async pull(link, param) {
         try {
-            return await fetch(this.state.cloudUrl+'/api/v2/pull?'+param).then((response) => {
+            return await fetch(this.props.cloudUrl+'/api/v2/'+link+'?'+param).then((response) => {
                 return response.json()
             });
         } catch (err) {
             console.log(err.message)
         }
+    }
+    jsonToQueryString(json) {
+        return Object.keys(json).map(function(key) {
+            return encodeURIComponent(key) + '=' + encodeURIComponent(json[key]);
+        }).join('&');
     }
 }
 

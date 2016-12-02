@@ -48,26 +48,38 @@ class SplashPage extends Component {
                 {column: 'id' , condition: '=', value: this.props.doctorUserID},
             ])).then((data) => {
                 db.transaction((tx) => {
-                    // tx.executeSql("SELECT * FROM "+data.table+" WHERE id=?", [this.props.doctorUserID], (tx, rs) => {
-                        // if (rs.rows.length == 0) {
-                            tx.executeSql("INSERT OR REPLACE INTO "+data.table+" VALUES ("+_.join(_.fill(Array(_.size(data.data[0])), '?'), ',')+")", _.values(data.data[0]), (tx, rs) => {
+                    tx.executeSql("SELECT * FROM "+data.table+" WHERE id=?", [this.props.doctorUserID], (tx, rs) => {
+                        if (rs.rows.length > 0) {
+                            tx.executeSql("DELETE FROM "+data.table+" WHERE id=?", [this.props.doctorUserID], (tx, rs) => {
+                                tx.executeSql("INSERT INTO "+data.table+" VALUES ("+_.join(_.fill(Array(_.size(data.data[0])), '?'), ',')+")", _.values(data.data[0]), (tx, rs) => {
+                                    console.log(data.table+': ', rs.rowsAffected)
+                                }, err => console.log(err.message))
+                            })
+                        } else {
+                            tx.executeSql("INSERT INTO "+data.table+" VALUES ("+_.join(_.fill(Array(_.size(data.data[0])), '?'), ',')+")", _.values(data.data[0]), (tx, rs) => {
                                 console.log(data.table+': ', rs.rowsAffected)
                             }, err => console.log(err.message))
-                        // }
-                    // })
+                        }
+                    })
                 })
             }).done()
             this.pull(this.parse('doctors', [
                 {column: 'userID' , condition: '=', value: this.props.doctorUserID},
             ])).then((data) => {
                 db.transaction((tx) => {
-                    // tx.executeSql("SELECT * FROM "+data.table+" WHERE userID=?", [this.props.doctorUserID], (tx, rs) => {
-                        // if (rs.rows.length == 0) {
-                            tx.executeSql("INSERT OR REPLACE INTO "+data.table+" VALUES ("+_.join(_.fill(Array(_.size(data.data[0])), '?'), ',')+")", _.values(data.data[0]), (tx, rs) => {
+                    tx.executeSql("SELECT * FROM "+data.table+" WHERE userID=?", [this.props.doctorUserID], (tx, rs) => {
+                        if (rs.rows.length > 0) {
+                            tx.executeSql("DELETE FROM "+data.table+" WHERE userID=?", [this.props.doctorUserID], (tx, rs) => {
+                                tx.executeSql("INSERT INTO "+data.table+" VALUES ("+_.join(_.fill(Array(_.size(data.data[0])), '?'), ',')+")", _.values(data.data[0]), (tx, rs) => {
+                                    console.log(data.table+': ', rs.rowsAffected)
+                                }, err => console.log(err.message))
+                            })
+                        } else {
+                            tx.executeSql("INSERT INTO "+data.table+" VALUES ("+_.join(_.fill(Array(_.size(data.data[0])), '?'), ',')+")", _.values(data.data[0]), (tx, rs) => {
                                 console.log(data.table+': ', rs.rowsAffected)
                             }, err => console.log(err.message))
-                        // }
-                    // })
+                        }
+                    })
                 }, err => console.log(err.message), () => {
                     this.validate();
                 })
@@ -112,6 +124,7 @@ class SplashPage extends Component {
                 } else if (_.size(Schema) == count){
                     db.transaction((tx) => {
                         tx.executeSql("SELECT `doctors`.`userID`, `doctors`.`id`, ('Dr. ' || `doctors`.`firstname` || ' ' || `doctors`.`middlename` || ' ' || `doctors`.`lastname`) as name, `doctors`.`type`, `doctors`.`initial`, `users`.`password`, `doctors`.`imagePath`, `users`.`accountVerified`, `users`.`emailVerified` FROM `users` LEFT OUTER JOIN `doctors` ON `doctors`.`userID`=`users`.`id` WHERE `users`.`id`=? AND `users`.`userType`='doctor' AND (`users`.`deleted_at` in (null, 'NULL', '') OR `users`.`deleted_at` is null) LIMIT 1", [this.props.doctorUserID], (tx, rs) => {
+                            console.log(rs.rows.item(0))
                             if (rs.rows.item(0).accountVerified !== null || rs.rows.item(0).emailVerified !== null) {
                                 var doctor = _.omit(rs.rows.item(0), ['password', 'accountVerified', 'emailVerified']);
                                 doctor['cloudUrl'] = this.props.cloudUrl;
@@ -123,15 +136,14 @@ class SplashPage extends Component {
                             } else {
                                 this.props.navigator.replace({
                                     id: 'VerifyPage',
+                                    passProps: {
+                                        doctorUserID: this.props.doctorUserID,
+                                        cloudUrl: this.props.cloudUrl
+                                    },
                                     sceneConfig: Navigator.SceneConfigs.FadeAndroid
                                 });
                             }
                         })
-                    }, (err) => console.log(err.message), () => {
-                        this.props.navigator.replace({
-                            id: 'VerifyPage',
-                            sceneConfig: Navigator.SceneConfigs.FadeAndroid
-                        });
                     })
                 }
             });
