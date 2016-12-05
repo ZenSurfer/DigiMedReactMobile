@@ -1,11 +1,13 @@
 #REACT NATIVE 0.33.0
 
-file:node_modules/react-native-bcrypt/dist/bcrypt.js
+file:node_modules/react-native-bcrypt/dist/bcrypt.js  
 line:50
+
     var bcrypt = {};
     +var _ = require('lodash');
 
 line:68
+
     function random(len) {
         /* fallback */
         if (!randomFallback) {
