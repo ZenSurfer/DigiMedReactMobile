@@ -20,9 +20,10 @@ class LoginPage extends Component {
         this.state = {
             username: 'RAJ',
             password: 'doctor2',
-            cloudUrl: 'http://192.168.1.40/imd5/public/',
+            cloudUrl: 'http://192.168.1.41/imd5/public/',
             auth: false,
             visibility: false,
+            failed: false,
         }
     }
     componentDidMount() {
@@ -113,19 +114,20 @@ class LoginPage extends Component {
                                                             })
                                                             this.login(param).then((data) => {
                                                                 this.setState({auth: false})
-                                                                if (data.auth) {
-                                                                    this.props.navigator.replace({
-                                                                        id: 'SplashPage',
-                                                                        passProps: {
-                                                                            initial: true,
-                                                                            doctorUserID: data.userID,
-                                                                            cloudUrl: _.trimEnd(this.state.cloudUrl, '/'),
-                                                                        },
-                                                                        sceneConfig: Navigator.SceneConfigs.FadeAndroid
-                                                                    })
-                                                                }
-                                                                else
+                                                                if (!_.isUndefined(data)) {
+                                                                    if (data.auth) {
+                                                                        this.props.navigator.replace({
+                                                                            id: 'SplashPage',
+                                                                            passProps: {
+                                                                                initial: true,
+                                                                                doctorUserID: data.userID,
+                                                                                cloudUrl: _.trimEnd(this.state.cloudUrl, '/'),
+                                                                            },
+                                                                            sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                                                        })
+                                                                    } else
                                                                     ToastAndroid.show('Invalid username / password!', 1000);
+                                                                }
                                                             }).done();
                                                         } else {
                                                             db.transaction((tx) => {
@@ -160,20 +162,20 @@ class LoginPage extends Component {
                                                                     })
                                                                     this.login(param).then((data) => {
                                                                         this.setState({auth: false})
-                                                                        if (data.auth) {
-                                                                            this.props.navigator.replace({
-                                                                                id: 'SplashPage',
-                                                                                passProps: {
-                                                                                    initial: true,
-                                                                                    doctorUserID: data.userID,
-                                                                                    cloudUrl: _.trimEnd(this.state.cloudUrl, '/'),
-                                                                                },
-                                                                                sceneConfig: Navigator.SceneConfigs.FadeAndroid
-                                                                            })
-                                                                        }
-                                                                        else
+                                                                        if (!_.isUndefined(data)) {
+                                                                            if (data.auth) {
+                                                                                this.props.navigator.replace({
+                                                                                    id: 'SplashPage',
+                                                                                    passProps: {
+                                                                                        initial: true,
+                                                                                        doctorUserID: data.userID,
+                                                                                        cloudUrl: _.trimEnd(this.state.cloudUrl, '/'),
+                                                                                    },
+                                                                                    sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                                                                })
+                                                                            } else
                                                                             ToastAndroid.show('Invalid username / password!', 1000);
-
+                                                                        }
                                                                     }).done();
                                                                 }
                                                             })
@@ -212,12 +214,13 @@ class LoginPage extends Component {
     }
     async login(param) {
         try {
+            this.setState({failed: false})
             return await fetch(_.trimEnd(this.state.cloudUrl, '/')+'/api/v2/login?'+param).then((response) => {
                 return response.json()
             });
         } catch (err) {
-            this.setState({auth: false})
-            ToastAndroid.show('No internet connection!', 1000)
+            this.setState({auth: false, failed: true})
+            ToastAndroid.show('Cloud server request failed!', 1000)
             console.log(err.message)
         }
     }

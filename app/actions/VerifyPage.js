@@ -77,7 +77,7 @@ class VerifyPage extends Component {
                             {(this.state.verifying) ? (
                                 <View>
                                     <ActivityIndicator animating={true} size={'large'} color={'#FFF'} style={{height: 50}}/>
-                                    <View style={[Styles.coloredButton, styles.button, {marginBottom: 0}]}>
+                                    <View style={[styles.button, {marginBottom: 0}]}>
                                         <Text style={{color: '#FFF'}}>VERIFYING CODE</Text>
                                     </View>
                                 </View>
@@ -92,7 +92,7 @@ class VerifyPage extends Component {
                                         onChangeText={(text) => this.setState({code: text})}/>
                                     <TouchableNativeFeedback
                                         onPress={() => this.codeVerified()}>
-                                        <View style={[Styles.coloredButton, styles.button, {marginBottom: 0}]}>
+                                        <View style={[styles.button, {marginBottom: 0}]}>
                                             <Text style={{color: '#FFF'}}>VERIFY</Text>
                                         </View>
                                     </TouchableNativeFeedback>
@@ -102,7 +102,7 @@ class VerifyPage extends Component {
                                     id: 'LoginPage',
                                     sceneConfig: Navigator.SceneConfigs.FadeAndroid
                                 })}>
-                                <View style={[Styles.coloredButton, styles.button, {backgroundColor: '#2962FF', marginTop: 0}]}>
+                                <View style={[styles.button, {backgroundColor: '#2962FF', marginTop: 0}]}>
                                     <Text style={{color: '#90CAF9'}}>LOGIN</Text>
                                 </View>
                             </TouchableNativeFeedback>
@@ -120,7 +120,7 @@ class VerifyPage extends Component {
                             {(this.state.verifying) ? (
                                 <View>
                                     <ActivityIndicator animating={true} size={'large'} color={'#FFF'} style={{height: 50}}/>
-                                    <View style={[Styles.coloredButton, styles.button, {marginBottom: 0}]}>
+                                    <View style={[styles.button, {marginBottom: 0}]}>
                                         <Text style={{color: '#FFF'}}>VERIFYING EMAIL ADDRESS</Text>
                                     </View>
                                 </View>
@@ -137,7 +137,7 @@ class VerifyPage extends Component {
                                         returnKeyType={'next'}/>
                                     <TouchableNativeFeedback
                                         onPress={() => this.emailVerified()}>
-                                        <View style={[Styles.coloredButton, styles.button, {marginBottom: 0}]}>
+                                        <View style={[styles.button, {marginBottom: 0}]}>
                                             <Text style={{color: '#FFF'}}>SEND VERIFICATION CODE</Text>
                                         </View>
                                     </TouchableNativeFeedback>
@@ -147,7 +147,7 @@ class VerifyPage extends Component {
                                     id: 'LoginPage',
                                     sceneConfig: Navigator.SceneConfigs.FadeAndroid
                                 })}>
-                                <View style={[Styles.coloredButton, styles.button, {backgroundColor: '#2962FF', marginTop: 0}]}>
+                                <View style={[styles.button, {backgroundColor: '#2962FF', marginTop: 0}]}>
                                     <Text style={{color: '#90CAF9'}}>LOGIN</Text>
                                 </View>
                             </TouchableNativeFeedback>
@@ -158,6 +158,7 @@ class VerifyPage extends Component {
         );
     }
     async pull(link, param) {
+        console.log(this.props.cloudUrl+'/api/v2/'+link+'?'+param)
         try {
             return await fetch(this.props.cloudUrl+'/api/v2/'+link+'?'+param).then((response) => {
                 return response.json()
@@ -178,9 +179,12 @@ var styles = StyleSheet.create({
         alignItems: 'stretch',
     },
     button: {
+        justifyContent: 'center',
+        alignItems: 'center',
         height: 50,
         backgroundColor: '#2979FF',
         elevation: 0,
+        marginTop: 5,
     },
     textInputWrapper: {
         paddingLeft: 10,
