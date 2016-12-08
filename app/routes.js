@@ -2,6 +2,7 @@
 
 import React from 'react'
 import {StatusBar, View, Text, TouchableOpacity, BackAndroid} from 'react-native'
+import SQLite from 'react-native-sqlite-storage'
 
 import SplashPage from './actions/SplashPage'
 import VerifyPage from './actions/VerifyPage'
@@ -59,34 +60,36 @@ import ImportPage from './actions/Syncing/ImportPage'
 
 import Styles from './assets/Styles'
 
+var db = SQLite.openDatabase({name: "testDB4"})
+
 module.exports = (route, navigator, self) => {
 
     var routeId = route.id
 
     if (routeId === 'SplashPage') {
         return (
-            <SplashPage navigator={navigator} {...route.passProps}>
+            <SplashPage navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF'/>
             </SplashPage>
         )
     }
     if (routeId === 'VerifyPage') {
         return (
-            <VerifyPage navigator={navigator} {...route.passProps}>
+            <VerifyPage navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF'/>
             </VerifyPage>
         )
     }
     if (routeId === 'LoginPage') {
         return (
-            <LoginPage navigator={navigator} {...route.passProps}>
+            <LoginPage navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF'/>
             </LoginPage>
         )
     }
     if (routeId === 'SearchPage') {
         return (
-            <SearchPage navigator={navigator} {...route.passProps}>
+            <SearchPage navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -101,7 +104,7 @@ module.exports = (route, navigator, self) => {
     // main page
     if (routeId === 'MainPage') {
         return (
-            <MainPage navigator={navigator} {...route.passProps}>
+            <MainPage navigator={navigator} {...route.passProps} db={db}>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                         <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
@@ -115,7 +118,7 @@ module.exports = (route, navigator, self) => {
     // patient page
     if (routeId === 'PatientPage') {
         return (
-            <PatientPage navigator={navigator} {...route.passProps}>
+            <PatientPage navigator={navigator} {...route.passProps} db={db}>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                         <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
@@ -128,7 +131,7 @@ module.exports = (route, navigator, self) => {
     }
     if (routeId === 'AddPatient') {
         return (
-            <AddPatient navigator={navigator} {...route.passProps}>
+            <AddPatient navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF' translucent={true}/>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -142,7 +145,7 @@ module.exports = (route, navigator, self) => {
     }
     if (routeId === 'PatientProfile') {
         return (
-            <PatientProfile navigator={navigator} {...route.passProps}>
+            <PatientProfile navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -156,7 +159,7 @@ module.exports = (route, navigator, self) => {
     }
     if (routeId === 'EditPatient') {
         return (
-            <EditPatient navigator={navigator} {...route.passProps}>
+            <EditPatient navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -172,7 +175,7 @@ module.exports = (route, navigator, self) => {
     //hped page
     if (routeId === 'AddHPED') {
         return (
-            <AddHPED navigator={navigator} {...route.passProps}>
+            <AddHPED navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -186,7 +189,7 @@ module.exports = (route, navigator, self) => {
     }
     if (routeId === 'HPEDPage') {
         return (
-            <HPEDPage navigator={navigator} {...route.passProps}>
+            <HPEDPage navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -200,7 +203,7 @@ module.exports = (route, navigator, self) => {
     }
     if (routeId === 'HPEDInfo') {
         return (
-            <HPEDInfo navigator={navigator} {...route.passProps}>
+            <HPEDInfo navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -214,7 +217,7 @@ module.exports = (route, navigator, self) => {
     }
     if (routeId === 'EditHPED') {
         return (
-            <EditHPED navigator={navigator} {...route.passProps}>
+            <EditHPED navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -229,7 +232,7 @@ module.exports = (route, navigator, self) => {
     //labwork
     if (routeId === 'OrderItem') {
         return (
-            <OrderItem navigator={navigator} {...route.passProps}>
+            <OrderItem navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -243,7 +246,7 @@ module.exports = (route, navigator, self) => {
     }
     if (routeId === 'PendingOrder') {
         return (
-            <PendingOrder navigator={navigator} {...route.passProps}>
+            <PendingOrder navigator={navigator} {...route.passProps} db={db}>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                         <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
@@ -256,7 +259,7 @@ module.exports = (route, navigator, self) => {
     }
     if (routeId === 'CompletedOrder') {
         return (
-            <CompletedOrder navigator={navigator} {...route.passProps}>
+            <CompletedOrder navigator={navigator} {...route.passProps} db={db}>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                         <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
@@ -270,7 +273,7 @@ module.exports = (route, navigator, self) => {
     //prescription
     if (routeId === 'PrescriptionPage') {
         return (
-            <PrescriptionPage navigator={navigator} {...route.passProps}>
+            <PrescriptionPage navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -284,7 +287,7 @@ module.exports = (route, navigator, self) => {
     }
     if (routeId === 'AddPrescription') {
         return (
-            <AddPrescription navigator={navigator} {...route.passProps}>
+            <AddPrescription navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -298,7 +301,7 @@ module.exports = (route, navigator, self) => {
     }
     if (routeId === 'EditPrescription') {
         return (
-            <EditPrescription navigator={navigator} {...route.passProps}>
+            <EditPrescription navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -313,7 +316,7 @@ module.exports = (route, navigator, self) => {
     //image
     if (routeId === 'ImagePage') {
         return (
-            <ImagePage navigator={navigator} {...route.passProps}>
+            <ImagePage navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -327,7 +330,7 @@ module.exports = (route, navigator, self) => {
     }
     if (routeId === 'ViewImage') {
         return (
-            <ViewImage navigator={navigator} {...route.passProps}>
+            <ViewImage navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -341,7 +344,7 @@ module.exports = (route, navigator, self) => {
     }
     if (routeId === 'AddImage') {
         return (
-            <AddImage navigator={navigator} {...route.passProps}>
+            <AddImage navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -355,7 +358,7 @@ module.exports = (route, navigator, self) => {
     }
     if (routeId === 'EditImage') {
         return (
-            <EditImage navigator={navigator} {...route.passProps}>
+            <EditImage navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -370,7 +373,7 @@ module.exports = (route, navigator, self) => {
     //appointment page
     if (routeId === 'AppointmentPage') {
         return (
-            <AppointmentPage navigator={navigator} {...route.passProps}>
+            <AppointmentPage navigator={navigator} {...route.passProps} db={db}>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                         <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
@@ -383,7 +386,7 @@ module.exports = (route, navigator, self) => {
     }
     if (routeId === 'AppointmentPatientPage') {
         return (
-            <AppointmentPatientPage navigator={navigator} {...route.passProps}>
+            <AppointmentPatientPage navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF' translucent={true}/>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -397,7 +400,7 @@ module.exports = (route, navigator, self) => {
     }
     if (routeId === 'AddAppointment') {
         return (
-            <AddAppointment navigator={navigator} {...route.passProps}>
+            <AddAppointment navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -411,7 +414,7 @@ module.exports = (route, navigator, self) => {
     }
     if (routeId === 'EditAppointment') {
         return (
-            <EditAppointment navigator={navigator} {...route.passProps}>
+            <EditAppointment navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -426,7 +429,7 @@ module.exports = (route, navigator, self) => {
     //followup page
     if (routeId === 'FollowupPage') {
         return (
-            <FollowupPage navigator={navigator} {...route.passProps}>
+            <FollowupPage navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -440,7 +443,7 @@ module.exports = (route, navigator, self) => {
     }
     if (routeId === 'AddFollowup') {
         return (
-            <AddFollowup navigator={navigator} {...route.passProps}>
+            <AddFollowup navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -454,7 +457,7 @@ module.exports = (route, navigator, self) => {
     }
     if (routeId === 'EditFollowup') {
         return (
-            <EditFollowup navigator={navigator} {...route.passProps}>
+            <EditFollowup navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -469,7 +472,7 @@ module.exports = (route, navigator, self) => {
    //user profile/setting page
    if (routeId === 'UserSettingPage') {
        return (
-           <UserSettingPage navigator={navigator} {...route.passProps}>
+           <UserSettingPage navigator={navigator} {...route.passProps} db={db}>
                {(self.state.completed) ? (
                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
@@ -482,7 +485,7 @@ module.exports = (route, navigator, self) => {
    }
    if (routeId === 'EditUserSetting') {
        return (
-           <EditUserSetting navigator={navigator} {...route.passProps}>
+           <EditUserSetting navigator={navigator} {...route.passProps} db={db}>
                <StatusBar backgroundColor='#2962FF'/>
                {(self.state.completed) ? (
                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -496,7 +499,7 @@ module.exports = (route, navigator, self) => {
    }
    if (routeId === 'UserProfilePage') {
        return (
-           <UserProfilePage navigator={navigator} {...route.passProps}>
+           <UserProfilePage navigator={navigator} {...route.passProps} db={db}>
                {(self.state.completed) ? (
                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
@@ -509,7 +512,7 @@ module.exports = (route, navigator, self) => {
    }
    if (routeId === 'EditUserProfile') {
        return (
-           <EditUserProfile navigator={navigator} {...route.passProps}>
+           <EditUserProfile navigator={navigator} {...route.passProps} db={db}>
                <StatusBar backgroundColor='#2962FF'/>
                {(self.state.completed) ? (
                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -524,7 +527,7 @@ module.exports = (route, navigator, self) => {
    // doctors page
    if (routeId === 'DoctorPage') {
        return (
-           <DoctorPage navigator={navigator} {...route.passProps}>
+           <DoctorPage navigator={navigator} {...route.passProps} db={db}>
                {(self.state.completed) ? (
                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
@@ -537,7 +540,7 @@ module.exports = (route, navigator, self) => {
    }
    if (routeId === 'AddDoctor') {
        return (
-           <AddDoctor navigator={navigator} {...route.passProps}>
+           <AddDoctor navigator={navigator} {...route.passProps} db={db}>
                <StatusBar backgroundColor='#2962FF'/>
                {(self.state.completed) ? (
                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -551,7 +554,7 @@ module.exports = (route, navigator, self) => {
    }
    if (routeId === 'EditDoctor') {
        return (
-           <EditDoctor navigator={navigator} {...route.passProps}>
+           <EditDoctor navigator={navigator} {...route.passProps} db={db}>
                <StatusBar backgroundColor='#2962FF'/>
                {(self.state.completed) ? (
                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -565,7 +568,7 @@ module.exports = (route, navigator, self) => {
    }
    if (routeId === 'DoctorProfile') {
        return (
-           <DoctorProfile navigator={navigator} {...route.passProps}>
+           <DoctorProfile navigator={navigator} {...route.passProps} db={db}>
                <StatusBar backgroundColor='#2962FF'/>
                {(self.state.completed) ? (
                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -580,7 +583,7 @@ module.exports = (route, navigator, self) => {
     // export page
     if (routeId === 'ExportPage') {
         return (
-            <ExportPage navigator={navigator} {...route.passProps}>
+            <ExportPage navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -594,7 +597,7 @@ module.exports = (route, navigator, self) => {
     }
     if (routeId === 'ImportPage') {
         return (
-            <ImportPage navigator={navigator} {...route.passProps}>
+            <ImportPage navigator={navigator} {...route.passProps} db={db}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
                     <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -609,7 +612,7 @@ module.exports = (route, navigator, self) => {
     // frontdesk page
     if (routeId === 'FrontPage') {
         return (
-            <FrontPage navigator={navigator} {...route.passProps}>
+            <FrontPage navigator={navigator} {...route.passProps} db={db}>
             </FrontPage>
         )
     }

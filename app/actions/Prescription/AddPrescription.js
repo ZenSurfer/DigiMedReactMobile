@@ -66,7 +66,7 @@ class AddPrescription extends Component {
     async updateCredentials() {
         try {
             var doctor = await AsyncStorage.getItem('doctor');
-            this.setState({doctorID: JSON.parse(doctor).id})
+            this.setState({doctorID: JSON.parse(doctor).id, mobileID: JSON.parse(doctor).mobileID})
         } catch (error) {
             console.log('AsyncStorage error: ' + error.message);
         }
@@ -407,31 +407,37 @@ class AddPrescription extends Component {
         })
         if (passed) {
             db.transaction((tx) => {
-                var values = {
-                    patientID: this.props.patientID,
-                    doctorID: this.state.doctorID,
-                    frequency: '',
-                    form: '',
-                    dateIssued: moment().format('YYYY-MM-DD'),
-                    generic: '',
-                    notes: '',
-                    brand: '',
-                    dosage: '',
-                    pharmacyDrugData: '',
-                    deleted_at: '',
-                    created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
-                    updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
-                };
-                _.forEach(this.state.prescription, (v, i) => {
-                    values['generic'] = values['generic']+((i>0) ? '||' : '')+v.generic;
-                    values['brand'] = values['brand']+((i>0) ? '||' : '')+v.brand;
-                    values['form'] = values['form']+((i>0) ? '||' : '')+v.form;
-                    values['dosage'] = values['dosage']+((i>0) ? '||' : '')+v.dosage;
-                    values['frequency'] = values['frequency']+((i>0) ? '||' : '')+v.frequency;
-                    values['notes'] = values['notes']+((i>0) ? '||' : '')+v.notes;
-                })
-                tx.executeSql("INSERT INTO prescriptions (`patientID`, `doctorID`, `frequency`, `form`, `dateIssued`, `genericName`, `notes`, `brandName`, `dosage`, `pharmacyDrugData`, `deleted_at`, `created_at`, `updated_at`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)", _.values(values), (tx, rs) => {
-                    console.log("created: " + rs.rowsAffected);
+                var insertID = this.state.mobileID*100000;
+                tx.executeSql("SELECT id FROM prescriptions WHERE id BETWEEN "+insertID+" AND "+((insertID*2)-1)+" ORDER BY created_at DESC LIMIT 1", [], (tx, rs) => {
+                    if (rs.rows.length > 0)
+                        insertID = rs.rows.item(0).id + 1;
+                    var values = {
+                        id: insertID,
+                        patientID: this.props.patientID,
+                        doctorID: this.state.doctorID,
+                        frequency: '',
+                        form: '',
+                        dateIssued: moment().format('YYYY-MM-DD'),
+                        generic: '',
+                        notes: '',
+                        brand: '',
+                        dosage: '',
+                        pharmacyDrugData: '',
+                        deleted_at: '',
+                        created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+                        updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+                    };
+                    _.forEach(this.state.prescription, (v, i) => {
+                        values['generic'] = values['generic']+((i>0) ? '||' : '')+v.generic;
+                        values['brand'] = values['brand']+((i>0) ? '||' : '')+v.brand;
+                        values['form'] = values['form']+((i>0) ? '||' : '')+v.form;
+                        values['dosage'] = values['dosage']+((i>0) ? '||' : '')+v.dosage;
+                        values['frequency'] = values['frequency']+((i>0) ? '||' : '')+v.frequency;
+                        values['notes'] = values['notes']+((i>0) ? '||' : '')+v.notes;
+                    })
+                    tx.executeSql("INSERT INTO prescriptions (`id`, `patientID`, `doctorID`, `frequency`, `forms`, `dateIssued`, `genericName`, `notes`, `brandName`, `dosage`, `pharmacyDrugData`, `deleted_at`, `created_at`, `updated_at`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)", _.values(values), (tx, rs) => {
+                        console.log("created: " + rs.rowsAffected);
+                    })
                 })
             }, (err) => {
                 alert(err.message)

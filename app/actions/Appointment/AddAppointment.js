@@ -58,7 +58,7 @@ class AppointmentPage extends Component {
     async updateCredentials() {
         try {
             var doctor = await AsyncStorage.getItem('doctor');
-            this.setState({doctorID: JSON.parse(doctor).id})
+            this.setState({doctorID: JSON.parse(doctor).id, mobileID: JSON.parse(doctor).mobileID})
         } catch (error) {
             console.log('AsyncStorage error: ' + error.message);
         } finally {
@@ -307,19 +307,6 @@ class AppointmentPage extends Component {
         var currentDate = moment(this.state.presetText).format('YYYY-MM-DD');
         var timeStart = moment(this.state.presetText+' '+this.state.presetStart.presetTime).add(1, 'minutes').format('HH:mm:00');
         var timeEnd = moment(this.state.presetText+' '+this.state.presetEnd.presetTime).subtract(1, 'minutes').format('HH:mm:00');
-        var values = {
-            date: currentDate,
-            timeStart: moment(this.state.presetText+' '+this.state.presetStart.presetTime).format('HH:mm:00'),
-            timeEnd: moment(this.state.presetText+' '+this.state.presetEnd.presetTime).format('HH:mm:00'),
-            patientID: (this.props.patientID) ? this.props.patientID : this.state.patientID,
-            doctorID: this.state.doctorID,
-            hospitalID: '',
-            type: this.state.setType,
-            notes: this.state.notes,
-            deleted_at: '',
-            created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
-            updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
-        }
         db.transaction((tx) => {
             db.duplicate = false;
             tx.executeSql("SELECT DISTINCT COUNT(`appointments`.`id`) as total FROM `appointments` LEFT OUTER JOIN `patients` ON `patients`.`id` = `appointments`.`patientID` WHERE (`appointments`.`deleted_at` IN (null, 'NULL', '') OR `appointments`.`deleted_at` is null) AND `appointments`.`doctorID` = "+this.state.doctorID+" AND (`appointments`.`timeStart` BETWEEN '"+timeStart+"' AND '"+timeEnd+"' OR `appointments`.`timeEnd` BETWEEN '"+timeStart+"' AND '"+timeEnd+"' OR (`appointments`.`timeStart` < '"+timeStart+"' AND `appointments`.`timeEnd` > '"+timeEnd+"')) AND `appointments`.`date` = '"+currentDate+"' AND (`patients`.`deleted_at` IN (null, 'NULL', '') OR `patients`.`deleted_at` is null)", [], (tx, rs) => {
@@ -332,9 +319,28 @@ class AppointmentPage extends Component {
                             db.duplicate = true;
                             db.type = 'followup';
                         } else {
-                            tx.executeSql("INSERT INTO appointments (date, timeStart, timeEnd, patientID, doctorID, hospitalID, type, notes, deleted_at, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)", _.values(values), (tx, rs) => {
-                                console.log("created: " + rs.rowsAffected);
-                            }, (err) => { alert(err.message)})
+                            var insertID = this.state.mobileID*100000;
+                            tx.executeSql("SELECT id FROM appointments WHERE id BETWEEN "+insertID+" AND "+((insertID*2)-1)+" ORDER BY created_at DESC LIMIT 1", [], (tx, rs) => {
+                                if (rs.rows.length > 0)
+                                    insertID = rs.rows.item(0).id + 1;
+                                var values = {
+                                    id: insertID,
+                                    date: currentDate,
+                                    timeStart: moment(this.state.presetText+' '+this.state.presetStart.presetTime).format('HH:mm:00'),
+                                    timeEnd: moment(this.state.presetText+' '+this.state.presetEnd.presetTime).format('HH:mm:00'),
+                                    patientID: (this.props.patientID) ? this.props.patientID : this.state.patientID,
+                                    doctorID: this.state.doctorID,
+                                    hospitalID: '',
+                                    type: this.state.setType,
+                                    notes: this.state.notes,
+                                    deleted_at: '',
+                                    created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+                                    updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+                                }
+                                tx.executeSql("INSERT INTO appointments (id, date, timeStart, timeEnd, patientID, doctorID, hospitalID, type, notes, deleted_at, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", _.values(values), (tx, rs) => {
+                                    console.log("created: " + rs.rowsAffected);
+                                }, (err) => { alert(err.message)})
+                            })
                         }
                     }, (err) => { alert(err.message)})
                 }

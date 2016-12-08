@@ -2,7 +2,7 @@
 
 import React, {Component} from 'react'
 import {AppRegistry, Navigator, BackAndroid, DeviceEventEmitter} from 'react-native'
-import FCM from 'react-native-fcm';
+import FCM from 'react-native-fcm'
 import routes from './app/routes'
 
 class AwesomeProject extends Component {
@@ -14,11 +14,7 @@ class AwesomeProject extends Component {
     }
     componentDidMount() {
         FCM.requestPermissions(); // for iOS
-        FCM.getFCMToken().then(token => {
-            console.log(token)
-        });
         this.notificationUnsubscribe = FCM.on('notification', (notif) => {
-            console.log(notif)
             this.setState({completed : true})
             setTimeout(() => {
                 this.setState({completed: false})
@@ -31,7 +27,7 @@ class AwesomeProject extends Component {
             }
         });
         this.refreshUnsubscribe = FCM.on('refreshToken', (token) => {
-            console.log(token)
+            console.log('token', token)
             // fcm token may not be available on first load, catch it here
         });
     }

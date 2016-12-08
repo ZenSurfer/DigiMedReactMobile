@@ -202,7 +202,7 @@ class PatientPage extends Component {
             _.forEach(db.data, function(v, i) {
                 rowData.push(db.data.item(i))
                 if (db.data.item(i).imagePath != '')
-                    RNFS.readFile(db.data.item(i).imagePath, 'base64').then((rs) => {
+                    RNFS.readFile(RNFS.ExternalDirectoryPath + db.data.item(i).imagePath, 'base64').then((rs) => {
                         var obj = {};
                         obj['patient'+db.data.item(i).id] = _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,');
                         self.setState(obj);

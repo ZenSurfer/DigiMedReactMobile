@@ -560,11 +560,10 @@ class EditPatient extends Component {
     }
     onSubmit() {
         this.setState({refreshing: true})
-        RNFS.mkdir(RNFS.ExternalDirectoryPath+ '/avatar');
         if (_.trim(this.state.firstname) !== '' && _.trim(this.state.lastname) !== '' && _.trim(this.state.middlename) !== '' && _.trim(this.state.telMobile) !== '') {
             var path = ''; var mime = '';
             if (this.state.avatar) {
-                path = RNFS.ExternalDirectoryPath + '/avatar/'+this.guid()+'.jpeg';
+                path = '/avatar/'+this.guid()+'.jpeg';
                 mime = 'jpeg';
             }
             var parse = _.map(_.values(this.state), (rs, i) => {
@@ -586,7 +585,7 @@ class EditPatient extends Component {
             }, () => {
                 this.setState({refreshing: false})
                 if (this.state.avatar) {
-                    RNFS.writeFile(path, this.state.avatar, 'base64').then((success) => {
+                    RNFS.writeFile(RNFS.ExternalDirectoryPath + path, this.state.avatar, 'base64').then((success) => {
                         this.props.navigator.replacePreviousAndPop({
                             id: 'PatientProfile',
                             passProps: { patientID: this.props.patientID }

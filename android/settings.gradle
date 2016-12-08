@@ -1,8 +1,8 @@
 rootProject.name = 'AwesomeProject'
 
 include ':app'
+include ':react-native-fetch-blob'
 include ':react-native-fcm'
-project(':react-native-fcm').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fcm/android')
 include ':react-native-vector-icons'
 include ':RNMaterialKit'
 include ':react-native-image-picker'
@@ -11,6 +11,8 @@ include ':react-native-fs'
 include ':react-native-chart-android'
 include ':react-native-photo-view'
 
+project(':react-native-fetch-blob').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fetch-blob/android')
+project(':react-native-fcm').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fcm/android')
 project(':react-native-vector-icons').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-vector-icons/android')
 project(':RNMaterialKit').projectDir = file('../node_modules/react-native-material-kit/android')
 project(':react-native-image-picker').projectDir = new File(settingsDir, '../node_modules/react-native-image-picker/android')

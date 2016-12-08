@@ -1,7 +1,7 @@
 'use strict'
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, Image, View, Navigator, InteractionManager, DrawerLayoutAndroid, StatusBar, TouchableOpacity, TouchableNativeFeedback, DatePickerAndroid, ScrollView, RefreshControl, TextInput, Picker, TimePickerAndroid, Slider, Switch, ToastAndroid, ListView, Modal} from 'react-native'
+import {StyleSheet, Text, Image, View, Navigator, InteractionManager, DrawerLayoutAndroid, StatusBar, TouchableOpacity, TouchableNativeFeedback, DatePickerAndroid, ScrollView, RefreshControl, TextInput, Picker, TimePickerAndroid, Slider, Switch, ToastAndroid, ListView, Modal, AsyncStorage} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import RNFS from 'react-native-fs'
 import {LineChart} from 'react-native-chart-android';
@@ -46,7 +46,19 @@ class OrderItem extends Component {
         })
     }
     componentDidMount() {
-        setTimeout(() => {this.labItemUpdate()}, 1000)
+        this.updateCredentials().done();
+    }
+    async updateCredentials() {
+        try {
+            var doctor = await AsyncStorage.getItem('doctor');
+            this.setState({doctorID: JSON.parse(doctor).id, mobileID: JSON.parse(doctor).mobileID})
+        } catch (error) {
+            console.log('AsyncStorage error: ' + error.message);
+        } finally {
+            setTimeout(() => {
+                this.labItemUpdate()
+            }, 1000)
+        }
     }
     render() {
         return (
@@ -511,7 +523,7 @@ class OrderItem extends Component {
     getChart() {
         this.setState({refreshing: true, allItem: {}})
         db.transaction((tx) => {
-            tx.executeSql("SELECT `labwork`.`completionDate`, `labwork`.`labData` FROM `labwork` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND `labwork`.`completed` = 1 AND `labwork`.`patientID` = ? ORDER BY `labwork`.`completionDate` ASC, `labwork`.`created_at` ASC", [this.props.patientID], (tx, rs) => {
+            tx.executeSql("SELECT `labwork`.`completionDate`, `labwork`.`labData` FROM `labwork` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND `labwork`.`completed` = 1 AND `labwork`.`patientID` = ? AND `labwork`.`userID` = ? ORDER BY `labwork`.`completionDate` ASC, `labwork`.`created_at` ASC", [this.props.patientID, this.props.doctorUserID], (tx, rs) => {
                 var recentItemObj = {};
                 _.forEach(rs.rows, (v, i) => {
                     var orderDate = rs.rows.item(i).completionDate;
@@ -593,10 +605,15 @@ class OrderItem extends Component {
             var values = _.join(_.fill(Array(_.size(labItems))), '@@') ;
             var data = _.join(labItems, '@@');
             var labData = data+':::'+values;
-            var insert = [this.props.patientID, this.props.doctorUserID, moment().format('YYYY-MM-DD'), null, null, labData, null, null, moment().format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss')];
             db.transaction((tx) => {
-                tx.executeSql("INSERT INTO `labwork` (`patientID`, `userID`, `orderDate`, `completionDate`, `completed`, `labData`, `viewed`, `deleted_at`, `created_at`, `updated_at`) VALUES (?,?,?,?,?,?,?,?,?,?)", insert, (tx, rs) => {
-                    console.log('insert:', rs.insertId)
+                var insertID = this.state.mobileID*100000;
+                tx.executeSql("SELECT id FROM labwork WHERE id BETWEEN "+insertID+" AND "+((insertID*2)-1)+" ORDER BY created_at DESC LIMIT 1", [], (tx, rs) => {
+                    if (rs.rows.length > 0)
+                        insertID = rs.rows.item(0).id + 1;
+                    var insert = [insertID, this.props.patientID, this.props.doctorUserID, moment().format('YYYY-MM-DD'), null, null, labData, null, null, moment().format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss')];
+                    tx.executeSql("INSERT INTO `labwork` (`id`, `patientID`, `userID`, `orderDate`, `completionDate`, `completed`, `labData`, `viewed`, `deleted_at`, `created_at`, `updated_at`) VALUES (?,?,?,?,?,?,?,?,?,?,?)", insert, (tx, rs) => {
+                        console.log('insert:', rs.insertId)
+                    })
                 })
             }, (err) => {
                 alert(err.message)

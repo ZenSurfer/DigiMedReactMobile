@@ -62,9 +62,18 @@ class AddDoctor extends Component {
         )
     }
     componentDidMount() {
+        this.updateCredentials().done();
         InteractionManager.runAfterInteractions(() => {
             this.setState({renderPlaceholderOnly: false, progress: 1});
         });
+    }
+    async updateCredentials() {
+        try {
+            var doctor = await AsyncStorage.getItem('doctor');
+            this.setState({mobileID: JSON.parse(doctor).mobileID})
+        } catch (error) {
+            console.log('AsyncStorage error: ' + error.message);
+        }
     }
     async showPicker(stateKey, options) {
         try {
@@ -292,13 +301,17 @@ class AddDoctor extends Component {
             var birthdate = moment(this.state.birthdate.date).format('YYYY-MM-DD');
             var imagePath = path;
             var imageMime = mime;
-
             db.transaction((tx) => {
-                tx.executeSql("INSERT INTO doctors (firstname, middlename, lastname, nameSuffix, birthdate, sex, status, address, phone1, phone2, email, imagePath, imageMime, created_at, updated_at, rank, type, code, licenseID) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
-                , [this.state.firstname, this.state.middlename, this.state.lastname, this.state.nameSuffix, birthdate, this.state.sex, this.state.status, this.state.address, this.state.phone1, this.state.phone2, this.state.email, imagePath, imageMime, this.state.created_at, this.state.updated_at, this.state.rank, this.state.type, this.state.code, this.state.licenseID]
-                , (tx, rs) => {
-                    console.log("updated: " + rs.rowsAffected);
-                })
+                var insertID = this.state.mobileID*100000;
+                tx.executeSql("SELECT id FROM doctors WHERE id BETWEEN "+insertID+" AND "+((insertID*2)-1)+" ORDER BY created_at DESC LIMIT 1", [], (tx, rs) => {
+                    if (rs.rows.length > 0)
+                        insertID = rs.rows.item(0).id + 1;
+                    tx.executeSql("INSERT INTO doctors (id, firstname, middlename, lastname, nameSuffix, birthdate, sex, status, address, phone1, phone2, email, imagePath, imageMime, created_at, updated_at, rank, type, code, licenseID) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+                    , [insertID, this.state.firstname, this.state.middlename, this.state.lastname, this.state.nameSuffix, birthdate, this.state.sex, this.state.status, this.state.address, this.state.phone1, this.state.phone2, this.state.email, imagePath, imageMime, this.state.created_at, this.state.updated_at, this.state.rank, this.state.type, this.state.code, this.state.licenseID]
+                    , (tx, rs) => {
+                        console.log("updated: " + rs.rowsAffected);
+                    })
+                });
             }, (err) => {
                 this.setState({refreshing: false})
                 alert(err.message)

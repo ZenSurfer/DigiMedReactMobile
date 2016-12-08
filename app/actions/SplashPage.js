@@ -1,8 +1,9 @@
 'use strict';
 
 import React, {Component} from 'react'
-import {Text, View, Navigator, ActivityIndicator, StyleSheet, Dimensions, TouchableOpacity, AsyncStorage, ToastAndroid, ProgressBarAndroid, Animated, Easing} from 'react-native'
+import {Text, View, Navigator, ActivityIndicator, StyleSheet, Dimensions, TouchableOpacity, AsyncStorage, ToastAndroid, ProgressBarAndroid, Animated, Easing, NetInfo} from 'react-native'
 import RNFS from 'react-native-fs'
+import FCM from 'react-native-fcm';
 import Schema from '../database/schema.js'
 import Populate from '../database/values.js'
 import Demo from '../database/testDB.js'
@@ -20,14 +21,22 @@ class SplashPage extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            doctor: {},
+            token: '',
             progress: 0,
             title: 'Validating Requirements...',
             error: 1,
         }
     }
     componentWillMount() {
+        FCM.getFCMToken().then(token => this.setState({token: token}));
         RNFS.mkdir(RNFS.ExternalDirectoryPath + '/patient')
         RNFS.mkdir(RNFS.ExternalDirectoryPath + '/avatar')
+        var table = {}
+        _.forEach(_.omit(Schema, ['index']), (v, i) => {
+            table[i] = '';
+        })
+        this.setState({table: _.omit(table, ['migrations', 'password_resets'])});
         if (this.props.initial) {
             this.setState({title: 'Initial Configuration...'})
             this.initial();
@@ -44,46 +53,56 @@ class SplashPage extends Component {
                 })
             })
         }, (err) => console.log(err.message), () => {
-            this.pull(this.parse('users', [
-                {column: 'id' , condition: '=', value: this.props.doctorUserID},
-            ])).then((data) => {
-                db.transaction((tx) => {
-                    tx.executeSql("SELECT * FROM "+data.table+" WHERE id=?", [this.props.doctorUserID], (tx, rs) => {
-                        if (rs.rows.length > 0) {
-                            tx.executeSql("DELETE FROM "+data.table+" WHERE id=?", [this.props.doctorUserID], (tx, rs) => {
-                                tx.executeSql("INSERT INTO "+data.table+" VALUES ("+_.join(_.fill(Array(_.size(data.data[0])), '?'), ',')+")", _.values(data.data[0]), (tx, rs) => {
-                                    console.log(data.table+': ', rs.rowsAffected)
-                                }, err => console.log(err.message))
+            NetInfo.isConnected.fetch().then(isConnected => {
+                if (isConnected) {
+                    this.pull(this.parse('users', [
+                        {column: 'id' , condition: '=', value: this.props.doctorUserID},
+                    ])).then((data) => {
+                        db.transaction((tx) => {
+                            tx.executeSql("SELECT * FROM "+data.table+" WHERE id=?", [this.props.doctorUserID], (tx, rs) => {
+                                if (rs.rows.length > 0) {
+                                    tx.executeSql("DELETE FROM "+data.table+" WHERE id=?", [this.props.doctorUserID], (tx, rs) => {
+                                        tx.executeSql("INSERT INTO "+data.table+" VALUES ("+_.join(_.fill(Array(_.size(data.data[0])), '?'), ',')+")", _.values(data.data[0]), (tx, rs) => {
+                                            console.log(data.table+': ', rs.rowsAffected)
+                                        }, err => console.log(err.message))
+                                    })
+                                } else {
+                                    tx.executeSql("INSERT INTO "+data.table+" VALUES ("+_.join(_.fill(Array(_.size(data.data[0])), '?'), ',')+")", _.values(data.data[0]), (tx, rs) => {
+                                        console.log(data.table+': ', rs.rowsAffected)
+                                    }, err => console.log(err.message))
+                                }
                             })
-                        } else {
-                            tx.executeSql("INSERT INTO "+data.table+" VALUES ("+_.join(_.fill(Array(_.size(data.data[0])), '?'), ',')+")", _.values(data.data[0]), (tx, rs) => {
-                                console.log(data.table+': ', rs.rowsAffected)
-                            }, err => console.log(err.message))
-                        }
-                    })
-                })
-            }).done()
-            this.pull(this.parse('doctors', [
-                {column: 'userID' , condition: '=', value: this.props.doctorUserID},
-            ])).then((data) => {
-                db.transaction((tx) => {
-                    tx.executeSql("SELECT * FROM "+data.table+" WHERE userID=?", [this.props.doctorUserID], (tx, rs) => {
-                        if (rs.rows.length > 0) {
-                            tx.executeSql("DELETE FROM "+data.table+" WHERE userID=?", [this.props.doctorUserID], (tx, rs) => {
-                                tx.executeSql("INSERT INTO "+data.table+" VALUES ("+_.join(_.fill(Array(_.size(data.data[0])), '?'), ',')+")", _.values(data.data[0]), (tx, rs) => {
-                                    console.log(data.table+': ', rs.rowsAffected)
-                                }, err => console.log(err.message))
+                        })
+                    }).done()
+                    this.pull(this.parse('doctors', [
+                        {column: 'userID' , condition: '=', value: this.props.doctorUserID},
+                    ])).then((data) => {
+                        db.transaction((tx) => {
+                            tx.executeSql("SELECT * FROM "+data.table+" WHERE userID=?", [this.props.doctorUserID], (tx, rs) => {
+                                if (rs.rows.length > 0) {
+                                    tx.executeSql("DELETE FROM "+data.table+" WHERE userID=?", [this.props.doctorUserID], (tx, rs) => {
+                                        tx.executeSql("INSERT INTO "+data.table+" VALUES ("+_.join(_.fill(Array(_.size(data.data[0])), '?'), ',')+")", _.values(data.data[0]), (tx, rs) => {
+                                            console.log(data.table+': ', rs.rowsAffected)
+                                        }, err => console.log(err.message))
+                                    })
+                                } else {
+                                    tx.executeSql("INSERT INTO "+data.table+" VALUES ("+_.join(_.fill(Array(_.size(data.data[0])), '?'), ',')+")", _.values(data.data[0]), (tx, rs) => {
+                                        console.log(data.table+': ', rs.rowsAffected)
+                                    }, err => console.log(err.message))
+                                }
                             })
-                        } else {
-                            tx.executeSql("INSERT INTO "+data.table+" VALUES ("+_.join(_.fill(Array(_.size(data.data[0])), '?'), ',')+")", _.values(data.data[0]), (tx, rs) => {
-                                console.log(data.table+': ', rs.rowsAffected)
-                            }, err => console.log(err.message))
-                        }
-                    })
-                }, err => console.log(err.message), () => {
-                    this.validate();
-                })
-            }).done()
+                        }, err => console.log(err.message), () => {
+                            this.validate();
+                        })
+                    }).done()
+                } else {
+                    ToastAndroid.show('Connection problem!', 1000)
+                    this.props.navigator.replace({
+                        id: 'LoginPage',
+                        sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                    });
+                }
+            })
         });
     }
     validate() {
@@ -124,14 +143,34 @@ class SplashPage extends Component {
                 } else if (_.size(Schema) == count){
                     db.transaction((tx) => {
                         tx.executeSql("SELECT `doctors`.`userID`, `doctors`.`id`, ('Dr. ' || `doctors`.`firstname` || ' ' || `doctors`.`middlename` || ' ' || `doctors`.`lastname`) as name, `doctors`.`type`, `doctors`.`initial`, `users`.`password`, `doctors`.`imagePath`, `users`.`accountVerified`, `users`.`emailVerified` FROM `users` LEFT OUTER JOIN `doctors` ON `doctors`.`userID`=`users`.`id` WHERE `users`.`id`=? AND `users`.`userType`='doctor' AND (`users`.`deleted_at` in (null, 'NULL', '') OR `users`.`deleted_at` is null) LIMIT 1", [this.props.doctorUserID], (tx, rs) => {
-                            console.log(rs.rows.item(0))
                             if (rs.rows.item(0).accountVerified !== null || rs.rows.item(0).emailVerified !== null) {
                                 var doctor = _.omit(rs.rows.item(0), ['password', 'accountVerified', 'emailVerified']);
                                 doctor['cloudUrl'] = this.props.cloudUrl;
-                                AsyncStorage.setItem('doctor', JSON.stringify(doctor))
-                                this.props.navigator.replace({
-                                    id: 'AppointmentPage',
-                                    sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                NetInfo.isConnected.fetch().then(isConnected => {
+                                    console.log(isConnected)
+                                    if (isConnected) {
+                                        this.register({
+                                            userID: doctor.userID,
+                                            doctorID: doctor.id,
+                                            token: this.state.token,
+                                            doctor: doctor,
+                                        }).then((data) => {
+                                            doctor['mobileID'] = data.mobileID
+                                            AsyncStorage.setItem('doctor', JSON.stringify(doctor))
+                                            this.props.navigator.replace({
+                                                id: 'AppointmentPage',
+                                                sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                            });
+                                        }).done()
+                                    } else {
+                                        doctor['mobileID'] = 2
+                                        AsyncStorage.setItem('doctor', JSON.stringify(doctor))
+                                        ToastAndroid.show('Offline mode!', 1000)
+                                        this.props.navigator.replace({
+                                            id: 'AppointmentPage',
+                                            sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                        });
+                                    }
                                 });
                             } else {
                                 this.props.navigator.replace({
@@ -189,6 +228,18 @@ class SplashPage extends Component {
     async pull(param) {
         try {
             return await fetch(this.props.cloudUrl+'/api/v2/pull?'+param).then((response) => {
+                return response.json()
+            });
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
+    async register(param) {
+        try {
+            param = Object.keys(param).map((key) => {
+                return encodeURIComponent(key) + '=' + encodeURIComponent(param[key]);
+            }).join('&');
+            return await fetch(this.props.cloudUrl+'/api/v2/register?'+param).then((response) => {
                 return response.json()
             });
         } catch (err) {

@@ -1,7 +1,7 @@
 'use strict';
 
 import React, { Component } from 'react'
-import { StyleSheet, Text, View, Navigator, ScrollView, ProgressBarAndroid, ToastAndroid, DrawerLayoutAndroid, TextInput, TouchableOpacity, Dimensions, ActivityIndicator, Animated, AsyncStorage, LayoutAnimation} from 'react-native'
+import { StyleSheet, Text, View, Navigator, ScrollView, ProgressBarAndroid, ToastAndroid, DrawerLayoutAndroid, TextInput, TouchableOpacity, Dimensions, ActivityIndicator, Animated, AsyncStorage, LayoutAnimation, NetInfo} from 'react-native'
 import Schema from '../../database/schema.js'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import IconFont from 'react-native-vector-icons/FontAwesome'
@@ -42,6 +42,7 @@ class ExportPage extends Component {
             this.setState({
                 doctorID: JSON.parse(doctor).id,
                 doctorUserID: JSON.parse(doctor).userID,
+                cloudUrl: JSON.parse(doctor).cloudUrl,
             })
         } catch (error) {
             console.log('AsyncStorage error: ' + error.message);
@@ -115,79 +116,89 @@ class ExportPage extends Component {
     export() {
         var where = ''
         this.setState({exportFile: 0})
-        db.transaction(tx => {
-            _.forEach(this.state.export, (v, table) => {
-                if (v) {
-                    if (table === 'users')
-                        where = ' WHERE (created_at>="'+v+'" OR updated_at>="'+v+'") AND id='+this.state.doctorUserID;
-                    else
-                        where = ' WHERE (created_at>="'+v+'" OR updated_at>="'+v+'")';
-                    tx.executeSql("SELECT * FROM "+table+where, [], (tx, rs) => {
-                        var rows = [];
-                        _.forEach(rs.rows, (v, i) => {
-                            rows.push(i+ '='+ encodeURIComponent('{') + this.jsonToQueryString(rs.rows.item(i)) + encodeURIComponent('}'))
-                        })
-                        this.post(rows, table, where).then((data) => {
-                            this.setState({table: 'Exporting '+Math.round(((this.state.exportFile + 1) / _.size(this.state.export)) * 100)+'%'})
-                            if ((data.insert + data.exist) !== _.size(rows)) {
-                                _.forEach(JSON.parse(data.error), (v, i) => {
-                                    console.log(v)
+        NetInfo.isConnected.fetch().then(isConnected => {
+            if (isConnected) {
+                db.transaction(tx => {
+                    _.forEach(_.omit(this.state.export, ['migrations', 'password_resets']), (v, table) => {
+                        if (v) {
+                            if (table === 'users')
+                                where = ' WHERE (created_at>="'+v+'" OR updated_at>="'+v+'") AND id='+this.state.doctorUserID;
+                            else
+                                where = ' WHERE (created_at>="'+v+'" OR updated_at>="'+v+'")';
+                            tx.executeSql("SELECT * FROM "+table+where, [], (tx, rs) => {
+                                var rows = [];
+                                _.forEach(rs.rows, (v, i) => {
+                                    rows.push(i+ '='+ encodeURIComponent('{') + this.jsonToQueryString(rs.rows.item(i)) + encodeURIComponent('}'))
                                 })
-                            }
-                            console.log(data)
-                            var res = {};
-                            res['table'] = table;
-                            res['request'] = _.size(rows);
-                            res['response'] = data.insert + data.exist + _.size(JSON.parse(data.error));
-                            console.log(res);
-                            if ((this.state.exportFile + 1) == _.size(this.state.export)) {
-                                this.props.navigator.replace({
-                                    id: 'AppointmentPage',
-                                    sceneConfig: Navigator.SceneConfigs.PushFromRight,
-                                });
-                                ToastAndroid.show('Exporting successfully done!', 1000);
-                            } else
-                                this.setState({exportFile: this.state.exportFile + 1, progress: ((this.state.exportFile + 1) / _.size(this.state.export))})
-                        }).catch((err) => console.log(table+':', err)).done();
-                    })
-                } else {
-                    if (table === 'users')
-                        where = ' WHERE id='+this.state.doctorUserID;
-                    tx.executeSql("SELECT * FROM "+table+where, [], (tx, rs) => {
-                        var rows = [];
-                        _.forEach(rs.rows, (v, i) => {
-                            rows.push(i+ '='+ encodeURIComponent('{') + this.jsonToQueryString(rs.rows.item(i)) + encodeURIComponent('}'))
-                        })
-                        this.post(rows, table, where).then((data) => {
-                            this.setState({table: 'Exporting '+Math.round(((this.state.exportFile + 1) / _.size(this.state.export)) * 100)+'%'})
-                            if ((data.insert + data.exist) !== _.size(rows)) {
-                                _.forEach(JSON.parse(data.error), (v, i) => {
-                                    console.log(v)
+                                this.post(rows, table, where).then((data) => {
+                                    this.setState({table: 'Exporting '+Math.round(((this.state.exportFile + 1) / _.size(this.state.export)) * 100)+'%'})
+                                    if ((data.insert + data.exist) !== _.size(rows)) {
+                                        _.forEach(JSON.parse(data.error), (v, i) => {
+                                            console.log(v)
+                                        })
+                                    }
+                                    console.log(data)
+                                    var res = {};
+                                    res['table'] = table;
+                                    res['request'] = _.size(rows);
+                                    res['response'] = data.insert + data.exist + _.size(JSON.parse(data.error));
+                                    if ((this.state.exportFile + 1) == _.size(this.state.export)) {
+                                        this.props.navigator.replace({
+                                            id: 'AppointmentPage',
+                                            sceneConfig: Navigator.SceneConfigs.PushFromRight,
+                                        });
+                                        ToastAndroid.show('Exporting successfully done!', 1000);
+                                    } else
+                                        this.setState({exportFile: this.state.exportFile + 1, progress: ((this.state.exportFile + 1) / _.size(this.state.export))})
+                                }).catch((err) => console.log(table+':', err)).done();
+                            })
+                        } else {
+                            if (table === 'users')
+                                where = ' WHERE id='+this.state.doctorUserID;
+                            tx.executeSql("SELECT * FROM "+table+where, [], (tx, rs) => {
+                                var rows = [];
+                                _.forEach(rs.rows, (v, i) => {
+                                    rows.push(i+ '='+ encodeURIComponent('{') + this.jsonToQueryString(rs.rows.item(i)) + encodeURIComponent('}'))
                                 })
-                            }
-                            console.log(data)
-                            var res = {};
-                            res['table'] = table;
-                            res['request'] = _.size(rows);
-                            res['response'] = data.insert + data.exist + _.size(JSON.parse(data.error));
-                            console.log(res);
-                            if ((this.state.exportFile + 1) == _.size(this.state.export)) {
-                                this.props.navigator.replace({
-                                    id: 'AppointmentPage',
-                                    sceneConfig: Navigator.SceneConfigs.PushFromRight,
-                                });
-                                ToastAndroid.show('Exporting successfully done!', 1000);
-                            } else
-                                this.setState({exportFile: this.state.exportFile + 1, progress: ((this.state.exportFile + 1) / _.size(this.state.export))})
-                        }).catch((err) => console.log(table+':', err)).done();
+                                this.post(rows, table, where).then((data) => {
+                                    this.setState({table: 'Exporting '+Math.round(((this.state.exportFile + 1) / _.size(this.state.export)) * 100)+'%'})
+                                    if ((data.insert + data.exist) !== _.size(rows)) {
+                                        _.forEach(JSON.parse(data.error), (v, i) => {
+                                            console.log(v)
+                                        })
+                                    }
+                                    var res = {};
+                                    res['table'] = table;
+                                    res['request'] = _.size(rows);
+                                    res['response'] = data.insert + data.exist + _.size(JSON.parse(data.error));
+                                    console.log(res);
+                                    if ((this.state.exportFile + 1) == (_.size(this.state.export) - 2)) {
+                                        this.props.navigator.replace({
+                                            id: 'AppointmentPage',
+                                            sceneConfig: Navigator.SceneConfigs.PushFromRight,
+                                        });
+                                        ToastAndroid.show('Exporting successfully done!', 1000);
+                                    } else
+                                        this.setState({exportFile: this.state.exportFile + 1, progress: ((this.state.exportFile + 1) / _.size(this.state.export))})
+                                }).catch((err) => console.log(table+':', err)).done();
+                            })
+                        }
                     })
-                }
-            })
+                })
+            } else {
+                setTimeout(() => {
+                    ToastAndroid.show('Connection problem!', 1000);
+                    this.props.navigator.replace({
+                        id: 'AppointmentPage',
+                        sceneConfig: Navigator.SceneConfigs.PushFromRight
+                    });
+                }, 3000)
+            }
         })
     }
     async post(rows, table) {
         try {
-            return await fetch('http://192.168.1.40/imd5/public/api/v2/export?table='+table, {
+            return await fetch(this.state.cloudUrl+'/api/v2/export?table='+table, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -197,7 +208,7 @@ class ExportPage extends Component {
             }).then((response) => {
                 return response.json()
             });
-        } catch (e) {
+        } catch (err) {
             console.log(table+':', e.message)
         }
     }

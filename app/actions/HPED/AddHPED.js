@@ -84,7 +84,7 @@ class AddHPED extends Component {
     async updateCredentials() {
         try {
             var doctor = await AsyncStorage.getItem('doctor');
-            this.setState({doctorID: JSON.parse(doctor).id})
+            this.setState({doctorID: JSON.parse(doctor).id, mobileID: JSON.parse(doctor).mobileID})
         } catch (error) {
             console.log('AsyncStorage error: ' + error.message);
         }
@@ -507,22 +507,64 @@ class AddHPED extends Component {
         var icds = _.transform(this.state.icds, function(rs, v, i) {
             if (v) rs[i] = v
         }, {});
-        var parse = _.map(_.values(this.state), (rs, i) => {
-            if (i == 7) return this.state.systolic+' / '+this.state.diastolic
-            if (i == 22) return (this.state.accident) ? 1 : 0
-            return rs
-        })
-        var values =  _.dropRight(_(parse).value(), (_.size(this.state) - 34));
+        // var values =  _.dropRight(_(parse).value(), (_.size(this.state) - 34));
         db.transaction((tx) => {
-            tx.executeSql("INSERT INTO diagnosis (`patientID`, `doctorID`, `appointmentID`, `preparedByID`, `chiefComplaint`, `historyIllness`, `bodyTemperature`, `bloodPressure`, `respirationRate`, `pulseRate`, `medicalHistory`, `initialDiagnosis`, `physicalExam`, `services`, `type`, `code`, `category`, `plan`, `pay`, `referringDoctor`, `labs`, `imaging`, `accident`, `painLevel`, `allergies`, `currentMedications`, `date`, `timeStart`, `timeEnd`, `certRemarks`, `certPurpose`, `deleted_at`, `created_at`, `updated_at`) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", values, (tx, rs) => {
-                _.forEach(icds, (v, i) => {
-                    tx.executeSql("INSERT INTO `diagnosisIcds` (`diagnosisID`, `icdID`, `deleted_at`, `created_at`, `updated_at`) VALUES ("+rs.insertId+", "+i+", null, '"+moment().format('YYYY-MM-DD HH:mm:ss')+"', '"+moment().format('YYYY-MM-DD HH:mm:ss')+"')", [], (tx, rs) => {
-                        console.log("created: " + rs.rowsAffected);
-                    }, (err) => {
-                        console.log(':'+ err.message)
+            var insertID = this.state.mobileID*100000;
+            tx.executeSql("SELECT id FROM diagnosis WHERE id BETWEEN "+insertID+" AND "+((insertID*2)-1)+" ORDER BY created_at DESC LIMIT 1", [], (tx, rs) => {
+                if (rs.rows.length > 0)
+                    insertID = rs.rows.item(0).id + 1;
+                var values = {
+                    id: insertID,
+                    patientID: this.state.patientID,
+                    doctorID: this.state.doctorID,
+                    appointmentID: this.state.appointmentID,
+                    preparedByID: this.state.preparedByID,
+                    chiefComplaint: this.state.chiefComplaint,
+                    historyIllness: this.state.historyIllness,
+                    bodyTemperature: this.state.systolic+' / '+this.state.diastolic,
+                    bloodPressure: this.state.bloodPressure,
+                    respirationRate: this.state.respirationRate,
+                    pulseRate: this.state.pulseRate,
+                    medicalHistory: this.state.medicalHistory,
+                    initialDiagnosis: this.state.initialDiagnosis,
+                    physicalExam: this.state.physicalExam,
+                    services: this.state.services,
+                    type: this.state.type,
+                    code: this.state.code,
+                    category: this.state.category,
+                    plan: this.state.plan,
+                    pay: this.state.pay,
+                    referringDoctor: this.state.referringDoctor,
+                    labs: this.state.labs,
+                    imaging: this.state.imaging,
+                    accident: (this.state.accident) ? 1 : 0,
+                    painLevel: this.state.painLevel,
+                    allergies: this.state.allergies,
+                    currentMedications: this.state.currentMedications,
+                    date: this.state.date,
+                    timeStart: this.state.timeStart,
+                    timeEnd: this.state.timeEnd,
+                    certRemarks: this.state.certRemarks,
+                    certPurpose: this.state.certPurpose,
+                    deleted_at: this.state.deleted_at,
+                    created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+                    updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+                }
+                tx.executeSql("INSERT INTO diagnosis (`id`, `patientID`, `doctorID`, `appointmentID`, `preparedByID`, `chiefComplaint`, `historyIllness`, `bodyTemperature`, `bloodPressure`, `respirationRate`, `pulseRate`, `medicalHistory`, `initialDiagnosis`, `physicalExam`, `services`, `type`, `code`, `category`, `plan`, `pay`, `referringDoctor`, `labs`, `imaging`, `accident`, `painLevel`, `allergies`, `currentMedications`, `date`, `timeStart`, `timeEnd`, `certRemarks`, `certPurpose`, `deleted_at`, `created_at`, `updated_at`) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", _.values(values), (tx, rs) => {
+                    _.forEach(icds, (v, i) => {
+                        var insertID = this.state.mobileID*100000;
+                        tx.executeSql("SELECT id FROM diagnosisIcds WHERE id BETWEEN "+insertID+" AND "+((insertID*2)-1)+" ORDER BY created_at DESC LIMIT 1", [], (tx, rs) => {
+                            if (rs.rows.length > 0)
+                                insertID = rs.rows.item(0).id + 1;
+                            tx.executeSql("INSERT INTO `diagnosisIcds` (`id`, `diagnosisID`, `icdID`, `deleted_at`, `created_at`, `updated_at`) VALUES ("+insertID+", "+rs.insertId+", "+i+", null, '"+moment().format('YYYY-MM-DD HH:mm:ss')+"', '"+moment().format('YYYY-MM-DD HH:mm:ss')+"')", [], (tx, rs) => {
+                                console.log("created: " + rs.rowsAffected);
+                            }, (err) => {
+                                console.log(':'+ err.message)
+                            })
+                        })
                     })
                 })
-            })
+            });
         }, (err) => {
             this.setState({refreshing: false})
             ToastAndroid.show("Error occured while creating!"+JSON.stringify(values), 3000)

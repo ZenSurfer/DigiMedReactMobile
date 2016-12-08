@@ -1,7 +1,7 @@
 'use strict'
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, Image, View, Navigator, InteractionManager, DrawerLayoutAndroid, StatusBar, TouchableOpacity, TouchableNativeFeedback, DatePickerAndroid, ScrollView, TextInput, Picker, Switch, ToastAndroid, Dimensions, Modal} from 'react-native'
+import {StyleSheet, Text, Image, View, Navigator, InteractionManager, DrawerLayoutAndroid, StatusBar, TouchableOpacity, TouchableNativeFeedback, DatePickerAndroid, ScrollView, TextInput, Picker, Switch, ToastAndroid, Dimensions, Modal, AsyncStorage} from 'react-native'
 import RNFS from 'react-native-fs'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
@@ -78,6 +78,17 @@ class AddPatient extends Component {
             modalVisible: false,
             transparent: true,
             avatar: '',
+        }
+    }
+    componentDidMount() {
+        this.updateCredentials().done();
+    }
+    async updateCredentials() {
+        try {
+            var doctor = await AsyncStorage.getItem('doctor');
+            this.setState({doctorID: JSON.parse(doctor).id, mobileID: JSON.parse(doctor).mobileID})
+        } catch (error) {
+            console.log('AsyncStorage error: ' + error.message);
         }
     }
     render() {
@@ -489,68 +500,75 @@ class AddPatient extends Component {
     onSubmit() {
         this.setState({refreshing: true})
         if (_.trim(this.state.firstname) !== '' && _.trim(this.state.lastname) !== '' && _.trim(this.state.middlename) !== '' && _.trim(this.state.telMobile) !== '') {
-            var insert = {
-                groupID: this.state.groupID,
-                primaryDoc: this.state.primaryDoc,
-                secondaryDoc: this.state.secondaryDoc,
-                referredByID: this.state.referredByID,
-                code: this.state.code,
-                category: this.state.category,
-                firstname: this.state.firstname,
-                lastname: this.state.lastname,
-                middlename: this.state.middlename,
-                nickname: this.state.nickname,
-                birthdate: moment(this.state.birthdate.date).format('YYYY-MM-DD'),
-                birthPlace: this.state.birthPlace,
-                religion: this.state.religion,
-                address: this.state.address,
-                status: this.state.status,
-                occupation: this.state.occupation,
-                sex: this.state.sex,
-                race: this.state.race,
-                nationality: this.state.nationality,
-                height: this.state.height,
-                hmoID: this.state.hmoID,
-                hmo: this.state.hmo,
-                hmoCode: this.state.hmoCode,
-                telHome: this.state.telHome,
-                telOffice: this.state.telOffice,
-                telMobile: this.state.telMobile,
-                email: this.state.email,
-                company: this.state.company,
-                companyAddress: this.state.companyAddress,
-                companyContact: this.state.companyContact,
-                companyID: this.state.companyID,
-                personNotify: this.state.personNotify,
-                personMobile: this.state.personMobile,
-                personRelation: this.state.personRelation,
-                personAddress: this.state.personAddress,
-                insuranceProvider: this.state.insuranceProvider,
-                accountVerified: this.state.accountVerified,
-                policyNumber: this.state.policyNumber,
-                imagePath: (this.state.avatar) ? RNFS.ExternalDirectoryPath + '/avatar/'+this.guid()+'.jpeg' : '',
-                imageMime: 'jpeg',
-                isPedia: this.state.isPedia,
-                fatherName: this.state.fatherName,
-                motherName: this.state.motherName,
-                guardianName: this.state.guardianName,
-                spouseName: this.state.spouseName,
-                deleted_at: this.state.deleted_at,
-                created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
-                updated_at: moment().format('YYYY-MM-DD HH:mm:ss')
-            }
+            var path = (this.state.avatar) ? '/avatar/'+this.guid()+'.jpeg' : '';
             db.transaction((tx) => {
-                tx.executeSql("insert into patients (`groupID`, `primaryDoc`, `secondaryDoc`, `referredByID`, `code`, `category`, `firstname`, `lastname`, `middlename`, `nickname`, `birthdate`, `birthPlace`, `religion`, `address`, `status`, `occupation`, `sex`, `race`, `nationality`, `height`, `hmoID`, `hmo`, `hmoCode`, `telHome`, `telOffice`, `telMobile`, `email`, `company`, `companyAddress`, `companyContact`, `companyID`, `personNotify`, `personMobile`, `personRelation`, `personAddress`, `insuranceProvider`, `accountVerified`, `policyNumber`, `imagePath`, `imageMime`, `isPedia`, `fatherName`, `motherName`, `guardianName`, `spouseName`, `deleted_at`, `created_at`, `updated_at`) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", _.values(insert), (tx, rs) => {
-                    console.log("created: " + rs.rowsAffected);
-                    db.patientID = rs.insertId;
-                })
+                var insertID = this.state.mobileID*100000;
+                tx.executeSql("SELECT id FROM patients WHERE id BETWEEN "+insertID+" AND "+((insertID*2)-1)+" ORDER BY created_at DESC LIMIT 1", [], (tx, rs) => {
+                    if (rs.rows.length > 0)
+                        insertID = rs.rows.item(0).id + 1;
+                    var insert = {
+                        id: insertID,
+                        groupID: this.state.groupID,
+                        primaryDoc: this.state.primaryDoc,
+                        secondaryDoc: this.state.secondaryDoc,
+                        referredByID: this.state.referredByID,
+                        code: this.state.code,
+                        category: this.state.category,
+                        firstname: this.state.firstname,
+                        lastname: this.state.lastname,
+                        middlename: this.state.middlename,
+                        nickname: this.state.nickname,
+                        birthdate: moment(this.state.birthdate.date).format('YYYY-MM-DD'),
+                        birthPlace: this.state.birthPlace,
+                        religion: this.state.religion,
+                        address: this.state.address,
+                        status: this.state.status,
+                        occupation: this.state.occupation,
+                        sex: this.state.sex,
+                        race: this.state.race,
+                        nationality: this.state.nationality,
+                        height: this.state.height,
+                        hmoID: this.state.hmoID,
+                        hmo: this.state.hmo,
+                        hmoCode: this.state.hmoCode,
+                        telHome: this.state.telHome,
+                        telOffice: this.state.telOffice,
+                        telMobile: this.state.telMobile,
+                        email: this.state.email,
+                        company: this.state.company,
+                        companyAddress: this.state.companyAddress,
+                        companyContact: this.state.companyContact,
+                        companyID: this.state.companyID,
+                        personNotify: this.state.personNotify,
+                        personMobile: this.state.personMobile,
+                        personRelation: this.state.personRelation,
+                        personAddress: this.state.personAddress,
+                        insuranceProvider: this.state.insuranceProvider,
+                        accountVerified: this.state.accountVerified,
+                        policyNumber: this.state.policyNumber,
+                        imagePath: path,
+                        imageMime: 'jpeg',
+                        isPedia: this.state.isPedia,
+                        fatherName: this.state.fatherName,
+                        motherName: this.state.motherName,
+                        guardianName: this.state.guardianName,
+                        spouseName: this.state.spouseName,
+                        deleted_at: this.state.deleted_at,
+                        created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+                        updated_at: moment().format('YYYY-MM-DD HH:mm:ss')
+                    }
+                    tx.executeSql("insert into patients (`id`, `groupID`, `primaryDoc`, `secondaryDoc`, `referredByID`, `code`, `category`, `firstname`, `lastname`, `middlename`, `nickname`, `birthdate`, `birthPlace`, `religion`, `address`, `status`, `occupation`, `sex`, `race`, `nationality`, `height`, `hmoID`, `hmo`, `hmoCode`, `telHome`, `telOffice`, `telMobile`, `email`, `company`, `companyAddress`, `companyContact`, `companyID`, `personNotify`, `personMobile`, `personRelation`, `personAddress`, `insuranceProvider`, `accountVerified`, `policyNumber`, `imagePath`, `imageMime`, `isPedia`, `fatherName`, `motherName`, `guardianName`, `spouseName`, `deleted_at`, `created_at`, `updated_at`) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", _.values(insert), (tx, rs) => {
+                        console.log("created: " + rs.rowsAffected);
+                        db.patientID = rs.insertId;
+                    })
+                });
             }, (err) => {
                 this.setState({refreshing: false})
                 ToastAndroid.show("Error occured while saving!", 3000)
             }, () => {
                 this.setState({refreshing: false})
                 if (this.state.avatar) {
-                    RNFS.writeFile(path, this.state.avatar, 'base64').then((success) => {
+                    RNFS.writeFile(RNFS.ExternalDirectoryPath + path, this.state.avatar, 'base64').then((success) => {
                         this.props.navigator.replace({
                             id: 'PatientPage',
                             sceneConfig: Navigator.SceneConfigs.FadeAndroid

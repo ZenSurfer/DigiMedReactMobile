@@ -1,4 +1,6 @@
-'use strict'
+'use strict';
+
+import React, {Component} from 'react'
 import {AsyncStorage} from 'react-native'
 import SQLite from 'react-native-sqlite-storage'
 
@@ -8,21 +10,29 @@ function Env() {
         id: 3,
         name: 'Dr. Donald Platino Benas',
         type: 'Neurologist',
-        initial: 'DPB',
+        initial: 'DPB'
     }
     this.fcm = {
-        token: 'copcqjx3ikk:APA91bEQwo7KUNAVBcnhFmgfQuxe14Yzh2W07oqjSoaElS36IH2mQWCyuvJYrs0OIM7MjUhhe65CZ0KyyZWntBCRc200Fq5WslOKyAJ3dOVsOYGodQJFcvikPtBUSlc2CzlpVGdX6edb',
+        token: 'copcqjx3ikk:APA91bEQwo7KUNAVBcnhFmgfQuxe14Yzh2W07oqjSoaElS36IH2mQWCyuvJYrs0OIM7MjUhhe65CZ0KyyZWntBCRc200Fq5WslOKyAJ3dOVsOYGodQJFcvikPtBUSlc2CzlpVGdX6edb'
     }
-    this.db = function () {
-        return SQLite.openDatabase({name : "testDB1"})
+    this.db = function() {
+        return SQLite.openDatabase({name: "testDB4"})
     }
     this.setDoctor = function(v, i) {
         var doctor = this.doctor;
         doctor[i] = v;
-        this.doctor =  doctor;
+        this.doctor = doctor;
     }
-    this.getDoctor = function() {
-        return this.doctor
+    // this.getDoctor = function() {
+    //     return this.doctor
+    // }
+    this.getDoctor = async function() {
+        try {
+            var doctor = await AsyncStorage.getItem('doctor');
+            return this.doctor = JSON.parse(doctor)
+        } catch (error) {
+            console.log('AsyncStorage error: ' + error.message);
+        }
     }
 }
 

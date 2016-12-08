@@ -1,7 +1,7 @@
 'use strict';
 
 import React, {Component} from 'react'
-import {Text, View, Navigator, ActivityIndicator, StyleSheet, Dimensions, TouchableOpacity, AsyncStorage, ToastAndroid, ProgressBarAndroid} from 'react-native'
+import {Text, View, Navigator, ActivityIndicator, StyleSheet, Dimensions, TouchableOpacity, AsyncStorage, ToastAndroid, ProgressBarAndroid, NetInfo} from 'react-native'
 import RNFS from 'react-native-fs'
 import Schema from '../../database/schema.js'
 import Styles from '../../assets/Styles.js'
@@ -30,26 +30,55 @@ class ImportPage extends Component {
     }
     validate() {
         this.setState({title: 'Validating Requirements...', progress: 0, importFile: 0,})
-        console.log('click')
-        _.forEach(Schema, (v, table) => {
-            this.pull(this.parse(table, [])).then((data) => {
-                db.sqlBatch(_.transform(data.data, (result, n, i) => {
-                    result.push(["INSERT OR REPLACE INTO "+data.table+" VALUES ("+_.join(_.fill(Array(_.size(n)), '?'), ',')+")", _.values(n)])
-                    return true
-                }, []), () => {
-                    this.setState({title: 'Importing '+Math.round(((this.state.importFile + 1) / _.size(Schema)) * 100)+'%'})
-                    if ((this.state.importFile + 1) == _.size(Schema)) {
-                        this.props.navigator.replace({
-                            id: 'AppointmentPage',
-                            sceneConfig: Navigator.SceneConfigs.PushFromRight,
+        NetInfo.isConnected.fetch().then(isConnected => {
+            if (isConnected) {
+                _.forEach(Schema, (v, table) => {
+                    this.pull(this.parse(table, [])).then((data) => {
+                        db.sqlBatch(_.transform(data.data, (result, n, i) => {
+                            result.push(["INSERT OR REPLACE INTO "+data.table+" VALUES ("+_.join(_.fill(Array(_.size(n)), '?'), ',')+")", _.values(n)])
+                            if (data.table === 'patients' || data.table === 'staff' || data.table === 'doctors' || data.table === 'nurses') {
+                                var path = RNFS.ExternalDirectoryPath + n.imagePath;
+                                var param = {id: n.id, type: data.table};
+                                this.image(Object.keys(param).map((key) => {
+                                    return encodeURIComponent(key) + '=' + encodeURIComponent(param[key]);
+                                }).join('&')).then((data) => {
+                                    if (!_.isUndefined(data)) {
+                                        console.log(data)
+                                        if (data.success)
+                                            RNFS.writeFile(path, data.avatar, 'base64').then((success) => {
+                                                console.log("Successfully created!")
+                                            }).catch((err) => {
+                                                console.log("Error occured while creating image!")
+                                            });
+                                    }
+                                }).done();
+                            }
+                            return true
+                        }, []), () => {
+                            this.setState({title: 'Importing '+Math.round(((this.state.importFile + 1) / _.size(Schema)) * 100)+'%'})
+                            if ((this.state.importFile + 1) == _.size(Schema)) {
+                                this.props.navigator.replace({
+                                    id: 'AppointmentPage',
+                                    sceneConfig: Navigator.SceneConfigs.PushFromRight,
+                                });
+                                ToastAndroid.show('Importing successfully done!', 1000);
+                            } else
+                                this.setState({importFile: this.state.importFile + 1, progress: ((this.state.importFile + 1) / _.size(Schema))})
+                        }, (err) => {
+                            this.setState({importFile: this.state.importFile + 1, progress: ((this.state.importFile + 1) / _.size(Schema))})
+                            console.log(err.message);
                         });
-                        ToastAndroid.show('Importing successfully done!', 1000);
-                    } else
-                        this.setState({importFile: this.state.importFile + 1, progress: ((this.state.importFile + 1) / _.size(Schema))})
-                }, (err) => {
-                    console.log(err.message);
-                });
-            }).done()
+                    }).done()
+                })
+            } else {
+                setTimeout(() => {
+                    ToastAndroid.show('Connection problem!', 1000);
+                    this.props.navigator.replace({
+                        id: 'AppointmentPage',
+                        sceneConfig: Navigator.SceneConfigs.PushFromRight
+                    });
+                }, 3000)
+            }
         })
     }
     render() {
@@ -100,6 +129,15 @@ class ImportPage extends Component {
                 </View>
             </View>
         );
+    }
+    async image(param) {
+        try {
+            return await fetch(this.props.cloudUrl+'/api/v2/image?'+param).then((response) => {
+                return response.json()
+            });
+        } catch (err) {
+            console.log(err.message)
+        }
     }
     async pull(param) {
         try {

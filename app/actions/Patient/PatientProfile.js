@@ -41,9 +41,9 @@ class PatientProfile extends Component {
             this.setState({refreshing: false})
             this.setState({rowData: db.data.item(0)})
             if (db.data.item(0).imagePath != '')
-                RNFS.exists(db.data.item(0).imagePath).then((exist) => {
+                RNFS.exists(RNFS.ExternalDirectoryPath + db.data.item(0).imagePath).then((exist) => {
                     if (exist)
-                        RNFS.readFile( db.data.item(0).imagePath, 'base64').then((rs) => {
+                        RNFS.readFile(RNFS.ExternalDirectoryPath + db.data.item(0).imagePath, 'base64').then((rs) => {
                             this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')});
                         })
                 })

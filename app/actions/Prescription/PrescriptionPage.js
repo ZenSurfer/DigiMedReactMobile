@@ -1,7 +1,7 @@
 'use strict';
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, View, ListView, RefreshControl, Navigator, Dimensions, ToastAndroid, TouchableOpacity, TouchableNativeFeedback, Image, Alert} from 'react-native'
+import {StyleSheet, Text, View, ListView, RefreshControl, Navigator, Dimensions, ToastAndroid, TouchableOpacity, TouchableNativeFeedback, Image, Alert, AsyncStorage} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import RNFS from 'react-native-fs'
 import _ from 'lodash'
@@ -146,7 +146,7 @@ class PrescriptionPage extends Component {
                 var brandName = _.split(db.data.item(i).brandName, '||');
                 var frequency = _.split(db.data.item(i).frequency, '||');
                 var dosage = _.split(db.data.item(i).dosage, '||');
-                var form = _.split(db.data.item(i).form, '||');
+                var form = _.split(db.data.item(i).forms, '||');
                 var notes = _.split(db.data.item(i).notes, '||');
                 _.forEach(genericName, (vv, ii) => {
                     var prescription = {

@@ -1,7 +1,7 @@
 'use strict';
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, View, ListView, RefreshControl, Navigator, Dimensions, ToastAndroid, TouchableOpacity, TouchableNativeFeedback, Image, Alert, ScrollView, TextInput} from 'react-native'
+import {StyleSheet, Text, View, ListView, RefreshControl, Navigator, Dimensions, ToastAndroid, TouchableOpacity, TouchableNativeFeedback, Image, Alert, ScrollView, TextInput, AsyncStorage} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import ImagePicker from 'react-native-image-picker'
 import RNFS from 'react-native-fs'
@@ -34,6 +34,17 @@ class AddImage extends Component {
                     this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')})
                 })
         })
+    }
+    componentDidMount() {
+        this.updateCredentials().done();
+    }
+    async updateCredentials() {
+        try {
+            var doctor = await AsyncStorage.getItem('doctor');
+            this.setState({doctorID: JSON.parse(doctor).id, mobileID: JSON.parse(doctor).mobileID})
+        } catch (error) {
+            console.log('AsyncStorage error: ' + error.message);
+        }
     }
     render() {
         return (
@@ -123,23 +134,29 @@ class AddImage extends Component {
     onSubmit() {
         if (this.state.image) {
             var image = this.guid()+'.jpg';
-            var values = {
-                patientID: this.props.patientID,
-                assocRecordID: this.props.diagnosisID,
-                image: image,
-                image1: null,
-                imageAnnotation: this.state.imageAnnotation,
-                forDisplay: null,
-                imageType: 'jpg',
-                imageModule: 'diagnosis',
-                deleted_at: '',
-                created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
-                updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
-            }
             RNFS.writeFile(RNFS.ExternalDirectoryPath+'/patient/'+image, this.state.image, 'base64').then((success) => {
                 db.transaction((tx) => {
-                    tx.executeSql("INSERT INTO patientImages (`patientID`, `assocRecordID`, `image`, `image1`, `imageAnnotation`, `forDisplay`, `imageType`, `imageModule`, `deleted_at`, `created_at`, `updated_at`) VALUES (?,?,?,?,?,?,?,?,?,?,?)", _.values(values), (tx, rs) => {
-                        console.log("created: " + rs.rowsAffected);
+                    var insertID = this.state.mobileID*100000;
+                    tx.executeSql("SELECT id FROM patientImages WHERE id BETWEEN "+insertID+" AND "+((insertID*2)-1)+" ORDER BY created_at DESC LIMIT 1", [], (tx, rs) => {
+                        if (rs.rows.length > 0)
+                            insertID = rs.rows.item(0).id + 1;
+                        var values = {
+                            id: insertID,
+                            patientID: this.props.patientID,
+                            assocRecordID: this.props.diagnosisID,
+                            image: image,
+                            image1: null,
+                            imageAnnotation: this.state.imageAnnotation,
+                            forDisplay: null,
+                            imageType: 'jpg',
+                            imageModule: 'diagnosis',
+                            deleted_at: '',
+                            created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+                            updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+                        }
+                        tx.executeSql("INSERT INTO patientImages (`id`, `patientID`, `assocRecordID`, `image`, `image1`, `imageAnnotation`, `forDisplay`, `imageType`, `imageModule`, `deleted_at`, `created_at`, `updated_at`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", _.values(values), (tx, rs) => {
+                            console.log("created: " + rs.rowsAffected);
+                        })
                     })
                 }, (err) => {
                     alert(err.message)

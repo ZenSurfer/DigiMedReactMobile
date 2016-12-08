@@ -57,7 +57,7 @@ class EditPrescription extends Component {
             var brandName = _.split(db.data.item(0).brandName, '||');
             var frequency = _.split(db.data.item(0).frequency, '||');
             var dosage = _.split(db.data.item(0).dosage, '||');
-            var form = _.split(db.data.item(0).form, '||');
+            var form = _.split(db.data.item(0).forms, '||');
             var notes = _.split(db.data.item(0).notes, '||');
             this.setState({
                 prescriptionID: this.props.prescriptionID,
@@ -401,7 +401,7 @@ class EditPrescription extends Component {
                                             _.pullAt(dosage, [this.props.prescriptionRowID]);
                                             var values = {
                                                 frequency: _.join(frequency, '||'),
-                                                form: _.join(form, '||'),
+                                                forms: _.join(form, '||'),
                                                 generic: _.join(generic, '||'),
                                                 notes: _.join(notes, '||'),
                                                 brand: _.join(brand, '||'),
@@ -409,7 +409,7 @@ class EditPrescription extends Component {
                                                 pharmacyDrugData: '',
                                                 updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
                                             };
-                                            tx.executeSql("UPDATE prescriptions SET `frequency`=?, `form`=?, `genericName`=?, `notes`=?, `brandName`=?, `dosage`=?, `pharmacyDrugData`=?, `updated_at`=?", _.values(values), (tx, rs) => {
+                                            tx.executeSql("UPDATE prescriptions SET `frequency`=?, `forms`=?, `genericName`=?, `notes`=?, `brandName`=?, `dosage`=?, `pharmacyDrugData`=?, `updated_at`=?", _.values(values), (tx, rs) => {
                                                 console.log("created: " + rs.rowsAffected);
                                             })
                                         } else {
@@ -478,7 +478,7 @@ class EditPrescription extends Component {
                     updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
                     prescriptionID: this.props.prescriptionID
                 };
-                tx.executeSql("UPDATE prescriptions SET `frequency`=?, `form`=?, `genericName`=?, `notes`=?, `brandName`=?, `dosage`=?, `pharmacyDrugData`=?, `updated_at`=? WHERE id=?", _.values(values), (tx, rs) => {
+                tx.executeSql("UPDATE prescriptions SET `frequency`=?, `forms`=?, `genericName`=?, `notes`=?, `brandName`=?, `dosage`=?, `pharmacyDrugData`=?, `updated_at`=? WHERE id=?", _.values(values), (tx, rs) => {
                     console.log("created: " + rs.rowsAffected);
                 })
             }, (err) => {
