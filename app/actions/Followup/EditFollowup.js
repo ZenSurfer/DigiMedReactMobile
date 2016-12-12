@@ -1,7 +1,7 @@
 'use strict'
 
 import React, {Component} from 'react'
-import { Text, StyleSheet, View, DrawerLayoutAndroid, Navigator, ToastAndroid, ProgressBarAndroid, InteractionManager, TouchableOpacity, DatePickerAndroid, TimePickerAndroid, Picker, TextInput, ScrollView, ListView, Modal, RefreshControl, TouchableNativeFeedback, Alert, AsyncStorage} from 'react-native'
+import { Text, StyleSheet, View, DrawerLayoutAndroid, Navigator, ToastAndroid, ProgressBarAndroid, InteractionManager, TouchableOpacity, DatePickerAndroid, TimePickerAndroid, Picker, TextInput, ScrollView, ListView, Modal, RefreshControl, TouchableNativeFeedback, Alert, AsyncStorage, Image} from 'react-native'
 import RNFS from 'react-native-fs'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import moment from 'moment'
@@ -71,7 +71,7 @@ class EditFollowup extends Component {
         RNFS.exists(this.props.patientAvatar).then((exist) => {
             if (exist)
                 RNFS.readFile(this.props.patientAvatar, 'base64').then((rs) => {
-                    this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')})
+                    this.setState({avatar: (rs.toString().indexOf('dataimage/'+this.props.patientAvatar.split('.').pop()+'base64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/'+this.props.patientAvatar.split('.').pop()+';base64,'+rs.toString()})
                 })
         })
     }
@@ -334,6 +334,16 @@ class EditFollowup extends Component {
 }
 
 var styles = StyleSheet.create({
+    avatarImage: {
+        height: 48,
+        width: 48,
+        borderRadius: 30,
+        margin: 5,
+        marginRight: 10,
+    },
+    avatarIcon: {
+        margin: 0,
+    },
     containerWrapper: {
         backgroundColor: '#FFFFFF',
         paddingLeft: 16,
@@ -378,6 +388,7 @@ var styles = StyleSheet.create({
         color: '#9E9E9E'
     },
 })
+
 var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
     LeftButton(route, navigator, index, nextState) {
         return (

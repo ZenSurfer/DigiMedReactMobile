@@ -66,7 +66,7 @@ class EditDoctor extends Component {
                 RNFS.exists(db.data.imagePath).then((exist) => {
                     if (exist)
                         RNFS.readFile(db.data.imagePath, 'base64').then((rs) => {
-                            this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')});
+                            this.setState({avatar: (rs.toString().indexOf('dataimage/'+this.props.patientAvatar.split('.').pop()+'base64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/'+this.props.patientAvatar.split('.').pop()+';base64,'+rs.toString()});
                         })
                 })
             this.setState({
@@ -354,15 +354,12 @@ class EditDoctor extends Component {
         this.setState({refreshing: true})
         RNFS.mkdir(RNFS.ExternalDirectoryPath+ '/avatar');
         if (_.trim(this.state.firstname) !== '' && _.trim(this.state.lastname) !== '' && _.trim(this.state.middlename) !== '' && _.trim(this.state.phone2) !== '') {
-            var path = ''; var mime = '';
+            var path = ''; var imagePath = ''; var imageMime = 'jpeg';
             if (this.state.avatar) {
-                path = RNFS.ExternalDirectoryPath + '/avatar/'+this.guid()+'.jpeg';
-                mime = 'jpeg';
+                var imagePath = 'avatar/'+this.guid()+'.jpeg';
+                path = RNFS.ExternalDirectoryPath + '/' + imagePath;
             }
             var birthdate = moment(this.state.birthdate.date).format('YYYY-MM-DD');
-            var imagePath = path;
-            var imageMime = mime;
-
             db.transaction((tx) => {
                 tx.executeSql("UPDATE `doctors` SET `firstname` = ?, `middlename` = ?, `lastname` = ?, `nameSuffix` = ?, `birthdate` = ?, `sex` = ?, `status` = ?, `address` = ?, `phone1` = ?, `phone2` = ?, `email` = ?, `imagePath` = ?, `imageMime` = ?, `updated_at` = ?, `rank` = ?, `type` = ?, `code` = ?, `licenseID` = ?  WHERE id = ?"
                 , [this.state.firstname, this.state.middlename, this.state.lastname, this.state.nameSuffix, birthdate, this.state.sex, this.state.status, this.state.address, this.state.phone1, this.state.phone2, this.state.email, imagePath, imageMime, this.state.updated_at, this.state.rank, this.state.type, this.state.code, this.state.licenseID, this.props.doctorID]

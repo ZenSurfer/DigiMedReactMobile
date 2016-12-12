@@ -500,7 +500,7 @@ class AddPatient extends Component {
     onSubmit() {
         this.setState({refreshing: true})
         if (_.trim(this.state.firstname) !== '' && _.trim(this.state.lastname) !== '' && _.trim(this.state.middlename) !== '' && _.trim(this.state.telMobile) !== '') {
-            var path = (this.state.avatar) ? '/avatar/'+this.guid()+'.jpeg' : '';
+            var imagePath = (this.state.avatar) ? 'avatar/'+this.guid()+'.jpeg' : '';
             db.transaction((tx) => {
                 var insertID = this.state.mobileID*100000;
                 tx.executeSql("SELECT id FROM patients WHERE id BETWEEN "+insertID+" AND "+((insertID*2)-1)+" ORDER BY created_at DESC LIMIT 1", [], (tx, rs) => {
@@ -546,7 +546,7 @@ class AddPatient extends Component {
                         insuranceProvider: this.state.insuranceProvider,
                         accountVerified: this.state.accountVerified,
                         policyNumber: this.state.policyNumber,
-                        imagePath: path,
+                        imagePath: imagePath,
                         imageMime: 'jpeg',
                         isPedia: this.state.isPedia,
                         fatherName: this.state.fatherName,
@@ -568,7 +568,7 @@ class AddPatient extends Component {
             }, () => {
                 this.setState({refreshing: false})
                 if (this.state.avatar) {
-                    RNFS.writeFile(RNFS.ExternalDirectoryPath + path, this.state.avatar, 'base64').then((success) => {
+                    RNFS.writeFile(RNFS.ExternalDirectoryPath +'/'+ imagePath, this.state.avatar, 'base64').then((success) => {
                         this.props.navigator.replace({
                             id: 'PatientPage',
                             sceneConfig: Navigator.SceneConfigs.FadeAndroid

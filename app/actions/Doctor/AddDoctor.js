@@ -293,14 +293,12 @@ class AddDoctor extends Component {
         this.setState({refreshing: true})
         RNFS.mkdir(RNFS.ExternalDirectoryPath+ '/avatar');
         if (_.trim(this.state.firstname) !== '' && _.trim(this.state.lastname) !== '' && _.trim(this.state.middlename) !== '' && _.trim(this.state.phone2) !== '') {
-            var path = ''; var mime = '';
+            var path = ''; var imagePath = ''; var imageMime = 'jpeg';
             if (this.state.avatar) {
-                path = RNFS.ExternalDirectoryPath + '/avatar/'+this.guid()+'.jpeg';
-                mime = 'jpeg';
+                var imagePath = 'avatar/'+this.guid()+'.jpeg';
+                path = RNFS.ExternalDirectoryPath + '/' + imagePath;
             }
             var birthdate = moment(this.state.birthdate.date).format('YYYY-MM-DD');
-            var imagePath = path;
-            var imageMime = mime;
             db.transaction((tx) => {
                 var insertID = this.state.mobileID*100000;
                 tx.executeSql("SELECT id FROM doctors WHERE id BETWEEN "+insertID+" AND "+((insertID*2)-1)+" ORDER BY created_at DESC LIMIT 1", [], (tx, rs) => {

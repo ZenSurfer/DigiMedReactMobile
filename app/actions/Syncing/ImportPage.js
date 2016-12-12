@@ -9,7 +9,8 @@ import Env from '../../env.js'
 import _ from 'lodash'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import IconFont from 'react-native-vector-icons/FontAwesome'
-import * as Animatable from 'react-native-animatable';
+import * as Animatable from 'react-native-animatable'
+import moment from 'moment'
 
 const EnvInstance = new Env()
 const db = EnvInstance.db()
@@ -24,50 +25,90 @@ class ImportPage extends Component {
         }
     }
     componentDidMount() {
-        setTimeout(() => {
-            this.validate();
-        }, 1000)
+        this.updateCredentials().done();
+    }
+    async updateCredentials() {
+        try {
+            var doctor = await AsyncStorage.getItem('doctor');
+            this.setState({doctorID: JSON.parse(doctor).id, cloudUrl: JSON.parse(doctor).cloudUrl})
+        } catch (error) {
+            console.log('AsyncStorage error: ' + error.message);
+        } finally {
+            setTimeout(() => {
+                this.validate();
+            }, 1000)
+        }
     }
     validate() {
         this.setState({title: 'Validating Requirements...', progress: 0, importFile: 0,})
         NetInfo.isConnected.fetch().then(isConnected => {
             if (isConnected) {
-                _.forEach(Schema, (v, table) => {
-                    this.pull(this.parse(table, [])).then((data) => {
-                        db.sqlBatch(_.transform(data.data, (result, n, i) => {
-                            result.push(["INSERT OR REPLACE INTO "+data.table+" VALUES ("+_.join(_.fill(Array(_.size(n)), '?'), ',')+")", _.values(n)])
-                            if (data.table === 'patients' || data.table === 'staff' || data.table === 'doctors' || data.table === 'nurses') {
-                                var path = RNFS.ExternalDirectoryPath + n.imagePath;
-                                var param = {id: n.id, type: data.table};
-                                this.image(Object.keys(param).map((key) => {
-                                    return encodeURIComponent(key) + '=' + encodeURIComponent(param[key]);
-                                }).join('&')).then((data) => {
-                                    if (!_.isUndefined(data)) {
-                                        console.log(data)
-                                        if (data.success)
-                                            RNFS.writeFile(path, data.avatar, 'base64').then((success) => {
-                                                console.log("Successfully created!")
-                                            }).catch((err) => {
-                                                console.log("Error occured while creating image!")
-                                            });
+                var filterSchema = _.omit(filterSchema, ['cache', 'migrations', 'password_resets', 'userAccessLevel']);
+                _.forEach(filterSchema, (v, table) => {
+                    this.importDate(table).then(importDate => {
+                        if (importDate === null) {
+                            importDate = moment().year(2000).format('YYYY-MM-DD HH:mm:ss')
+                        }
+                        this.importData(table, importDate).then((data) => {
+                            var currentImportDate = importDate;
+                            if (data.total > 0) {
+                                db.sqlBatch(_.transform(data.data, (result, n, i) => {
+                                    result.push(["INSERT OR REPLACE INTO "+data.table+" VALUES ("+_.join(_.fill(Array(_.size(n)), '?'), ',')+")", _.values(n)])
+                                    if (data.table === 'patients' || data.table === 'staff' || data.table === 'doctors' || data.table === 'nurses') {
+                                        var path = RNFS.ExternalDirectoryPath+'/'+n.imagePath;
+                                        var param = {id: n.id, type: data.table};
+                                        this.importImage(Object.keys(param).map((key) => {
+                                            return encodeURIComponent(key) + '=' + encodeURIComponent(param[key]);
+                                        }).join('&')).then((data) => {
+                                            if (!_.isUndefined(data)) {
+                                                if (data.success) {
+                                                    RNFS.writeFile(path, decodeURIComponent(data.avatar), 'base64').then((success) => {
+                                                        console.log("Successfully created!")
+                                                    }).catch((err) => {
+                                                        console.log("Error occured while creating image!")
+                                                    });
+                                                }
+                                            }
+                                        }).done();
                                     }
-                                }).done();
-                            }
-                            return true
-                        }, []), () => {
-                            this.setState({title: 'Importing '+Math.round(((this.state.importFile + 1) / _.size(Schema)) * 100)+'%'})
-                            if ((this.state.importFile + 1) == _.size(Schema)) {
-                                this.props.navigator.replace({
-                                    id: 'AppointmentPage',
-                                    sceneConfig: Navigator.SceneConfigs.PushFromRight,
+                                    return true
+                                }, []), () => {
+                                    this.setState({title: 'Importing '+Math.round(((this.state.importFile + 1) / _.size(filterSchema)) * 100)+'%'})
+                                    currentImportDate = data.importdate;
+                                    this.updateImportDate(data.table, currentImportDate).then(msg => console.log(data.table, msg)).done()
+                                    if ((this.state.importFile + 1) == _.size(filterSchema)) {
+                                        this.props.navigator.replace({
+                                            id: 'AppointmentPage',
+                                            sceneConfig: Navigator.SceneConfigs.PushFromRight,
+                                        });
+                                        ToastAndroid.show('Importing successfully done!', 1000);
+                                    } else
+                                        this.setState({importFile: this.state.importFile + 1, progress: ((this.state.importFile + 1) / _.size(filterSchema))})
+                                }, (err) => {
+                                    if ((this.state.importFile + 1) == _.size(filterSchema)) {
+                                        this.props.navigator.replace({
+                                            id: 'AppointmentPage',
+                                            sceneConfig: Navigator.SceneConfigs.PushFromRight,
+                                        });
+                                        ToastAndroid.show('Importing successfully done!', 1000);
+                                    } else
+                                        this.setState({importFile: this.state.importFile + 1, progress: ((this.state.importFile + 1) / _.size(filterSchema))})
                                 });
-                                ToastAndroid.show('Importing successfully done!', 1000);
-                            } else
-                                this.setState({importFile: this.state.importFile + 1, progress: ((this.state.importFile + 1) / _.size(Schema))})
-                        }, (err) => {
-                            this.setState({importFile: this.state.importFile + 1, progress: ((this.state.importFile + 1) / _.size(Schema))})
-                            console.log(err.message);
-                        });
+                            } else {
+                                currentImportDate = data.importdate;
+                                if (_.isUndefined(data.table))
+                                    console.log(data)
+                                this.updateImportDate(data.table, currentImportDate).then(msg => console.log(data.table, msg)).done()
+                                if ((this.state.importFile + 1) == _.size(filterSchema)) {
+                                    this.props.navigator.replace({
+                                        id: 'AppointmentPage',
+                                        sceneConfig: Navigator.SceneConfigs.PushFromRight,
+                                    });
+                                    ToastAndroid.show('Importing successfully done!', 1000);
+                                } else
+                                    this.setState({importFile: this.state.importFile + 1, progress: ((this.state.importFile + 1) / _.size(filterSchema))})
+                            }
+                        }).done()
                     }).done()
                 })
             } else {
@@ -130,24 +171,6 @@ class ImportPage extends Component {
             </View>
         );
     }
-    async image(param) {
-        try {
-            return await fetch(this.props.cloudUrl+'/api/v2/image?'+param).then((response) => {
-                return response.json()
-            });
-        } catch (err) {
-            console.log(err.message)
-        }
-    }
-    async pull(param) {
-        try {
-            return await fetch(this.props.cloudUrl+'/api/v2/pull?'+param).then((response) => {
-                return response.json()
-            });
-        } catch (err) {
-            console.log(err.message)
-        }
-    }
     parse(table, values) {
         var rows = []; var where = [];
         rows.push('table='+table)
@@ -161,6 +184,49 @@ class ImportPage extends Component {
         return Object.keys(json).map((key) => {
             return encodeURIComponent('"') + encodeURIComponent(key) + encodeURIComponent('"') + encodeURIComponent(":") + encodeURIComponent('"') + encodeURIComponent(json[key])+ encodeURIComponent('"');
         }).join(encodeURIComponent(','));
+    }
+    async importImage(param) {
+        try {
+            return await fetch(this.props.cloudUrl+'/api/v2/image?'+param).then((response) => {
+                return response.json()
+            });
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
+    async importDate(table) {
+        try {
+            var importDate = JSON.parse(await AsyncStorage.getItem('importDate'));
+            return (_.isUndefined(importDate[table])) ? null : importDate[table];
+        } catch (err) {
+            return null;
+        }
+    }
+    async updateImportDate(table, date) {
+        try {
+            var importDate = JSON.parse(await AsyncStorage.getItem('importDate'));
+            importDate[table] = date;
+            AsyncStorage.setItem('importDate', JSON.stringify(importDate));
+            return 'updated '+date;
+        } catch (err) {
+            return err.message;
+        }
+    }
+    async importData(table, date) {
+        try {
+            return await fetch(this.state.cloudUrl+'/api/v2/import?table='+table+'&date='+encodeURIComponent(date)).then((res) => {
+                return res.json()
+            });
+        } catch (err) {
+            return err.message;
+        }
+        // try {
+        //     return await fetch(this.props.cloudUrl+'/api/v2/pull?'+param).then((response) => {
+        //         return response.json()
+        //     });
+        // } catch (err) {
+        //     console.log(err.message)
+        // }
     }
 }
 

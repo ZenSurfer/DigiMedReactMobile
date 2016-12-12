@@ -45,10 +45,10 @@ class DrawerPage extends Component {
                 doctorInitial: JSON.parse(doctor).initial,
                 cloudUrl: JSON.parse(doctor).cloudUrl,
             })
-            RNFS.exists(JSON.parse(doctor).imagePath).then((exist) => {
+            RNFS.exists(RNFS.ExternalDirectoryPath +'/'+ JSON.parse(doctor).imagePath).then((exist) => {
                 if (exist)
-                    RNFS.readFile(JSON.parse(doctor).imagePath, 'base64').then((rs) => {
-                        this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')})
+                    RNFS.readFile(RNFS.ExternalDirectoryPath +'/'+ JSON.parse(doctor).imagePath, 'base64').then((rs) => {
+                        this.setState({avatar: (rs.toString().indexOf('dataimage/'+JSON.parse(doctor).imagePath.split('.').pop()+'base64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/'+JSON.parse(doctor).imagePath.split('.').pop()+';base64,'+rs.toString()})
                     })
             })
             db.transaction((tx) => {

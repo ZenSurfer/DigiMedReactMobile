@@ -1,7 +1,7 @@
 'use strict';
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, View, ListView, RefreshControl, Navigator, Dimensions, ToastAndroid, TouchableOpacity, TouchableNativeFeedback, Image, Alert, ScrollView, InteractionManager, ActivityIndicator} from 'react-native'
+import {StyleSheet, Text, View, ListView, RefreshControl, Navigator, Dimensions, ToastAndroid, TouchableOpacity, TouchableNativeFeedback, Image, Alert, ScrollView, InteractionManager, ActivityIndicator, AsyncStorage, NetInfo} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import RNFS from 'react-native-fs'
 import _ from 'lodash'
@@ -21,75 +21,37 @@ class ImagePage extends Component {
             refreshing: false,
             imaging: [],
             avatar: false,
-            renderPlaceholderOnly: true,
+            syncing: false,
+            syncingTitle: 'Syncing Imaging...',
         }
     }
     componentWillMount() {
-        this.setState({refreshing: true})
-        db.transaction((tx) => {
-            tx.executeSql("SELECT * FROM patientImages WHERE patientID=? AND (deleted_at in (null, 'NULL', '') OR deleted_at is null) ORDER BY created_at DESC", [this.props.patientID], (tx, rs) => {
-                db.data = rs.rows
-            })
-        }, (error) => {
-            console.log('transaction error: ' + error.message);
-        }, () => {
-            var imaging = [];
-            _.forEach(db.data, (v, i) => {
-                if (db.data.item(i).image != '')
-                    RNFS.exists(RNFS.ExternalDirectoryPath+'/patient/'+db.data.item(i).image).then((exist) => {
-                        if (exist)
-                            RNFS.readFile(RNFS.ExternalDirectoryPath+'/patient/'+db.data.item(i).image, 'base64').then((rs) => {
-                                var obj = {};
-                                obj[db.data.item(i).image] = _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,');
-                                this.setState(obj);
-                            })
-                    })
-                imaging.push(db.data.item(i))
-            })
-            this.setState({refreshing: false, imaging: imaging})
-        })
         RNFS.exists(this.props.patientAvatar).then((exist) => {
             if (exist)
                 RNFS.readFile(this.props.patientAvatar, 'base64').then((rs) => {
-                    this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')})
+                    this.setState({avatar: (rs.toString().indexOf('dataimage/'+this.props.patientAvatar.split('.').pop()+'base64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/'+this.props.patientAvatar.split('.').pop()+';base64,'+rs.toString()})
                 })
         })
     }
     componentDidMount() {
-        InteractionManager.runAfterInteractions(() => {
-            this.setState({renderPlaceholderOnly: false});
-        });
+        this.updateCredentials().done();
     }
-    renderPlaceholderView() {
-        return (
-            <View style={[Styles.containerStyle, {backgroundColor: '#E0E0E0'}]}>
-                {this.props.children}
-                <View style={[Styles.subTolbar, {marginTop: 24}]}>
-                    <Text style={Styles.subTitle}>Imaging</Text>
-                </View>
-                <View style={Styles.loading}>
-                    <View style={Styles.horizontal}><ActivityIndicator color="#212121" size={23}/></View>
-                </View>
-                <TouchableOpacity
-                    style={[Styles.buttonFab, Styles.subTolbarButton, {marginTop: 24}]}
-                    onPress={() => this.props.navigator.push({
-                        id: 'AddImage',
-                        passProps: {
-                            diagnosisID: this.props.diagnosisID,
-                            patientID: this.props.patientID,
-                            patientAvatar: this.props.patientAvatar,
-                            patientName: this.props.patientName
-                        }
-                    })}>
-                    <Icon name={'add'} color={'#FFFFFF'} size={30}/>
-                </TouchableOpacity>
-            </View>
-        );
+    async updateCredentials() {
+        try {
+            var doctor = await AsyncStorage.getItem('doctor');
+            this.setState({doctorID: JSON.parse(doctor).id, cloudUrl: JSON.parse(doctor).cloudUrl})
+        } catch (error) {
+            console.log('AsyncStorage error: ' + error.message);
+        } finally {
+            setTimeout(() => {
+                this.onRefresh();
+            }, 1000)
+        }
     }
     render() {
         return (
             <Navigator
-                renderScene={(this.state.renderPlaceholderOnly) ? this.renderPlaceholderView.bind(this) : this.renderScene.bind(this)}
+                renderScene={this.renderScene.bind(this)}
                 navigator={this.props.navigator}
                 navigationBar={
                     <Navigator.NavigationBar
@@ -105,6 +67,18 @@ class ImagePage extends Component {
                 <View style={[Styles.subTolbar, {marginTop: 24}]}>
                     <Text style={Styles.subTitle}>Imaging</Text>
                 </View>
+                {(this.state.syncing) ? (
+                    <View style={{position: 'absolute', top: 74, zIndex: 1, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                            <View style={{ backgroundColor: '#FF5722', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                                <ActivityIndicator color="#FFF" size={15}/>
+                                <Text style={{textAlignVertical: 'center', paddingLeft: 10, color: '#FFF', fontSize: 11}}>{this.state.syncingTitle}</Text>
+                            </View>
+                        </View>
+                    </View>
+                ) : (
+                    <View />
+                )}
                 <ScrollView
                     refreshControl={
                         <RefreshControl
@@ -116,7 +90,7 @@ class ImagePage extends Component {
                         if ((i % 2) == 0)
                         return (
                             <View key={i} style={{flexDirection: 'row'}}>
-                                <View style={{flex: 1, alignItems: 'stretch', margin: 1, marginRight: 0.5}}>
+                                <View style={{flex: 1, alignItems: 'stretch'}}>
                                     <View style={{height: 180, backgroundColor: '#FFFFFF'}}>
                                         <Image
                                             resizeMode={'cover'}
@@ -196,8 +170,8 @@ class ImagePage extends Component {
                                         </TouchableOpacity>
                                     </View>
                                 </View>
-                                {(_.isEmpty(this.state.imaging[i+1])) ? (<View style={{flex: 1, alignItems: 'stretch', margin: 1, marginLeft: 0.5}}/>) : (
-                                    <View style={{flex: 1, alignItems: 'stretch', margin: 1, marginLeft: 0.5}}>
+                                {(_.isEmpty(this.state.imaging[i+1])) ? (<View style={{flex: 1, alignItems: 'stretch'}}/>) : (
+                                    <View style={{flex: 1, alignItems: 'stretch'}}>
                                         <View style={{height: 180, backgroundColor: '#FFFFFF'}}>
                                             <Image
                                                 resizeMode={'cover'}
@@ -312,13 +286,173 @@ class ImagePage extends Component {
                 if (db.data.item(i).image != '')
                     RNFS.readFile(RNFS.ExternalDirectoryPath+'/patient/'+db.data.item(i).image, 'base64').then((rs) => {
                         var obj = {};
-                        obj[db.data.item(i).image] = _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,');
+                        obj[db.data.item(i).image] = (rs.toString().indexOf('dataimage/'+db.data.item(i).image.split('.').pop()+'base64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/'+db.data.item(i).image.split('.').pop()+';base64,'+rs.toString();
                         this.setState(obj);
                     })
                 imaging.push(db.data.item(i))
             })
             this.setState({refreshing: false, imaging: imaging})
+            this.updateData(['patientImages']);
         })
+    }
+    updateData(tables) {
+        NetInfo.isConnected.fetch().then(isConnected => {
+            if (isConnected) {
+                this.setState({syncing: true})
+                _.forEach(tables, (table, ii) => {
+                    this.exportDate(table).then(exportDate => {
+                        if (exportDate === null) {
+                            exportDate = moment().year(2000).format('YYYY-MM-DD HH:mm:ss')
+                        }
+                        db.transaction(tx => {
+                            tx.executeSql("SELECT * FROM "+table+" WHERE (created_at>='"+exportDate+"' OR updated_at>='"+exportDate+"')", [], (tx, rs) => {
+                                db.data = rs.rows;
+                            })
+                        }, (err) => console.log(err.message), () => {
+                            var rows = [];
+                            _.forEach(db.data, (v, i) => {
+                                rows.push(i+ '='+ encodeURIComponent('{') + this.jsonToQueryString(db.data.item(i)) + encodeURIComponent('}'))
+                            })
+                            this.exportData(table, rows).then(data => {
+                                if(!_.isUndefined(data) && data.success) {
+                                    this.updateExportDate(table, data.exportdate).then(msg => console.log(data.table+' export', msg)).done()
+                                    this.importDate(table).then(importDate => {
+                                        if (importDate === null) {
+                                            importDate = moment().year(2000).format('YYYY-MM-DD HH:mm:ss')
+                                        }
+                                        if (moment().diff(moment(importDate), 'minutes') >= EnvInstance.interval) {
+                                            this.importData(table, importDate).then((data) => {
+                                                var currentImportDate = importDate;
+                                                if (data.total > 0) {
+                                                    db.sqlBatch(_.transform(data.data, (result, n, i) => {
+                                                        result.push(["INSERT OR REPLACE INTO "+table+" VALUES ("+_.join(_.fill(Array(_.size(n)), '?'), ',')+")", _.values(n)])
+                                                        var param = {id: n.id, type: data.table};
+                                                        this.importImage(Object.keys(param).map((key) => {
+                                                            return encodeURIComponent(key) + '=' + encodeURIComponent(param[key]);
+                                                        }).join('&')).then((data) => {
+                                                            if (!_.isUndefined(data)) {
+                                                                if (data.success) {
+                                                                    RNFS.writeFile(RNFS.ExternalDirectoryPath+'/patient/'+n.image, decodeURIComponent(data.avatar), 'base64').then((success) => {
+                                                                        console.log("Successfully created!")
+                                                                    }).catch((err) => {
+                                                                        console.log("Error occured while creating image!")
+                                                                    });
+                                                                }
+                                                            }
+                                                        }).done();
+                                                        return true
+                                                    }, []), () => {
+                                                        if(_.last(tables) === table)
+                                                            this.setState({syncing: false})
+                                                        currentImportDate = data.importdate;
+                                                        this.updateImportDate(table, currentImportDate).then(msg => {
+                                                            console.log(data.table+' import', msg)
+                                                            if(_.last(tables) === table)
+                                                                this.onRefresh()
+                                                            // ToastAndroid.show('Appointments updated!', 1000)
+                                                        }).done()
+                                                    }, (err) => {
+                                                        if(_.last(tables) === table)
+                                                            this.setState({syncing: false})
+                                                        table// ToastAndroid.show(err.message+'!', 1000)
+                                                    });
+                                                } else {
+                                                    currentImportDate = data.importdate;
+                                                    if(_.last(tables) === table)
+                                                        this.setState({syncing: false})
+                                                    this.updateImportDate(table, currentImportDate  ).then(msg => {
+                                                        console.log(data.table+' import', msg)
+                                                        // ToastAndroid.show('Appointments up to date!', 1000)
+                                                    }).done()
+                                                }
+                                            }).done()
+                                        } else {
+                                            if(_.last(tables) === table)
+                                                this.setState({syncing: false})
+                                        }
+                                    }).done()
+                                }
+                            }).done();
+                        })
+                    }).done()
+                })
+            }
+        })
+    }
+    async importImage(param) {
+        try {
+            return await fetch(this.state.cloudUrl+'/api/v2/image?'+param).then((response) => {
+                return response.json()
+            });
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
+    async importDate(table) {
+        try {
+            var importDate = JSON.parse(await AsyncStorage.getItem('importDate'));
+            return (_.isUndefined(importDate[table])) ? null : importDate[table];
+        } catch (err) {
+            return null;
+        }
+    }
+    async importData(table, date) {
+        try {
+            return await fetch(this.state.cloudUrl+'/api/v2/import?table='+table+'&date='+encodeURIComponent(date)).then((res) => {
+                return res.json()
+            });
+        } catch (err) {
+            return err.message;
+        }
+    }
+    async updateImportDate(table, date) {
+        try {
+            var importDate = JSON.parse(await AsyncStorage.getItem('importDate'));
+            importDate[table] = date;
+            AsyncStorage.setItem('importDate', JSON.stringify(importDate));
+            return 'updated '+date;
+        } catch (err) {
+            return err.message;
+        }
+    }
+    async exportDate(table) {
+        try {
+            var exportDate = JSON.parse(await AsyncStorage.getItem('exportDate'));
+            return (_.isUndefined(exportDate[table])) ? null : exportDate[table];
+        } catch (err) {
+            return null;
+        }
+    }
+    async updateExportDate(table, date) {
+        try {
+            var exportDate = JSON.parse(await AsyncStorage.getItem('exportDate'));
+            exportDate[table] = date;
+            AsyncStorage.setItem('exportDate', JSON.stringify(exportDate));
+            return 'updated '+date;
+        } catch (err) {
+            return err.message;
+        }
+    }
+    async exportData(table, rows) {
+        try {
+            return await fetch(this.state.cloudUrl+'/api/v2/export?table='+table, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                },
+                body: _.join(rows, '&')
+            }).then((response) => {
+                return response.json()
+            });
+        } catch (err) {
+            console.log(table+':', e.message)
+        }
+    }
+    jsonToQueryString(json) {
+        return Object.keys(json).map((key) => {
+            return encodeURIComponent('"') + encodeURIComponent(key) + encodeURIComponent('"') + encodeURIComponent(":") + encodeURIComponent('"') + encodeURIComponent(json[key])+ encodeURIComponent('"');
+        }).join(encodeURIComponent(','));
     }
 }
 

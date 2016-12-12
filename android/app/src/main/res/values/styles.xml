@@ -8,6 +8,7 @@
         <item name="android:textColorSecondary">@color/colorWhite</item>
         <item name="android:textCursorDrawable">@null</item>
         <item name="android:spinnerDropDownItemStyle">@style/SpinnerDropDownItem</item>
+        <item name="android:textSize">@dimen/font_size</item>
     </style>
 
     <style name="SpinnerDropDownItem" parent="Theme.AppCompat.Light.DarkActionBar">

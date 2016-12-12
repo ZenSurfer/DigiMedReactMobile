@@ -19,35 +19,13 @@ class PatientProfile extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            refreshing: false,
+            refreshing: true,
             rowData: [],
             renderPlaceholderOnly: true,
             fullProfile: false,
             fullContact: false,
             fullOther: false,
         }
-    }
-    componentWillMount() {
-        this.setState({refreshing: true})
-        db.transaction((tx) => {
-            tx.executeSql("SELECT * FROM patients WHERE id=? LIMIT 1", [this.props.patientID], function(tx, rs) {
-                db.data = rs.rows
-            }, function(error) {
-                console.log('SELECT SQL statement ERROR: ' + error.message);
-            });
-        }, (error) => {
-            console.log('transaction error: ' + error.message);
-        }, () => {
-            this.setState({refreshing: false})
-            this.setState({rowData: db.data.item(0)})
-            if (db.data.item(0).imagePath != '')
-                RNFS.exists(RNFS.ExternalDirectoryPath + db.data.item(0).imagePath).then((exist) => {
-                    if (exist)
-                        RNFS.readFile(RNFS.ExternalDirectoryPath + db.data.item(0).imagePath, 'base64').then((rs) => {
-                            this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')});
-                        })
-                })
-        })
     }
     render() {
         return (
@@ -65,6 +43,7 @@ class PatientProfile extends Component {
         InteractionManager.runAfterInteractions(() => {
             this.setState({renderPlaceholderOnly: false, progress: 1});
         });
+        this.onRefresh()
     }
     renderPlaceholderView() {
         return (
@@ -365,7 +344,7 @@ class PatientProfile extends Component {
                             id: 'AddAppointment',
                             passProps: {
                                 patientID: this.state.rowData.id,
-                                patientAvatar: this.state.rowData.imagePath,
+                                patientAvatar: RNFS.ExternalDirectoryPath +'/'+ this.state.rowData.imagePath,
                                 patientName: this.state.rowData.firstname+' '+this.state.rowData.middlename+' '+this.state.rowData.lastname
                             }
                         })}>
@@ -378,7 +357,7 @@ class PatientProfile extends Component {
                             id: 'HPEDPage',
                             passProps: {
                                 patientID: this.state.rowData.id,
-                                patientAvatar: this.state.rowData.imagePath,
+                                patientAvatar: RNFS.ExternalDirectoryPath +'/'+ this.state.rowData.imagePath,
                                 patientName: this.state.rowData.firstname+' '+this.state.rowData.middlename+' '+this.state.rowData.lastname
                             }
                         })}>
@@ -392,7 +371,7 @@ class PatientProfile extends Component {
                             id: 'AppointmentPatientPage',
                             passProps: {
                                 patientID: this.state.rowData.id,
-                                patientAvatar: this.state.rowData.imagePath,
+                                patientAvatar: RNFS.ExternalDirectoryPath +'/'+ this.state.rowData.imagePath,
                                 patientName: this.state.rowData.firstname+' '+this.state.rowData.middlename+' '+this.state.rowData.lastname
                             }
                         })}>
@@ -418,6 +397,18 @@ class PatientProfile extends Component {
         }, () => {
             this.setState({refreshing: false})
             this.setState({rowData: db.data.item(0)})
+            if (db.data.item(0).imagePath != '') {
+                RNFS.exists(RNFS.ExternalDirectoryPath +'/'+ db.data.item(0).imagePath).then((exist) => {
+                    if (exist)
+                        RNFS.readFile(RNFS.ExternalDirectoryPath +'/'+ db.data.item(0).imagePath, 'base64').then((rs) => {
+                            if (rs.toString().indexOf('dataimage/'+db.data.item(0).imageMime+'base64') !== -1) {
+                                this.setState({avatar: _.replace(rs.toString(), 'dataimage/'+db.data.item(0).imageMime+'base64','data:image/'+db.data.item(0).imageMime+';base64,')});
+                            } else {
+                                this.setState({avatar: 'data:image/'+db.data.item(0).imageMime+';base64,'+rs.toString()});
+                            }
+                        })
+                })
+            }
         })
     }
 }

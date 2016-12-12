@@ -99,10 +99,10 @@ class EditPatient extends Component {
                     }
             })
             if (db.data.imagePath != '')
-                RNFS.exists(db.data.imagePath).then((exist) => {
+                RNFS.exists(RNFS.ExternalDirectoryPath +'/'+ db.data.imagePath).then((exist) => {
                     if (exist)
-                        RNFS.readFile(db.data.imagePath, 'base64').then((rs) => {
-                            this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')});
+                        RNFS.readFile(RNFS.ExternalDirectoryPath +'/'+ db.data.imagePath, 'base64').then((rs) => {
+                            this.setState({avatar: (rs.toString().indexOf('dataimage/'+db.data.imageMime+'base64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/'+db.data.imageMime+';base64,'+rs.toString()});
                         })
                 })
         })
@@ -561,22 +561,57 @@ class EditPatient extends Component {
     onSubmit() {
         this.setState({refreshing: true})
         if (_.trim(this.state.firstname) !== '' && _.trim(this.state.lastname) !== '' && _.trim(this.state.middlename) !== '' && _.trim(this.state.telMobile) !== '') {
-            var path = ''; var mime = '';
-            if (this.state.avatar) {
-                path = '/avatar/'+this.guid()+'.jpeg';
-                mime = 'jpeg';
+            var imagePath = (this.state.avatar) ? 'avatar/'+this.guid()+'.jpeg' : '';
+            var value = {
+                primaryDoc: this.state.primaryDoc,
+                secondaryDoc: this.state.secondaryDoc,
+                referredByID: this.state.referredByID,
+                code: this.state.code,
+                category: this.state.category,
+                firstname: this.state.firstname,
+                lastname: this.state.lastname,
+                middlename: this.state.middlename,
+                nickname: this.state.nickname,
+                birthdate: moment(this.state.birthdate.date).format('YYYY-MM-DD'),
+                birthPlace: this.state.birthPlace,
+                religion: this.state.religion,
+                address: this.state.address,
+                status: this.state.status,
+                occupation: this.state.occupation,
+                sex: this.state.sex,
+                race: this.state.race,
+                nationality: this.state.nationality,
+                height: this.state.height,
+                hmoID: this.state.hmoID,
+                hmo: this.state.hmo,
+                hmoCode: this.state.hmoCode,
+                telHome: this.state.telHome,
+                telOffice: this.state.telOffice,
+                telMobile: this.state.telMobile,
+                email: this.state.email,
+                company: this.state.company,
+                companyAddress: this.state.companyAddress,
+                companyContact: this.state.companyContact,
+                companyID: this.state.companyID,
+                personNotify: this.state.personNotify,
+                personMobile: this.state.personMobile,
+                personRelation: this.state.personRelation,
+                personAddress: this.state.personAddress,
+                insuranceProvider: this.state.insuranceProvider,
+                accountVerified: this.state.accountVerified,
+                policyNumber: this.state.policyNumber,
+                imagePath: imagePath,
+                imageMime: 'jpeg',
+                isPedia: this.state.isPedia,
+                fatherName: this.state.fatherName,
+                motherName: this.state.motherName,
+                guardianName: this.state.guardianName,
+                spouseName: this.state.spouseName,
+                updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+                id: this.props.patientID,
             }
-            var parse = _.map(_.values(this.state), (rs, i) => {
-                if (i == 9) return moment(rs.date).format('YYYY-MM-DD')
-                else if (i == 37) return path
-                else if (i == 38) return mime
-                else return rs
-            })
-            var insert = _.dropRight(_(parse).value(), (_.size(parse) - 47));
-            insert.push(this.props.patientID);
-
             db.transaction((tx) => {
-                tx.executeSql("UPDATE patients SET primaryDoc = ?, secondaryDoc = ?, referredByID = ?, code = ?, category = ?, firstname = ?, lastname = ?, middlename = ?, nickname = ?, birthdate = ?, birthPlace = ?, religion = ?, address = ?, status = ?, occupation = ?, sex = ?, race = ?, nationality = ?, height = ?, hmoID = ?, hmo = ?, hmoCode = ?, telHome = ?, telOffice = ?, telMobile = ?, email = ?, company = ?, companyAddress = ?, companyContact = ?, companyID = ?, personNotify = ?, personMobile = ?, personRelation = ?, personAddress = ?, insuranceProvider = ?, accountVerified = ?, policyNumber = ?, imagePath = ?, imageMime = ?, isPedia = ?, fatherName = ?, motherName = ?, guardianName = ?, spouseName = ?, deleted_at = ?, created_at = ?, updated_at = ? WHERE id = ?", insert, (tx, rs) => {
+                tx.executeSql("UPDATE patients SET primaryDoc = ?, secondaryDoc = ?, referredByID = ?, code = ?, category = ?, firstname = ?, lastname = ?, middlename = ?, nickname = ?, birthdate = ?, birthPlace = ?, religion = ?, address = ?, status = ?, occupation = ?, sex = ?, race = ?, nationality = ?, height = ?, hmoID = ?, hmo = ?, hmoCode = ?, telHome = ?, telOffice = ?, telMobile = ?, email = ?, company = ?, companyAddress = ?, companyContact = ?, companyID = ?, personNotify = ?, personMobile = ?, personRelation = ?, personAddress = ?, insuranceProvider = ?, accountVerified = ?, policyNumber = ?, imagePath = ?, imageMime = ?, isPedia = ?, fatherName = ?, motherName = ?, guardianName = ?, spouseName = ?, updated_at = ? WHERE id = ?", _.values(value), (tx, rs) => {
                     console.log("updated: " + rs.rowsAffected);
                 })
             }, (err) => {
@@ -585,7 +620,7 @@ class EditPatient extends Component {
             }, () => {
                 this.setState({refreshing: false})
                 if (this.state.avatar) {
-                    RNFS.writeFile(RNFS.ExternalDirectoryPath + path, this.state.avatar, 'base64').then((success) => {
+                    RNFS.writeFile(RNFS.ExternalDirectoryPath +'/'+ imagePath, this.state.avatar, 'base64').then((success) => {
                         this.props.navigator.replacePreviousAndPop({
                             id: 'PatientProfile',
                             passProps: { patientID: this.props.patientID }

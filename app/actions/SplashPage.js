@@ -157,6 +157,10 @@ class SplashPage extends Component {
                                         }).then((data) => {
                                             doctor['mobileID'] = data.mobileID
                                             AsyncStorage.setItem('doctor', JSON.stringify(doctor))
+                                            if (data.new) {
+                                                AsyncStorage.setItem('importDate', JSON.stringify({}))
+                                                AsyncStorage.setItem('exportDate', JSON.stringify({}))
+                                            }
                                             this.props.navigator.replace({
                                                 id: 'AppointmentPage',
                                                 sceneConfig: Navigator.SceneConfigs.FadeAndroid
