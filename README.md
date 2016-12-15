@@ -1,5 +1,8 @@
 #REACT NATIVE 0.33.0
 
+PHP Server
+always_populate_raw_post_data = -1
+
 file:node_modules/react-native-bcrypt/dist/bcrypt.js  
 line:50
 

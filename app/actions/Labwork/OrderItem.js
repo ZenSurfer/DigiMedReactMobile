@@ -35,7 +35,7 @@ class OrderItem extends Component {
             allItem: {},
             modalItems: {},
             syncing: false,
-            syncingTitle: 'Syncing Pending Orders...',
+            syncingTitle: 'Syncing Laboratory Works...',
         }
     }
     componentWillMount() {
@@ -43,7 +43,7 @@ class OrderItem extends Component {
         RNFS.exists(this.props.patientAvatar).then((exist) => {
             if (exist)
             RNFS.readFile(this.props.patientAvatar, 'base64').then((rs) => {
-                this.setState({avatar: (rs.toString().indexOf('dataimage/'+this.props.patientAvatar.split('.').pop()+'base64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/'+this.props.patientAvatar.split('.').pop()+';base64,'+rs.toString()})
+                this.setState({avatar: (rs.toString().indexOf('dataimage/jpegbase64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/jpeg;base64,'+rs.toString()})
             })
         })
     }
@@ -200,7 +200,7 @@ class OrderItem extends Component {
                         </View>
                     </View>
                 </Modal>
-                <View style={{flexDirection: 'row', backgroundColor: '#E0E0E0'}}>
+                <View style={{flexDirection: 'row', backgroundColor: '#E0E0E0', zIndex: 0}}>
                     <TouchableOpacity
                         ref={ref => this.refStep1 = ref}
                         activeOpacity={(this.state.steps.active == 1) ? 1 : 0.2}
@@ -279,8 +279,8 @@ class OrderItem extends Component {
                 labItem.push(db.data.item(i))
             })
             this.setState({labItem: labItem, refreshing: false})
+            this.updateData(['labItem', 'labItemClass', 'labwork']);
         })
-        this.updateData(['labItem', 'labItemClass'], 'labItem');
     }
     pendingItemUpdate() {
         this.setState({refreshing: true, pendingItem: {}})
@@ -311,7 +311,7 @@ class OrderItem extends Component {
             this.setState({refreshing: false})
         }, () => {
             this.setState({pendingItem: db.pendingItem, refreshing: false})
-            this.updateData(['labwork'], 'pendingItem');
+            this.updateData(['labItem', 'labItemClass', 'labwork']);
         })
     }
     recentItemUpdate() {
@@ -347,7 +347,7 @@ class OrderItem extends Component {
             this.setState({refreshing: false})
         }, () => {
             this.setState({recentItem: db.recentItem, refreshing: false})
-            this.updateData(['labwork'], 'recentItem');
+            this.updateData(['labItem', 'labItemClass', 'labwork']);
         })
     }
     steps(step) {
@@ -645,15 +645,9 @@ class OrderItem extends Component {
         } else
         ToastAndroid.show('No item selected!', 1000)
     }
-    updateData(tables, title) {
+    updateData(tables) {
         NetInfo.isConnected.fetch().then(isConnected => {
             if (isConnected) {
-                var titles = {
-                    labItem: 'Syncing Laboratory Items',
-                    pendingItem: 'Syncing Pending Orders...',
-                    recentItem: 'Syncing Recent Orders...',
-                }
-                this.setState({syncing: true, syncingTitle: titles[title]})
                 _.forEach(tables, (table, ii) => {
                     this.exportDate(table).then(exportDate => {
                         if (exportDate === null) {
@@ -676,6 +670,7 @@ class OrderItem extends Component {
                                             importDate = moment().year(2000).format('YYYY-MM-DD HH:mm:ss')
                                         }
                                         if (moment().diff(moment(importDate), 'minutes') >= EnvInstance.interval) {
+                                            this.setState({syncing: true})
                                             this.importData(table, importDate).then((data) => {
                                                 var currentImportDate = importDate;
                                                 if (data.total > 0) {
@@ -704,14 +699,6 @@ class OrderItem extends Component {
                                                         currentImportDate = data.importdate;
                                                         this.updateImportDate(table, currentImportDate).then(msg => {
                                                             console.log(data.table+' import', msg)
-                                                            if(_.last(tables) === table) {
-                                                                if (title == 'labItem')
-                                                                    this.labItemUpdate()
-                                                                if (title == 'pendingItem')
-                                                                    this.pendingItemUpdate()
-                                                                if (title == 'recentItem')
-                                                                    this.recentItemUpdate()
-                                                            }
                                                             // ToastAndroid.show('Appointments updated!', 1000)
                                                         }).done()
                                                     }, (err) => {
@@ -729,10 +716,7 @@ class OrderItem extends Component {
                                                     }).done()
                                                 }
                                             }).done()
-                                        } else {
-                                            if(_.last(tables) === table)
-                                                this.setState({syncing: false})
-                                        }
+                                        } 
                                     }).done()
                                 }
                             }).done();

@@ -43,7 +43,7 @@ class ImportPage extends Component {
         this.setState({title: 'Validating Requirements...', progress: 0, importFile: 0,})
         NetInfo.isConnected.fetch().then(isConnected => {
             if (isConnected) {
-                var filterSchema = _.omit(filterSchema, ['cache', 'migrations', 'password_resets', 'userAccessLevel']);
+                var filterSchema = _.omit(Schema, ['cache', 'migrations', 'password_resets', 'userAccessLevel']);
                 _.forEach(filterSchema, (v, table) => {
                     this.importDate(table).then(importDate => {
                         if (importDate === null) {

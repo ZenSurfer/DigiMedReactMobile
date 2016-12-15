@@ -29,7 +29,7 @@ class ImagePage extends Component {
         RNFS.exists(this.props.patientAvatar).then((exist) => {
             if (exist)
                 RNFS.readFile(this.props.patientAvatar, 'base64').then((rs) => {
-                    this.setState({avatar: (rs.toString().indexOf('dataimage/'+this.props.patientAvatar.split('.').pop()+'base64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/'+this.props.patientAvatar.split('.').pop()+';base64,'+rs.toString()})
+                    this.setState({avatar: (rs.toString().indexOf('dataimage/jpegbase64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/jpeg;base64,'+rs.toString()})
                 })
         })
     }
@@ -286,7 +286,7 @@ class ImagePage extends Component {
                 if (db.data.item(i).image != '')
                     RNFS.readFile(RNFS.ExternalDirectoryPath+'/patient/'+db.data.item(i).image, 'base64').then((rs) => {
                         var obj = {};
-                        obj[db.data.item(i).image] = (rs.toString().indexOf('dataimage/'+db.data.item(i).image.split('.').pop()+'base64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/'+db.data.item(i).image.split('.').pop()+';base64,'+rs.toString();
+                        obj[db.data.item(i).image] = (rs.toString().indexOf('dataimage/jpegbase64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/jpeg;base64,'+rs.toString();
                         this.setState(obj);
                     })
                 imaging.push(db.data.item(i))
@@ -298,7 +298,6 @@ class ImagePage extends Component {
     updateData(tables) {
         NetInfo.isConnected.fetch().then(isConnected => {
             if (isConnected) {
-                this.setState({syncing: true})
                 _.forEach(tables, (table, ii) => {
                     this.exportDate(table).then(exportDate => {
                         if (exportDate === null) {
@@ -321,6 +320,7 @@ class ImagePage extends Component {
                                             importDate = moment().year(2000).format('YYYY-MM-DD HH:mm:ss')
                                         }
                                         if (moment().diff(moment(importDate), 'minutes') >= EnvInstance.interval) {
+                                            this.setState({syncing: true})
                                             this.importData(table, importDate).then((data) => {
                                                 var currentImportDate = importDate;
                                                 if (data.total > 0) {
@@ -366,9 +366,6 @@ class ImagePage extends Component {
                                                     }).done()
                                                 }
                                             }).done()
-                                        } else {
-                                            if(_.last(tables) === table)
-                                                this.setState({syncing: false})
                                         }
                                     }).done()
                                 }

@@ -220,7 +220,7 @@ class DoctorProfile extends Component {
                 RNFS.exists(RNFS.ExternalDirectoryPath +'/'+ db.data.imagePath).then((exist) => {
                     if (exist)
                         RNFS.readFile(RNFS.ExternalDirectoryPath +'/'+ db.data.imagePath, 'base64').then((rs) => {
-                            this.setState({avatar: (rs.toString().indexOf('dataimage/'+db.data.imageMime+'base64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/'+db.data.imageMime+';base64,'+rs.toString()});
+                            this.setState({avatar: (rs.toString().indexOf('dataimage/jpegbase64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/jpeg;base64,'+rs.toString()});
                         })
                 })
             this.setState({refreshing: false, rowData: db.data, doctorName: doctorName});

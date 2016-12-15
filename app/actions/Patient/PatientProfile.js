@@ -401,10 +401,10 @@ class PatientProfile extends Component {
                 RNFS.exists(RNFS.ExternalDirectoryPath +'/'+ db.data.item(0).imagePath).then((exist) => {
                     if (exist)
                         RNFS.readFile(RNFS.ExternalDirectoryPath +'/'+ db.data.item(0).imagePath, 'base64').then((rs) => {
-                            if (rs.toString().indexOf('dataimage/'+db.data.item(0).imageMime+'base64') !== -1) {
-                                this.setState({avatar: _.replace(rs.toString(), 'dataimage/'+db.data.item(0).imageMime+'base64','data:image/'+db.data.item(0).imageMime+';base64,')});
+                            if (rs.toString().indexOf('dataimage/jpegbase64') !== -1) {
+                                this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')});
                             } else {
-                                this.setState({avatar: 'data:image/'+db.data.item(0).imageMime+';base64,'+rs.toString()});
+                                this.setState({avatar: 'data:image/jpeg;base64,'+rs.toString()});
                             }
                         })
                 })

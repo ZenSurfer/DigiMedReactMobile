@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react'
 import { StyleSheet, Text, View, Navigator, ScrollView, ProgressBarAndroid, ToastAndroid, DrawerLayoutAndroid, TextInput, TouchableOpacity, Dimensions, ActivityIndicator, Animated, AsyncStorage, NetInfo} from 'react-native'
+import RNFS from 'react-native-fs'
 import Schema from '../../database/schema.js'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import IconFont from 'react-native-vector-icons/FontAwesome'
@@ -117,10 +118,33 @@ class ExportPage extends Component {
                             if (exportDate === null) {
                                 exportDate = moment().year(2000).format('YYYY-MM-DD HH:mm:ss')
                             }
-                            tx.executeSql("SELECT * FROM "+table+" WHERE (created_at >= '"+exportDate+"' OR updated_at >= '"+exportDate+"')", [], (tx, rs) => {
+                            // tx.executeSql("SELECT * FROM "+table+" WHERE (created_at >= '"+exportDate+"' OR updated_at >= '"+exportDate+"')", [], (tx, rs) => {
+                            tx.executeSql("SELECT * FROM "+table, [], (tx, rs) => {
                                 var rows = [];
                                 _.forEach(rs.rows, (v, i) => {
                                     rows.push(i+ '='+ encodeURIComponent('{') + this.jsonToQueryString(rs.rows.item(i)) + encodeURIComponent('}'))
+                                    if (table == 'patientImages') {
+                                        RNFS.exists(RNFS.ExternalDirectoryPath+'/patient/'+rs.rows.item(i).image).then((exist) => {
+                                            if (exist)
+                                                RNFS.readFile(RNFS.ExternalDirectoryPath+'/patient/'+rs.rows.item(i).image, 'base64').then((image) => {
+                                                    this.exportImage({
+                                                        imagePath: 'patient/'+rs.rows.item(i).image,
+                                                        image: (image.toString().indexOf('dataimage/jpegbase64') !== -1) ? encodeURIComponent(_.replace(image.toString(), 'dataimage/jpegbase64','')) :  encodeURIComponent(image.toString())
+                                                    }, table).done();
+                                                })
+                                        })
+                                    }
+                                    if (table == 'patients' || table == 'staff' || table == 'nurses' || table == 'doctors') {
+                                        RNFS.exists(RNFS.ExternalDirectoryPath+'/'+rs.rows.item(i).image).then((exist) => {
+                                            if (exist)
+                                                RNFS.readFile(RNFS.ExternalDirectoryPath+'/'+rs.rows.item(i).image, 'base64').then((image) => {
+                                                    this.exportImage({
+                                                        imagePath: rs.rows.item(i).image,
+                                                        image: (image.toString().indexOf('dataimage/jpegbase64') !== -1) ? encodeURIComponent(_.replace(image.toString(), 'dataimage/jpegbase64','')) :  encodeURIComponent(image.toString())
+                                                    }, table).done();
+                                                })
+                                        })
+                                    }
                                 })
                                 this.exportData(rows, table).then((data) => {
                                     if(!_.isUndefined(data) && data.success) {
@@ -177,6 +201,22 @@ class ExportPage extends Component {
                 }, 3000)
             }
         })
+    }
+    async exportImage(rows, table) {
+        try {
+            return await fetch(this.state.cloudUrl+'/api/v2/storeimage?type='+table, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(rows)
+            }).then((response) => {
+                return response.json()
+            });
+        } catch (err) {
+            console.log(table+':', err.message)
+        }
     }
     async exportData(rows, table) {
         try {

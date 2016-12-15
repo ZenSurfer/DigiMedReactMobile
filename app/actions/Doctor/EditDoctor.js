@@ -66,7 +66,7 @@ class EditDoctor extends Component {
                 RNFS.exists(db.data.imagePath).then((exist) => {
                     if (exist)
                         RNFS.readFile(db.data.imagePath, 'base64').then((rs) => {
-                            this.setState({avatar: (rs.toString().indexOf('dataimage/'+this.props.patientAvatar.split('.').pop()+'base64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/'+this.props.patientAvatar.split('.').pop()+';base64,'+rs.toString()});
+                            this.setState({avatar: (rs.toString().indexOf('dataimage/jpegbase64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/jpeg;base64,'+rs.toString()});
                         })
                 })
             this.setState({

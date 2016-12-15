@@ -8,7 +8,7 @@ function Env() {
     this.db = function() {
         return SQLite.openDatabase({name: "testDB4"})
     }
-    this.interval = 1
+    this.interval = 5
 }
 
 module.exports = Env;

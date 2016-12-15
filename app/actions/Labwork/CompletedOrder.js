@@ -1,7 +1,7 @@
 'use strict'
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, Image, View, Alert, DatePickerAndroid, Navigator, DrawerLayoutAndroid, TouchableNativeFeedback, TouchableOpacity, ListView, RefreshControl, ToastAndroid} from 'react-native'
+import {StyleSheet, Text, Image, View, Alert, DatePickerAndroid, Navigator, DrawerLayoutAndroid, TouchableNativeFeedback, TouchableOpacity, ListView, RefreshControl, ToastAndroid, AsyncStorage, NetInfo, ActivityIndicator} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import _ from 'lodash'
 import moment from 'moment'
@@ -26,12 +26,24 @@ class PendingOrder extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            refreshing: false,
+            refreshing: true,
             completedItem: {},
+            syncing: false,
+            syncingTitle: 'Syncing Completed Order...',
         }
     }
     componentDidMount() {
-        this.onRefresh()
+        this.updateCredentials().done();
+    }
+    async updateCredentials() {
+        try {
+            var doctor = await AsyncStorage.getItem('doctor');
+            this.setState({doctorID: JSON.parse(doctor).id, cloudUrl: JSON.parse(doctor).cloudUrl})
+        } catch (error) {
+            console.log('AsyncStorage error: ' + error.message);
+        } finally {
+            this.onRefresh();
+        }
     }
     onRefresh() {
         this.setState({refreshing: true})
@@ -63,6 +75,7 @@ class PendingOrder extends Component {
             alert(err.message)
         }, () => {
             this.setState({completedItem: db.completedItem, refreshing: false})
+            this.updateData(['labItem', 'labItemClass', 'labwork']);
         })
     }
     render() {
@@ -93,6 +106,18 @@ class PendingOrder extends Component {
                 <View style={Styles.subTolbar}>
                     <Text style={Styles.subTitle}>Completed Order</Text>
                 </View>
+                {(this.state.syncing) ? (
+                    <View style={{position: 'absolute', top: 50, zIndex: 1, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                            <View style={{ backgroundColor: '#FF5722', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                                <ActivityIndicator color="#FFF" size={15}/>
+                                <Text style={{textAlignVertical: 'center', paddingLeft: 10, color: '#FFF', fontSize: 11}}>{this.state.syncingTitle}</Text>
+                            </View>
+                        </View>
+                    </View>
+                ) : (
+                    <View />
+                )}
                 <ListView
                     dataSource={ds.cloneWithRows(this.state.completedItem)}
                     renderRow={(rowData) => this.renderListView(rowData)}
@@ -113,7 +138,7 @@ class PendingOrder extends Component {
                         <View style={{flex: 1, alignItems: 'stretch', paddingRight: 16}}>
                             <Text>{moment(rowData.orderDate).format('MMMM DD, YYYY')}</Text>
                             <Text style={styles.listItemHead}>{rowData.patientName}</Text>
-                            <Text style={{fontStyle: 'italic', color: '#FF5722'}}>updated last {rowData.completionDate}</Text>
+                            <Text style={{color: '#FF5722', fontSize: 10}}>Updated last {rowData.completionDate}</Text>
                         </View>
                         <View style={{justifyContent: 'center'}}>
                             <TouchableOpacity
@@ -166,6 +191,139 @@ class PendingOrder extends Component {
     }
     drawerInstance(instance) {
         drawerRef = instance
+    }
+    updateData(tables) {
+        NetInfo.isConnected.fetch().then(isConnected => {
+            if (isConnected) {
+                _.forEach(tables, (table, ii) => {
+                    this.exportDate(table).then(exportDate => {
+                        if (exportDate === null) {
+                            exportDate = moment().year(2000).format('YYYY-MM-DD HH:mm:ss')
+                        }
+                        db.transaction(tx => {
+                            tx.executeSql("SELECT * FROM "+table+" WHERE (created_at>='"+exportDate+"' OR updated_at>='"+exportDate+"')", [], (tx, rs) => {
+                                db.data = rs.rows;
+                            })
+                        }, (err) => console.log(err.message), () => {
+                            var rows = [];
+                            _.forEach(db.data, (v, i) => {
+                                rows.push(i+ '='+ encodeURIComponent('{') + this.jsonToQueryString(db.data.item(i)) + encodeURIComponent('}'))
+                            })
+                            this.exportData(table, rows).then(data => {
+                                if(!_.isUndefined(data) && data.success) {
+                                    this.updateExportDate(table, data.exportdate).then(msg => console.log(data.table+' export', msg)).done()
+                                    this.importDate(table).then(importDate => {
+                                        if (importDate === null) {
+                                            importDate = moment().year(2000).format('YYYY-MM-DD HH:mm:ss')
+                                        }
+                                        if (moment().diff(moment(importDate), 'minutes') >= EnvInstance.interval) {
+                                            this.setState({syncing: true})
+                                            this.importData(table, importDate).then((data) => {
+                                                var currentImportDate = importDate;
+                                                if (data.total > 0) {
+                                                    db.sqlBatch(_.transform(data.data, (result, n, i) => {
+                                                        result.push(["INSERT OR REPLACE INTO "+table+" VALUES ("+_.join(_.fill(Array(_.size(n)), '?'), ',')+")", _.values(n)])
+                                                        return true
+                                                    }, []), () => {
+                                                        if(_.last(tables) === table)
+                                                            this.setState({syncing: false})
+                                                        currentImportDate = data.importdate;
+                                                        this.updateImportDate(table, currentImportDate).then(msg => {
+                                                            console.log(data.table+' import', msg)
+                                                            if(_.last(tables) === table)
+                                                                this.onRefresh()
+                                                            // ToastAndroid.show('Appointments updated!', 1000)
+                                                        }).done()
+                                                    }, (err) => {
+                                                        if(_.last(tables) === table)
+                                                            this.setState({syncing: false})
+                                                        table// ToastAndroid.show(err.message+'!', 1000)
+                                                    });
+                                                } else {
+                                                    currentImportDate = data.importdate;
+                                                    if(_.last(tables) === table)
+                                                        this.setState({syncing: false})
+                                                    this.updateImportDate(table, currentImportDate  ).then(msg => {
+                                                        console.log(data.table+' import', msg)
+                                                        // ToastAndroid.show('Appointments up to date!', 1000)
+                                                    }).done()
+                                                }
+                                            }).done()
+                                        }
+                                    }).done()
+                                }
+                            }).done();
+                        })
+                    }).done()
+                })
+            }
+        })
+    }
+    async importDate(table) {
+        try {
+            var importDate = JSON.parse(await AsyncStorage.getItem('importDate'));
+            return (_.isUndefined(importDate[table])) ? null : importDate[table];
+        } catch (err) {
+            return null;
+        }
+    }
+    async importData(table, date) {
+        try {
+            return await fetch(this.state.cloudUrl+'/api/v2/import?table='+table+'&date='+encodeURIComponent(date)).then((res) => {
+                return res.json()
+            });
+        } catch (err) {
+            return err.message;
+        }
+    }
+    async updateImportDate(table, date) {
+        try {
+            var importDate = JSON.parse(await AsyncStorage.getItem('importDate'));
+            importDate[table] = date;
+            AsyncStorage.setItem('importDate', JSON.stringify(importDate));
+            return 'updated '+date;
+        } catch (err) {
+            return err.message;
+        }
+    }
+    async exportDate(table) {
+        try {
+            var exportDate = JSON.parse(await AsyncStorage.getItem('exportDate'));
+            return (_.isUndefined(exportDate[table])) ? null : exportDate[table];
+        } catch (err) {
+            return null;
+        }
+    }
+    async updateExportDate(table, date) {
+        try {
+            var exportDate = JSON.parse(await AsyncStorage.getItem('exportDate'));
+            exportDate[table] = date;
+            AsyncStorage.setItem('exportDate', JSON.stringify(exportDate));
+            return 'updated '+date;
+        } catch (err) {
+            return err.message;
+        }
+    }
+    async exportData(table, rows) {
+        try {
+            return await fetch(this.state.cloudUrl+'/api/v2/export?table='+table, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                },
+                body: _.join(rows, '&')
+            }).then((response) => {
+                return response.json()
+            });
+        } catch (err) {
+            console.log(table+':', e.message)
+        }
+    }
+    jsonToQueryString(json) {
+        return Object.keys(json).map((key) => {
+            return encodeURIComponent('"') + encodeURIComponent(key) + encodeURIComponent('"') + encodeURIComponent(":") + encodeURIComponent('"') + encodeURIComponent(json[key])+ encodeURIComponent('"');
+        }).join(encodeURIComponent(','));
     }
 }
 

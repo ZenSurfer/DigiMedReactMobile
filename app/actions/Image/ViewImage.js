@@ -36,7 +36,7 @@ class ViewImage extends Component {
                 RNFS.exists(RNFS.ExternalDirectoryPath+'/patient/'+imaging.image).then((exist) => {
                     if (exist)
                         RNFS.readFile(RNFS.ExternalDirectoryPath+'/patient/'+imaging.image, 'base64').then((rs) => {
-                            imaging['image'] =  (rs.toString().indexOf('dataimage/'+imaging.image.split('.').pop()+'base64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/'+imaging.image.split('.').pop()+';base64,'+rs.toString();
+                            imaging['image'] =  (rs.toString().indexOf('dataimage/jpegbase64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/jpeg;base64,'+rs.toString();
                         })
                 })
             this.setState({imaging: imaging})

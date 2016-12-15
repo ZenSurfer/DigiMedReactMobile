@@ -66,10 +66,10 @@ class DoctorPage extends Component {
                     RNFS.exists(RNFS.ExternalDirectoryPath +'/'+ db.data.item(i).imagePath).then((exist) => {
                         if (exist)
                             RNFS.readFile(RNFS.ExternalDirectoryPath +'/'+ db.data.item(i).imagePath, 'base64').then((rs) => {
-                                if (rs.toString().indexOf('dataimage/'+db.data.item(i).imageMime+'base64') !== -1) {
-                                    obj['doctor'+db.data.item(i).id] = _.replace(rs.toString(), 'dataimage/'+db.data.item(i).imageMime+'base64','data:image/'+db.data.item(i).imageMime+';base64,');
+                                if (rs.toString().indexOf('dataimage/jpegbase64') !== -1) {
+                                    obj['doctor'+db.data.item(i).id] = _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,');
                                 } else {
-                                    obj['doctor'+db.data.item(i).id] = 'data:image/'+db.data.item(i).imageMime+';base64,'+rs.toString();
+                                    obj['doctor'+db.data.item(i).id] = 'data:image/jpeg;base64,'+rs.toString();
                                 }
                                 self.setState(obj);
                             })
@@ -176,7 +176,6 @@ class DoctorPage extends Component {
     updateData(tables) {
         NetInfo.isConnected.fetch().then(isConnected => {
             if (isConnected) {
-                this.setState({syncing: true})
                 _.forEach(tables, (table, ii) => {
                     this.exportDate(table).then(exportDate => {
                         if (exportDate === null) {
@@ -199,6 +198,7 @@ class DoctorPage extends Component {
                                             importDate = moment().year(2000).format('YYYY-MM-DD HH:mm:ss')
                                         }
                                         if (moment().diff(moment(importDate), 'minutes') >= EnvInstance.interval) {
+                                            this.setState({syncing: true})
                                             this.importData(table, importDate).then((data) => {
                                                 var currentImportDate = importDate;
                                                 if (data.total > 0) {
@@ -246,9 +246,6 @@ class DoctorPage extends Component {
                                                     }).done()
                                                 }
                                             }).done()
-                                        } else {
-                                            if(_.last(tables) === table)
-                                                this.setState({syncing: false})
                                         }
                                     }).done()
                                 }

@@ -48,7 +48,7 @@ class DrawerPage extends Component {
             RNFS.exists(RNFS.ExternalDirectoryPath +'/'+ JSON.parse(doctor).imagePath).then((exist) => {
                 if (exist)
                     RNFS.readFile(RNFS.ExternalDirectoryPath +'/'+ JSON.parse(doctor).imagePath, 'base64').then((rs) => {
-                        this.setState({avatar: (rs.toString().indexOf('dataimage/'+JSON.parse(doctor).imagePath.split('.').pop()+'base64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/'+JSON.parse(doctor).imagePath.split('.').pop()+';base64,'+rs.toString()})
+                        this.setState({avatar: (rs.toString().indexOf('dataimage/jpegbase64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/jpeg;base64,'+rs.toString()})
                     })
             })
             db.transaction((tx) => {
@@ -214,7 +214,7 @@ class DrawerPage extends Component {
                             </View>
                         </TouchableNativeFeedback>
                         <View style={{marginTop: 5, marginBottom: 5, borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}></View>
-                        <Text style={[styles.drawerLabel]}>Syncing (<Text style={{fontStyle: 'italic'}}>{(this.state.cloudUrl) ? this.state.cloudUrl : '-'}</Text>)</Text>
+                        <Text style={[styles.drawerLabel]}>Syncing (<Text style={{}}>{(this.state.cloudUrl) ? this.state.cloudUrl : '-'}</Text>)</Text>
                         <TouchableNativeFeedback
                             onPress={() => this.props.navigator.push({
                                 id: 'ImportPage',

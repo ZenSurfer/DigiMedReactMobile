@@ -30,7 +30,7 @@ class HPEDPage extends Component {
         RNFS.exists(this.props.patientAvatar).then((exist) => {
             if (exist)
                 RNFS.readFile(this.props.patientAvatar, 'base64').then((rs) => {
-                    this.setState({avatar: (rs.toString().indexOf('dataimage/'+this.props.patientAvatar.split('.').pop()+'base64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/'+this.props.patientAvatar.split('.').pop()+';base64,'+rs.toString()})
+                    this.setState({avatar: (rs.toString().indexOf('dataimage/jpegbase64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/jpeg;base64,'+rs.toString()})
                 })
         })
     }
@@ -217,7 +217,7 @@ class HPEDPage extends Component {
                         {(rowData.upcoming) ? (
                             <View style={{flexDirection: 'column',padding: 16, paddingTop: 5, paddingBottom: 5}}>
                                 <Text style={{color: '#F44336', fontWeight: 'bold'}}>Upcoming Followup</Text>
-                                <Text style={{color: '#616161', flex: 1, alignItems: 'stretch', fontStyle: 'italic'}}>
+                                <Text style={{color: '#616161', flex: 1, alignItems: 'stretch'}}>
                                     {_.map(_.split(rowData.upcoming, '@@'), (v,i) => {
                                         if (i==1)
                                             return (<Text key={i}> {v}</Text>)
@@ -232,7 +232,7 @@ class HPEDPage extends Component {
                         ) : (
                             <View style={{flexDirection: 'column',padding: 16, paddingTop: 5, paddingBottom: 5}}>
                                 <Text style={{color: '#616161', fontWeight: 'bold'}}>Previous Followup</Text>
-                                <Text style={{color: '#616161', flex: 1, alignItems: 'stretch', fontStyle: 'italic'}}>
+                                <Text style={{color: '#616161', flex: 1, alignItems: 'stretch'}}>
                                     {_.map(_.split(rowData.last, '@@'), (v,i) => {
                                         if (i==1)
                                             return (<Text key={i}> {v}</Text>)
@@ -275,7 +275,6 @@ class HPEDPage extends Component {
     updateData(tables) {
         NetInfo.isConnected.fetch().then(isConnected => {
             if (isConnected) {
-                this.setState({syncing: true})
                 _.forEach(tables, (table, ii) => {
                     this.exportDate(table).then(exportDate => {
                         if (exportDate === null) {
@@ -298,6 +297,7 @@ class HPEDPage extends Component {
                                             importDate = moment().year(2000).format('YYYY-MM-DD HH:mm:ss')
                                         }
                                         if (moment().diff(moment(importDate), 'minutes') >= EnvInstance.interval) {
+                                            this.setState({syncing: true})
                                             this.importData(table, importDate).then((data) => {
                                                 var currentImportDate = importDate;
                                                 if (data.total > 0) {
@@ -345,9 +345,6 @@ class HPEDPage extends Component {
                                                     }).done()
                                                 }
                                             }).done()
-                                        } else {
-                                            if(_.last(tables) === table)
-                                                this.setState({syncing: false})
                                         }
                                     }).done()
                                 }

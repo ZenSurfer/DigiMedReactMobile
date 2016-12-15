@@ -322,10 +322,10 @@ class AppointmentPage extends Component {
                             <Icon style={{textAlignVertical: 'center', textAlign: 'center', color: '#FFF'}} name='announcement' size={20}/>
                         </TouchableOpacity>
                         <View style={{flex: 1, alignItems: 'stretch', marginLeft: 16}}>
-                            <Text style={{color: '#616161', fontStyle: 'italic'}}>({time})</Text>
+                            <Text style={{color: '#616161'}}>({time})</Text>
                             <Text style={{fontSize: 23, color: '#212121'}}>{appointmentRowData[0].patient}</Text>
                             <View style={{flexDirection: 'row', alignItems: 'stretch'}}>
-                                <Text style={{fontStyle: 'italic'}}>for</Text>
+                                <Text style={{}}>for</Text>
                                 <Text style={{color: '#FF5722'}}> {(appointmentRowData[0].type) ? this.state.appointmentType[appointmentRowData[0].type] : 'Follow-Up'} {}</Text>
                             </View>
                         </View>
@@ -349,7 +349,6 @@ class AppointmentPage extends Component {
     updateData(tables) {
         NetInfo.isConnected.fetch().then(isConnected => {
             if (isConnected) {
-                this.setState({syncing: true, syncingTitle: 'Syncing Appointments...'})
                 _.forEach(tables, (table, ii) => {
                     this.exportDate(table).then(exportDate => {
                         if (exportDate === null) {
@@ -372,6 +371,7 @@ class AppointmentPage extends Component {
                                             importDate = moment().year(2000).format('YYYY-MM-DD HH:mm:ss')
                                         }
                                         if (moment().diff(moment(importDate), 'minutes') >= EnvInstance.interval) {
+                                            this.setState({syncing: true, syncingTitle: 'Syncing Appointments...'})
                                             this.importData(table, importDate).then((data) => {
                                                 var currentImportDate = importDate;
                                                 if (data.total > 0) {
@@ -403,9 +403,6 @@ class AppointmentPage extends Component {
                                                     }).done()
                                                 }
                                             }).done()
-                                        } else {
-                                            if(_.last(tables) === table)
-                                                this.setState({syncing: false})
                                         }
                                     }).done()
                                 }
