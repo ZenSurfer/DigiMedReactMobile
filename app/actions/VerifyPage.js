@@ -53,7 +53,6 @@ class VerifyPage extends Component {
                     passProps: {
                         initial: true,
                         doctorUserID: this.props.doctorUserID,
-                        cloudUrl: this.props.cloudUrl,
                     },
                     sceneConfig: Navigator.SceneConfigs.FadeAndroid
                 })
@@ -158,9 +157,9 @@ class VerifyPage extends Component {
         );
     }
     async pull(link, param) {
-        console.log(this.props.cloudUrl+'/api/v2/'+link+'?'+param)
+        console.log(EnvInstance.cloudUrl+'/api/v2/'+link+'?'+param)
         try {
-            return await fetch(this.props.cloudUrl+'/api/v2/'+link+'?'+param).then((response) => {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/'+link+'?'+param).then((response) => {
                 return response.json()
             });
         } catch (err) {

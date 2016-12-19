@@ -15,56 +15,55 @@ class AwesomeProject extends Component {
         }
     }
     componentDidMount() {
-        this.updateCredentials().then(doctor => {
-            FCM.requestPermissions();
-            this.notificationUnsubscribe = FCM.on('notification', (notif) => {
-                console.log(doctor)
-                if (!_.isUndefined(notif['fcm'])) {
-                    FCM.presentLocalNotification({
-                        title: notif.fcm.title,
-                        body:  notif.fcm.body,
-                        show_in_foreground: true,
-                        priority: "high",
-                    });
-                }
-                if(notif.local_notification){
-                    if (!_.isUndefined(doctor)) {
+        FCM.requestPermissions();
+        this.notificationUnsubscribe = FCM.on('notification', (notif) => {
+            if (!_.isUndefined(notif['fcm'])) {
+                FCM.presentLocalNotification({
+                    title: notif.fcm.title,
+                    body:  notif.fcm.body,
+                    show_in_foreground: true,
+                    priority: "high",
+                });
+            }
+            if(notif.local_notification) {
+                this.updateCredentials().then(data => {
+                    if (data.validate) {
                         this.nav.replace({
                             id: 'CompletedOrder',
                             passProps: {
-                                userID: doctor.userID,
+                                userID: data.userID,
                             },
                             sceneConfig: Navigator.SceneConfigs.FadeAndroid
                         })
-                    }
-                }
-                if(notif.opened_from_tray){
-                    if (!_.isUndefined(doctor)) {
+                    } else {
                         this.nav.replace({
-                            id: 'CompletedOrder',
-                            passProps: {
-                                userID: doctor.userID,
-                            },
+                            id: 'LoginPage',
                             sceneConfig: Navigator.SceneConfigs.FadeAndroid
                         })
                     }
-                }
-            });
-            this.refreshUnsubscribe = FCM.on('refreshToken', (token) => {
-                console.log('token', token)
-            });
-        }).done();
+                }).done()
+            }
+        });
+        // this.refreshUnsubscribe = FCM.on('refreshToken', (token) => {
+        //     console.log('token', token)
+        // });
     }
     async updateCredentials() {
         try {
             var doctor = await AsyncStorage.getItem('doctor');
-            return  JSON.parse(doctor)
+            if (!_.isNull(doctor))
+                return {
+                    validate: true,
+                    userID: JSON.parse(doctor).userID
+                }
+            else
+                return {validate: false}
         } catch (error) {
             console.log('AsyncStorage error: ' + error.message);
         }
     }
     componentWillUnmount() {
-        this.refreshUnsubscribe();
+        // this.refreshUnsubscribe();
         this.notificationUnsubscribe();
     }
     otherMethods(){
@@ -112,7 +111,7 @@ class AwesomeProject extends Component {
         return (
             <Navigator
                 ref={nav => this.nav = nav}
-                initialRoute={{id: 'LoginPage'}}
+                initialRoute={{id: 'SplashPage'}}
                 renderScene={this.renderScene.bind(this)}
                 configureScene={(route) => {
                     if (route.sceneConfig) {

@@ -56,7 +56,6 @@ class OrderItem extends Component {
             this.setState({
                 doctorID: JSON.parse(doctor).id,
                 mobileID: JSON.parse(doctor).mobileID,
-                cloudUrl: JSON.parse(doctor).cloudUrl
             })
         } catch (error) {
             console.log('AsyncStorage error: ' + error.message);
@@ -86,7 +85,7 @@ class OrderItem extends Component {
                     <Text style={Styles.subTitle}>Laboratory Works</Text>
                 </View>
                 {(this.state.syncing) ? (
-                    <View style={{position: 'absolute', top: 74, zIndex: 1, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                    <View style={{position: 'absolute', top: 109, zIndex: 1, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                         <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
                             <View style={{ backgroundColor: '#FF5722', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
                                 <ActivityIndicator color="#FFF" size={15}/>
@@ -737,7 +736,7 @@ class OrderItem extends Component {
     }
     async importImage(param) {
         try {
-            return await fetch(this.state.cloudUrl+'/api/v2/image?'+param).then((response) => {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/image?'+param).then((response) => {
                 return response.json()
             });
         } catch (err) {
@@ -754,7 +753,7 @@ class OrderItem extends Component {
     }
     async importData(table, date) {
         try {
-            return await fetch(this.state.cloudUrl+'/api/v2/import?table='+table+'&date='+encodeURIComponent(date)).then((res) => {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/import?table='+table+'&date='+encodeURIComponent(date)).then((res) => {
                 return res.json()
             });
         } catch (err) {
@@ -791,7 +790,7 @@ class OrderItem extends Component {
     }
     async exportData(table, rows) {
         try {
-            return await fetch(this.state.cloudUrl+'/api/v2/export?table='+table, {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/export?table='+table, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',

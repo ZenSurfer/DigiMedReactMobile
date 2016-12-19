@@ -30,7 +30,7 @@ class ImportPage extends Component {
     async updateCredentials() {
         try {
             var doctor = await AsyncStorage.getItem('doctor');
-            this.setState({doctorID: JSON.parse(doctor).id, cloudUrl: JSON.parse(doctor).cloudUrl})
+            this.setState({doctorID: JSON.parse(doctor).id})
         } catch (error) {
             console.log('AsyncStorage error: ' + error.message);
         } finally {
@@ -187,7 +187,7 @@ class ImportPage extends Component {
     }
     async importImage(param) {
         try {
-            return await fetch(this.props.cloudUrl+'/api/v2/image?'+param).then((response) => {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/image?'+param).then((response) => {
                 return response.json()
             });
         } catch (err) {
@@ -214,14 +214,14 @@ class ImportPage extends Component {
     }
     async importData(table, date) {
         try {
-            return await fetch(this.state.cloudUrl+'/api/v2/import?table='+table+'&date='+encodeURIComponent(date)).then((res) => {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/import?table='+table+'&date='+encodeURIComponent(date)).then((res) => {
                 return res.json()
             });
         } catch (err) {
             return err.message;
         }
         // try {
-        //     return await fetch(this.props.cloudUrl+'/api/v2/pull?'+param).then((response) => {
+        //     return await fetch(EnvInstance.cloudUrl+'/api/v2/pull?'+param).then((response) => {
         //         return response.json()
         //     });
         // } catch (err) {

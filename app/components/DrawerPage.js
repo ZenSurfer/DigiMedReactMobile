@@ -43,7 +43,6 @@ class DrawerPage extends Component {
                 doctorName: JSON.parse(doctor).name,
                 doctorType: JSON.parse(doctor).type,
                 doctorInitial: JSON.parse(doctor).initial,
-                cloudUrl: JSON.parse(doctor).cloudUrl,
             })
             RNFS.exists(RNFS.ExternalDirectoryPath +'/'+ JSON.parse(doctor).imagePath).then((exist) => {
                 if (exist)
@@ -214,7 +213,7 @@ class DrawerPage extends Component {
                             </View>
                         </TouchableNativeFeedback>
                         <View style={{marginTop: 5, marginBottom: 5, borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}></View>
-                        <Text style={[styles.drawerLabel]}>Syncing (<Text style={{}}>{(this.state.cloudUrl) ? this.state.cloudUrl : '-'}</Text>)</Text>
+                        <Text style={[styles.drawerLabel]}>Syncing</Text>
                         <TouchableNativeFeedback
                             onPress={() => this.props.navigator.push({
                                 id: 'ImportPage',
@@ -222,12 +221,11 @@ class DrawerPage extends Component {
                                     userID: this.state.userID,
                                     doctorID: this.state.doctorID,
                                     doctorName: this.state.doctorName,
-                                    cloudUrl: this.state.cloudUrl,
                                 },
                                 sceneConfig: Navigator.SceneConfigs.PushFromRight
                             })
                             }>
-                            <View style={[styles.drawerViewWrapper, {opacity: (this.state.cloudUrl) ? 1 : 0.2, backgroundColor: (this.props.routeName == 'imports') ? '#EEEEEE' : '#FFFFFF'}]}>
+                            <View style={[styles.drawerViewWrapper, {opacity: (EnvInstance.cloudUrl) ? 1 : 0.2, backgroundColor: (this.props.routeName == 'imports') ? '#EEEEEE' : '#FFFFFF'}]}>
                                 <View style={styles.iconWrapper}>
                                     <Icon name='cloud-download' style={[styles.icon, {color: '#FF5722'}]} />
                                 </View>
@@ -245,7 +243,7 @@ class DrawerPage extends Component {
                                 sceneConfig: Navigator.SceneConfigs.PushFromRight
                             })
                             }>
-                            <View style={[styles.drawerViewWrapper, {opacity: (this.state.cloudUrl) ? 1 : 0.2, backgroundColor: (this.props.routeName == 'exports') ? '#EEEEEE' : '#FFFFFF'}]}>
+                            <View style={[styles.drawerViewWrapper, {opacity: (EnvInstance.cloudUrl) ? 1 : 0.2, backgroundColor: (this.props.routeName == 'exports') ? '#EEEEEE' : '#FFFFFF'}]}>
                                 <View style={styles.iconWrapper}>
                                     <Icon name='cloud-upload' style={[styles.icon, {color: '#01579B'}]} />
                                 </View>

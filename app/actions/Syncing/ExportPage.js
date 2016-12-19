@@ -36,7 +36,6 @@ class ExportPage extends Component {
             this.setState({
                 doctorID: JSON.parse(doctor).id,
                 doctorUserID: JSON.parse(doctor).userID,
-                cloudUrl: JSON.parse(doctor).cloudUrl,
             })
         } catch (error) {
             console.log('AsyncStorage error: ' + error.message);
@@ -204,7 +203,7 @@ class ExportPage extends Component {
     }
     async exportImage(rows, table) {
         try {
-            return await fetch(this.state.cloudUrl+'/api/v2/storeimage?type='+table, {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/storeimage?type='+table, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -220,7 +219,7 @@ class ExportPage extends Component {
     }
     async exportData(rows, table) {
         try {
-            return await fetch(this.state.cloudUrl+'/api/v2/export?table='+table, {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/export?table='+table, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',

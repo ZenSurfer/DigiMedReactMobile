@@ -3,6 +3,7 @@
 import React, {Component} from 'react'
 import {StyleSheet, Text, Image, View, AsyncStorage, Navigator, StatusBar, ProgressBarAndroid, DrawerLayoutAndroid, InteractionManager, TouchableNativeFeedback, TouchableOpacity, ListView, RefreshControl, Modal, TouchableHighlight, TextInput, NetInfo, ActivityIndicator} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import IconFont from 'react-native-vector-icons/FontAwesome'
 import RNFS from 'react-native-fs'
 import moment from 'moment'
 import _ from 'lodash'
@@ -38,7 +39,7 @@ class PatientPage extends Component {
     async updateCredentials() {
         try {
             var doctor = await AsyncStorage.getItem('doctor');
-            this.setState({doctorID: JSON.parse(doctor).id, cloudUrl: JSON.parse(doctor).cloudUrl})
+            this.setState({doctorID: JSON.parse(doctor).id})
         } catch (error) {
             console.log('AsyncStorage error: ' + error.message);
         } finally {
@@ -124,7 +125,7 @@ class PatientPage extends Component {
                     <View />
                 )}
                 <ListView
-                    style={{marginBottom: 42}}
+                    style={{marginBottom: 36}}
                     dataSource={ds.cloneWithRows(this.state.rowData)}
                     renderRow={(rowData, sectionID, rowID) => this.renderListView(rowData, rowID)}
                     enableEmptySections={true}
@@ -152,10 +153,10 @@ class PatientPage extends Component {
                                 this.setState({search: 'ORDER BY firstname ASC'})
                             this.onRefresh()
                         }}>
-                        <View style={{flex: 1, alignItems: 'stretch', padding: 10, borderColor: '#448AFF', borderRightWidth: 0.5, backgroundColor: (this.state.searchType=='firstname') ? '#FFF' : '#2979FF'}}>
+                        <View style={{flex: 1, alignItems: 'stretch', padding: 10, borderColor: '#FFF', borderRightWidth: 0.5, backgroundColor: '#F5F5F5'}}>
                             <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-                                <Text style={{color: (this.state.searchType=='firstname') ? '#424242' : '#FFF', textAlign: 'center', textAlignVertical: 'center', paddingRight: 5}}>FNAME</Text>
-                                <Text style={{color: (this.state.searchType=='firstname') ? '#424242' : '#FFF', textAlign: 'center'}}><Icon name={'sort-by-alpha'} size={25} /></Text>
+                                <Text style={{color: (this.state.searchType=='firstname') ? '#424242' : '#BDBDBD', textAlign: 'center', textAlignVertical: 'center', paddingRight: 5}}>First Name</Text>
+                                <Text style={{color: (this.state.searchType=='firstname') ? '#424242' : '#BDBDBD', textAlign: 'center', textAlignVertical: 'center'}}><IconFont name={(this.state.search == 'ORDER BY firstname ASC') ? 'sort-alpha-desc' : 'sort-alpha-asc'} size={16} /></Text>
                             </View>
                         </View>
                     </TouchableNativeFeedback>
@@ -168,10 +169,10 @@ class PatientPage extends Component {
                                 this.setState({search: 'ORDER BY middlename ASC'})
                             this.onRefresh()
                         }}>
-                        <View style={{flex: 1, alignItems: 'stretch', padding: 10, borderColor: '#448AFF', borderRightWidth: 0.5, backgroundColor: (this.state.searchType=='middlename') ? '#FFF' : '#2979FF'}}>
+                        <View style={{flex: 1, alignItems: 'stretch', padding: 10, borderColor: '#FFF', borderRightWidth: 0.5, backgroundColor: '#F5F5F5'}}>
                             <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-                                <Text style={{color: (this.state.searchType=='middlename') ? '#424242' : '#FFF', textAlign: 'center', textAlignVertical: 'center', paddingRight: 5}}>MNAME</Text>
-                                <Text style={{color: (this.state.searchType=='middlename') ? '#424242' : '#FFF', textAlign: 'center'}}><Icon name={'sort-by-alpha'} size={25} /></Text>
+                                <Text style={{color: (this.state.searchType=='middlename') ? '#424242' : '#BDBDBD', textAlign: 'center', textAlignVertical: 'center', paddingRight: 5}}>Middle Name</Text>
+                                <Text style={{color: (this.state.searchType=='middlename') ? '#424242' : '#BDBDBD', textAlign: 'center', textAlignVertical: 'center'}}><IconFont name={(this.state.search == 'ORDER BY middlename ASC') ? 'sort-alpha-desc' : 'sort-alpha-asc'} size={16} /></Text>
                             </View>
                         </View>
                     </TouchableNativeFeedback>
@@ -184,10 +185,10 @@ class PatientPage extends Component {
                                 this.setState({search: 'ORDER BY lastname ASC'})
                             this.onRefresh()
                         }}>
-                        <View style={{flex: 1, alignItems: 'stretch', padding: 10, backgroundColor: (this.state.searchType=='lastname') ? '#FFF' : '#2979FF'}}>
+                        <View style={{flex: 1, alignItems: 'stretch', padding: 10, backgroundColor: '#F5F5F5'}}>
                             <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-                                <Text style={{color: (this.state.searchType=='lastname') ? '#424242' : '#FFF', textAlign: 'center', textAlignVertical: 'center', paddingRight: 5}}>LNAME</Text>
-                                <Text style={{color: (this.state.searchType=='lastname') ? '#424242' : '#FFF', textAlign: 'center'}}><Icon name={'sort-by-alpha'} size={25} /></Text>
+                                <Text style={{color: (this.state.searchType=='lastname') ? '#424242' : '#BDBDBD', textAlign: 'center', textAlignVertical: 'center', paddingRight: 5}}>Last Name</Text>
+                                <Text style={{color: (this.state.searchType=='lastname') ? '#424242' : '#BDBDBD', textAlign: 'center', textAlignVertical: 'center'}}><IconFont name={(this.state.search == 'ORDER BY lastname ASC') ? 'sort-alpha-desc' : 'sort-alpha-asc'} size={16} /></Text>
                             </View>
                         </View>
                     </TouchableNativeFeedback>
@@ -335,7 +336,7 @@ class PatientPage extends Component {
     }
     async importImage(param) {
         try {
-            return await fetch(this.state.cloudUrl+'/api/v2/image?'+param).then((response) => {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/image?'+param).then((response) => {
                 return response.json()
             });
         } catch (err) {
@@ -352,7 +353,7 @@ class PatientPage extends Component {
     }
     async importData(table, date) {
         try {
-            return await fetch(this.state.cloudUrl+'/api/v2/import?table='+table+'&date='+encodeURIComponent(date)).then((res) => {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/import?table='+table+'&date='+encodeURIComponent(date)).then((res) => {
                 return res.json()
             });
         } catch (err) {
@@ -389,7 +390,7 @@ class PatientPage extends Component {
     }
     async exportData(table, rows) {
         try {
-            return await fetch(this.state.cloudUrl+'/api/v2/export?table='+table, {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/export?table='+table, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',

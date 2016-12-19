@@ -28,32 +28,17 @@ class HPEDInfo extends Component {
     }
     componentWillMount() {
         this.setState({refreshing: true})
-        db.transaction((tx) => {
-            tx.executeSql("SELECT `diagnosis`.`patientID`, `diagnosis`.`doctorID`, `diagnosis`.`appointmentID`, `diagnosis`.`preparedByID`, `diagnosis`.`chiefComplaint`, `diagnosis`.`historyIllness`, `diagnosis`.`bodyTemperature`, `diagnosis`.`bloodPressure`, `diagnosis`.`respirationRate`, `diagnosis`.`pulseRate`, `diagnosis`.`medicalHistory`, `diagnosis`.`initialDiagnosis`, `diagnosis`.`physicalExam`, `diagnosis`.`services`, `diagnosis`.`type`, `diagnosis`.`code`, `diagnosis`.`category`, `diagnosis`.`plan`, `diagnosis`.`pay`, `diagnosis`.`referringDoctor`, `diagnosis`.`labs`, `diagnosis`.`imaging`, `diagnosis`.`accident`, `diagnosis`.`painLevel`, `diagnosis`.`allergies`, `diagnosis`.`currentMedications`, `diagnosis`.`date`, `diagnosis`.`timeStart`, `diagnosis`.`timeEnd`, `diagnosis`.`certRemarks`, `diagnosis`.`certPurpose`, ('Dr. ' || `doctors`.`firstname` || ' ' || `doctors`.`middlename` || ' ' || `doctors`.`lastname`)  AS `doctorName` FROM `diagnosis` LEFT OUTER JOIN `doctors` on `diagnosis`.`doctorID` = `doctors`.`id` WHERE `diagnosis`.`id` = ? LIMIT 1", [this.props.diagnosisID], function(tx, rs) {
-                db.data = rs.rows
-            }, function(error) {
-                console.log('SELECT SQL statement ERROR: ' + error.message);
-            });
-            tx.executeSql("SELECT `icds`.`code` as `code`, `icds`.`description` as `description` FROM `diagnosisIcds` LEFT OUTER JOIN `icds` ON `icds`.`id` = `diagnosisIcds`.`icdID` WHERE `diagnosisIcds`.`diagnosisID` = ? AND (`diagnosisIcds`.`deleted_at` in (null, 'NULL', '') OR `diagnosisIcds`.`deleted_at` is null) ORDER BY `icds`.`code` ASC", [this.props.diagnosisID], (tx, rs) => {
-                db.icds = rs.rows;
-            })
-        }, (error) => {
-            console.log('transaction error: ' + error.message);
-        }, () => {
-            this.setState({refreshing: false})
-            this.setState({rowData: db.data.item(0)})
-            var icds = [];
-            _.forEach(db.icds, (v, i) => {
-                icds.push(db.icds.item(i).code+': '+db.icds.item(i).description);
-            })
-            this.setState({icds: icds})
-        })
         RNFS.exists(this.props.patientAvatar).then((exist) => {
             if (exist)
                 RNFS.readFile(this.props.patientAvatar, 'base64').then((rs) => {
                     this.setState({avatar: (rs.toString().indexOf('dataimage/jpegbase64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/jpeg;base64,'+rs.toString()})
                 })
         })
+    }
+    componentDidMount() {
+        setTimeout(() => {
+            this.onRefresh()
+        }, 1000)
     }
     onRefresh() {
         this.setState({refreshing: true})
@@ -76,15 +61,10 @@ class HPEDInfo extends Component {
             this.setState({icds: icds})
         })
     }
-    componentDidMount() {
-        InteractionManager.runAfterInteractions(() => {
-            this.setState({renderPlaceholderOnly: false, progress: 1});
-        });
-    }
     render() {
         return (
             <Navigator
-                renderScene={(this.state.renderPlaceholderOnly) ? this.renderPlaceholderView.bind(this) : this.renderScene.bind(this)}
+                renderScene={this.renderScene.bind(this)}
                 navigator={this.props.navigator}
                 navigationBar={
                     <Navigator.NavigationBar

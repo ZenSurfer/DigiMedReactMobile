@@ -20,7 +20,6 @@ class LoginPage extends Component {
         this.state = {
             username: 'RAJ',
             password: 'doctor2',
-            cloudUrl: 'http://192.168.1.41/imd5/public/',
             auth: false,
             visibility: false,
             failed: false,
@@ -75,14 +74,14 @@ class LoginPage extends Component {
                                             </TouchableOpacity>
                                         )}
                                     </View>
-                                    <TextInput
+                                    {/* <TextInput
                                         placeholder={'Cloud Server (Optional)'}
                                         style={[styles.textInput,{color: '#FFF', textAlign: 'center'}]}
-                                        value={this.state.cloudUrl}
+                                        value={EnvInstance.cloudUrl}
                                         placeholderTextColor={'#90CAF9'}
                                         underlineColorAndroid={'#2979FF'}
                                         onChangeText={(text) => this.setState({cloudUrl: text})}
-                                        returnKeyType={'next'}/>
+                                        returnKeyType={'next'}/> */}
                                     <View style={[{flexDirection: 'column'}]}>
                                         {(!this.state.auth) ? (
                                             <TouchableNativeFeedback
@@ -111,7 +110,7 @@ class LoginPage extends Component {
                                                                             passProps: {
                                                                                 initial: true,
                                                                                 doctorUserID: data.userID,
-                                                                                cloudUrl: _.trimEnd(this.state.cloudUrl, '/'),
+
                                                                             },
                                                                             sceneConfig: Navigator.SceneConfigs.FadeAndroid
                                                                         })
@@ -140,7 +139,7 @@ class LoginPage extends Component {
                                                                         id: 'SplashPage',
                                                                         passProps: {
                                                                             doctorUserID: db.data.userID,
-                                                                            cloudUrl: _.trimEnd(this.state.cloudUrl, '/'),
+
                                                                         },
                                                                         sceneConfig: Navigator.SceneConfigs.FadeAndroid
                                                                     })
@@ -159,7 +158,7 @@ class LoginPage extends Component {
                                                                                     passProps: {
                                                                                         initial: true,
                                                                                         doctorUserID: data.userID,
-                                                                                        cloudUrl: _.trimEnd(this.state.cloudUrl, '/'),
+
                                                                                     },
                                                                                     sceneConfig: Navigator.SceneConfigs.FadeAndroid
                                                                                 })
@@ -188,7 +187,7 @@ class LoginPage extends Component {
                                         </TouchableNativeFeedback>
                                     </View>
                                     {(this.state.auth) ? (
-                                        <View style={{position: 'absolute', height: 150, width: 280, top: 0}}>
+                                        <View style={{position: 'absolute', height: 100, width: 280, top: 0}}>
                                             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#2962FF', paddingBottom: 20}}>
                                                 <ActivityIndicator animating={true} size={'large'} color={'#FFF'}/>
                                             </View>
@@ -205,7 +204,7 @@ class LoginPage extends Component {
     async login(param) {
         try {
             this.setState({failed: false})
-            return await fetch(_.trimEnd(this.state.cloudUrl, '/')+'/api/v2/login?'+param).then((response) => {
+            return await fetch(_.trimEnd(EnvInstance.cloudUrl, '/')+'/api/v2/login?'+param).then((response) => {
                 return response.json()
             });
         } catch (err) {

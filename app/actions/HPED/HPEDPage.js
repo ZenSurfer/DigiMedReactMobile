@@ -53,12 +53,13 @@ class HPEDPage extends Component {
             this.setState({
                 doctorID: JSON.parse(doctor).id,
                 doctorUserID: JSON.parse(doctor).userID,
-                cloudUrl: JSON.parse(doctor).cloudUrl
             })
         } catch (error) {
             console.log('AsyncStorage error: ' + error.message);
         } finally {
-            this.onRefresh()
+            setTimeout(() => {
+                this.onRefresh()
+            }, 1000)
         }
     }
     render() {
@@ -360,7 +361,7 @@ class HPEDPage extends Component {
     }
     async importImage(param) {
         try {
-            return await fetch(this.state.cloudUrl+'/api/v2/image?'+param).then((response) => {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/image?'+param).then((response) => {
                 return response.json()
             });
         } catch (err) {
@@ -377,7 +378,7 @@ class HPEDPage extends Component {
     }
     async importData(table, date) {
         try {
-            return await fetch(this.state.cloudUrl+'/api/v2/import?table='+table+'&date='+encodeURIComponent(date)).then((res) => {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/import?table='+table+'&date='+encodeURIComponent(date)).then((res) => {
                 return res.json()
             });
         } catch (err) {
@@ -414,7 +415,7 @@ class HPEDPage extends Component {
     }
     async exportData(table, rows) {
         try {
-            return await fetch(this.state.cloudUrl+'/api/v2/export?table='+table, {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/export?table='+table, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',

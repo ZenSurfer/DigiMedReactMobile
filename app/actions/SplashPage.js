@@ -26,6 +26,7 @@ class SplashPage extends Component {
             progress: 0,
             title: 'Validating Requirements...',
             error: 1,
+            doctorUserID: this.props.doctorUserID,
         }
     }
     componentWillMount() {
@@ -37,11 +38,34 @@ class SplashPage extends Component {
             table[i] = '';
         })
         this.setState({table: _.omit(table, ['migrations', 'password_resets'])});
-        if (this.props.initial) {
-            this.setState({title: 'Initial Configuration...'})
-            this.initial();
-        } else
-            this.validate();
+    }
+    componentDidMount() {
+        this.updateCredentials().then(validate => {
+            if (validate || this.state.doctorUserID) {
+                if (this.props.initial) {
+                    this.setState({title: 'Initial Configuration...'})
+                    this.initial();
+                } else
+                    this.validate();
+            } else {
+                this.props.navigator.replace({
+                    id: 'LoginPage',
+                    sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                });
+            }
+        }).done();
+    }
+    async updateCredentials() {
+        try {
+            var doctor = await AsyncStorage.getItem('doctor');
+            if (!_.isNull(doctor)) {
+                this.setState({doctorUserID: JSON.parse(doctor).userID})
+                return true
+            } else
+                return false
+        } catch (error) {
+            console.log('AsyncStorage error: ' + error.message);
+        }
     }
     initial() {
         db.transaction((tx) => {
@@ -56,12 +80,12 @@ class SplashPage extends Component {
             NetInfo.isConnected.fetch().then(isConnected => {
                 if (isConnected) {
                     this.pull(this.parse('users', [
-                        {column: 'id' , condition: '=', value: this.props.doctorUserID},
+                        {column: 'id' , condition: '=', value: this.state.doctorUserID},
                     ])).then((data) => {
                         db.transaction((tx) => {
-                            tx.executeSql("SELECT * FROM "+data.table+" WHERE id=?", [this.props.doctorUserID], (tx, rs) => {
+                            tx.executeSql("SELECT * FROM "+data.table+" WHERE id=?", [this.state.doctorUserID], (tx, rs) => {
                                 if (rs.rows.length > 0) {
-                                    tx.executeSql("DELETE FROM "+data.table+" WHERE id=?", [this.props.doctorUserID], (tx, rs) => {
+                                    tx.executeSql("DELETE FROM "+data.table+" WHERE id=?", [this.state.doctorUserID], (tx, rs) => {
                                         tx.executeSql("INSERT INTO "+data.table+" VALUES ("+_.join(_.fill(Array(_.size(data.data[0])), '?'), ',')+")", _.values(data.data[0]), (tx, rs) => {
                                             console.log(data.table+': ', rs.rowsAffected)
                                         }, err => console.log(err.message))
@@ -75,12 +99,12 @@ class SplashPage extends Component {
                         })
                     }).done()
                     this.pull(this.parse('doctors', [
-                        {column: 'userID' , condition: '=', value: this.props.doctorUserID},
+                        {column: 'userID' , condition: '=', value: this.state.doctorUserID},
                     ])).then((data) => {
                         db.transaction((tx) => {
-                            tx.executeSql("SELECT * FROM "+data.table+" WHERE userID=?", [this.props.doctorUserID], (tx, rs) => {
+                            tx.executeSql("SELECT * FROM "+data.table+" WHERE userID=?", [this.state.doctorUserID], (tx, rs) => {
                                 if (rs.rows.length > 0) {
-                                    tx.executeSql("DELETE FROM "+data.table+" WHERE userID=?", [this.props.doctorUserID], (tx, rs) => {
+                                    tx.executeSql("DELETE FROM "+data.table+" WHERE userID=?", [this.state.doctorUserID], (tx, rs) => {
                                         tx.executeSql("INSERT INTO "+data.table+" VALUES ("+_.join(_.fill(Array(_.size(data.data[0])), '?'), ',')+")", _.values(data.data[0]), (tx, rs) => {
                                             console.log(data.table+': ', rs.rowsAffected)
                                         }, err => console.log(err.message))
@@ -142,10 +166,10 @@ class SplashPage extends Component {
                     });
                 } else if (_.size(Schema) == count){
                     db.transaction((tx) => {
-                        tx.executeSql("SELECT `doctors`.`userID`, `doctors`.`id`, ('Dr. ' || `doctors`.`firstname` || ' ' || `doctors`.`middlename` || ' ' || `doctors`.`lastname`) as name, `doctors`.`type`, `doctors`.`initial`, `users`.`password`, `doctors`.`imagePath`, `users`.`accountVerified`, `users`.`emailVerified` FROM `users` LEFT OUTER JOIN `doctors` ON `doctors`.`userID`=`users`.`id` WHERE `users`.`id`=? AND `users`.`userType`='doctor' AND (`users`.`deleted_at` in (null, 'NULL', '') OR `users`.`deleted_at` is null) LIMIT 1", [this.props.doctorUserID], (tx, rs) => {
+                        tx.executeSql("SELECT `doctors`.`userID`, `doctors`.`id`, ('Dr. ' || `doctors`.`firstname` || ' ' || `doctors`.`middlename` || ' ' || `doctors`.`lastname`) as name, `doctors`.`type`, `doctors`.`initial`, `users`.`password`, `doctors`.`imagePath`, `users`.`accountVerified`, `users`.`emailVerified` FROM `users` LEFT OUTER JOIN `doctors` ON `doctors`.`userID`=`users`.`id` WHERE `users`.`id`=? AND `users`.`userType`='doctor' AND (`users`.`deleted_at` in (null, 'NULL', '') OR `users`.`deleted_at` is null) LIMIT 1", [this.state.doctorUserID], (tx, rs) => {
                             if (rs.rows.item(0).accountVerified !== null || rs.rows.item(0).emailVerified !== null) {
                                 var doctor = _.omit(rs.rows.item(0), ['password', 'accountVerified', 'emailVerified']);
-                                doctor['cloudUrl'] = this.props.cloudUrl;
+                                doctor['cloudUrl'] = EnvInstance.cloudUrl;
                                 NetInfo.isConnected.fetch().then(isConnected => {
                                     console.log(isConnected)
                                     if (isConnected) {
@@ -180,8 +204,7 @@ class SplashPage extends Component {
                                 this.props.navigator.replace({
                                     id: 'VerifyPage',
                                     passProps: {
-                                        doctorUserID: this.props.doctorUserID,
-                                        cloudUrl: this.props.cloudUrl
+                                        doctorUserID: this.state.doctorUserID,
                                     },
                                     sceneConfig: Navigator.SceneConfigs.FadeAndroid
                                 });
@@ -231,7 +254,7 @@ class SplashPage extends Component {
     }
     async pull(param) {
         try {
-            return await fetch(this.props.cloudUrl+'/api/v2/pull?'+param).then((response) => {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/pull?'+param).then((response) => {
                 return response.json()
             });
         } catch (err) {
@@ -243,7 +266,7 @@ class SplashPage extends Component {
             param = Object.keys(param).map((key) => {
                 return encodeURIComponent(key) + '=' + encodeURIComponent(param[key]);
             }).join('&');
-            return await fetch(this.props.cloudUrl+'/api/v2/register?'+param).then((response) => {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/register?'+param).then((response) => {
                 return response.json()
             });
         } catch (err) {
