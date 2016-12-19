@@ -199,22 +199,26 @@ class EditFollowup extends Component {
                         <Text style={styles.label} >Brief Description</Text>
                         <TextInput
                             placeholder={'Text Here...'}
-                            style={[styles.textInput, {textAlignVertical: 'top'}]}
+                            style={[styles.textInput, {textAlignVertical: 'top', paddingTop: 10, paddingBottom: 20, height: Math.max(35, this.state.height)}]}
+                            onContentSizeChange={(event) => {
+                                this.setState({height: event.nativeEvent.contentSize.height});
+                            }}
                             autoCapitalize={'words'}
                             value={this.state.name}
                             placeholderTextColor={'#E0E0E0'}
                             multiline={true}
-                            numberOfLines={2}
                             onChangeText={(text) => this.setState({name: text})} />
                         <Text style={styles.label}>Description of Follow-Up</Text>
                         <TextInput
                             placeholder={'Text Here...'}
-                            style={[styles.textInput, {textAlignVertical: 'top', marginBottom: 150}]}
+                            style={[styles.textInput, {textAlignVertical: 'top', marginBottom: 150, paddingTop: 10, paddingBottom: 20, height: Math.max(35, this.state.height)}]}
+                            onContentSizeChange={(event) => {
+                                this.setState({height: event.nativeEvent.contentSize.height});
+                            }}
                             autoCapitalize={'words'}
                             value={this.state.description}
                             placeholderTextColor={'#E0E0E0'}
                             multiline={true}
-                            numberOfLines={4}
                             onChangeText={(text) => this.setState({description: text})} />
                     </ScrollView>
                     <TouchableOpacity

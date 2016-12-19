@@ -253,42 +253,50 @@ class AddHPED extends Component {
                         <Text style={styles.label} >Chief Complaint</Text>
                         <TextInput
                             placeholder={'Text Here...'}
-                            style={[styles.textInput, {textAlignVertical: 'top'}]}
+                            style={[styles.textInput, {textAlignVertical: 'top', paddingTop: 10, paddingBottom: 20, height: Math.max(35, this.state.height)}]}
+                            onContentSizeChange={(event) => {
+                                this.setState({height: event.nativeEvent.contentSize.height});
+                            }}
                             autoCapitalize={'words'}
                             value={this.state.chiefComplaint}
                             placeholderTextColor={'#E0E0E0'}
                             multiline={true}
-                            numberOfLines={4}
                             onChangeText={(text) => this.setState({chiefComplaint: text})} />
                         <Text style={styles.label} >History of Present Illness</Text>
                         <TextInput
                             placeholder={'Text Here...'}
-                            style={[styles.textInput, {textAlignVertical: 'top'}]}
+                            style={[styles.textInput, {textAlignVertical: 'top', paddingTop: 10, paddingBottom: 20, height: Math.max(35, this.state.height)}]}
+                            onContentSizeChange={(event) => {
+                                this.setState({height: event.nativeEvent.contentSize.height});
+                            }}
                             autoCapitalize={'words'}
                             value={this.state.historyIllness}
                             placeholderTextColor={'#E0E0E0'}
                             multiline={true}
-                            numberOfLines={4}
                             onChangeText={(text) => this.setState({historyIllness: text})} />
                         <Text style={styles.label} >Pertinent Medical History</Text>
                         <TextInput
                             placeholder={'Text Here...'}
-                            style={[styles.textInput, {textAlignVertical: 'top'}]}
+                            style={[styles.textInput, {textAlignVertical: 'top', paddingTop: 10, paddingBottom: 20, height: Math.max(35, this.state.height)}]}
+                            onContentSizeChange={(event) => {
+                                this.setState({height: event.nativeEvent.contentSize.height});
+                            }}
                             autoCapitalize={'words'}
                             value={this.state.medicalHistory}
                             placeholderTextColor={'#E0E0E0'}
                             multiline={true}
-                            numberOfLines={4}
                             onChangeText={(text) => this.setState({medicalHistory: text})} />
                         <Text style={styles.label} >Initial Diagnosis</Text>
                         <TextInput
                             placeholder={'Text Here...'}
-                            style={[styles.textInput, {textAlignVertical: 'top'}]}
+                            style={[styles.textInput, {textAlignVertical: 'top', paddingTop: 10, paddingBottom: 20, height: Math.max(35, this.state.height)}]}
+                            onContentSizeChange={(event) => {
+                                this.setState({height: event.nativeEvent.contentSize.height});
+                            }}
                             autoCapitalize={'words'}
                             value={this.state.initialDiagnosis}
                             placeholderTextColor={'#E0E0E0'}
                             multiline={true}
-                            numberOfLines={4}
                             onChangeText={(text) => this.setState({initialDiagnosis: text})} />
                         <Text style={styles.label} >Blood Pressure (Systolic / Diastolic)</Text>
                         <View style={{flexDirection: 'row'}}>
@@ -365,12 +373,14 @@ class AddHPED extends Component {
                         <Text style={styles.label} >Physical Exam </Text>
                         <TextInput
                             placeholder={'Text Here...'}
-                            style={[styles.textInput, {textAlignVertical: 'top'}]}
+                            style={[styles.textInput, {textAlignVertical: 'top', paddingTop: 10, paddingBottom: 20, height: Math.max(35, this.state.height)}]}
+                            onContentSizeChange={(event) => {
+                                this.setState({height: event.nativeEvent.contentSize.height});
+                            }}
                             autoCapitalize={'words'}
                             value={this.state.physicalExam}
                             placeholderTextColor={'#E0E0E0'}
                             multiline={true}
-                            numberOfLines={4}
                             onChangeText={(text) => this.setState({physicalExam: text})} />
                         <Text style={styles.label} >Allergies</Text>
                         <TextInput
@@ -383,22 +393,26 @@ class AddHPED extends Component {
                         <Text style={styles.label} >Current Medications</Text>
                         <TextInput
                             placeholder={'Text Here...'}
-                            style={[styles.textInput, {textAlignVertical: 'top'}]}
+                            style={[styles.textInput, {textAlignVertical: 'top', paddingTop: 10, paddingBottom: 20, height: Math.max(35, this.state.height)}]}
+                            onContentSizeChange={(event) => {
+                                this.setState({height: event.nativeEvent.contentSize.height});
+                            }}
                             autoCapitalize={'words'}
                             value={this.state.currentMedications}
                             placeholderTextColor={'#E0E0E0'}
                             multiline={true}
-                            numberOfLines={4}
                             onChangeText={(text) => this.setState({currentMedications: text})} />
                         <Text style={styles.label} >Plan</Text>
                         <TextInput
                             placeholder={'Text Here...'}
-                            style={[styles.textInput, {textAlignVertical: 'top'}]}
+                            style={[styles.textInput, {textAlignVertical: 'top', paddingTop: 10, paddingBottom: 20, height: Math.max(35, this.state.height)}]}
+                            onContentSizeChange={(event) => {
+                                this.setState({height: event.nativeEvent.contentSize.height});
+                            }}
                             autoCapitalize={'words'}
                             value={this.state.plan}
                             placeholderTextColor={'#E0E0E0'}
                             multiline={true}
-                            numberOfLines={4}
                             onChangeText={(text) => this.setState({plan: text})} />
                         <View style={[styles.rows, {flexDirection: 'row', marginRight: 4}]}>
                             <Text style={styles.label}>ICD's</Text>

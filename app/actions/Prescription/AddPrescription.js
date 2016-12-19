@@ -348,12 +348,14 @@ class AddPrescription extends Component {
                                         <Text style={styles.label} >Note</Text>
                                         <TextInput
                                             placeholder={'Text Here...'}
-                                            style={[styles.textInput, {textAlignVertical: 'top'}]}
+                                            style={[styles.textInput, {textAlignVertical: 'top', paddingTop: 10, paddingBottom: 20, height: Math.max(35, this.state.height)}]}
+                                            onContentSizeChange={(event) => {
+                                                this.setState({height: event.nativeEvent.contentSize.height});
+                                            }}
                                             autoCapitalize={'words'}
                                             value={this.state.prescription[i].notes}
                                             placeholderTextColor={'#E0E0E0'}
                                             multiline={true}
-                                            numberOfLines={2}
                                             onChangeText={(text) => this.onSetState(text, i, 'notes')} />
                                     </View>
                                     <TouchableOpacity

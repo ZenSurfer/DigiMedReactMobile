@@ -260,12 +260,14 @@ class AppointmentPage extends Component {
                         <Text style={styles.label} >Note</Text>
                         <TextInput
                             placeholder={'Text Here...'}
-                            style={[styles.textInput, {textAlignVertical: 'top', marginBottom: 90}]}
+                            style={[styles.textInput, {textAlignVertical: 'top', marginBottom: 90, paddingTop: 10, paddingBottom: 20, height: Math.max(35, this.state.height)}]}
+                            onContentSizeChange={(event) => {
+                                this.setState({height: event.nativeEvent.contentSize.height});
+                            }}
                             autoCapitalize={'words'}
                             value={this.state.notes}
                             placeholderTextColor={'#E0E0E0'}
                             multiline={true}
-                            numberOfLines={4}
                             onChangeText={(text) => this.setState({notes: text})} />
                     </ScrollView>
                     {(this.props.patientID) ? (

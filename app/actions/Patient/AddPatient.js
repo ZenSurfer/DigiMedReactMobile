@@ -97,7 +97,8 @@ class AddPatient extends Component {
                 renderScene={this.renderScene.bind(this)}
                 navigator={this.props.navigator}
                 navigationBar={
-                    <Navigator.NavigationBar style={Styles.navigationBar}
+                    <Navigator.NavigationBar
+                        style={[Styles.navigationBar,{marginTop: 24}]}
                         routeMapper={NavigationBarRouteMapper} />
                 }
                 configureScene = {this.configureScene}
@@ -126,7 +127,8 @@ class AddPatient extends Component {
     renderScene(route, navigator) {
         return (
             <View style={[Styles.containerStyle, {backgroundColor: '#FFFFFF'}]}>
-                <View style={[Styles.subTolbar]}>
+                {this.props.children}
+                <View style={[Styles.subTolbar, {marginTop: 24}]}>
                     <Text style={Styles.subTitle}>Add Patient Information</Text>
                 </View>
                 <ScrollView
@@ -289,12 +291,14 @@ class AddPatient extends Component {
                         <Text style={styles.label} >Address</Text>
                         <TextInput
                             placeholder={'Text Here...'}
-                            style={[styles.textInput, {textAlignVertical: 'top'}]}
+                            style={[styles.textInput, {textAlignVertical: 'top', paddingTop: 10, paddingBottom: 20, height: Math.max(35, this.state.height)}]}
+                            onContentSizeChange={(event) => {
+                                this.setState({height: event.nativeEvent.contentSize.height});
+                            }}
                             autoCapitalize={'words'}
                             value={this.state.address}
                             placeholderTextColor={'#E0E0E0'}
                             multiline={true}
-                            numberOfLines={4}
                             onChangeText={(text) => this.setState({address: text})} />
                         <Text style={styles.label} >Mobile Number</Text>
                         <TextInput
@@ -645,9 +649,6 @@ const styles = StyleSheet.create({
     textInput: {
         fontSize: 16,
         paddingTop: 5,
-        marginBottom: 5,
-        borderBottomWidth: 1,
-        borderBottomColor: '#757575',
         borderStyle: 'solid',
     },
     switch: {

@@ -245,12 +245,14 @@ class EditDoctor extends Component {
                             <Text style={styles.label}>Address</Text>
                             <TextInput
                                 placeholder={'Text Here...'}
-                                style={[styles.textInput, {textAlignVertical: 'top'}]}
+                                style={[styles.textInput, {textAlignVertical: 'top', paddingTop: 10, paddingBottom: 20, height: Math.max(35, this.state.height)}]}
+                                onContentSizeChange={(event) => {
+                                    this.setState({height: event.nativeEvent.contentSize.height});
+                                }}
                                 autoCapitalize={'words'}
                                 value={this.state.address}
                                 placeholderTextColor={'#E0E0E0'}
                                 multiline={true}
-                                numberOfLines={4}
                                 onChangeText={(text) => this.setState({address: text})} />
                             <Text style={styles.label} >Mobile Number</Text>
                             <TextInput

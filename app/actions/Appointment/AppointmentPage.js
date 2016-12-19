@@ -185,7 +185,6 @@ class AppointmentPage extends Component {
             <DrawerLayoutAndroid
                 drawerWidth={300}
                 drawerPosition={DrawerLayoutAndroid.positions.Left}
-                statusBarBackgroundColor={'#2962FF'}
                 renderNavigationView={() => {
                     return (<DrawerPage navigator={this.props.navigator} routeName={'appointments'}></DrawerPage>)
                 }}
@@ -195,7 +194,8 @@ class AppointmentPage extends Component {
                     renderScene={this.renderScene.bind(this)}
                     navigator={this.props.navigator}
                     navigationBar={
-                        <Navigator.NavigationBar style={Styles.navigationBar}
+                        <Navigator.NavigationBar
+                            style={[Styles.navigationBar, {marginTop: 24}]}
                             routeMapper={NavigationBarRouteMapper} />
                     } />
             </DrawerLayoutAndroid>
@@ -205,11 +205,11 @@ class AppointmentPage extends Component {
         return (
             <View style={Styles.containerStyle}>
                 {this.props.children}
-                <View style={Styles.subTolbar}>
+                <View style={[Styles.subTolbar, {marginTop: 24}]}>
                     <Text style={Styles.subTitle}>{this.state.presetText}</Text>
                 </View>
                 {(this.state.syncing) ? (
-                    <View style={{position: 'absolute', top: 50, zIndex: 1, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                    <View style={{position: 'absolute', top: 74, zIndex: 1, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                         <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
                             <View style={{ backgroundColor: '#FF5722', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
                                 <ActivityIndicator color="#FFF" size={15}/>
@@ -231,7 +231,7 @@ class AppointmentPage extends Component {
                             />
                     }/>
                 <TouchableOpacity
-                    style={[Styles.buttonFab, Styles.subTolbarButton]}
+                    style={[Styles.buttonFab, Styles.subTolbarButton, {marginTop: 24}]}
                     onPress={this.showPicker.bind(this, 'simple', {date: this.state.presetDate})}>
                     <Icon name="date-range" size={30} color="#FFF" />
                 </TouchableOpacity>

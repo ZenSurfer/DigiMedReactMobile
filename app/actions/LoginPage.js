@@ -187,7 +187,7 @@ class LoginPage extends Component {
                                         </TouchableNativeFeedback>
                                     </View>
                                     {(this.state.auth) ? (
-                                        <View style={{position: 'absolute', height: 100, width: 280, top: 0}}>
+                                        <View style={{position: 'absolute', height: 100, width: 300, top: 0}}>
                                             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#2962FF', paddingBottom: 20}}>
                                                 <ActivityIndicator animating={true} size={'large'} color={'#FFF'}/>
                                             </View>

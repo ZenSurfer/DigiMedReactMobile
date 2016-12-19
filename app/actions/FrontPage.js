@@ -124,7 +124,6 @@ class FrontPage extends Component {
             <DrawerLayoutAndroid
                 drawerWidth={300}
                 drawerPosition={DrawerLayoutAndroid.positions.Left}
-                statusBarBackgroundColor={'#2962FF'}
                 renderNavigationView={() => {
                     return (<DrawerPage navigator={this.props.navigator}></DrawerPage>)
                 }}
@@ -134,7 +133,8 @@ class FrontPage extends Component {
                     renderScene={(this.state.renderPlaceholderOnly) ? this.renderPlaceholderView.bind(this) : this.renderScene.bind(this)}
                     navigator={this.props.navigator}
                     navigationBar={
-                        <Navigator.NavigationBar style={Styles.navigationBar}
+                        <Navigator.NavigationBar
+                            style={[Styles.navigationBar,{marginTop: 24}]}
                             routeMapper={NavigationBarRouteMapper} />
                     } />
             </DrawerLayoutAndroid>
@@ -211,16 +211,18 @@ class FrontPage extends Component {
                     <Text style={styles.label} >Note</Text>
                     <TextInput
                         placeholder={'Text Here...'}
-                        style={[styles.textInput, {textAlignVertical: 'top', marginBottom: 16}]}
+                        style={[styles.textInput, {textAlignVertical: 'top', marginBottom: 16, paddingTop: 10, paddingBottom: 20, height: Math.max(35, this.state.height)}]}
+                        onContentSizeChange={(event) => {
+                            this.setState({height: event.nativeEvent.contentSize.height});
+                        }}
                         autoCapitalize={'words'}
                         value={this.state.note}
                         placeholderTextColor={'#E0E0E0'}
                         multiline={true}
-                        numberOfLines={4}
                         onChangeText={(text) => this.setState({note: text})} />
                 </ScrollView>
                 <TouchableOpacity
-                    style={[Styles.buttonFab, Styles.subTolbarButton]}
+                    style={[Styles.buttonFab, Styles.subTolbarButton, {marginTop: 24}]}
                     onPress={this.showPicker.bind(this, 'date')}
                     >
                     <Icon name="date-range" size={30} color="#FFF" />

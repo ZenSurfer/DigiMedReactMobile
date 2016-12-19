@@ -37,13 +37,13 @@ class DoctorProfile extends Component {
                 renderNavigationView={() => {
                     return (<DrawerPage navigator={this.props.navigator}></DrawerPage>)
                 }}
-                statusBarBackgroundColor={'#2962FF'}
                 ref={this.drawerInstance} >
                 <Navigator
                     renderScene={(this.state.renderPlaceholderOnly) ? this.renderPlaceholderView.bind(this) : this.renderScene.bind(this)}
                     navigator={this.props.navigator}
                     navigationBar={
-                        <Navigator.NavigationBar style={Styles.navigationBar}
+                        <Navigator.NavigationBar
+                            style={[Styles.navigationBar,{marginTop: 24}]}
                             routeMapper={NavigationBarRouteMapper} />
                     }
                     />
@@ -70,7 +70,7 @@ class DoctorProfile extends Component {
         return (
             <View style={Styles.containerStyle}>
                 {this.props.children}
-                <View style={[Styles.subTolbar]}>
+                <View style={[Styles.subTolbar, {marginTop: 24}]}>
                     <Text style={Styles.subTitle}>{this.props.doctorName}</Text>
                 </View>
                 <View style={[Styles.loading, {marginTop: -10}]}>
@@ -192,7 +192,7 @@ class DoctorProfile extends Component {
                         </View>
                     </ScrollView>
                     <TouchableOpacity
-                        style={[Styles.buttonFab, Styles.subTolbarButton, {marginTop: 5}]}
+                        style={[Styles.buttonFab, Styles.subTolbarButton, {marginTop: 24}]}
                         onPress={() =>  this.props.navigator.push({
                             id: 'EditDoctor',
                             passProps: {

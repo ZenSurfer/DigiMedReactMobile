@@ -114,10 +114,12 @@ class AddImage extends Component {
                         <Text style={styles.label}>Annotation</Text>
                         <TextInput
                             placeholder={'Text Here...'}
-                            style={[styles.textInput, {textAlignVertical: 'top'}]}
+                            style={[styles.textInput, {textAlignVertical: 'top', paddingTop: 10, paddingBottom: 20, height: Math.max(35, this.state.height)}]}
+                            onContentSizeChange={(event) => {
+                                this.setState({height: event.nativeEvent.contentSize.height});
+                            }}
                             autoCapitalize={'words'}
                             multiline={true}
-                            numberOfLines={3}
                             value={this.state.imageAnnotation}
                             placeholderTextColor={'#E0E0E0'}
                             onChangeText={(text) => this.setState({imageAnnotation: text})} />

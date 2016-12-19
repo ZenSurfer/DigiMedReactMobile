@@ -89,15 +89,6 @@ module.exports = (route, navigator, self) => {
         return (
             <SearchPage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                            </View>
-                        </View>
-                    </View>
-                ) : (<View/>)}
             </SearchPage>
         )
     }
@@ -105,15 +96,7 @@ module.exports = (route, navigator, self) => {
     if (routeId === 'MainPage') {
         return (
             <MainPage navigator={navigator} {...route.passProps}>
-            {(self.state.completed) ? (
-                <View style={{position: 'absolute',top: 50, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                    <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                        <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                            <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                        </View>
-                    </View>
-                </View>
-            ) : (<View/>)}
+                <StatusBar backgroundColor='#2962FF' translucent={true}/>
             </MainPage>
         )
     }
@@ -121,15 +104,7 @@ module.exports = (route, navigator, self) => {
     if (routeId === 'PatientPage') {
         return (
             <PatientPage navigator={navigator} {...route.passProps}>
-            {(self.state.completed) ? (
-                <View style={{position: 'absolute',top: 50, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                    <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                        <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                            <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                        </View>
-                    </View>
-                </View>
-            ) : (<View/>)}
+                <StatusBar backgroundColor='#2962FF' translucent={true}/>
             </PatientPage>
         )
     }
@@ -137,15 +112,6 @@ module.exports = (route, navigator, self) => {
         return (
             <AddPatient navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF' translucent={true}/>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                            </View>
-                        </View>
-                    </View>
-                ) : (<View/>)}
             </AddPatient>
         )
     }
@@ -153,15 +119,6 @@ module.exports = (route, navigator, self) => {
         return (
             <PatientProfile navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF' translucent={true}/>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute',top: 50, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                            </View>
-                        </View>
-                    </View>
-                ) : (<View/>)}
             </PatientProfile>
         )
     }
@@ -169,15 +126,6 @@ module.exports = (route, navigator, self) => {
         return (
             <EditPatient navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                            </View>
-                        </View>
-                    </View>
-                ) : (<View/>)}
             </EditPatient>
         )
     }
@@ -187,15 +135,6 @@ module.exports = (route, navigator, self) => {
         return (
             <AddHPED navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                            </View>
-                        </View>
-                    </View>
-                ) : (<View/>)}
             </AddHPED>
         )
     }
@@ -203,15 +142,6 @@ module.exports = (route, navigator, self) => {
         return (
             <HPEDPage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                            </View>
-                        </View>
-                    </View>
-                ) : (<View/>)}
             </HPEDPage>
         )
     }
@@ -219,15 +149,6 @@ module.exports = (route, navigator, self) => {
         return (
             <HPEDInfo navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                            </View>
-                        </View>
-                    </View>
-                ) : (<View/>)}
             </HPEDInfo>
         )
     }
@@ -235,15 +156,6 @@ module.exports = (route, navigator, self) => {
         return (
             <EditHPED navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                            </View>
-                        </View>
-                    </View>
-                ) : (<View/>)}
             </EditHPED>
         )
     }
@@ -252,45 +164,20 @@ module.exports = (route, navigator, self) => {
         return (
             <OrderItem navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                            </View>
-                        </View>
-                    </View>
-                ) : (<View/>)}
             </OrderItem>
         )
     }
     if (routeId === 'PendingOrder') {
         return (
             <PendingOrder navigator={navigator} {...route.passProps}>
-            {(self.state.completed) ? (
-                <View style={{position: 'absolute',top: 50, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                    <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                        <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                            <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                        </View>
-                    </View>
-                </View>
-            ) : (<View/>)}
+                <StatusBar backgroundColor='#2962FF' translucent={true}/>
             </PendingOrder>
         )
     }
     if (routeId === 'CompletedOrder') {
         return (
             <CompletedOrder navigator={navigator} {...route.passProps}>
-            {(self.state.completed) ? (
-                <View style={{position: 'absolute',top: 50, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                    <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                        <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                            <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                        </View>
-                    </View>
-                </View>
-            ) : (<View/>)}
+                <StatusBar backgroundColor='#2962FF' translucent={true}/>
             </CompletedOrder>
         )
     }
@@ -299,15 +186,6 @@ module.exports = (route, navigator, self) => {
         return (
             <PrescriptionPage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                            </View>
-                        </View>
-                    </View>
-                ) : (<View/>)}
             </PrescriptionPage>
         )
     }
@@ -315,15 +193,6 @@ module.exports = (route, navigator, self) => {
         return (
             <AddPrescription navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                            </View>
-                        </View>
-                    </View>
-                ) : (<View/>)}
             </AddPrescription>
         )
     }
@@ -331,15 +200,6 @@ module.exports = (route, navigator, self) => {
         return (
             <EditPrescription navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                            </View>
-                        </View>
-                    </View>
-                ) : (<View/>)}
             </EditPrescription>
         )
     }
@@ -348,15 +208,6 @@ module.exports = (route, navigator, self) => {
         return (
             <ImagePage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                            </View>
-                        </View>
-                    </View>
-                ) : (<View/>)}
             </ImagePage>
         )
     }
@@ -364,15 +215,6 @@ module.exports = (route, navigator, self) => {
         return (
             <ViewImage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                            </View>
-                        </View>
-                    </View>
-                ) : (<View/>)}
             </ViewImage>
         )
     }
@@ -380,15 +222,6 @@ module.exports = (route, navigator, self) => {
         return (
             <AddImage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                            </View>
-                        </View>
-                    </View>
-                ) : (<View/>)}
             </AddImage>
         )
     }
@@ -396,15 +229,6 @@ module.exports = (route, navigator, self) => {
         return (
             <EditImage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                            </View>
-                        </View>
-                    </View>
-                ) : (<View/>)}
             </EditImage>
         )
     }
@@ -412,15 +236,7 @@ module.exports = (route, navigator, self) => {
     if (routeId === 'AppointmentPage') {
         return (
             <AppointmentPage navigator={navigator} {...route.passProps}>
-            {(self.state.completed) ? (
-                <View style={{position: 'absolute',top: 50, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                    <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                        <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                            <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                        </View>
-                    </View>
-                </View>
-            ) : (<View/>)}
+                <StatusBar backgroundColor='#2962FF' translucent={true}/>
             </AppointmentPage>
         )
     }
@@ -428,15 +244,6 @@ module.exports = (route, navigator, self) => {
         return (
             <AppointmentPatientPage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF' translucent={true}/>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                            </View>
-                        </View>
-                    </View>
-                ) : (<View/>)}
             </AppointmentPatientPage>
         )
     }
@@ -444,15 +251,6 @@ module.exports = (route, navigator, self) => {
         return (
             <AddAppointment navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                            </View>
-                        </View>
-                    </View>
-                ) : (<View/>)}
             </AddAppointment>
         )
     }
@@ -460,15 +258,6 @@ module.exports = (route, navigator, self) => {
         return (
             <EditAppointment navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                            </View>
-                        </View>
-                    </View>
-                ) : (<View/>)}
             </EditAppointment>
         )
     }
@@ -477,15 +266,6 @@ module.exports = (route, navigator, self) => {
         return (
             <FollowupPage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                            </View>
-                        </View>
-                    </View>
-                ) : (<View/>)}
             </FollowupPage>
         )
     }
@@ -493,15 +273,6 @@ module.exports = (route, navigator, self) => {
         return (
             <AddFollowup navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                            </View>
-                        </View>
-                    </View>
-                ) : (<View/>)}
             </AddFollowup>
         )
     }
@@ -509,15 +280,6 @@ module.exports = (route, navigator, self) => {
         return (
             <EditFollowup navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                            </View>
-                        </View>
-                    </View>
-                ) : (<View/>)}
             </EditFollowup>
         )
     }
@@ -525,15 +287,7 @@ module.exports = (route, navigator, self) => {
    if (routeId === 'UserSettingPage') {
        return (
            <UserSettingPage navigator={navigator} {...route.passProps}>
-           {(self.state.completed) ? (
-               <View style={{position: 'absolute',top: 50, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                   <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                       <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                           <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                       </View>
-                   </View>
-               </View>
-           ) : (<View/>)}
+               <StatusBar backgroundColor='#2962FF' translucent={true}/>
            </UserSettingPage>
        )
    }
@@ -541,30 +295,13 @@ module.exports = (route, navigator, self) => {
        return (
            <EditUserSetting navigator={navigator} {...route.passProps}>
                <StatusBar backgroundColor='#2962FF'/>
-               {(self.state.completed) ? (
-                   <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                       <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                           <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                               <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                           </View>
-                       </View>
-                   </View>
-               ) : (<View/>)}
            </EditUserSetting>
        )
    }
    if (routeId === 'UserProfilePage') {
        return (
            <UserProfilePage navigator={navigator} {...route.passProps}>
-           {(self.state.completed) ? (
-               <View style={{position: 'absolute',top: 50, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                   <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                       <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                           <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                       </View>
-                   </View>
-               </View>
-           ) : (<View/>)}
+               <StatusBar backgroundColor='#2962FF' translucent={true}/>
            </UserProfilePage>
        )
    }
@@ -572,15 +309,6 @@ module.exports = (route, navigator, self) => {
        return (
            <EditUserProfile navigator={navigator} {...route.passProps}>
                <StatusBar backgroundColor='#2962FF'/>
-               {(self.state.completed) ? (
-                   <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                       <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                           <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                               <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                           </View>
-                       </View>
-                   </View>
-               ) : (<View/>)}
            </EditUserProfile>
        )
    }
@@ -588,15 +316,7 @@ module.exports = (route, navigator, self) => {
    if (routeId === 'DoctorPage') {
        return (
            <DoctorPage navigator={navigator} {...route.passProps}>
-           {(self.state.completed) ? (
-               <View style={{position: 'absolute',top: 50, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                   <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                       <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                           <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                       </View>
-                   </View>
-               </View>
-           ) : (<View/>)}
+               <StatusBar backgroundColor='#2962FF' translucent={true}/>
            </DoctorPage>
        )
    }
@@ -604,15 +324,6 @@ module.exports = (route, navigator, self) => {
        return (
            <AddDoctor navigator={navigator} {...route.passProps}>
                <StatusBar backgroundColor='#2962FF'/>
-               {(self.state.completed) ? (
-                   <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                       <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                           <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                               <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                           </View>
-                       </View>
-                   </View>
-               ) : (<View/>)}
            </AddDoctor>
        )
    }
@@ -620,15 +331,6 @@ module.exports = (route, navigator, self) => {
        return (
            <EditDoctor navigator={navigator} {...route.passProps}>
                <StatusBar backgroundColor='#2962FF'/>
-               {(self.state.completed) ? (
-                   <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                       <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                           <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                               <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                           </View>
-                       </View>
-                   </View>
-               ) : (<View/>)}
            </EditDoctor>
        )
    }
@@ -636,15 +338,6 @@ module.exports = (route, navigator, self) => {
        return (
            <DoctorProfile navigator={navigator} {...route.passProps}>
                <StatusBar backgroundColor='#2962FF'/>
-               {(self.state.completed) ? (
-                   <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                       <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                           <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                               <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
-                           </View>
-                       </View>
-                   </View>
-               ) : (<View/>)}
            </DoctorProfile>
        )
    }

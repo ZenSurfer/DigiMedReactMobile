@@ -84,7 +84,6 @@ class DoctorPage extends Component {
             <DrawerLayoutAndroid
                 drawerWidth={300}
                 drawerPosition={DrawerLayoutAndroid.positions.Left}
-                statusBarBackgroundColor={'#2962FF'}
                 renderNavigationView={() => {
                     return (<DrawerPage navigator={this.props.navigator}  routeName={'doctors'}></DrawerPage>)
                 }}
@@ -94,7 +93,8 @@ class DoctorPage extends Component {
                     renderScene={this.renderScene.bind(this)}
                     navigator={this.props.navigator}
                     navigationBar={
-                        <Navigator.NavigationBar style={Styles.navigationBar}
+                        <Navigator.NavigationBar
+                            style={[Styles.navigationBar,{marginTop: 24}]}
                             routeMapper={NavigationBarRouteMapper} />
                     } />
             </DrawerLayoutAndroid>
@@ -104,11 +104,11 @@ class DoctorPage extends Component {
         return (
             <View style={Styles.containerStyle}>
                 {this.props.children}
-                <View style={Styles.subTolbar}>
+                <View style={[Styles.subTolbar, {marginTop: 24}]}>
                     <Text style={Styles.subTitle}>Doctor</Text>
                 </View>
                 {(this.state.syncing) ? (
-                    <View style={{position: 'absolute', top: 50, zIndex: 1, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                    <View style={{position: 'absolute', top: 74, zIndex: 1, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                         <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
                             <View style={{ backgroundColor: '#FF5722', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
                                 <ActivityIndicator color="#FFF" size={15}/>
@@ -130,7 +130,7 @@ class DoctorPage extends Component {
                         />
                     }/>
                 <TouchableOpacity
-                    style={[Styles.buttonFab, Styles.subTolbarButton]}
+                    style={[Styles.buttonFab, Styles.subTolbarButton, {marginTop: 24}]}
                     onPress={() => this.props.navigator.push({
                         id: 'AddDoctor',
                     })}>
