@@ -1,42 +1,72 @@
 'use strict'
 
 import React, {Component} from 'react'
-import {AppRegistry, Navigator, BackAndroid, DeviceEventEmitter} from 'react-native'
+import {AppRegistry, Navigator, BackAndroid, DeviceEventEmitter, AsyncStorage} from 'react-native'
 import FCM from 'react-native-fcm'
 import routes from './app/routes'
+import _ from 'lodash'
+import env from './app/env'
 
 class AwesomeProject extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            completed: false
+            completed: false,
         }
     }
     componentDidMount() {
-        FCM.requestPermissions(); // for iOS
-        this.notificationUnsubscribe = FCM.on('notification', (notif) => {
-            this.setState({completed : true})
-            setTimeout(() => {
-                this.setState({completed: false})
-            }, 2000)
-            if(notif.local_notification){
-                //this is a local notification
-            }
-            if(notif.opened_from_tray){
-                //app is open/resumed because user clicked banner
-            }
-        });
-        this.refreshUnsubscribe = FCM.on('refreshToken', (token) => {
-            console.log('token', token)
-            // fcm token may not be available on first load, catch it here
-        });
+        this.updateCredentials().then(doctor => {
+            FCM.requestPermissions();
+            this.notificationUnsubscribe = FCM.on('notification', (notif) => {
+                console.log(doctor)
+                if (!_.isUndefined(notif['fcm'])) {
+                    FCM.presentLocalNotification({
+                        title: notif.fcm.title,
+                        body:  notif.fcm.body,
+                        show_in_foreground: true,
+                        priority: "high",
+                    });
+                }
+                if(notif.local_notification){
+                    if (!_.isUndefined(doctor)) {
+                        this.nav.replace({
+                            id: 'CompletedOrder',
+                            passProps: {
+                                userID: doctor.userID,
+                            },
+                            sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                        })
+                    }
+                }
+                if(notif.opened_from_tray){
+                    if (!_.isUndefined(doctor)) {
+                        this.nav.replace({
+                            id: 'CompletedOrder',
+                            passProps: {
+                                userID: doctor.userID,
+                            },
+                            sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                        })
+                    }
+                }
+            });
+            this.refreshUnsubscribe = FCM.on('refreshToken', (token) => {
+                console.log('token', token)
+            });
+        }).done();
     }
-
+    async updateCredentials() {
+        try {
+            var doctor = await AsyncStorage.getItem('doctor');
+            return  JSON.parse(doctor)
+        } catch (error) {
+            console.log('AsyncStorage error: ' + error.message);
+        }
+    }
     componentWillUnmount() {
         this.refreshUnsubscribe();
         this.notificationUnsubscribe();
     }
-
     otherMethods(){
         FCM.subscribeToTopic('/topics/foo-bar');
         FCM.unsubscribeFromTopic('/topics/foo-bar');
@@ -81,6 +111,7 @@ class AwesomeProject extends Component {
     render() {
         return (
             <Navigator
+                ref={nav => this.nav = nav}
                 initialRoute={{id: 'LoginPage'}}
                 renderScene={this.renderScene.bind(this)}
                 configureScene={(route) => {

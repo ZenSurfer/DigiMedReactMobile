@@ -267,6 +267,15 @@ class OrderItem extends Component {
     }
     labItemUpdate() {
         this.setState({refreshing: true, labItem: {}, labItemSelect: {}})
+        db.transaction(tx => {
+            tx.executeSql("SELECT * FROM labItemClass", [], (tx, rs) => {
+                console.log(rs.rows)
+                _.forEach(rs.rows, (v, i) => {
+                    console.log(rs.rows.item(i))
+                })
+            })
+        })
+
         db.transaction((tx) => {
             tx.executeSql("SELECT `labItemClass`.`value` as `class`, (SELECT GROUP_CONCAT((`labItem`.`id` || ':' ||`labItem`.`name`), '@') FROM labItem WHERE (`labItem`.`deleted_at` in (null, 'NULL', '') OR `labItem`.`deleted_at` is null) AND `labItem`.`labItemClassID` = `labItemClass`.`id` ORDER BY `labItem`.`name` ASC) as `value` FROM labItemClass ORDER BY `labItemClass`.`value` ASC", [], (tx, rs) => {
                 db.data = rs.rows
@@ -311,7 +320,7 @@ class OrderItem extends Component {
             this.setState({refreshing: false})
         }, () => {
             this.setState({pendingItem: db.pendingItem, refreshing: false})
-            this.updateData(['labItem', 'labItemClass', 'labwork']);
+            this.updateData(['labwork']);
         })
     }
     recentItemUpdate() {
@@ -347,7 +356,7 @@ class OrderItem extends Component {
             this.setState({refreshing: false})
         }, () => {
             this.setState({recentItem: db.recentItem, refreshing: false})
-            this.updateData(['labItem', 'labItemClass', 'labwork']);
+            this.updateData(['labwork']);
         })
     }
     steps(step) {
@@ -716,7 +725,7 @@ class OrderItem extends Component {
                                                     }).done()
                                                 }
                                             }).done()
-                                        } 
+                                        }
                                     }).done()
                                 }
                             }).done();

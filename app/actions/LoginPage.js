@@ -7,12 +7,12 @@ import _ from 'lodash'
 import RNFS from 'react-native-fs'
 import Styles from '../assets/Styles'
 import bcrypt from 'react-native-bcrypt'
-// import Env from '../env'
+import Env from '../env'
 import FCM from 'react-native-fcm';
 
 const dirPath = RNFS.ExternalDirectoryPath
-// const EnvInstance = new Env()
-// const db = EnvInstance.db()
+const EnvInstance = new Env()
+const db = EnvInstance.db()
 
 class LoginPage extends Component {
     constructor(props) {
@@ -24,17 +24,6 @@ class LoginPage extends Component {
             auth: false,
             visibility: false,
             failed: false,
-        }
-        this.db = this.props.db;
-    }
-    componentDidMount() {
-        this.removeCredentials().done();
-    }
-    async removeCredentials() {
-        try {
-            var doctor = await AsyncStorage.removeItem('doctor');
-        } catch (error) {
-            console.log('AsyncStorage error: ' + error.message);
         }
     }
     render() {
@@ -100,7 +89,7 @@ class LoginPage extends Component {
                                                 onPress={() => {
                                                     this.setState({auth: true})
                                                     var isUndefined = false;
-                                                    this.db.transaction((tx) => {
+                                                    db.transaction((tx) => {
                                                         tx.executeSql("SELECT name FROM sqlite_master WHERE type='table' AND name='users'", [], (tx, rs) => {
                                                             if (_.isUndefined(rs.rows.item(0)))
                                                                 isUndefined = true;
@@ -131,26 +120,26 @@ class LoginPage extends Component {
                                                                 }
                                                             }).done();
                                                         } else {
-                                                            this.db.transaction((tx) => {
-                                                                this.db.passed = false;
+                                                            db.transaction((tx) => {
+                                                                db.passed = false;
                                                                 tx.executeSql("SELECT `id` as `userID`, `password` FROM `users` WHERE `username`=? AND `userType`='doctor' AND (`accountVerified`=1 OR `emailVerified`=1) AND (`deleted_at` in (null, 'NULL', '') OR `deleted_at` is null) LIMIT 1", [this.state.username], (tx, rs) => {
                                                                     if (rs.rows.length == 0) {
-                                                                        this.db.passed = false;
+                                                                        db.passed = false;
                                                                     } else {
                                                                         if (bcrypt.compareSync(this.state.password, rs.rows.item(0).password)) {
-                                                                            this.db.data = rs.rows.item(0);
-                                                                            this.db.passed = true;
+                                                                            db.data = rs.rows.item(0);
+                                                                            db.passed = true;
                                                                         } else {
-                                                                            this.db.passed = false;
+                                                                            db.passed = false;
                                                                         }
                                                                     }
                                                                 })
                                                             }, (err) => console.log(err.message), () => {
-                                                                if(this.db.passed) {
+                                                                if(db.passed) {
                                                                     this.props.navigator.replace({
                                                                         id: 'SplashPage',
                                                                         passProps: {
-                                                                            doctorUserID: this.db.data.userID,
+                                                                            doctorUserID: db.data.userID,
                                                                             cloudUrl: _.trimEnd(this.state.cloudUrl, '/'),
                                                                         },
                                                                         sceneConfig: Navigator.SceneConfigs.FadeAndroid

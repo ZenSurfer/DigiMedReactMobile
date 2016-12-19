@@ -269,7 +269,7 @@ class HPEDPage extends Component {
                 rowData.push(db.data.item(i))
             })
             this.setState({refreshing: false, rowData: rowData})
-            this.updateData(['diagnosis', 'diagnosisIcds', 'cpts', 'cptCategories']);
+            this.updateData(['diagnosis', 'diagnosisIcds', 'icds', 'icdCategories']);
         })
     }
     updateData(tables) {
@@ -324,6 +324,7 @@ class HPEDPage extends Component {
                                                         if(_.last(tables) === table)
                                                             this.setState({syncing: false})
                                                         currentImportDate = data.importdate;
+                                                        console.log('in1')
                                                         this.updateImportDate(table, currentImportDate).then(msg => {
                                                             console.log(data.table+' import', msg)
                                                             if(_.last(tables) === table)
@@ -331,12 +332,14 @@ class HPEDPage extends Component {
                                                             // ToastAndroid.show('Appointments updated!', 1000)
                                                         }).done()
                                                     }, (err) => {
+                                                    console.log('in2')
                                                         if(_.last(tables) === table)
                                                             this.setState({syncing: false})
                                                         table// ToastAndroid.show(err.message+'!', 1000)
                                                     });
                                                 } else {
                                                     currentImportDate = data.importdate;
+                                                    console.log('in3')
                                                     if(_.last(tables) === table)
                                                         this.setState({syncing: false})
                                                     this.updateImportDate(table, currentImportDate  ).then(msg => {

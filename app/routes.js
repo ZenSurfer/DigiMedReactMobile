@@ -60,114 +60,124 @@ import ImportPage from './actions/Syncing/ImportPage'
 
 import Styles from './assets/Styles'
 
-var db = SQLite.openDatabase({name: "testDB4"})
-
 module.exports = (route, navigator, self) => {
 
     var routeId = route.id
 
     if (routeId === 'SplashPage') {
         return (
-            <SplashPage navigator={navigator} {...route.passProps} db={db}>
+            <SplashPage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
             </SplashPage>
         )
     }
     if (routeId === 'VerifyPage') {
         return (
-            <VerifyPage navigator={navigator} {...route.passProps} db={db}>
+            <VerifyPage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
             </VerifyPage>
         )
     }
     if (routeId === 'LoginPage') {
         return (
-            <LoginPage navigator={navigator} {...route.passProps} db={db}>
+            <LoginPage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
             </LoginPage>
         )
     }
     if (routeId === 'SearchPage') {
         return (
-            <SearchPage navigator={navigator} {...route.passProps} db={db}>
+            <SearchPage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                            </View>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                ) : (<View/>)}
             </SearchPage>
         )
     }
     // main page
     if (routeId === 'MainPage') {
         return (
-            <MainPage navigator={navigator} {...route.passProps} db={db}>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+            <MainPage navigator={navigator} {...route.passProps}>
+            {(self.state.completed) ? (
+                <View style={{position: 'absolute',top: 50, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                    <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                        <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                            <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                </View>
+            ) : (<View/>)}
             </MainPage>
         )
     }
     // patient page
     if (routeId === 'PatientPage') {
         return (
-            <PatientPage navigator={navigator} {...route.passProps} db={db}>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+            <PatientPage navigator={navigator} {...route.passProps}>
+            {(self.state.completed) ? (
+                <View style={{position: 'absolute',top: 50, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                    <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                        <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                            <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                </View>
+            ) : (<View/>)}
             </PatientPage>
         )
     }
     if (routeId === 'AddPatient') {
         return (
-            <AddPatient navigator={navigator} {...route.passProps} db={db}>
+            <AddPatient navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF' translucent={true}/>
                 {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                            </View>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                ) : (<View/>)}
             </AddPatient>
         )
     }
     if (routeId === 'PatientProfile') {
         return (
-            <PatientProfile navigator={navigator} {...route.passProps} db={db}>
-                <StatusBar backgroundColor='#2962FF'/>
+            <PatientProfile navigator={navigator} {...route.passProps}>
+                <StatusBar backgroundColor='#2962FF' translucent={true}/>
                 {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                    <View style={{position: 'absolute',top: 50, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                            </View>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                ) : (<View/>)}
             </PatientProfile>
         )
     }
     if (routeId === 'EditPatient') {
         return (
-            <EditPatient navigator={navigator} {...route.passProps} db={db}>
+            <EditPatient navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                            </View>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                ) : (<View/>)}
             </EditPatient>
         )
     }
@@ -175,444 +185,488 @@ module.exports = (route, navigator, self) => {
     //hped page
     if (routeId === 'AddHPED') {
         return (
-            <AddHPED navigator={navigator} {...route.passProps} db={db}>
+            <AddHPED navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                            </View>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                ) : (<View/>)}
             </AddHPED>
         )
     }
     if (routeId === 'HPEDPage') {
         return (
-            <HPEDPage navigator={navigator} {...route.passProps} db={db}>
+            <HPEDPage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                            </View>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                ) : (<View/>)}
             </HPEDPage>
         )
     }
     if (routeId === 'HPEDInfo') {
         return (
-            <HPEDInfo navigator={navigator} {...route.passProps} db={db}>
+            <HPEDInfo navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                            </View>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                ) : (<View/>)}
             </HPEDInfo>
         )
     }
     if (routeId === 'EditHPED') {
         return (
-            <EditHPED navigator={navigator} {...route.passProps} db={db}>
+            <EditHPED navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                            </View>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                ) : (<View/>)}
             </EditHPED>
         )
     }
     //labwork
     if (routeId === 'OrderItem') {
         return (
-            <OrderItem navigator={navigator} {...route.passProps} db={db}>
+            <OrderItem navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                            </View>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                ) : (<View/>)}
             </OrderItem>
         )
     }
     if (routeId === 'PendingOrder') {
         return (
-            <PendingOrder navigator={navigator} {...route.passProps} db={db}>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+            <PendingOrder navigator={navigator} {...route.passProps}>
+            {(self.state.completed) ? (
+                <View style={{position: 'absolute',top: 50, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                    <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                        <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                            <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                </View>
+            ) : (<View/>)}
             </PendingOrder>
         )
     }
     if (routeId === 'CompletedOrder') {
         return (
-            <CompletedOrder navigator={navigator} {...route.passProps} db={db}>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+            <CompletedOrder navigator={navigator} {...route.passProps}>
+            {(self.state.completed) ? (
+                <View style={{position: 'absolute',top: 50, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                    <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                        <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                            <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                </View>
+            ) : (<View/>)}
             </CompletedOrder>
         )
     }
     //prescription
     if (routeId === 'PrescriptionPage') {
         return (
-            <PrescriptionPage navigator={navigator} {...route.passProps} db={db}>
+            <PrescriptionPage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                            </View>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                ) : (<View/>)}
             </PrescriptionPage>
         )
     }
     if (routeId === 'AddPrescription') {
         return (
-            <AddPrescription navigator={navigator} {...route.passProps} db={db}>
+            <AddPrescription navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                            </View>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                ) : (<View/>)}
             </AddPrescription>
         )
     }
     if (routeId === 'EditPrescription') {
         return (
-            <EditPrescription navigator={navigator} {...route.passProps} db={db}>
+            <EditPrescription navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                            </View>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                ) : (<View/>)}
             </EditPrescription>
         )
     }
     //image
     if (routeId === 'ImagePage') {
         return (
-            <ImagePage navigator={navigator} {...route.passProps} db={db}>
+            <ImagePage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                            </View>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                ) : (<View/>)}
             </ImagePage>
         )
     }
     if (routeId === 'ViewImage') {
         return (
-            <ViewImage navigator={navigator} {...route.passProps} db={db}>
+            <ViewImage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                            </View>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                ) : (<View/>)}
             </ViewImage>
         )
     }
     if (routeId === 'AddImage') {
         return (
-            <AddImage navigator={navigator} {...route.passProps} db={db}>
+            <AddImage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                            </View>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                ) : (<View/>)}
             </AddImage>
         )
     }
     if (routeId === 'EditImage') {
         return (
-            <EditImage navigator={navigator} {...route.passProps} db={db}>
+            <EditImage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                            </View>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                ) : (<View/>)}
             </EditImage>
         )
     }
     //appointment page
     if (routeId === 'AppointmentPage') {
         return (
-            <AppointmentPage navigator={navigator} {...route.passProps} db={db}>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+            <AppointmentPage navigator={navigator} {...route.passProps}>
+            {(self.state.completed) ? (
+                <View style={{position: 'absolute',top: 50, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                    <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                        <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                            <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                </View>
+            ) : (<View/>)}
             </AppointmentPage>
         )
     }
     if (routeId === 'AppointmentPatientPage') {
         return (
-            <AppointmentPatientPage navigator={navigator} {...route.passProps} db={db}>
+            <AppointmentPatientPage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF' translucent={true}/>
                 {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                            </View>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                ) : (<View/>)}
             </AppointmentPatientPage>
         )
     }
     if (routeId === 'AddAppointment') {
         return (
-            <AddAppointment navigator={navigator} {...route.passProps} db={db}>
+            <AddAppointment navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                            </View>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                ) : (<View/>)}
             </AddAppointment>
         )
     }
     if (routeId === 'EditAppointment') {
         return (
-            <EditAppointment navigator={navigator} {...route.passProps} db={db}>
+            <EditAppointment navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                            </View>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                ) : (<View/>)}
             </EditAppointment>
         )
     }
     //followup page
     if (routeId === 'FollowupPage') {
         return (
-            <FollowupPage navigator={navigator} {...route.passProps} db={db}>
+            <FollowupPage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                            </View>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                ) : (<View/>)}
             </FollowupPage>
         )
     }
     if (routeId === 'AddFollowup') {
         return (
-            <AddFollowup navigator={navigator} {...route.passProps} db={db}>
+            <AddFollowup navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                            </View>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                ) : (<View/>)}
             </AddFollowup>
         )
     }
     if (routeId === 'EditFollowup') {
         return (
-            <EditFollowup navigator={navigator} {...route.passProps} db={db}>
+            <EditFollowup navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
                 {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                    <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                            <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                                <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                            </View>
                         </View>
                     </View>
-                    ) : (<View/>)}
+                ) : (<View/>)}
             </EditFollowup>
         )
     }
    //user profile/setting page
    if (routeId === 'UserSettingPage') {
        return (
-           <UserSettingPage navigator={navigator} {...route.passProps} db={db}>
-               {(self.state.completed) ? (
-                   <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                       <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                           <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+           <UserSettingPage navigator={navigator} {...route.passProps}>
+           {(self.state.completed) ? (
+               <View style={{position: 'absolute',top: 50, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                   <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                       <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                           <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
                        </View>
                    </View>
-                   ) : (<View/>)}
+               </View>
+           ) : (<View/>)}
            </UserSettingPage>
        )
    }
    if (routeId === 'EditUserSetting') {
        return (
-           <EditUserSetting navigator={navigator} {...route.passProps} db={db}>
+           <EditUserSetting navigator={navigator} {...route.passProps}>
                <StatusBar backgroundColor='#2962FF'/>
                {(self.state.completed) ? (
-                   <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                       <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                           <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                   <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                       <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                           <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                               <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                           </View>
                        </View>
                    </View>
-                   ) : (<View/>)}
+               ) : (<View/>)}
            </EditUserSetting>
        )
    }
    if (routeId === 'UserProfilePage') {
        return (
-           <UserProfilePage navigator={navigator} {...route.passProps} db={db}>
-               {(self.state.completed) ? (
-                   <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                       <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                           <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+           <UserProfilePage navigator={navigator} {...route.passProps}>
+           {(self.state.completed) ? (
+               <View style={{position: 'absolute',top: 50, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                   <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                       <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                           <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
                        </View>
                    </View>
-                   ) : (<View/>)}
+               </View>
+           ) : (<View/>)}
            </UserProfilePage>
        )
    }
    if (routeId === 'EditUserProfile') {
        return (
-           <EditUserProfile navigator={navigator} {...route.passProps} db={db}>
+           <EditUserProfile navigator={navigator} {...route.passProps}>
                <StatusBar backgroundColor='#2962FF'/>
                {(self.state.completed) ? (
-                   <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                       <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                           <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                   <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                       <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                           <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                               <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                           </View>
                        </View>
                    </View>
-                   ) : (<View/>)}
+               ) : (<View/>)}
            </EditUserProfile>
        )
    }
    // doctors page
    if (routeId === 'DoctorPage') {
        return (
-           <DoctorPage navigator={navigator} {...route.passProps} db={db}>
-               {(self.state.completed) ? (
-                   <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                       <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                           <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+           <DoctorPage navigator={navigator} {...route.passProps}>
+           {(self.state.completed) ? (
+               <View style={{position: 'absolute',top: 50, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                   <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                       <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                           <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
                        </View>
                    </View>
-                   ) : (<View/>)}
+               </View>
+           ) : (<View/>)}
            </DoctorPage>
        )
    }
    if (routeId === 'AddDoctor') {
        return (
-           <AddDoctor navigator={navigator} {...route.passProps} db={db}>
+           <AddDoctor navigator={navigator} {...route.passProps}>
                <StatusBar backgroundColor='#2962FF'/>
                {(self.state.completed) ? (
-                   <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                       <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                           <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                   <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                       <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                           <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                               <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                           </View>
                        </View>
                    </View>
-                   ) : (<View/>)}
+               ) : (<View/>)}
            </AddDoctor>
        )
    }
    if (routeId === 'EditDoctor') {
        return (
-           <EditDoctor navigator={navigator} {...route.passProps} db={db}>
+           <EditDoctor navigator={navigator} {...route.passProps}>
                <StatusBar backgroundColor='#2962FF'/>
                {(self.state.completed) ? (
-                   <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                       <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                           <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                   <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                       <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                           <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                               <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                           </View>
                        </View>
                    </View>
-                   ) : (<View/>)}
+               ) : (<View/>)}
            </EditDoctor>
        )
    }
    if (routeId === 'DoctorProfile') {
        return (
-           <DoctorProfile navigator={navigator} {...route.passProps} db={db}>
+           <DoctorProfile navigator={navigator} {...route.passProps}>
                <StatusBar backgroundColor='#2962FF'/>
                {(self.state.completed) ? (
-                   <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                       <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                           <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
+                   <View style={{position: 'absolute',top: 74, zIndex: 2, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                       <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
+                           <View style={{ backgroundColor: '#FFEB3B', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                               <Text style={{textAlignVertical: 'center', color: '#424242', fontSize: 11}}>New Labwork Order Completed!</Text>
+                           </View>
                        </View>
                    </View>
-                   ) : (<View/>)}
+               ) : (<View/>)}
            </DoctorProfile>
        )
    }
     // export page
     if (routeId === 'ExportPage') {
         return (
-            <ExportPage navigator={navigator} {...route.passProps} db={db}>
+            <ExportPage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
-                        </View>
-                    </View>
-                    ) : (<View/>)}
             </ExportPage>
         )
     }
     if (routeId === 'ImportPage') {
         return (
-            <ImportPage navigator={navigator} {...route.passProps} db={db}>
+            <ImportPage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='#2962FF'/>
-                {(self.state.completed) ? (
-                    <View style={{position: 'absolute', top: 50, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{backgroundColor: '#FFEB3B',  flex: 1, alignItems: 'stretch', padding: 10}}>
-                            <Text style={{textAlign: 'center', fontSize: 10, color: '#424242'}}>New Labwork Order Completed!</Text>
-                        </View>
-                    </View>
-                    ) : (<View/>)}
             </ImportPage>
         )
     }
     // frontdesk page
     if (routeId === 'FrontPage') {
         return (
-            <FrontPage navigator={navigator} {...route.passProps} db={db}>
+            <FrontPage navigator={navigator} {...route.passProps}>
             </FrontPage>
         )
     }

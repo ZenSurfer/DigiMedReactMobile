@@ -273,10 +273,14 @@ class DrawerPage extends Component {
                             </View>
                         </TouchableNativeFeedback>
                         <TouchableNativeFeedback
-                            onPress={() => this.props.navigator.replace({
-                                id: 'LoginPage',
-                                sceneConfig: Navigator.SceneConfigs.FloatFromLeft
-                            })
+                            onPress={() => {
+                                this.removeCredentials().done(() => {
+                                    this.props.navigator.replace({
+                                        id: 'LoginPage',
+                                        sceneConfig: Navigator.SceneConfigs.FloatFromLeft
+                                    })
+                                });
+                            }
                         }>
                             <View style={styles.drawerViewWrapper}>
                                 <View style={styles.iconWrapper}>
@@ -290,7 +294,13 @@ class DrawerPage extends Component {
             </ScrollView>
         )
     }
-
+    async removeCredentials() {
+        try {
+            var doctor = await AsyncStorage.removeItem('doctor');
+        } catch (error) {
+            console.log('AsyncStorage error: ' + error.message);
+        }
+    }
 }
 
 module.exports = DrawerPage

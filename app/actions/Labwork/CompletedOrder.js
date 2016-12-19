@@ -38,7 +38,10 @@ class PendingOrder extends Component {
     async updateCredentials() {
         try {
             var doctor = await AsyncStorage.getItem('doctor');
-            this.setState({doctorID: JSON.parse(doctor).id, cloudUrl: JSON.parse(doctor).cloudUrl})
+            this.setState({
+                doctorID: JSON.parse(doctor).id,
+                cloudUrl: JSON.parse(doctor).cloudUrl
+            })
         } catch (error) {
             console.log('AsyncStorage error: ' + error.message);
         } finally {
