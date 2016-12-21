@@ -67,12 +67,10 @@ class FollowupPage extends Component {
                     <Text style={Styles.subTitle}>Follow-Up</Text>
                 </View>
                 {(this.state.syncing) ? (
-                    <View style={{position: 'absolute', top: 74, zIndex: 1, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                            <View style={{ backgroundColor: '#FF5722', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                                <ActivityIndicator color="#FFF" size={15}/>
-                                <Text style={{textAlignVertical: 'center', paddingLeft: 10, color: '#FFF', fontSize: 11}}>{this.state.syncingTitle}</Text>
-                            </View>
+                    <View style={{alignItems: 'center'}}>
+                        <View style={{flexDirection: 'row', padding: 15, paddingTop: 10, paddingBottom: 10, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                            <ActivityIndicator color="#616161" size={15}/>
+                            <Text style={{textAlignVertical: 'center', paddingLeft: 10, color: '#616161', fontSize: 11}}>{this.state.syncingTitle}</Text>
                         </View>
                     </View>
                 ) : (
@@ -217,7 +215,7 @@ class FollowupPage extends Component {
                                                     }, (err) => {
                                                         if(_.last(tables) === table)
                                                             this.setState({syncing: false})
-                                                        table// ToastAndroid.show(err.message+'!', 1000)
+                                                        // ToastAndroid.show(err.message+'!', 1000)
                                                     });
                                                 } else {
                                                     currentImportDate = data.importdate;
@@ -229,6 +227,9 @@ class FollowupPage extends Component {
                                                     }).done()
                                                 }
                                             }).done()
+                                        } else {
+                                            if(_.last(tables) === table)
+                                                this.setState({syncing: false})
                                         }
                                     }).done()
                                 }

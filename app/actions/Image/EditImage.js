@@ -202,9 +202,6 @@ var styles = StyleSheet.create({
         marginRight: 4,
     },
     select: {
-        borderBottomWidth: 1,
-        borderBottomColor: '#757575',
-        borderStyle: 'solid',
         marginLeft: 4,
         marginRight: 4,
         marginBottom: 10,
@@ -214,9 +211,6 @@ var styles = StyleSheet.create({
         fontSize: 16,
         paddingTop: 5,
         marginBottom: 5,
-        borderBottomWidth: 1,
-        borderBottomColor: '#757575',
-        borderStyle: 'solid',
     },
 })
 

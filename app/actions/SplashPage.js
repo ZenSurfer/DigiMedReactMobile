@@ -5,6 +5,7 @@ import {Text, View, Navigator, ActivityIndicator, StyleSheet, Dimensions, Toucha
 import RNFS from 'react-native-fs'
 import FCM from 'react-native-fcm';
 import Schema from '../database/schema.js'
+import moment from 'moment'
 import Populate from '../database/values.js'
 import Demo from '../database/testDB.js'
 import Styles from '../assets/Styles.js'
@@ -171,7 +172,6 @@ class SplashPage extends Component {
                                 var doctor = _.omit(rs.rows.item(0), ['password', 'accountVerified', 'emailVerified']);
                                 doctor['cloudUrl'] = EnvInstance.cloudUrl;
                                 NetInfo.isConnected.fetch().then(isConnected => {
-                                    console.log(isConnected)
                                     if (isConnected) {
                                         this.register({
                                             userID: doctor.userID,
@@ -179,6 +179,33 @@ class SplashPage extends Component {
                                             token: this.state.token,
                                             doctor: doctor,
                                         }).then((data) => {
+                                            var table = 'mobile'
+                                            this.importDate(table).then(importDate => {
+                                                if (importDate === null) {
+                                                    importDate = moment().year(2000).format('YYYY-MM-DD HH:mm:ss')
+                                                }
+                                                this.importData(table, importDate).then((data) => {
+                                                    var currentImportDate = importDate;
+                                                    if (data.total > 0) {
+                                                        db.sqlBatch(_.transform(data.data, (result, n, i) => {
+                                                            result.push(["INSERT OR REPLACE INTO "+table+" VALUES ("+_.join(_.fill(Array(_.size(n)), '?'), ',')+")", _.values(n)])
+                                                            return true
+                                                        }, []), () => {
+                                                            currentImportDate = data.importdate;
+                                                            this.updateImportDate(table, currentImportDate).then(msg => {
+                                                                console.log(data.table+' import', msg)
+                                                            }).done()
+                                                        }, (err) => {
+                                                            console.log(err.message)
+                                                        });
+                                                    } else {
+                                                        currentImportDate = data.importdate;
+                                                        this.updateImportDate(table, currentImportDate  ).then(msg => {
+                                                            console.log(data.table+' import', msg)
+                                                        }).done()
+                                                    }
+                                                }).done()
+                                            }).done()
                                             doctor['mobileID'] = data.mobileID
                                             AsyncStorage.setItem('doctor', JSON.stringify(doctor))
                                             if (data.new) {
@@ -191,13 +218,19 @@ class SplashPage extends Component {
                                             });
                                         }).done()
                                     } else {
-                                        doctor['mobileID'] = 2
-                                        AsyncStorage.setItem('doctor', JSON.stringify(doctor))
-                                        ToastAndroid.show('Offline mode!', 1000)
-                                        this.props.navigator.replace({
-                                            id: 'AppointmentPage',
-                                            sceneConfig: Navigator.SceneConfigs.FadeAndroid
-                                        });
+                                        db.transaction(tx => {
+                                            tx.executeSql("SELECT id FROM mobile WHERE userID="+doctor.userID+" AND doctorID="+doctor.id+" ORDER BY created_at DESC LIMIT 1", [], (tx, rs) => {
+                                                db.mobileID = rs.rows.item(0).id;
+                                            })
+                                        }, err => console.log(err.message), () => {
+                                            doctor['mobileID'] = db.mobileID;
+                                            AsyncStorage.setItem('doctor', JSON.stringify(doctor))
+                                            ToastAndroid.show('Offline mode!', 1000)
+                                            this.props.navigator.replace({
+                                                id: 'AppointmentPage',
+                                                sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                            });
+                                        })
                                     }
                                 });
                             } else {
@@ -252,6 +285,20 @@ class SplashPage extends Component {
             </View>
         );
     }
+    parse(table, values) {
+        var rows = []; var where = [];
+        rows.push('table='+table)
+        _.forEach(values, (v, i) => {
+            where.push(encodeURIComponent('{') + this.jsonToQueryString(v) + encodeURIComponent('}'))
+        })
+        rows.push('where='+ encodeURIComponent('[') + _.join(where, encodeURIComponent(',')) + encodeURIComponent(']'))
+        return _.join(rows, '&')
+    }
+    jsonToQueryString(json) {
+        return Object.keys(json).map((key) => {
+            return encodeURIComponent('"') + encodeURIComponent(key) + encodeURIComponent('"') + encodeURIComponent(":") + encodeURIComponent('"') + encodeURIComponent(json[key])+ encodeURIComponent('"');
+        }).join(encodeURIComponent(','));
+    }
     async pull(param) {
         try {
             return await fetch(EnvInstance.cloudUrl+'/api/v2/pull?'+param).then((response) => {
@@ -273,19 +320,32 @@ class SplashPage extends Component {
             console.log(err.message)
         }
     }
-    parse(table, values) {
-        var rows = []; var where = [];
-        rows.push('table='+table)
-        _.forEach(values, (v, i) => {
-            where.push(encodeURIComponent('{') + this.jsonToQueryString(v) + encodeURIComponent('}'))
-        })
-        rows.push('where='+ encodeURIComponent('[') + _.join(where, encodeURIComponent(',')) + encodeURIComponent(']'))
-        return _.join(rows, '&')
+    async importDate(table) {
+        try {
+            var importDate = JSON.parse(await AsyncStorage.getItem('importDate'));
+            return (_.isUndefined(importDate[table])) ? null : importDate[table];
+        } catch (err) {
+            return null;
+        }
     }
-    jsonToQueryString(json) {
-        return Object.keys(json).map((key) => {
-            return encodeURIComponent('"') + encodeURIComponent(key) + encodeURIComponent('"') + encodeURIComponent(":") + encodeURIComponent('"') + encodeURIComponent(json[key])+ encodeURIComponent('"');
-        }).join(encodeURIComponent(','));
+    async importData(table, date) {
+        try {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/import?table='+table+'&date='+encodeURIComponent(date)).then((res) => {
+                return res.json()
+            });
+        } catch (err) {
+            return err.message;
+        }
+    }
+    async updateImportDate(table, date) {
+        try {
+            var importDate = JSON.parse(await AsyncStorage.getItem('importDate'));
+            importDate[table] = date;
+            AsyncStorage.setItem('importDate', JSON.stringify(importDate));
+            return 'updated '+date;
+        } catch (err) {
+            return err.message;
+        }
     }
 }
 

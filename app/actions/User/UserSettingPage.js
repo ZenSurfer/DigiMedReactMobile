@@ -1,7 +1,7 @@
 'use-strict'
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, View, ScrollView, Navigator, TouchableOpacity, ListView, DrawerLayoutAndroid, RefreshControl, Dimensions, InteractionManager, ActivityIndicator, TouchableNativeFeedback, TouchableHighlight, Modal, TextInput, ToastAndroid} from 'react-native'
+import {StyleSheet, Text, View, ScrollView, Navigator, TouchableOpacity, ListView, DrawerLayoutAndroid, RefreshControl, Dimensions, InteractionManager, ActivityIndicator, TouchableNativeFeedback, TouchableHighlight, Modal, TextInput, ToastAndroid, NetInfo, AsyncStorage} from 'react-native'
 import RNFS from 'react-native-fs'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import moment from 'moment'
@@ -26,6 +26,8 @@ class UserSettingPage extends Component {
             updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
             refreshing: true,
             renderPlaceholderOnly: true,
+            syncing: false,
+            syncingTitle: 'Syncing Doctors...',
         }
     }
     componentWillMount() {
@@ -59,13 +61,14 @@ class UserSettingPage extends Component {
                 renderNavigationView={() => {
                     return (<DrawerPage navigator={this.props.navigator} routeName={'settings'}></DrawerPage>)
                 }}
+                statusBarBackgroundColor={'#2962FF'}
                 ref={this.drawerInstance} >
                 <Navigator
                     renderScene={this.renderScene.bind(this)}
                     navigator={this.props.navigator}
                     navigationBar={
                         <Navigator.NavigationBar
-                            style={[Styles.navigationBar,{marginTop: 24}]}
+                            style={[Styles.navigationBar,{}]}
                             routeMapper={NavigationBarRouteMapper} />
                     }
                     />
@@ -75,8 +78,7 @@ class UserSettingPage extends Component {
     renderScene(route, navigator) {
         return (
             <View style={Styles.containerStyle}>
-                {this.props.children}
-                <View style={[Styles.subTolbar, {marginTop: 24}]}>
+                <View style={[Styles.subTolbar, {}]}>
                     <Text style={Styles.subTitle}>{this.props.doctorName}</Text>
                 </View>
                 <ScrollView
@@ -134,7 +136,7 @@ class UserSettingPage extends Component {
                     </View>
                 </ScrollView>
                 <TouchableOpacity
-                    style={[Styles.buttonFab, Styles.subTolbarButton, {marginTop: 24}]}
+                    style={[Styles.buttonFab, Styles.subTolbarButton, {}]}
                     onPress={() =>  this.props.navigator.push({
                         id: 'EditUserSetting',
                         passProps: {
@@ -159,10 +161,172 @@ class UserSettingPage extends Component {
         }, () => {
             var rowData = db.data;
             this.setState({refreshing: false, rowData: rowData});
+            this.updateData(['doctors', 'users']);
         });
     }
     drawerInstance(instance) {
         drawerRef = instance
+    }
+    updateData(tables) {
+        NetInfo.isConnected.fetch().then(isConnected => {
+            if (isConnected) {
+                _.forEach(tables, (table, ii) => {
+                    this.exportDate(table).then(exportDate => {
+                        if (exportDate === null) {
+                            exportDate = moment().year(2000).format('YYYY-MM-DD HH:mm:ss')
+                        }
+                        db.transaction(tx => {
+                            tx.executeSql("SELECT * FROM "+table+" WHERE (created_at>='"+exportDate+"' OR updated_at>='"+exportDate+"')", [], (tx, rs) => {
+                                db.data = rs.rows;
+                            })
+                        }, (err) => console.log(err.message), () => {
+                            var rows = [];
+                            _.forEach(db.data, (v, i) => {
+                                rows.push(i+ '='+ encodeURIComponent('{') + this.jsonToQueryString(db.data.item(i)) + encodeURIComponent('}'))
+                            })
+                            this.exportData(table, rows).then(data => {
+                                if(!_.isUndefined(data) && data.success) {
+                                    this.updateExportDate(table, data.exportdate).then(msg => console.log(data.table+' export', msg)).done()
+                                    this.importDate(table).then(importDate => {
+                                        if (importDate === null) {
+                                            importDate = moment().year(2000).format('YYYY-MM-DD HH:mm:ss')
+                                        }
+                                        if (moment().diff(moment(importDate), 'minutes') >= EnvInstance.interval) {
+                                            this.setState({syncing: true, syncingTitle: 'Syncing Doctors...'})
+                                            this.importData(table, importDate).then((data) => {
+                                                var currentImportDate = importDate;
+                                                if (data.total > 0) {
+                                                    db.sqlBatch(_.transform(data.data, (result, n, i) => {
+                                                        result.push(["INSERT OR REPLACE INTO "+table+" VALUES ("+_.join(_.fill(Array(_.size(n)), '?'), ',')+")", _.values(n)])
+                                                        if (!_.isUndefined(n.imagePath)) {
+                                                            var param = {id: n.id, type: data.table};
+                                                            this.importImage(Object.keys(param).map((key) => {
+                                                                return encodeURIComponent(key) + '=' + encodeURIComponent(param[key]);
+                                                            }).join('&')).then((data) => {
+                                                                if (!_.isUndefined(data)) {
+                                                                    if (data.success) {
+                                                                        RNFS.writeFile(RNFS.ExternalDirectoryPath+'/'+n.imagePath, decodeURIComponent(data.avatar), 'base64').then((success) => {
+                                                                            console.log("Successfully created!")
+                                                                        }).catch((err) => {
+                                                                            console.log("Error occured while creating image!")
+                                                                        });
+                                                                    }
+                                                                }
+                                                            }).done();
+                                                        }
+                                                        return true
+                                                    }, []), () => {
+                                                        if(_.last(tables) === table)
+                                                            this.setState({syncing: false})
+                                                        currentImportDate = data.importdate;
+                                                        this.updateImportDate(table, currentImportDate).then(msg => {
+                                                            console.log(data.table+' import', msg)
+                                                            if(_.last(tables) === table)
+                                                                this.onRefresh()
+                                                            // ToastAndroid.show('Appointments updated!', 1000)
+                                                        }).done()
+                                                    }, (err) => {
+                                                        if(_.last(tables) === table)
+                                                            this.setState({syncing: false})
+                                                        // ToastAndroid.show(err.message+'!', 1000)
+                                                    });
+                                                } else {
+                                                    currentImportDate = data.importdate;
+                                                    if(_.last(tables) === table)
+                                                        this.setState({syncing: false})
+                                                    this.updateImportDate(table, currentImportDate  ).then(msg => {
+                                                        console.log(data.table+' import', msg)
+                                                        // ToastAndroid.show('Appointments up to date!', 1000)
+                                                    }).done()
+                                                }
+                                            }).done()
+                                        } else {
+                                            if(_.last(tables) === table)
+                                                this.setState({syncing: false})
+                                        }
+                                    }).done()
+                                }
+                            }).done();
+                        })
+                    }).done()
+                })
+            }
+        })
+    }
+    async importImage(param) {
+        try {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/image?'+param).then((response) => {
+                return response.json()
+            });
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
+    async importDate(table) {
+        try {
+            var importDate = JSON.parse(await AsyncStorage.getItem('importDate'));
+            return (_.isUndefined(importDate[table])) ? null : importDate[table];
+        } catch (err) {
+            return null;
+        }
+    }
+    async importData(table, date) {
+        try {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/import?table='+table+'&date='+encodeURIComponent(date)).then((res) => {
+                return res.json()
+            });
+        } catch (err) {
+            return err.message;
+        }
+    }
+    async updateImportDate(table, date) {
+        try {
+            var importDate = JSON.parse(await AsyncStorage.getItem('importDate'));
+            importDate[table] = date;
+            AsyncStorage.setItem('importDate', JSON.stringify(importDate));
+            return 'updated '+date;
+        } catch (err) {
+            return err.message;
+        }
+    }
+    async exportDate(table) {
+        try {
+            var exportDate = JSON.parse(await AsyncStorage.getItem('exportDate'));
+            return (_.isUndefined(exportDate[table])) ? null : exportDate[table];
+        } catch (err) {
+            return null;
+        }
+    }
+    async updateExportDate(table, date) {
+        try {
+            var exportDate = JSON.parse(await AsyncStorage.getItem('exportDate'));
+            exportDate[table] = date;
+            AsyncStorage.setItem('exportDate', JSON.stringify(exportDate));
+            return 'updated '+date;
+        } catch (err) {
+            return err.message;
+        }
+    }
+    async exportData(table, rows) {
+        try {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/export?table='+table, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                },
+                body: _.join(rows, '&')
+            }).then((response) => {
+                return response.json()
+            });
+        } catch (err) {
+            console.log(table+':', e.message)
+        }
+    }
+    jsonToQueryString(json) {
+        return Object.keys(json).map((key) => {
+            return encodeURIComponent('"') + encodeURIComponent(key) + encodeURIComponent('"') + encodeURIComponent(":") + encodeURIComponent('"') + encodeURIComponent(json[key])+ encodeURIComponent('"');
+        }).join(encodeURIComponent(','));
     }
 }
 

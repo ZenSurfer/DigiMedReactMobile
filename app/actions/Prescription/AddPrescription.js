@@ -10,7 +10,6 @@ import moment from 'moment'
 import ImagePicker from 'react-native-image-picker'
 import Env from '../../env'
 import Styles from '../../assets/Styles'
-import DrawerPage from '../../components/DrawerPage'
 
 const {height, width} = Dimensions.get('window')
 const EnvInstance = new Env()
@@ -122,7 +121,7 @@ class AddPrescription extends Component {
                         </View>
                         {(this.state.selectedValue.modal == 'dosageVisible') ? (
                             <View style={{flexDirection: 'column'}}>
-                                <View style={{flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#FFF', padding: 1}}>
+                                <View style={{height: 140, flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#FFF', padding: 1}}>
                                     <View style={{flex: 1, flexDirection: 'column', margin: 1}}>
                                         <TouchableOpacity
                                             style={{padding: 5, flex: 1, alignItems: 'stretch', justifyContent: 'center', backgroundColor: '#FAFAFA', borderRadius: 2}}
@@ -200,7 +199,7 @@ class AddPrescription extends Component {
                                         </TouchableOpacity>
                                     </View>
                                 </View>
-                                <View style={{flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#FFF', padding: 1, paddingTop: 0}}>
+                                <View style={{height: 140, flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#FFF', padding: 1, paddingTop: 0}}>
                                     <View style={{flex: 1, flexDirection: 'column', margin: 1}}>
                                         <TouchableOpacity
                                             style={{padding: 5, flex: 1, alignItems: 'stretch', justifyContent: 'center', backgroundColor: '#FAFAFA', borderRadius: 2}}

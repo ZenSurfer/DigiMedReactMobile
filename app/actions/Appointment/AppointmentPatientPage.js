@@ -76,12 +76,10 @@ class AppointmentPatientPage extends Component {
                     <Text style={Styles.subTitle}>Appointment</Text>
                 </View>
                 {(this.state.syncing) ? (
-                    <View style={{position: 'absolute', top: 74, zIndex: 1, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                            <View style={{ backgroundColor: '#FF5722', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                                <ActivityIndicator color="#FFF" size={15}/>
-                                <Text style={{textAlignVertical: 'center', paddingLeft: 10, color: '#FFF', fontSize: 11}}>{this.state.syncingTitle}</Text>
-                            </View>
+                    <View style={{alignItems: 'center'}}>
+                        <View style={{flexDirection: 'row', padding: 15, paddingTop: 10, paddingBottom: 10, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                            <ActivityIndicator color="#616161" size={15}/>
+                            <Text style={{textAlignVertical: 'center', paddingLeft: 10, color: '#616161', fontSize: 11}}>{this.state.syncingTitle}</Text>
                         </View>
                     </View>
                 ) : (
@@ -136,7 +134,7 @@ class AppointmentPatientPage extends Component {
                             <Icon style={{textAlignVertical: 'center', textAlign: 'center', color: '#FFF'}} name='announcement' size={20}/>
                         </TouchableOpacity>
                         <View style={[styles.listText, {flex: 1, alignItems: 'stretch'}]}>
-                            <Text style={styles.listItem}>{rowData.id} {moment(rowData.date+' '+rowData.timeStart).format('MMMM DD, YYYY')}</Text>
+                            <Text style={styles.listItem}>{moment(rowData.date+' '+rowData.timeStart).format('MMMM DD, YYYY')}</Text>
                             <Text style={styles.listItemHead}>{this.state.appointmentType[rowData.type]}</Text>
                             <Text style={styles.listItem}>{moment(rowData.date+' '+rowData.timeStart).format('hh:mm A')} <Text style={{}}>to</Text> {moment(rowData.date+' '+rowData.timeEnd).format('hh:mm A')} </Text>
                             {/* <Text style={styles.listItem}>{rowData.id} {rowData.diagnosisID}</Text> */}
@@ -216,7 +214,7 @@ class AppointmentPatientPage extends Component {
                                                     }, (err) => {
                                                         if(_.last(tables) === table)
                                                             this.setState({syncing: false})
-                                                        table// ToastAndroid.show(err.message+'!', 1000)
+                                                        // ToastAndroid.show(err.message+'!', 1000)
                                                     });
                                                 } else {
                                                     currentImportDate = data.importdate;

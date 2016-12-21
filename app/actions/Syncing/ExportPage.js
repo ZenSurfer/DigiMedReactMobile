@@ -148,7 +148,7 @@ class ExportPage extends Component {
                                 this.exportData(rows, table).then((data) => {
                                     if(!_.isUndefined(data) && data.success) {
                                         this.updateExportDate(v, data.exportdate).then(msg => console.log(data.table, msg)).done()
-                                        this.setState({table: 'Exporting '+Math.round(((this.state.exportFile + 1) / _.size(filterSchema)) * 100)+'%'})
+                                        this.setState({table: 'Exporting Data '+Math.round(((this.state.exportFile + 1) / _.size(filterSchema)) * 100)+'%'})
                                         // if ((data.insert + data.exist) !== _.size(rows)) {
                                         //     _.forEach(JSON.parse(data.error), (v, i) => {
                                         //         console.log(v)

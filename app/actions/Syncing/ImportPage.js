@@ -21,7 +21,7 @@ class ImportPage extends Component {
         this.state = {
             progress: 0,
             importFile: 0,
-            title: 'Validating Requirements...',
+            title: 'Initializing Imported Data...',
         }
     }
     componentDidMount() {
@@ -40,7 +40,7 @@ class ImportPage extends Component {
         }
     }
     validate() {
-        this.setState({title: 'Validating Requirements...', progress: 0, importFile: 0,})
+        this.setState({title: 'Initializing Imported Data...', progress: 0, importFile: 0,})
         NetInfo.isConnected.fetch().then(isConnected => {
             if (isConnected) {
                 var filterSchema = _.omit(Schema, ['cache', 'migrations', 'password_resets', 'userAccessLevel']);
@@ -73,7 +73,7 @@ class ImportPage extends Component {
                                     }
                                     return true
                                 }, []), () => {
-                                    this.setState({title: 'Importing '+Math.round(((this.state.importFile + 1) / _.size(filterSchema)) * 100)+'%'})
+                                    this.setState({title: 'Importing Data '+Math.round(((this.state.importFile + 1) / _.size(filterSchema)) * 100)+'%'})
                                     currentImportDate = data.importdate;
                                     this.updateImportDate(data.table, currentImportDate).then(msg => console.log(data.table, msg)).done()
                                     if ((this.state.importFile + 1) == _.size(filterSchema)) {
@@ -170,6 +170,33 @@ class ImportPage extends Component {
                 </View>
             </View>
         );
+    }
+    componentWillUnmount() {
+
+        db.transaction((tx) => {
+            tx.executeSql("SELECT `id`, `groupID`, `patientID`, `userID`, `firstname`, `middlename`, `lastname`, `nameSuffix`, `birthdate`, `initial`, `type`, `sex`, `status`, `address`, `phone1`, `phone2`, `email`, `imagePath`, `imageMime`, `allowAsPatient`, `deleted_at`, `created_at`, `updated_at` FROM doctors WHERE `doctors`.`id`= ?", [this.props.doctorID], function(tx, rs) {
+                db.data = rs.rows.item(0);
+            });
+        }, (err) => {
+            alert(err.message);
+        }, () => {
+            var doctorName = 'Dr. '+db.data.firstname+' '+db.data.middlename+' '+db.data.lastname;
+            this.updateDoctorCredentials({
+                userID: db.data.userID,
+                id: db.data.id,
+                name: doctorName,
+                type: db.data.type,
+                initial: db.data.initial,
+                imagePath: db.data.imagePath
+            }).done();
+        });
+    }
+    async updateDoctorCredentials(data) {
+        try {
+            await AsyncStorage.setItem('doctor', JSON.stringify(data))
+        } catch (error) {
+            console.log('AsyncStorage error: ' + error.message);
+        }
     }
     parse(table, values) {
         var rows = []; var where = [];

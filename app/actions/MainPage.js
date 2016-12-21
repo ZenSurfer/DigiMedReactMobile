@@ -113,6 +113,7 @@ class MainPage extends Component {
                 renderNavigationView={() => {
                     return (<DrawerPage navigator={this.props.navigator}></DrawerPage>)
                 }}
+                statusBarBackgroundColor={'#2962FF'}
                 ref={this.drawerInstance}
                 >
                 <Navigator
@@ -120,7 +121,7 @@ class MainPage extends Component {
                     navigator={this.props.navigator}
                     navigationBar={
                         <Navigator.NavigationBar
-                            style={[Styles.navigationBar,{marginTop: 24}]}
+                            style={[Styles.navigationBar,{}]}
                             routeMapper={NavigationBarRouteMapper} />
                     } />
             </DrawerLayoutAndroid>
@@ -129,8 +130,7 @@ class MainPage extends Component {
     renderScene(route, navigator) {
         return (
             <View style={Styles.containerStyle}>
-                {this.props.children}
-                <View style={[Styles.subTolbar, {marginTop: 24}]}>
+                <View style={[Styles.subTolbar, {}]}>
                     <Text style={Styles.subTitle}>{this.state.presetText}</Text>
                 </View>
                 <ListView
@@ -145,7 +145,7 @@ class MainPage extends Component {
                     }
                     />
                 <TouchableOpacity
-                    style={[Styles.buttonFab, Styles.subTolbarButton, {marginTop: 24}]}
+                    style={[Styles.buttonFab, Styles.subTolbarButton, {}]}
                     onPress={this.showPicker.bind(this, 'simple', {date: this.state.presetDate})}
                     >
                     <Icon name="date-range" size={30} color="#FFF" />

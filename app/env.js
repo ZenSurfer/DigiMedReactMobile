@@ -6,7 +6,7 @@ import SQLite from 'react-native-sqlite-storage'
 
 function Env() {
     this.db = function() {
-        return SQLite.openDatabase({name: "testDB5"})
+        return SQLite.openDatabase({name: "testDB7"})
     }
     this.interval = 1
     this.cloudUrl = 'http://192.168.1.41/imd5/public/'

@@ -127,6 +127,7 @@ class FrontPage extends Component {
                 renderNavigationView={() => {
                     return (<DrawerPage navigator={this.props.navigator}></DrawerPage>)
                 }}
+                statusBarBackgroundColor={'#2962FF'}
                 ref={this.drawerInstance}
                 >
                 <Navigator
@@ -134,7 +135,7 @@ class FrontPage extends Component {
                     navigator={this.props.navigator}
                     navigationBar={
                         <Navigator.NavigationBar
-                            style={[Styles.navigationBar,{marginTop: 24}]}
+                            style={[Styles.navigationBar,{}]}
                             routeMapper={NavigationBarRouteMapper} />
                     } />
             </DrawerLayoutAndroid>
@@ -143,8 +144,7 @@ class FrontPage extends Component {
     renderPlaceholderView() {
         return (
             <View style={Styles.containerStyle}>
-                {this.props.children}
-                <View style={[Styles.subTolbar, {marginTop: 24}]}>
+                <View style={[Styles.subTolbar, {}]}>
                     <Text style={Styles.subTitle}>Edit Patient Information</Text>
                 </View>
                 <View style={Styles.loading}>
@@ -156,7 +156,6 @@ class FrontPage extends Component {
     renderScene(route, navigator) {
         return (
             <View style={Styles.containerStyle}>
-                {this.props.children}
                 <View style={Styles.subTolbar}>
                     <Text style={Styles.subTitle}>{this.state.presetText}</Text>
                 </View>
@@ -222,7 +221,7 @@ class FrontPage extends Component {
                         onChangeText={(text) => this.setState({note: text})} />
                 </ScrollView>
                 <TouchableOpacity
-                    style={[Styles.buttonFab, Styles.subTolbarButton, {marginTop: 24}]}
+                    style={[Styles.buttonFab, Styles.subTolbarButton, {}]}
                     onPress={this.showPicker.bind(this, 'date')}
                     >
                     <Icon name="date-range" size={30} color="#FFF" />

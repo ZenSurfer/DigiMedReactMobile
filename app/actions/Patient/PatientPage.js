@@ -64,13 +64,14 @@ class PatientPage extends Component {
                 renderNavigationView={() => {
                     return (<DrawerPage navigator={this.props.navigator} routeName={'patients'}></DrawerPage>)
                 }}
+                statusBarBackgroundColor={'#2962FF'}
                 ref={this.drawerInstance} >
                 <Navigator
                     renderScene={this.renderScene.bind(this)}
                     navigator={this.props.navigator}
                     navigationBar={
                         <Navigator.NavigationBar
-                            style={[Styles.navigationBar,{marginTop: 24}]}
+                            style={[Styles.navigationBar,{}]}
                             routeMapper={NavigationBarRouteMapper(this)} />
                     }
                     />
@@ -80,10 +81,19 @@ class PatientPage extends Component {
     renderScene(route, navigator) {
         return (
             <View style={Styles.containerStyle}>
-                {this.props.children}
-                <View style={[Styles.subTolbar, {marginTop: 24}]}>
+                <View style={[Styles.subTolbar, {}]}>
                     <Text style={Styles.subTitle}>Patient</Text>
                 </View>
+                {(this.state.syncing) ? (
+                    <View style={{alignItems: 'center'}}>
+                        <View style={{flexDirection: 'row', padding: 15, paddingTop: 10, paddingBottom: 10, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
+                            <ActivityIndicator color="#616161" size={15}/>
+                            <Text style={{textAlignVertical: 'center', paddingLeft: 10, color: '#616161', fontSize: 11}}>{this.state.syncingTitle}</Text>
+                        </View>
+                    </View>
+                ) : (
+                    <View />
+                )}
                 <Modal
                     transparent={true}
                     visible={this.state.modalVisible}
@@ -112,18 +122,6 @@ class PatientPage extends Component {
                         </View>
                     </TouchableOpacity>
                 </Modal>
-                {(this.state.syncing) ? (
-                    <View style={{position: 'absolute', top: 74, zIndex: 1, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                        <View style={{flex: 1, flexDirection: 'row', alignSelf: 'center', justifyContent: 'center'}}>
-                            <View style={{ backgroundColor: '#FF5722', flexDirection: 'row', padding: 15, paddingTop: 5, paddingBottom: 5, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                                <ActivityIndicator color="#FFF" size={15}/>
-                                <Text style={{textAlignVertical: 'center', paddingLeft: 10, color: '#FFF', fontSize: 11}}>{this.state.syncingTitle}</Text>
-                            </View>
-                        </View>
-                    </View>
-                ) : (
-                    <View />
-                )}
                 <ListView
                     style={{marginBottom: 36}}
                     dataSource={ds.cloneWithRows(this.state.rowData)}
@@ -137,7 +135,7 @@ class PatientPage extends Component {
                     }
                 />
                 <TouchableOpacity
-                    style={[Styles.buttonFab, Styles.subTolbarButton, {marginTop: 24}]}
+                    style={[Styles.buttonFab, Styles.subTolbarButton, {}]}
                     onPress={() => this.props.navigator.push({
                         id: 'AddPatient',
                     })}>
@@ -267,6 +265,28 @@ class PatientPage extends Component {
                             var rows = [];
                             _.forEach(db.data, (v, i) => {
                                 rows.push(i+ '='+ encodeURIComponent('{') + this.jsonToQueryString(db.data.item(i)) + encodeURIComponent('}'))
+                                if (table == 'patients' || table == 'staff' || table == 'nurses' || table == 'doctors') {
+                                    RNFS.exists(RNFS.ExternalDirectoryPath+'/'+db.data.item(i).imagePath).then((exist) => {
+                                        if (exist)
+                                            RNFS.readFile(RNFS.ExternalDirectoryPath+'/'+db.data.item(i).imagePath, 'base64').then((image) => {
+                                                this.exportImage({
+                                                    imagePath: db.data.item(i).imagePath,
+                                                    image: (image.toString().indexOf('dataimage/jpegbase64') !== -1) ? encodeURIComponent(_.replace(image.toString(), 'dataimage/jpegbase64','')) :  encodeURIComponent(image.toString())
+                                                }, table).done();
+                                            })
+                                    })
+                                }
+                                if (table == 'patientImages') {
+                                    RNFS.exists(RNFS.ExternalDirectoryPath+'/patient/'+db.data.item(i).image).then((exist) => {
+                                        if (exist)
+                                            RNFS.readFile(RNFS.ExternalDirectoryPath+'/patient/'+db.data.item(i).image, 'base64').then((image) => {
+                                                this.exportImage({
+                                                    imagePath: 'patient/'+db.data.item(i).image,
+                                                    image: (image.toString().indexOf('dataimage/jpegbase64') !== -1) ? encodeURIComponent(_.replace(image.toString(), 'dataimage/jpegbase64','')) :  encodeURIComponent(image.toString())
+                                                }, table).done();
+                                            })
+                                    })
+                                }
                             })
                             this.exportData(table, rows).then(data => {
                                 if(!_.isUndefined(data) && data.success) {
@@ -312,7 +332,7 @@ class PatientPage extends Component {
                                                     }, (err) => {
                                                         if(_.last(tables) === table)
                                                             this.setState({syncing: false})
-                                                        table// ToastAndroid.show(err.message+'!', 1000)
+                                                        // ToastAndroid.show(err.message+'!', 1000)
                                                     });
                                                 } else {
                                                     currentImportDate = data.importdate;
@@ -324,6 +344,9 @@ class PatientPage extends Component {
                                                     }).done()
                                                 }
                                             }).done()
+                                        } else {
+                                            if(_.last(tables) === table)
+                                                this.setState({syncing: false})
                                         }
                                     }).done()
                                 }
@@ -341,6 +364,22 @@ class PatientPage extends Component {
             });
         } catch (err) {
             console.log(err.message)
+        }
+    }
+    async exportImage(rows, table) {
+        try {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/storeimage?type='+table, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(rows)
+            }).then((response) => {
+                return response.json()
+            });
+        } catch (err) {
+            console.log(table+':', err.message)
         }
     }
     async importDate(table) {
