@@ -9,7 +9,7 @@ function Env() {
         return SQLite.openDatabase({name: "testDB7"})
     }
     this.interval = 1
-    this.cloudUrl = 'http://192.168.1.41/imd5/public/'
+    this.cloudUrl = 'https://demo.imd5.digimedemr.com/'
 }
 
 module.exports = Env;
