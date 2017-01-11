@@ -123,9 +123,9 @@ class ExportPage extends Component {
                                 _.forEach(rs.rows, (v, i) => {
                                     rows.push(i+ '='+ encodeURIComponent('{') + this.jsonToQueryString(rs.rows.item(i)) + encodeURIComponent('}'))
                                     if (table == 'patientImages') {
-                                        RNFS.exists(RNFS.ExternalDirectoryPath+'/patient/'+rs.rows.item(i).image).then((exist) => {
+                                        RNFS.exists(RNFS.DocumentDirectoryPath+'/patient/'+rs.rows.item(i).image).then((exist) => {
                                             if (exist)
-                                                RNFS.readFile(RNFS.ExternalDirectoryPath+'/patient/'+rs.rows.item(i).image, 'base64').then((image) => {
+                                                RNFS.readFile(RNFS.DocumentDirectoryPath+'/patient/'+rs.rows.item(i).image, 'base64').then((image) => {
                                                     this.exportImage({
                                                         imagePath: 'patient/'+rs.rows.item(i).image,
                                                         image: (image.toString().indexOf('dataimage/jpegbase64') !== -1) ? encodeURIComponent(_.replace(image.toString(), 'dataimage/jpegbase64','')) :  encodeURIComponent(image.toString())
@@ -134,9 +134,9 @@ class ExportPage extends Component {
                                         })
                                     }
                                     if (table == 'patients' || table == 'staff' || table == 'nurses' || table == 'doctors') {
-                                        RNFS.exists(RNFS.ExternalDirectoryPath+'/'+rs.rows.item(i).image).then((exist) => {
+                                        RNFS.exists(RNFS.DocumentDirectoryPath+'/'+rs.rows.item(i).image).then((exist) => {
                                             if (exist)
-                                                RNFS.readFile(RNFS.ExternalDirectoryPath+'/'+rs.rows.item(i).image, 'base64').then((image) => {
+                                                RNFS.readFile(RNFS.DocumentDirectoryPath+'/'+rs.rows.item(i).image, 'base64').then((image) => {
                                                     this.exportImage({
                                                         imagePath: rs.rows.item(i).image,
                                                         image: (image.toString().indexOf('dataimage/jpegbase64') !== -1) ? encodeURIComponent(_.replace(image.toString(), 'dataimage/jpegbase64','')) :  encodeURIComponent(image.toString())
@@ -163,7 +163,7 @@ class ExportPage extends Component {
                                                 id: 'AppointmentPage',
                                                 sceneConfig: Navigator.SceneConfigs.PushFromRight,
                                             });
-                                            ToastAndroid.show('Exporting successfully done!', 1000);
+                                            ToastAndroid.show('Exporting Successfully Completed!', 1000);
                                         } else
                                             this.setState({exportFile: this.state.exportFile + 1, progress: ((this.state.exportFile + 1) / _.size(filterSchema))})
                                     } else {
@@ -172,7 +172,7 @@ class ExportPage extends Component {
                                                 id: 'AppointmentPage',
                                                 sceneConfig: Navigator.SceneConfigs.PushFromRight,
                                             });
-                                            ToastAndroid.show('Exporting successfully done!', 1000);
+                                            ToastAndroid.show('Exporting Successfully Completed!', 1000);
                                         } else
                                             this.setState({exportFile: this.state.exportFile + 1, progress: ((this.state.exportFile + 1) / _.size(filterSchema))})
                                     }
@@ -182,7 +182,7 @@ class ExportPage extends Component {
                                             id: 'AppointmentPage',
                                             sceneConfig: Navigator.SceneConfigs.PushFromRight,
                                         });
-                                        ToastAndroid.show('Exporting successfully done!', 1000);
+                                        ToastAndroid.show('Exporting Successfully Completed!', 1000);
                                     } else
                                         this.setState({exportFile: this.state.exportFile + 1, progress: ((this.state.exportFile + 1) / _.size(filterSchema))})
                                 }).done();
@@ -192,7 +192,7 @@ class ExportPage extends Component {
                 })
             } else {
                 setTimeout(() => {
-                    ToastAndroid.show('Connection problem!', 1000);
+                    ToastAndroid.show('Connection Problem!', 1000);
                     this.props.navigator.replace({
                         id: 'AppointmentPage',
                         sceneConfig: Navigator.SceneConfigs.PushFromRight
@@ -230,7 +230,7 @@ class ExportPage extends Component {
                 return response.json()
             });
         } catch (err) {
-            console.log(table+':', e.message)
+            console.log(table+':', err.message)
         }
     }
     async exportDate(table) {

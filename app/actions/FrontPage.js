@@ -10,8 +10,6 @@ import Env from '../env'
 import Styles from '../assets/Styles'
 import DrawerPage from '../components/DrawerPage'
 
-const drawerRef = {}
-
 class FrontPage extends Component {
     constructor(props) {
         super(props)
@@ -40,6 +38,7 @@ class FrontPage extends Component {
             renderPlaceholderOnly: true,
             progress: 0,
         }
+        this.drawerRef = {}
     }
     componentWillMount() {
         this.setState({refreshing: true})
@@ -128,7 +127,7 @@ class FrontPage extends Component {
                     return (<DrawerPage navigator={this.props.navigator}></DrawerPage>)
                 }}
                 statusBarBackgroundColor={'#2962FF'}
-                ref={this.drawerInstance}
+                ref={ref => this.drawerRef = ref}
                 >
                 <Navigator
                     renderScene={(this.state.renderPlaceholderOnly) ? this.renderPlaceholderView.bind(this) : this.renderScene.bind(this)}
@@ -136,7 +135,7 @@ class FrontPage extends Component {
                     navigationBar={
                         <Navigator.NavigationBar
                             style={[Styles.navigationBar,{}]}
-                            routeMapper={NavigationBarRouteMapper} />
+                            routeMapper={NavigationBarRouteMapper(this.drawerRef)} />
                     } />
             </DrawerLayoutAndroid>
         )
@@ -237,9 +236,9 @@ class FrontPage extends Component {
     onSubmit() {
         this.setState({refreshing: true})
         if (this.state.patientID === 0) {
-            ToastAndroid.show('Select patient!', 3000)
+            ToastAndroid.show('Select Patient!', 3000)
         } else if (this.state.doctorID === 0) {
-            ToastAndroid.show('Select doctor!', 3000)
+            ToastAndroid.show('Select Doctor!', 3000)
         } else {
             fetch(env.emrUrl+'/frontdesk/create', {
                 method: 'POST',
@@ -312,7 +311,7 @@ const styles = StyleSheet.create({
     },
 })
 
-var NavigationBarRouteMapper = {
+var NavigationBarRouteMapper = (drawerRef) => ({
     LeftButton(route, navigator, index, navState) {
         return (
             <TouchableOpacity
@@ -334,6 +333,6 @@ var NavigationBarRouteMapper = {
             </TouchableOpacity>
         )
     }
-}
+})
 
 module.exports = FrontPage;

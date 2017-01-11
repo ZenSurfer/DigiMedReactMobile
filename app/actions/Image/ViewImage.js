@@ -33,9 +33,9 @@ class ViewImage extends Component {
         }, () => {
             var imaging = db.data.item(0);
             if (imaging.image != '')
-                RNFS.exists(RNFS.ExternalDirectoryPath+'/patient/'+imaging.image).then((exist) => {
+                RNFS.exists(RNFS.DocumentDirectoryPath+'/patient/'+imaging.image).then((exist) => {
                     if (exist)
-                        RNFS.readFile(RNFS.ExternalDirectoryPath+'/patient/'+imaging.image, 'base64').then((rs) => {
+                        RNFS.readFile(RNFS.DocumentDirectoryPath+'/patient/'+imaging.image, 'base64').then((rs) => {
                             imaging['image'] =  (rs.toString().indexOf('dataimage/jpegbase64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/jpeg;base64,'+rs.toString();
                         })
                 })
@@ -67,7 +67,9 @@ class ViewImage extends Component {
                     <View style={{flex: 1, alignItems: 'center', marginBottom: 10}}>
                         <TouchableOpacity
                             style={{padding: 18, backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: 100}}
-                            onPress={() => { this.props.navigator.pop() }}>
+                            onPress={() => {
+                                this.props.navigator.pop()
+                            }}>
                             <Icon name={'close'} color={'#FFF'} size={25}/>
                         </TouchableOpacity>
                     </View>

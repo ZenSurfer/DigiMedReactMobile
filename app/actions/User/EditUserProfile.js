@@ -54,9 +54,9 @@ class EditUserProfile extends Component {
             alert(err.message);
         }, () => {
             if (db.data.imagePath)
-                RNFS.exists(RNFS.ExternalDirectoryPath +'/'+ db.data.imagePath).then((exist) => {
+                RNFS.exists(RNFS.DocumentDirectoryPath +'/'+ db.data.imagePath).then((exist) => {
                     if (exist)
-                        RNFS.readFile(RNFS.ExternalDirectoryPath +'/'+ db.data.imagePath, 'base64').then((rs) => {
+                        RNFS.readFile(RNFS.DocumentDirectoryPath +'/'+ db.data.imagePath, 'base64').then((rs) => {
                             this.setState({avatar: (rs.toString().indexOf('dataimage/jpegbase64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/jpeg;base64,'+rs.toString()});
                         })
                 })
@@ -284,7 +284,7 @@ class EditUserProfile extends Component {
             var path = ''; var imageMime = 'jpeg'; var imagePath = '';
             if (this.state.avatar) {
                 imagePath = 'avatar/'+this.guid()+'.jpeg';
-                path = RNFS.ExternalDirectoryPath + '/' + imagePath;
+                path = RNFS.DocumentDirectoryPath + '/' + imagePath;
             }
             var birthdate = moment(this.state.birthdate.date).format('YYYY-MM-DD');
             db.transaction((tx) => {
@@ -295,7 +295,7 @@ class EditUserProfile extends Component {
                 })
             }, (err) => {
                 this.setState({refreshing: false})
-                ToastAndroid.show("Error occured while saving!", 1000)
+                ToastAndroid.show("Error Occured!", 1000)
             }, () => {
                 this.setState({refreshing: false})
                 var doctor = {};
@@ -303,15 +303,15 @@ class EditUserProfile extends Component {
                 this.updateCredentials(doctor).done()
                 if (this.state.avatar) {
                     RNFS.writeFile(path, this.state.avatar, 'base64').then((success) => {
-                        this.props.navigator.pop();
-                        ToastAndroid.show("Successfully saved!", 3000)
+                        this.props.navigator.pop()
+                        ToastAndroid.show("Successfully Updated!", 3000)
                     }).catch((err) => {
-                        this.props.navigator.pop();
-                        ToastAndroid.show("Error occured while saving image!", 1000)
+                        this.props.navigator.pop()
+                        ToastAndroid.show("Error Occured!", 1000)
                     });
                 } else {
-                    this.props.navigator.pop();
-                    ToastAndroid.show("Successfully saved!", 3000)
+                    this.props.navigator.pop()
+                    ToastAndroid.show("Successfully Updated!", 3000)
                 }
             })
         } else {

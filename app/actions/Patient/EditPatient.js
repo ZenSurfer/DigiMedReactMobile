@@ -99,9 +99,9 @@ class EditPatient extends Component {
                     }
             })
             if (db.data.imagePath != '')
-                RNFS.exists(RNFS.ExternalDirectoryPath +'/'+ db.data.imagePath).then((exist) => {
+                RNFS.exists(RNFS.DocumentDirectoryPath +'/'+ db.data.imagePath).then((exist) => {
                     if (exist)
-                        RNFS.readFile(RNFS.ExternalDirectoryPath +'/'+ db.data.imagePath, 'base64').then((rs) => {
+                        RNFS.readFile(RNFS.DocumentDirectoryPath +'/'+ db.data.imagePath, 'base64').then((rs) => {
                             this.setState({avatar: (rs.toString().indexOf('dataimage/jpegbase64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/jpeg;base64,'+rs.toString()});
                         })
                 })
@@ -533,15 +533,15 @@ class EditPatient extends Component {
                                 {text: 'CANCEL'},
                                 {text: 'OK', onPress: () => {
                                     db.transaction((tx) => {
-                                        tx.executeSql("update patients  ?, updated_at = ? where id = ?", [moment().format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss'), this.props.patientID], (tx, rs) => {
+                                        tx.executeSql("update patients SET deleted_at = ?, updated_at = ? where id = ?", [moment().format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss'), this.props.patientID], (tx, rs) => {
                                             console.log("deleted: " + rs.rowsAffected);
                                         }, (tx, err) => {
                                             console.log('DELETE error: ' + err.message);
                                         });
                                     }, (err) => {
-                                        ToastAndroid.show("Error occured while deleting!", 3000)
+                                        ToastAndroid.show("Error Occured!", 3000)
                                     }, () => {
-                                        ToastAndroid.show("Successfully deleted!", 3000)
+                                        ToastAndroid.show("Successfully Deleted!", 3000)
                                         navigator.parentNavigator.replace({
                                             id: 'PatientPage'
                                         })
@@ -618,29 +618,29 @@ class EditPatient extends Component {
                 })
             }, (err) => {
                 this.setState({refreshing: false})
-                ToastAndroid.show("Error occured while saving!", 3000)
+                ToastAndroid.show("Error Occured!", 3000)
             }, () => {
                 this.setState({refreshing: false})
                 if (this.state.avatar) {
-                    RNFS.writeFile(RNFS.ExternalDirectoryPath +'/'+ imagePath, this.state.avatar, 'base64').then((success) => {
+                    RNFS.writeFile(RNFS.DocumentDirectoryPath +'/'+ imagePath, this.state.avatar, 'base64').then((success) => {
                         this.props.navigator.replacePreviousAndPop({
                             id: 'PatientProfile',
                             passProps: { patientID: this.props.patientID }
                         });
-                        ToastAndroid.show("Successfully saved!", 3000)
+                        ToastAndroid.show("Successfully Updated!", 3000)
                     }).catch((err) => {
                         this.props.navigator.replacePreviousAndPop({
                             id: 'PatientProfile',
                             passProps: { patientID: this.props.patientID }
                         });
-                        ToastAndroid.show("Error occured while saving image!", 3000)
+                        ToastAndroid.show("Error Occured!", 3000)
                     });
                 } else {
                     this.props.navigator.replacePreviousAndPop({
                         id: 'PatientProfile',
                         passProps: { patientID: this.props.patientID }
                     });
-                    ToastAndroid.show("Successfully saved!", 3000)
+                    ToastAndroid.show("Successfully Updated!", 3000)
                 }
             })
         } else {
@@ -723,12 +723,7 @@ var NavigationBarRouteMapper = (patientID, patientName) => ({
         return (
             <TouchableOpacity style={{flex: 1, justifyContent: 'center'}}
                 onPress={() => {
-                    navigator.parentNavigator.replacePreviousAndPop({
-                        id: 'PatientProfile',
-                        passProps: {
-                            patientID: patientID
-                        }
-                    })
+                    navigator.parentNavigator.pop()
                 }}>
                 <Text style={{color: 'white', margin: 10,}}>
                     <Icon name="keyboard-arrow-left" size={30} color="#FFF" />

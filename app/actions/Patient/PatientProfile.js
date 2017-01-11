@@ -338,18 +338,18 @@ class PatientProfile extends Component {
                         })}>
                         <Icon name={'edit'} color={'#FFFFFF'} size={30}/>
                     </TouchableOpacity>
-                    <TouchableOpacity
+                    {/* <TouchableOpacity
                         style={[Styles.buttonFab, {backgroundColor: 'rgba(0,0,0,0.1)', bottom: 80, elevation: 0}]}
                         onPress={() => this.props.navigator.push({
                             id: 'AddAppointment',
                             passProps: {
                                 patientID: this.state.rowData.id,
-                                patientAvatar: RNFS.ExternalDirectoryPath +'/'+ this.state.rowData.imagePath,
+                                patientAvatar: RNFS.DocumentDirectoryPath +'/'+ this.state.rowData.imagePath,
                                 patientName: this.state.rowData.firstname+' '+this.state.rowData.middlename+' '+this.state.rowData.lastname
                             }
                         })}>
                         <Icon name={'playlist-add'} color={'#616161'} size={30}/>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
                 <View style={{position: 'absolute', bottom: 0, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                     <TouchableNativeFeedback
@@ -357,7 +357,7 @@ class PatientProfile extends Component {
                             id: 'HPEDPage',
                             passProps: {
                                 patientID: this.state.rowData.id,
-                                patientAvatar: RNFS.ExternalDirectoryPath +'/'+ this.state.rowData.imagePath,
+                                patientAvatar: RNFS.DocumentDirectoryPath +'/'+ this.state.rowData.imagePath,
                                 patientName: this.state.rowData.firstname+' '+this.state.rowData.middlename+' '+this.state.rowData.lastname
                             }
                         })}>
@@ -371,7 +371,7 @@ class PatientProfile extends Component {
                             id: 'AppointmentPatientPage',
                             passProps: {
                                 patientID: this.state.rowData.id,
-                                patientAvatar: RNFS.ExternalDirectoryPath +'/'+ this.state.rowData.imagePath,
+                                patientAvatar: RNFS.DocumentDirectoryPath +'/'+ this.state.rowData.imagePath,
                                 patientName: this.state.rowData.firstname+' '+this.state.rowData.middlename+' '+this.state.rowData.lastname
                             }
                         })}>
@@ -398,9 +398,9 @@ class PatientProfile extends Component {
             this.setState({refreshing: false})
             this.setState({rowData: db.data.item(0)})
             if (db.data.item(0).imagePath != '') {
-                RNFS.exists(RNFS.ExternalDirectoryPath +'/'+ db.data.item(0).imagePath).then((exist) => {
+                RNFS.exists(RNFS.DocumentDirectoryPath +'/'+ db.data.item(0).imagePath).then((exist) => {
                     if (exist)
-                        RNFS.readFile(RNFS.ExternalDirectoryPath +'/'+ db.data.item(0).imagePath, 'base64').then((rs) => {
+                        RNFS.readFile(RNFS.DocumentDirectoryPath +'/'+ db.data.item(0).imagePath, 'base64').then((rs) => {
                             if (rs.toString().indexOf('dataimage/jpegbase64') !== -1) {
                                 this.setState({avatar: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')});
                             } else {
@@ -475,7 +475,11 @@ var NavigationBarRouteMapper = (patientID) => ({
     LeftButton(route, navigator, index, nextState) {
         return (
             <TouchableOpacity style={{flex: 1, justifyContent: 'center'}}
-                onPress={() => { navigator.parentNavigator.pop() }}>
+                onPress={() => {
+                    navigator.parentNavigator.replacePreviousAndPop({
+                        id: 'PatientPage',
+                    })
+                }}>
                 <Text style={{color: 'white', margin: 10,}}>
                     <Icon name={"keyboard-arrow-left"} size={30} color={"#FFF"} />
                 </Text>
@@ -501,12 +505,10 @@ var NavigationBarRouteMapper = (patientID) => ({
                                         alert(err.message)
                                     });
                                 }, (err) => {
-                                    ToastAndroid.show("Error occured while deleting!", 3000)
+                                    ToastAndroid.show("Error Occured!", 3000)
                                 }, () => {
-                                    navigator.parentNavigator.replacePreviousAndPop({
-                                        id: 'PatientPage'
-                                    })
-                                    ToastAndroid.show("Successfully deleted!", 3000)
+                                    navigator.parentNavigator.pop()
+                                    ToastAndroid.show("Successfully Deleted!", 3000)
                                 })
                             }},
                         ]

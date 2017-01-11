@@ -55,7 +55,7 @@ class ImportPage extends Component {
                                 db.sqlBatch(_.transform(data.data, (result, n, i) => {
                                     result.push(["INSERT OR REPLACE INTO "+data.table+" VALUES ("+_.join(_.fill(Array(_.size(n)), '?'), ',')+")", _.values(n)])
                                     if (data.table === 'patients' || data.table === 'staff' || data.table === 'doctors' || data.table === 'nurses') {
-                                        var path = RNFS.ExternalDirectoryPath+'/'+n.imagePath;
+                                        var path = RNFS.DocumentDirectoryPath+'/'+n.imagePath;
                                         var param = {id: n.id, type: data.table};
                                         this.importImage(Object.keys(param).map((key) => {
                                             return encodeURIComponent(key) + '=' + encodeURIComponent(param[key]);
@@ -81,7 +81,7 @@ class ImportPage extends Component {
                                             id: 'AppointmentPage',
                                             sceneConfig: Navigator.SceneConfigs.PushFromRight,
                                         });
-                                        ToastAndroid.show('Importing successfully done!', 1000);
+                                        ToastAndroid.show('Importing Successfully Done!', 1000);
                                     } else
                                         this.setState({importFile: this.state.importFile + 1, progress: ((this.state.importFile + 1) / _.size(filterSchema))})
                                 }, (err) => {
@@ -90,7 +90,7 @@ class ImportPage extends Component {
                                             id: 'AppointmentPage',
                                             sceneConfig: Navigator.SceneConfigs.PushFromRight,
                                         });
-                                        ToastAndroid.show('Importing successfully done!', 1000);
+                                        ToastAndroid.show('Importing Successfully Done!', 1000);
                                     } else
                                         this.setState({importFile: this.state.importFile + 1, progress: ((this.state.importFile + 1) / _.size(filterSchema))})
                                 });
@@ -104,7 +104,7 @@ class ImportPage extends Component {
                                         id: 'AppointmentPage',
                                         sceneConfig: Navigator.SceneConfigs.PushFromRight,
                                     });
-                                    ToastAndroid.show('Importing successfully done!', 1000);
+                                    ToastAndroid.show('Importing Successfully Done!', 1000);
                                 } else
                                     this.setState({importFile: this.state.importFile + 1, progress: ((this.state.importFile + 1) / _.size(filterSchema))})
                             }
@@ -113,7 +113,7 @@ class ImportPage extends Component {
                 })
             } else {
                 setTimeout(() => {
-                    ToastAndroid.show('Connection problem!', 1000);
+                    ToastAndroid.show('Connection Problem!', 1000);
                     this.props.navigator.replace({
                         id: 'AppointmentPage',
                         sceneConfig: Navigator.SceneConfigs.PushFromRight
@@ -172,7 +172,6 @@ class ImportPage extends Component {
         );
     }
     componentWillUnmount() {
-
         db.transaction((tx) => {
             tx.executeSql("SELECT `id`, `groupID`, `patientID`, `userID`, `firstname`, `middlename`, `lastname`, `nameSuffix`, `birthdate`, `initial`, `type`, `sex`, `status`, `address`, `phone1`, `phone2`, `email`, `imagePath`, `imageMime`, `allowAsPatient`, `deleted_at`, `created_at`, `updated_at` FROM doctors WHERE `doctors`.`id`= ?", [this.props.doctorID], function(tx, rs) {
                 db.data = rs.rows.item(0);
@@ -181,13 +180,18 @@ class ImportPage extends Component {
             alert(err.message);
         }, () => {
             var doctorName = 'Dr. '+db.data.firstname+' '+db.data.middlename+' '+db.data.lastname;
-            this.updateDoctorCredentials({
-                userID: db.data.userID,
-                id: db.data.id,
-                name: doctorName,
-                type: db.data.type,
-                initial: db.data.initial,
-                imagePath: db.data.imagePath
+            this.updateMobileID().then(data => {
+                if (data) {
+                    this.updateDoctorCredentials({
+                        userID: db.data.userID,
+                        id: db.data.id,
+                        name: doctorName,
+                        type: db.data.type,
+                        initial: db.data.initial,
+                        imagePath: db.data.imagePath,
+                        mobileID: data.mobileID
+                    }).done();
+                }
             }).done();
         });
     }
@@ -196,6 +200,17 @@ class ImportPage extends Component {
             await AsyncStorage.setItem('doctor', JSON.stringify(data))
         } catch (error) {
             console.log('AsyncStorage error: ' + error.message);
+        }
+    }
+    async updateMobileID() {
+        try {
+            var mobile = await AsyncStorage.getItem('mobile');
+            if (!_.isNull(mobile)) {
+                return JSON.parse(mobile)
+            } else
+                return false
+        } catch (err) {
+            console.log('AsyncStorage error: ' + err.message);
         }
     }
     parse(table, values) {

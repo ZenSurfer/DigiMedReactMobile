@@ -144,16 +144,6 @@ class FollowupPage extends Component {
             this.updateData(['followup', 'followupIcds']);
         })
     }
-    componentWillReceiveProps(nextProps) {
-        if (_.size(nextProps.navigator.getCurrentRoutes(0)) > 4) {
-            this.setState({lastRoute: nextProps.navigator.getCurrentRoutes(0)[4].id})
-        } else {
-            if (this.state.lastRoute == 'AddFollowup' || this.state.lastRoute == 'EditFollowup') {
-                this.setState({lastRoute: ''});
-                this.onRefresh();
-            }
-        }
-    }
     updateData(tables) {
         NetInfo.isConnected.fetch().then(isConnected => {
             if (isConnected) {
@@ -192,7 +182,7 @@ class FollowupPage extends Component {
                                                             }).join('&')).then((data) => {
                                                                 if (!_.isUndefined(data)) {
                                                                     if (data.success) {
-                                                                        RNFS.writeFile(RNFS.ExternalDirectoryPath+'/'+n.imagePath, decodeURIComponent(data.avatar), 'base64').then((success) => {
+                                                                        RNFS.writeFile(RNFS.DocumentDirectoryPath+'/'+n.imagePath, decodeURIComponent(data.avatar), 'base64').then((success) => {
                                                                             console.log("Successfully created!")
                                                                         }).catch((err) => {
                                                                             console.log("Error occured while creating image!")
@@ -307,7 +297,7 @@ class FollowupPage extends Component {
                 return response.json()
             });
         } catch (err) {
-            console.log(table+':', e.message)
+            console.log(table+':', err.message)
         }
     }
     jsonToQueryString(json) {
@@ -357,7 +347,9 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
         return (
             <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                 <TouchableOpacity
-                    onPress={() => navigator.parentNavigator.pop()}>
+                    onPress={() => {
+                        navigator.parentNavigator.pop()
+                    }}>
                     <Text style={{color: 'white', margin: 10, marginTop: 15}}>
                         <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                     </Text>
@@ -371,7 +363,14 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
     },
     Title(route, navigator, index, nextState) {
         return (
-            <TouchableOpacity style={[Styles.title, {marginLeft: 50}]}>
+            <TouchableOpacity
+                style={[Styles.title, {marginLeft: 50}]}
+                onPress={() => {
+                    navigator.parentNavigator.push({
+                        id: 'PatientProfile',
+                        passProps: { patientID: patientID},
+                    })
+                }}>
                 <Text style={[Styles.titleText]}>{patientName}</Text>
             </TouchableOpacity>
         )

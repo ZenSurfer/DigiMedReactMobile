@@ -11,7 +11,6 @@ import Parser from 'react-native-html-parser'
 import Styles from '../assets/Styles'
 import DrawerPage from '../components/DrawerPage'
 
-const drawerRef = {}
 const DomParser = Parser.DOMParser
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 const EnvInstance = new Env()
@@ -34,6 +33,7 @@ class MainPage extends Component {
             search: '',
             rowData: [],
         }
+        this.drawerRef = {}
     }
     componentWillMount() {
         db.transaction((tx) => {
@@ -114,7 +114,7 @@ class MainPage extends Component {
                     return (<DrawerPage navigator={this.props.navigator}></DrawerPage>)
                 }}
                 statusBarBackgroundColor={'#2962FF'}
-                ref={this.drawerInstance}
+                ref={ref => this.drawerRef = ref}
                 >
                 <Navigator
                     renderScene={this.renderScene.bind(this)}
@@ -122,7 +122,7 @@ class MainPage extends Component {
                     navigationBar={
                         <Navigator.NavigationBar
                             style={[Styles.navigationBar,{}]}
-                            routeMapper={NavigationBarRouteMapper} />
+                            routeMapper={NavigationBarRouteMapper(this.drawerRef)} />
                     } />
             </DrawerLayoutAndroid>
         )
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
     },
 })
 
-var NavigationBarRouteMapper = {
+var NavigationBarRouteMapper = (drawerRef) => ({
     LeftButton(route, navigator, index, navState) {
         return (
             <TouchableOpacity
@@ -249,6 +249,6 @@ var NavigationBarRouteMapper = {
             </TouchableOpacity>
         )
     }
-}
+})
 
 module.exports = MainPage

@@ -6,10 +6,10 @@ import SQLite from 'react-native-sqlite-storage'
 
 function Env() {
     this.db = function() {
-        return SQLite.openDatabase({name: "testDB7"})
+        return SQLite.openDatabase({name: "testDB10"})
     }
     this.interval = 1
-    this.cloudUrl = 'https://demo.imd5.digimedemr.com/'
+    this.cloudUrl = 'https://demo.takeda.digimedemr.com/'
 }
 
 module.exports = Env;

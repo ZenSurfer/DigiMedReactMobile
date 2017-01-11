@@ -161,7 +161,9 @@ var NavigationBarRouteMapper = {
     RightButton(route, navigator, index, navState) {
         return (
             <TouchableOpacity style={Styles.rightButton}
-                onPress={() => navigator.parentNavigator.pop()} >
+                onPress={() => {
+                    navigator.parentNavigator.pop()
+                }}>
                 <Text style={Styles.rightButtonText}>
                     <Icon name="close" size={30} color="#FFF" />
                 </Text>

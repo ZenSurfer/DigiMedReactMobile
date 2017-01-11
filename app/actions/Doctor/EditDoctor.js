@@ -263,7 +263,7 @@ class EditDoctor extends Component {
                                 value={_.toString(this.state.phone1)}
                                 placeholderTextColor={'#E0E0E0'}
                                 onChangeText={(text) => this.setState({phone1: text})} />
-                            <Text style={styles.label} >Home Number</Text>
+                            <Text style={styles.label} >Phone Number</Text>
                             <TextInput
                                 keyboardType={'phone-pad'}
                                 placeholder={'Text Here...'}
@@ -326,15 +326,15 @@ class EditDoctor extends Component {
                             {text: 'CANCEL'},
                             {text: 'OK', onPress: () => {
                                 db.transaction((tx) => {
-                                    tx.executeSql("update doctors  ?, updated_at = ? where id = ?", [moment().format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss'), this.props.doctorID], (tx, rs) => {
+                                    tx.executeSql("update doctors SET deleted_at = ?, updated_at = ? where id = ?", [moment().format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss'), this.props.doctorID], (tx, rs) => {
                                         console.log("deleted: " + rs.rowsAffected);
                                     }, (tx, err) => {
                                         console.log('DELETE error: ' + err.message);
                                     });
                                 }, (err) => {
-                                    ToastAndroid.show("Error occured while deleting!", 3000)
+                                    ToastAndroid.show("Error Occured", 3000)
                                 }, () => {
-                                    ToastAndroid.show("Successfully deleted!", 3000)
+                                    ToastAndroid.show("Successfully Deleted!", 3000)
                                     this.props.navigator.pop()
                                 })
                             }},
@@ -354,12 +354,12 @@ class EditDoctor extends Component {
     }
     onSubmit() {
         this.setState({refreshing: true})
-        RNFS.mkdir(RNFS.ExternalDirectoryPath+ '/avatar');
+        RNFS.mkdir(RNFS.DocumentDirectoryPath+ '/avatar');
         if (_.trim(this.state.firstname) !== '' && _.trim(this.state.lastname) !== '' && _.trim(this.state.middlename) !== '' && _.trim(this.state.phone2) !== '') {
             var path = ''; var imagePath = ''; var imageMime = 'jpeg';
             if (this.state.avatar) {
                 var imagePath = 'avatar/'+this.guid()+'.jpeg';
-                path = RNFS.ExternalDirectoryPath + '/' + imagePath;
+                path = RNFS.DocumentDirectoryPath + '/' + imagePath;
             }
             var birthdate = moment(this.state.birthdate.date).format('YYYY-MM-DD');
             db.transaction((tx) => {
@@ -371,20 +371,20 @@ class EditDoctor extends Component {
             }, (err) => {
                 this.setState({refreshing: false})
                 alert(err.message)
-                ToastAndroid.show("Error occured while saving!", 1000)
+                ToastAndroid.show("Error Occured!", 1000)
             }, () => {
                 this.setState({refreshing: false})
                 if (this.state.avatar) {
                     RNFS.writeFile(path, this.state.avatar, 'base64').then((success) => {
-                        this.props.navigator.pop();
-                        ToastAndroid.show("Successfully saved!", 3000)
+                        this.props.navigator.pop()
+                        ToastAndroid.show("Successfully Updated!", 3000)
                     }).catch((err) => {
-                        this.props.navigator.pop();
-                        ToastAndroid.show("Error occured while saving image!", 1000)
+                        this.props.navigator.pop()
+                        ToastAndroid.show("Error Occured!", 1000)
                     });
                 } else {
-                    this.props.navigator.pop();
-                    ToastAndroid.show("Successfully saved!", 3000)
+                    this.props.navigator.pop()
+                    ToastAndroid.show("Successfully Updated!", 3000)
                 }
             })
         } else {
@@ -395,7 +395,7 @@ class EditDoctor extends Component {
             } else if (_.trim(this.state.middlename) == '') {
                 ToastAndroid.show("Invalid Middle Name!", 1000)
             } else {
-                ToastAndroid.show("Invalid Mobile Number!", 1000)
+                ToastAndroid.show("Invalid Phone Number!", 1000)
             }
         }
     }
@@ -475,6 +475,11 @@ var styles = StyleSheet.create({
         marginRight: 4,
         marginBottom: 10,
         paddingLeft: -5,
+    },
+    textInput: {
+        fontSize: 16,
+        paddingTop: 5   ,
+        marginBottom: 5,
     },
 })
 

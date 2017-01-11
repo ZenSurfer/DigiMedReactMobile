@@ -13,7 +13,6 @@ import Parser from 'react-native-html-parser'
 import Styles from '../../assets/Styles'
 import DrawerPage from '../../components/DrawerPage'
 
-const drawerRef = {}
 const DomParser = Parser.DOMParser
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 const EnvInstance = new Env()
@@ -28,6 +27,7 @@ class DoctorPage extends Component {
             syncing: false,
             syncingTitle: 'Syncing Doctors...',
         }
+        this.drawerRef = {}
     }
     componentDidMount() {
         this.updateCredentials().done();
@@ -42,16 +42,6 @@ class DoctorPage extends Component {
             this.onRefresh();
         }
     }
-    componentWillReceiveProps(nextProps) {
-        if (_.size(nextProps.navigator.getCurrentRoutes(0)) > 1) {
-            this.setState({lastRoute: nextProps.navigator.getCurrentRoutes(0)[1].id})
-        } else {
-            if (this.state.lastRoute == 'AddDoctor' || this.state.lastRoute == 'EditDoctor') {
-                this.setState({lastRoute: ''});
-                this.onRefresh();
-            }
-        }
-    }
     onRefresh() {
         this.setState({refreshing: true})
         db.transaction((tx) => {
@@ -63,9 +53,9 @@ class DoctorPage extends Component {
             _.forEach(db.data, (v, i) => {
                 doctors.push(db.data.item(i))
                 if (db.data.item(i).imagePath != '')
-                    RNFS.exists(RNFS.ExternalDirectoryPath +'/'+ db.data.item(i).imagePath).then((exist) => {
+                    RNFS.exists(RNFS.DocumentDirectoryPath +'/'+ db.data.item(i).imagePath).then((exist) => {
                         if (exist)
-                            RNFS.readFile(RNFS.ExternalDirectoryPath +'/'+ db.data.item(i).imagePath, 'base64').then((rs) => {
+                            RNFS.readFile(RNFS.DocumentDirectoryPath +'/'+ db.data.item(i).imagePath, 'base64').then((rs) => {
                                 var obj = {};
                                 if (rs.toString().indexOf('dataimage/jpegbase64') !== -1) {
                                     obj['doctor'+db.data.item(i).id] = _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,');
@@ -89,7 +79,7 @@ class DoctorPage extends Component {
                     return (<DrawerPage navigator={this.props.navigator}  routeName={'doctors'}></DrawerPage>)
                 }}
                 statusBarBackgroundColor={'#2962FF'}
-                ref={this.drawerInstance}
+                ref={ref => this.drawerRef = ref}
             >
                 <Navigator
                     renderScene={this.renderScene.bind(this)}
@@ -97,7 +87,7 @@ class DoctorPage extends Component {
                     navigationBar={
                         <Navigator.NavigationBar
                             style={[Styles.navigationBar,{}]}
-                            routeMapper={NavigationBarRouteMapper} />
+                            routeMapper={NavigationBarRouteMapper(this.drawerRef)} />
                     } />
             </DrawerLayoutAndroid>
         )
@@ -148,7 +138,7 @@ class DoctorPage extends Component {
                         doctorName: 'Dr. '+rowData.firstname+' '+((rowData.middlename) ? rowData.middlename+' ' : '')+rowData.lastname,
                     }
                 })}>
-                <View style={{backgroundColor: '#FFFFFF', borderColor: '#E0E0E0', borderBottomWidth: 0.5}}>
+                <View style={{flex: 1, backgroundColor: '#FFFFFF', borderColor: '#E0E0E0', borderBottomWidth: 0.5}}>
                     <View style={{flex: 1, flexDirection: 'row', padding: 16, paddingTop: 0, paddingBottom: 0, height: 80, justifyContent: 'center'}}>
                         <View style={{flex: 1, justifyContent: 'center', marginRight: -170}}>
                             {(rowData.imagePath) ? ((this.state['doctor'+rowData.id]) ? (
@@ -169,9 +159,6 @@ class DoctorPage extends Component {
             </TouchableNativeFeedback>
         )
     }
-    drawerInstance(instance) {
-        drawerRef = instance
-    }
     updateData(tables) {
         NetInfo.isConnected.fetch().then(isConnected => {
             if (isConnected) {
@@ -189,9 +176,9 @@ class DoctorPage extends Component {
                             _.forEach(db.data, (v, i) => {
                                 rows.push(i+ '='+ encodeURIComponent('{') + this.jsonToQueryString(db.data.item(i)) + encodeURIComponent('}'))
                                 if (table == 'patients' || table == 'staff' || table == 'nurses' || table == 'doctors') {
-                                    RNFS.exists(RNFS.ExternalDirectoryPath+'/'+db.data.item(i).imagePath).then((exist) => {
+                                    RNFS.exists(RNFS.DocumentDirectoryPath+'/'+db.data.item(i).imagePath).then((exist) => {
                                         if (exist)
-                                            RNFS.readFile(RNFS.ExternalDirectoryPath+'/'+db.data.item(i).imagePath, 'base64').then((image) => {
+                                            RNFS.readFile(RNFS.DocumentDirectoryPath+'/'+db.data.item(i).imagePath, 'base64').then((image) => {
                                                 this.exportImage({
                                                     imagePath: db.data.item(i).imagePath,
                                                     image: (image.toString().indexOf('dataimage/jpegbase64') !== -1) ? encodeURIComponent(_.replace(image.toString(), 'dataimage/jpegbase64','')) :  encodeURIComponent(image.toString())
@@ -200,9 +187,9 @@ class DoctorPage extends Component {
                                     })
                                 }
                                 if (table == 'patientImages') {
-                                    RNFS.exists(RNFS.ExternalDirectoryPath+'/patient/'+db.data.item(i).image).then((exist) => {
+                                    RNFS.exists(RNFS.DocumentDirectoryPath+'/patient/'+db.data.item(i).image).then((exist) => {
                                         if (exist)
-                                            RNFS.readFile(RNFS.ExternalDirectoryPath+'/patient/'+db.data.item(i).image, 'base64').then((image) => {
+                                            RNFS.readFile(RNFS.DocumentDirectoryPath+'/patient/'+db.data.item(i).image, 'base64').then((image) => {
                                                 this.exportImage({
                                                     imagePath: 'patient/'+db.data.item(i).image,
                                                     image: (image.toString().indexOf('dataimage/jpegbase64') !== -1) ? encodeURIComponent(_.replace(image.toString(), 'dataimage/jpegbase64','')) :  encodeURIComponent(image.toString())
@@ -232,7 +219,7 @@ class DoctorPage extends Component {
                                                             }).join('&')).then((data) => {
                                                                 if (!_.isUndefined(data)) {
                                                                     if (data.success) {
-                                                                        RNFS.writeFile(RNFS.ExternalDirectoryPath+'/'+n.imagePath, decodeURIComponent(data.avatar), 'base64').then((success) => {
+                                                                        RNFS.writeFile(RNFS.DocumentDirectoryPath+'/'+n.imagePath, decodeURIComponent(data.avatar), 'base64').then((success) => {
                                                                             console.log("Successfully created!")
                                                                         }).catch((err) => {
                                                                             console.log("Error occured while creating image!")
@@ -363,7 +350,7 @@ class DoctorPage extends Component {
                 return response.json()
             });
         } catch (err) {
-            console.log(table+':', e.message)
+            console.log(table+':', err.message)
         }
     }
     jsonToQueryString(json) {
@@ -411,7 +398,7 @@ const styles = StyleSheet.create({
     },
 })
 
-var NavigationBarRouteMapper = {
+var NavigationBarRouteMapper = (drawerRef) => ({
     LeftButton(route, navigator, index, navState) {
         return (
             <TouchableOpacity
@@ -433,6 +420,6 @@ var NavigationBarRouteMapper = {
             </TouchableOpacity>
         )
     }
-}
+})
 
 module.exports = DoctorPage

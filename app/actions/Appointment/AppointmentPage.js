@@ -11,7 +11,6 @@ import Parser from 'react-native-html-parser'
 import Styles from '../../assets/Styles'
 import DrawerPage from '../../components/DrawerPage'
 
-const drawerRef = {}
 const DomParser = Parser.DOMParser
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 const EnvInstance = new Env()
@@ -48,6 +47,7 @@ class AppointmentPage extends Component {
             syncing: false,
             syncingTitle: 'Syncing Appointments...',
         }
+        this.drawerRef = {}
     }
     componentDidMount() {
         this.updateCredentials().done();
@@ -149,18 +149,8 @@ class AppointmentPage extends Component {
                     evening: _.orderBy(schedules.evening, ['time'], ['asc']),
                 }
             })
-            this.updateData(['patients', 'appointments', 'followup']);
+            this.updateData(['patients', 'appointments', 'diagnosis', 'followup']);
         });
-    }
-    componentWillReceiveProps(nextProps) {
-        if (_.size(nextProps.navigator.getCurrentRoutes(0)) > 1) {
-            this.setState({lastRoute: nextProps.navigator.getCurrentRoutes(0)[1].id})
-        } else {
-            if (this.state.lastRoute == 'AddAppointment') {
-                this.setState({lastRoute: ''});
-                this.onRefresh();
-            }
-        }
     }
     async showPicker(stateKey, options) {
         try {
@@ -189,7 +179,7 @@ class AppointmentPage extends Component {
                     return (<DrawerPage navigator={this.props.navigator} routeName={'appointments'}></DrawerPage>)
                 }}
                 statusBarBackgroundColor={'#2962FF'}
-                ref={this.drawerInstance}
+                ref={ref => this.drawerRef = ref}
                 >
                 <Navigator
                     renderScene={this.renderScene.bind(this)}
@@ -197,7 +187,7 @@ class AppointmentPage extends Component {
                     navigationBar={
                         <Navigator.NavigationBar
                             style={[Styles.navigationBar, {}]}
-                            routeMapper={NavigationBarRouteMapper} />
+                            routeMapper={NavigationBarRouteMapper(this.drawerRef)} />
                     } />
             </DrawerLayoutAndroid>
         )
@@ -249,7 +239,7 @@ class AppointmentPage extends Component {
                 {(_.size(rowData) > 0) ? (
                     <View style={{flexDirection: 'column', backgroundColor: '#F5F5F5'}}>
                         <View style={{backgroundColor: '#FFEB3B', borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}>
-                            <Text style={[styles.time, {padding: 10, paddingLeft: 16, paddingRight: 16, fontSize: 30}]}>{this.state.schedules[rowID]}</Text>
+                            <Text style={[styles.time, {padding: 10, paddingLeft: 16, paddingRight: 16, fontSize: 18}]}>{this.state.schedules[rowID]}</Text>
                         </View>
                         <ListView
                             dataSource={ds.cloneWithRows(rowData)}
@@ -285,7 +275,7 @@ class AppointmentPage extends Component {
                                 passProps: {
                                     diagnosisID: appointmentRowData[0].diagnosisID,
                                     patientID: appointmentRowData[0].patientID,
-                                    patientAvatar: RNFS.ExternalDirectoryPath +'/'+ appointmentRowData[0].imagePath,
+                                    patientAvatar: RNFS.DocumentDirectoryPath +'/'+ appointmentRowData[0].imagePath,
                                     patientName: appointmentRowData[0].patient,
                                 }
                             })
@@ -294,7 +284,7 @@ class AppointmentPage extends Component {
                                 id: 'HPEDPage',
                                 passProps: {
                                     patientID: appointmentRowData[0].patientID,
-                                    patientAvatar: RNFS.ExternalDirectoryPath +'/'+ appointmentRowData[0].imagePath,
+                                    patientAvatar: RNFS.DocumentDirectoryPath +'/'+ appointmentRowData[0].imagePath,
                                     patientName: appointmentRowData[0].patient
                                 }
                             })
@@ -341,9 +331,6 @@ class AppointmentPage extends Component {
             }
         })
     }
-    drawerInstance(instance) {
-        drawerRef = instance
-    }
     updateData(tables) {
         NetInfo.isConnected.fetch().then(isConnected => {
             if (isConnected) {
@@ -384,7 +371,6 @@ class AppointmentPage extends Component {
                                                             console.log(data.table+' import', msg)
                                                             if(_.last(tables) === table)
                                                                 this.onRefresh()
-                                                            // ToastAndroid.show('Appointments updated!', 1000)
                                                         }).done()
                                                     }, (err) => {
                                                         if(_.last(tables) === table)
@@ -472,7 +458,7 @@ class AppointmentPage extends Component {
                 return response.json()
             });
         } catch (err) {
-            console.log(table+':', e.message)
+            console.log(table+':', err.message)
         }
     }
     jsonToQueryString(json) {
@@ -509,7 +495,7 @@ const styles = StyleSheet.create({
     },
 })
 
-var NavigationBarRouteMapper = {
+var NavigationBarRouteMapper = (drawerRef) => ({
     LeftButton(route, navigator, index, navState) {
         return (
             <TouchableOpacity
@@ -531,6 +517,6 @@ var NavigationBarRouteMapper = {
             </TouchableOpacity>
         )
     }
-}
+})
 
 module.exports = AppointmentPage

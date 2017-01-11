@@ -313,37 +313,39 @@ class AddPrescription extends Component {
                                             placeholderTextColor={'#E0E0E0'}
                                             onChangeText={(text) => this.onSetState(text, i , 'brand')} />
                                         <Text style={styles.label} >Dosage</Text>
-                                        <View style={{flex: 1, flexDirection: 'row'}}>
-                                            <View style={{flex: 1, flexDirection: 'row', alignItems: 'stretch'}}>
+                                        {/* <View style={{flex: 1, flexDirection: 'row'}}>
+                                            <View style={{flex: 1, flexDirection: 'row', alignItems: 'stretch'}}> */}
                                                 <TextInput
                                                     placeholder={'Text Here...'}
-                                                    style={[styles.textInput, {flex: 1, alignItems: 'stretch', paddingRight: 50}]}
+                                                    // style={[styles.textInput, {flex: 1, alignItems: 'stretch', paddingRight: 50}]}
+                                                    style={[styles.textInput]}
                                                     value={this.state.prescription[i].dosage}
                                                     placeholderTextColor={'#E0E0E0'}
                                                     onChangeText={(text) => this.onSetState(text, i , 'dosage')} />
-                                                <TouchableOpacity
+                                                {/* <TouchableOpacity
                                                     style={{position: 'absolute', right: 0, padding: 13}}
                                                     onPress={() => this.setState({selectedValue: {index: i, modal: 'dosageVisible', name: 'dosage'}, modalVisible: true})}>
                                                     <Icon name={'arrow-drop-down'} size={40} color={'#212121'} style={{marginTop: -8}}/>
-                                                </TouchableOpacity>
-                                            </View>
-                                        </View>
+                                                </TouchableOpacity> */}
+                                            {/* </View>
+                                        </View> */}
                                         <Text style={styles.label} >Frequency</Text>
-                                        <View style={{flex: 1, flexDirection: 'row'}}>
-                                            <View style={{flex: 1, flexDirection: 'row', alignItems: 'stretch'}}>
+                                        {/* <View style={{flex: 1, flexDirection: 'row'}}>
+                                            <View style={{flex: 1, flexDirection: 'row', alignItems: 'stretch'}}> */}
                                                 <TextInput
                                                     placeholder={'Text Here...'}
-                                                    style={[styles.textInput, {flex: 1, alignItems: 'stretch', paddingRight: 50}]}
+                                                    // style={[styles.textInput, {flex: 1, alignItems: 'stretch', paddingRight: 50}]}
+                                                    style={[styles.textInput]}
                                                     value={this.state.prescription[i].frequency}
                                                     placeholderTextColor={'#E0E0E0'}
                                                     onChangeText={(text) => this.onSetState(text, i , 'frequency')} />
-                                                <TouchableOpacity
+                                                {/* <TouchableOpacity
                                                     style={{position: 'absolute', right: 0, padding: 13}}
                                                     onPress={() => this.setState({selectedValue: {index: i, modal: 'frequencyVisible', name: 'frequency'}, modalVisible: true})}>
                                                     <Icon name={'arrow-drop-down'} size={40} color={'#212121'} style={{marginTop: -8}}/>
-                                                </TouchableOpacity>
-                                            </View>
-                                        </View>
+                                                </TouchableOpacity> */}
+                                            {/* </View>
+                                        </View> */}
                                         <Text style={styles.label} >Note</Text>
                                         <TextInput
                                             placeholder={'Text Here...'}
@@ -358,14 +360,14 @@ class AddPrescription extends Component {
                                             onChangeText={(text) => this.onSetState(text, i, 'notes')} />
                                     </View>
                                     <TouchableOpacity
-                                        style={{position: 'absolute', top: 10, right: 10, padding: 8, borderRadius: 50, backgroundColor: '#F5F5F5' }}
+                                        style={{position: 'absolute', top: 10, right: 10, padding: 8, borderRadius: 50, backgroundColor: '#E91E63' }}
                                         onPress={() => {
                                             var prescriptions = this.state.prescription
                                             this.setState({refreshing: true, prescription: []})
                                             _.pullAt(prescriptions, [i])
                                             this.setState({refreshing: false, prescription: prescriptions})
                                         }}>
-                                        <Icon name={'close'} size={18} color={'#E91E63'}/>
+                                        <Icon name={'close'} size={14} color={'#FFF'}/>
                                     </TouchableOpacity>
                                 </View>
                             )
@@ -374,9 +376,9 @@ class AddPrescription extends Component {
                             <TouchableOpacity
                                 style={{width: 40, height: 40, borderRadius: 30, backgroundColor: '#FFF', justifyContent: 'center', alignItems: 'center', marginBottom: 25, marginTop: (_.size(this.state.prescription) > 0) ? 0 : 25}}
                                 onPress={() => {
-                                        var prescription = this.state.prescription
-                                        prescription.push({ generic: '', brand: '', form: '', dosageValue: '', dosageMass: '', frequency: '', notes: ''});
-                                        this.setState(prescription)
+                                        var prescription = this.state.prescription;
+                                        prescription.push({ generic: '', brand: '', form: '', dosage: '', frequency: '', notes: '', });
+                                        this.setState({prescription: prescription})
                                 }}>
                                 <Icon name={'add'}  size={15}/>
                             </TouchableOpacity>
@@ -403,7 +405,7 @@ class AddPrescription extends Component {
         _.forEach(this.state.prescription, (v, i) => {
             if (v.generic =='' && passed) {
                 passed = false;
-                ToastAndroid.show("Prescription "+(i+1)+" generic name cannot be empty!", 2000);
+                ToastAndroid.show("Invalid Prescription "+(i+1)+" Generic Name!", 2000);
             }
         })
         if (passed) {
@@ -452,7 +454,7 @@ class AddPrescription extends Component {
                         patientName: this.props.patientName
                     }
                 })
-                ToastAndroid.show("Prescription successfully created!", 3000)
+                ToastAndroid.show("Successfully Created!", 3000)
             })
         }
     }
@@ -542,7 +544,9 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
         return (
             <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                 <TouchableOpacity
-                    onPress={() => navigator.parentNavigator.pop()}>
+                    onPress={() => {
+                        navigator.parentNavigator.pop()
+                    }}>
                     <Text style={{color: 'white', margin: 10, marginTop: 15}}>
                         <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                     </Text>
@@ -556,7 +560,14 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
     },
     Title(route, navigator, index, navState) {
         return (
-            <TouchableOpacity style={[Styles.title, {marginLeft: 50}]}>
+            <TouchableOpacity
+                style={[Styles.title, {marginLeft: 50}]}
+                onPress={() => {
+                    navigator.parentNavigator.push({
+                        id: 'PatientProfile',
+                        passProps: { patientID: patientID},
+                    })
+                }}>
                 <Text style={Styles.titleText}>{patientName}</Text>
             </TouchableOpacity>
         )

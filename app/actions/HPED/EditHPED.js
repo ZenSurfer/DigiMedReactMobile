@@ -67,6 +67,31 @@ class EditHPED extends Component {
             icdList: {},
             icdSelect: {},
             refreshing: false,
+            symptomsList: [
+                'Swelling of Lymph Nodes in Neck/Armpit/Goin',
+                'Pain in Lymph Nodes aft drinking alcohol',
+                'Recurrent Fever',
+                'Night Sweats',
+                'Unexplained Weight Loss',
+                'Loss of Weight',
+                'Itchy Skin',
+                'Bone pain',
+                'Broken bone from only minor injury',
+                'Weakness or numbness of legs',
+                'Frequent Infections',
+                'Persistent Fatigue',
+                'Nausea',
+                'Extreme thirst',
+                'Severe Constipation',
+                'Loss of Appetite',
+                'Mental Confusion',
+                'High Blood Level of Calcium [9]',
+                'Low Blood Counts (Anemia) [9]',
+                'Kidneys Problems [9]',
+                'Infections (Pneumonia) [9]',
+                'Enlarged Tongue [12]',
+            ],
+            symptomsSelected: [],
         }
     }
     componentWillMount() {
@@ -89,7 +114,10 @@ class EditHPED extends Component {
             _.forEach(db.icds, (v, i) => {
                 obj[db.icds.item(i).id] =  db.icds.item(i).code;
             })
-            this.setState({icds: obj})
+            this.setState({icds: obj, symptomsSelected: (db.data.symptoms) ? _.transform(_.split(db.data.symptoms, ','), (res, n) => {
+                res.push(_.toInteger(n))
+                return true
+            },[]) : []})
         })
         RNFS.exists(this.props.patientAvatar).then((exist) => {
             if (exist)
@@ -251,9 +279,9 @@ class EditHPED extends Component {
                                             console.log('DELETE error: ' + err.message);
                                         });
                                     }, (err) => {
-                                        ToastAndroid.show("Error occured while deleting!", 3000)
+                                        ToastAndroid.show("Error Occured!", 3000)
                                     }, () => {
-                                        ToastAndroid.show("Successfully deleted!", 3000)
+                                        ToastAndroid.show("Successfully Deleted!", 3000)
                                         this.props.navigator.replacePreviousAndPop({
                                             id: 'HPEDPage',
                                             passProps: {
@@ -316,30 +344,53 @@ class EditHPED extends Component {
                                 placeholderTextColor={'#E0E0E0'}
                                 multiline={true}
                                 onChangeText={(text) => this.setState({chiefComplaint: text})} />
-                            <Text style={styles.label} >History of Present Illness</Text>
-                            <TextInput
-                                placeholder={'Text Here...'}
-                                style={[styles.textInput, {textAlignVertical: 'top', paddingTop: 10, paddingBottom: 20, height: Math.max(35, this.state.height)}]}
-                                onContentSizeChange={(event) => {
-                                    this.setState({height: event.nativeEvent.contentSize.height});
-                                }}
-                                autoCapitalize={'words'}
-                                value={this.state.historyIllness}
-                                placeholderTextColor={'#E0E0E0'}
-                                multiline={true}
-                                onChangeText={(text) => this.setState({historyIllness: text})} />
-                            <Text style={styles.label} >Pertinent Medical History</Text>
-                            <TextInput
-                                placeholder={'Text Here...'}
-                                style={[styles.textInput, {textAlignVertical: 'top', paddingTop: 10, paddingBottom: 20, height: Math.max(35, this.state.height)}]}
-                                onContentSizeChange={(event) => {
-                                    this.setState({height: event.nativeEvent.contentSize.height});
-                                }}
-                                autoCapitalize={'words'}
-                                value={this.state.medicalHistory}
-                                placeholderTextColor={'#E0E0E0'}
-                                multiline={true}
-                                onChangeText={(text) => this.setState({medicalHistory: text})} />
+                            <View style={{flex: 1, margin: 4, marginBottom: 20, marginTop: -10}}>
+                                {_.map(this.state.symptomsList, (v, i) => {
+                                    if ((i%2) == 0)
+                                        return (
+                                            <View style={{flex: 1, flexDirection: 'row'}}>
+                                                <TouchableOpacity
+                                                    style={{flex: 1, flexDirection: 'row', paddingTop: 20, paddingRight: 5}}
+                                                    activeOpacity={1}
+                                                    onPress={() => {
+                                                        if (contains.call(this.state.symptomsSelected, i)) {
+                                                            var selectedValue = [] = _.without(this.state.symptomsSelected, i);
+                                                            this.setState({symptomsSelected: selectedValue})
+                                                        } else {
+                                                            var symptomsSelected = [] = this.state.symptomsSelected;
+                                                            symptomsSelected.push(i)
+                                                            this.setState({symptomsSelected: symptomsSelected})
+                                                        }
+                                                    }}>
+                                                    <View style={{paddingTop: 0, marginRight: 5}}>
+                                                        <Icon size={18} style={{textAlignVertical: 'center'}} color={(contains.call(this.state.symptomsSelected, i)) ? '#4CAF50' : '#616161'} name={(_.size(_.without(this.state.symptomsSelected, i)) !== _.size(this.state.symptomsSelected)) ? 'check-box' : 'check-box-outline-blank'} />
+                                                    </View>
+                                                    <Text style={{flex: 1, alignItems: 'stretch', fontSize: 14}}>{v}</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity
+                                                    style={{flex: 1, flexDirection: 'row', paddingTop: 20, paddingLeft: 5}}
+                                                    activeOpacity={1}
+                                                    onPress={() => {
+                                                        if (contains.call(this.state.symptomsSelected, i+1)) {
+                                                            var selectedValue = [] = _.without(this.state.symptomsSelected, i+1);
+                                                            this.setState({symptomsSelected: selectedValue})
+                                                        } else {
+                                                            var symptomsSelected = [] = this.state.symptomsSelected;
+                                                            symptomsSelected.push(i+1)
+                                                            this.setState({symptomsSelected: symptomsSelected})
+                                                        }
+                                                    }}>
+                                                    <View style={{paddingTop: 0, marginRight: 5}}>
+                                                        <Icon size={18} style={{textAlignVertical: 'center'}} color={(contains.call(this.state.symptomsSelected, i+1)) ? '#4CAF50' : '#616161'} name={(_.size(_.without(this.state.symptomsSelected, i+1)) !== _.size(this.state.symptomsSelected)) ? 'check-box' : 'check-box-outline-blank'} />
+                                                    </View>
+                                                    <Text style={{flex: 1, alignItems: 'stretch', fontSize: 14}}>{this.state.symptomsList[i+1]}</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                        )
+                                    else
+                                        return (<View/>)
+                                })}
+                            </View>
                             <Text style={styles.label} >Initial Diagnosis</Text>
                             <TextInput
                                 placeholder={'Text Here...'}
@@ -356,15 +407,15 @@ class EditHPED extends Component {
                             <View style={{flexDirection: 'row'}}>
                                 <TextInput
                                     placeholder={'Text Here...'}
-                                    style={[styles.textInput, {width: (width / 2 - 22)}]}
+                                    style={[styles.textInput, {flex: 1, alignItems: 'stretch'}]}
                                     keyboardType={'numeric'}
                                     value={this.state.systolic}
                                     placeholderTextColor={'#E0E0E0'}
                                     onChangeText={(text) => this.setState({systolic: text})} />
-                                <Text style={{textAlignVertical: 'center', fontSize: 30}}>/</Text>
+                                <Text style={{textAlignVertical: 'center', fontSize: 18, color: '#000', padding: 10, marginBottom: 10}}>/</Text>
                                 <TextInput
                                     placeholder={'Text Here...'}
-                                    style={[styles.textInput, {width: (width / 2 - 21)}]}
+                                    style={[styles.textInput, {flex: 1, alignItems: 'stretch'}]}
                                     keyboardType={'numeric'}
                                     value={this.state.diastolic}
                                     placeholderTextColor={'#E0E0E0'}
@@ -403,7 +454,31 @@ class EditHPED extends Component {
                     <ScrollView
                         keyboardShouldPersistTaps={true}>
                         <View style={{backgroundColor: '#FFFFFF', paddingLeft: 16, paddingRight: 16, paddingTop: 16, paddingBottom: (this.state.other) ? 90 : 40}}>
-                            <View style={{flexDirection: 'row', marginTop: 10,}}>
+                            <Text style={styles.label} >History of Present Illness</Text>
+                            <TextInput
+                                placeholder={'Text Here...'}
+                                style={[styles.textInput, {textAlignVertical: 'top', paddingTop: 10, paddingBottom: 20, height: Math.max(35, this.state.height)}]}
+                                onContentSizeChange={(event) => {
+                                    this.setState({height: event.nativeEvent.contentSize.height});
+                                }}
+                                autoCapitalize={'words'}
+                                value={this.state.historyIllness}
+                                placeholderTextColor={'#E0E0E0'}
+                                multiline={true}
+                                onChangeText={(text) => this.setState({historyIllness: text})} />
+                            <Text style={styles.label} >Pertinent Medical History</Text>
+                            <TextInput
+                                placeholder={'Text Here...'}
+                                style={[styles.textInput, {textAlignVertical: 'top', paddingTop: 10, paddingBottom: 20, height: Math.max(35, this.state.height)}]}
+                                onContentSizeChange={(event) => {
+                                    this.setState({height: event.nativeEvent.contentSize.height});
+                                }}
+                                autoCapitalize={'words'}
+                                value={this.state.medicalHistory}
+                                placeholderTextColor={'#E0E0E0'}
+                                multiline={true}
+                                onChangeText={(text) => this.setState({medicalHistory: text})} />
+                            <View style={{flexDirection: 'row'}}>
                                 <Switch
                                     onValueChange={(value) => {
                                         this.setState({accident: value})
@@ -579,15 +654,56 @@ class EditHPED extends Component {
         var icds = _.transform(this.state.icds, function(rs, v, i) {
             if (v) rs[i] = v
         }, {});
-        var parse = _.map(_.values(this.state), (rs, i) => {
-            if (i == 7) return this.state.systolic+' / '+this.state.diastolic
-            if (i == 22) return (this.state.accident) ? 1 : 0
-            return rs
+        var lymphoma = [0,1,2,3,4,5,6];
+        var lymphomaCount = 0;
+        var myeloma = [7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
+        var myelomaCount = 0;
+        _.map(this.state.symptomsSelected, (v, i) => {
+            if (contains.call(lymphoma, v))
+                lymphomaCount++;
+            if (contains.call(myeloma, v))
+                myelomaCount++;
         })
-        var insert =  _.dropRight(_(parse).value(), (_.size(this.state) - 34));
-        insert.push(this.props.diagnosisID);
         db.transaction((tx) => {
-            tx.executeSql("UPDATE `diagnosis` SET `patientID`=?, `doctorID`=?, `appointmentID`=?, `preparedByID`=?, `chiefComplaint`=?, `historyIllness`=?, `bodyTemperature`=?, `bloodPressure`=?, `respirationRate`=?, `pulseRate`=?, `medicalHistory`=?, `initialDiagnosis`=?, `physicalExam`=?, `services`=?, `type`=?, `code`=?, `category`=?, `plan`=?, `pay`=?, `referringDoctor`=?, `labs`=?, `imaging`=?, `accident`=?, `painLevel`=?, `allergies`=?, `currentMedications`=?, `date`=?, `timeStart`=?, `timeEnd`=?, `certRemarks`=?, `certPurpose`=?, `deleted_at`=?, `created_at`=?, `updated_at`=? WHERE `diagnosis`.`id`=?", insert, (tx, rs) => {
+            var values = {
+                patientID: this.state.patientID,
+                doctorID: this.state.doctorID,
+                appointmentID: this.state.appointmentID,
+                preparedByID: this.state.preparedByID,
+                chiefComplaint: this.state.chiefComplaint,
+                historyIllness: this.state.historyIllness,
+                bodyTemperature: this.state.bodyTemperature,
+                bloodPressure: (this.state.systolic ? this.state.systolic : '-')+' / '+(this.state.diastolic ? this.state.diastolic : '-'),
+                respirationRate: this.state.respirationRate,
+                pulseRate: this.state.pulseRate,
+                medicalHistory: this.state.medicalHistory,
+                initialDiagnosis: this.state.initialDiagnosis,
+                physicalExam: this.state.physicalExam,
+                services: this.state.services,
+                type: this.state.type,
+                code: this.state.code,
+                category: this.state.category,
+                plan: this.state.plan,
+                pay: this.state.pay,
+                referringDoctor: this.state.referringDoctor,
+                labs: this.state.labs,
+                imaging: this.state.imaging,
+                accident: (this.state.accident) ? 1 : 0,
+                painLevel: this.state.painLevel,
+                allergies: this.state.allergies,
+                currentMedications: this.state.currentMedications,
+                date: this.state.date,
+                timeStart: this.state.timeStart,
+                timeEnd: this.state.timeEnd,
+                certRemarks: this.state.certRemarks,
+                certPurpose: this.state.certPurpose,
+                symptoms: _.join(this.state.symptomsSelected, ','),
+                deleted_at: this.state.deleted_at,
+                created_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+                updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
+                diagnosisID: this.props.diagnosisID
+            }
+            tx.executeSql("UPDATE `diagnosis` SET `patientID`=?, `doctorID`=?, `appointmentID`=?, `preparedByID`=?, `chiefComplaint`=?, `historyIllness`=?, `bodyTemperature`=?, `bloodPressure`=?, `respirationRate`=?, `pulseRate`=?, `medicalHistory`=?, `initialDiagnosis`=?, `physicalExam`=?, `services`=?, `type`=?, `code`=?, `category`=?, `plan`=?, `pay`=?, `referringDoctor`=?, `labs`=?, `imaging`=?, `accident`=?, `painLevel`=?, `allergies`=?, `currentMedications`=?, `date`=?, `timeStart`=?, `timeEnd`=?, `certRemarks`=?, `certPurpose`=?, `symptoms`=?,`deleted_at`=?, `created_at`=?, `updated_at`=? WHERE `diagnosis`.`id`=?", _.values(values), (tx, rs) => {
                 console.log("created: " + rs.rowsAffected);
             })
             tx.executeSql("DELETE FROM `diagnosisIcds` WHERE `diagnosisID`=? ", [this.props.diagnosisID], (tx, rs) => {
@@ -601,8 +717,8 @@ class EditHPED extends Component {
             })
         }, (err) => {
             this.setState({refreshing: false})
-            ToastAndroid.show("Error occured while creating!"+JSON.stringify(values), 3000)
         }, () => {
+            ToastAndroid.show("Successfully Updated!", 3000)
             this.props.navigator.replacePreviousAndPop({
                 id: 'HPEDInfo',
                 passProps: {
@@ -612,9 +728,100 @@ class EditHPED extends Component {
                     patientName: this.props.patientName
                 },
             })
-            ToastAndroid.show("Successfully diagnosis created!", 3000)
+            this.analyze(['Hodgkin\'s Lymphoma', "Multiple Myeloma"], [lymphomaCount, myelomaCount], [lymphoma, myeloma], {
+                order: {
+                    id: 'OrderItem',
+                    passProps: {
+                        diagnosisID: this.props.diagnosisID,
+                        patientID: this.props.patientID,
+                        patientAvatar: this.props.patientAvatar,
+                        patientName: this.props.patientName,
+                        labItemSelect: '152,4,8',
+                    }
+                },
+                refer: {
+                    id: 'DoctorSharePage',
+                    passProps: {
+                        diagnosisID: this.props.diagnosisID,
+                        patientID: this.props.patientID,
+                        patientAvatar: this.props.patientAvatar,
+                        patientName: this.props.patientName
+                    }
+                }
+            })
         })
     }
+    analyze(cancer, count, symptoms, props) {
+        var notify = false; var message = []; var status = {}; var notifyStatus = {active: false, title: ''};
+        _.forEach(cancer, (v, i) => {
+            if (count[i]) {
+                notify = true;
+                var percentage = count[i]/_.size(symptoms[i]) * 100;
+                if (contains.call(this.state.symptomsSelected, 0) && cancer[i] == 'Hodgkin\'s Lymphoma') {
+                    status = props.refer;
+                    notifyStatus.active = true;
+                    notifyStatus.title = 'REFER TO DOCTOR';
+                    var potential = 'Very High Level';
+                } else if (percentage <= 20) {
+                    var potential = 'Low Level';
+                } else if (percentage <= 50) {
+                    status = props.order;
+                    notifyStatus.active = true;
+                    notifyStatus.title = 'REQUEST BLOOD TEST';
+                    var potential = 'Medium Level';
+                } else if (percentage <= 90) {
+                    status = props.order;
+                    notifyStatus.active = true;
+                    notifyStatus.title = 'REQUEST BLOOD TEST';
+                    var potential = 'High Level';
+                } else {
+                    status = props.refer;
+                    notifyStatus.active = true;
+                    notifyStatus.title = 'REFER TO DOCTOR';
+                    var potential = 'Very High Level';
+                }
+                message.push('Consider as '+cancer[i]+'! \nPotential: '+potential)
+            }
+        })
+        if (notify)
+            return  (
+                Alert.alert(
+                    'Attention',
+                    _.join(message, '\n\n'),
+                    [
+                        {text: (notifyStatus.active) ? notifyStatus.title : '', onPress: () => {
+                            this.props.navigator.push(status)
+                        }},
+                        {},
+                        {text: 'OK', onPress: () => console.log('OK Pressed!')},
+                    ]
+                )
+            )
+    }
+}
+
+var contains = function(needle) {
+    var findNaN = needle !== needle;
+    var indexOf;
+    if(!findNaN && typeof Array.prototype.indexOf === 'function') {
+        indexOf = Array.prototype.indexOf;
+    } else {
+        indexOf = function(needle) {
+            var i = -1, index = -1;
+
+            for(i = 0; i < this.length; i++) {
+                var item = this[i];
+
+                if((findNaN && item !== item) || item === needle) {
+                    index = i;
+                    break;
+                }
+            }
+
+            return index;
+        };
+    }
+    return indexOf.call(this, needle) > -1;
 }
 
 const styles = StyleSheet.create({
@@ -696,7 +903,9 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
         return (
             <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                 <TouchableOpacity
-                    onPress={() => navigator.parentNavigator.pop()}>
+                    onPress={() => {
+                        navigator.parentNavigator.pop()
+                    }}>
                     <Text style={{color: 'white', margin: 10, marginTop: 15}}>
                         <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                     </Text>
@@ -710,7 +919,14 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
     },
     Title(route, navigator, index, navState) {
         return (
-            <TouchableOpacity style={[Styles.title, {marginLeft: 50}]}>
+            <TouchableOpacity
+                style={[Styles.title, {marginLeft: 50}]}
+                onPress={() => {
+                    navigator.parentNavigator.push({
+                        id: 'PatientProfile',
+                        passProps: { patientID: patientID},
+                    })
+                }}>
                 <Text style={Styles.titleText}>{patientName}</Text>
             </TouchableOpacity>
         )

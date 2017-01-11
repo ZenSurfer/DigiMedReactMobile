@@ -136,10 +136,10 @@ class ImagePage extends Component {
                                                                 console.log('DELETE error: ' + err.message);
                                                             });
                                                         }, (err) => {
-                                                            ToastAndroid.show("Error occured while deleting!", 3000)
+                                                            ToastAndroid.show("Error Occured!", 3000)
                                                         }, () => {
                                                             this.onRefresh();
-                                                            ToastAndroid.show("Successfully deleted!", 3000)
+                                                            ToastAndroid.show("Successfully Deleted!", 3000)
                                                         })
                                                     }},
                                                     ]
@@ -217,10 +217,10 @@ class ImagePage extends Component {
                                                                                     console.log('DELETE error: ' + err.message);
                                                                                 });
                                                                             }, (err) => {
-                                                                                ToastAndroid.show("Error occured while deleting!", 3000)
+                                                                                ToastAndroid.show("Error Occured!", 3000)
                                                                             }, () => {
                                                                                 this.onRefresh();
-                                                                                ToastAndroid.show("Successfully deleted!", 3000)
+                                                                                ToastAndroid.show("Successfully Deleted!", 3000)
                                                                             })
                                                                         }},
                                                                     ]
@@ -282,7 +282,7 @@ class ImagePage extends Component {
             var imaging = [];
             _.forEach(db.data, (v, i) => {
                 if (db.data.item(i).image != '')
-                    RNFS.readFile(RNFS.ExternalDirectoryPath+'/patient/'+db.data.item(i).image, 'base64').then((rs) => {
+                    RNFS.readFile(RNFS.DocumentDirectoryPath+'/patient/'+db.data.item(i).image, 'base64').then((rs) => {
                         var obj = {};
                         obj[db.data.item(i).image] = (rs.toString().indexOf('dataimage/jpegbase64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/jpeg;base64,'+rs.toString();
                         this.setState(obj);
@@ -310,9 +310,9 @@ class ImagePage extends Component {
                             _.forEach(db.data, (v, i) => {
                                 rows.push(i+ '='+ encodeURIComponent('{') + this.jsonToQueryString(db.data.item(i)) + encodeURIComponent('}'))
                                 if (table == 'patients' || table == 'staff' || table == 'nurses' || table == 'doctors') {
-                                    RNFS.exists(RNFS.ExternalDirectoryPath+'/'+db.data.item(i).image).then((exist) => {
+                                    RNFS.exists(RNFS.DocumentDirectoryPath+'/'+db.data.item(i).image).then((exist) => {
                                         if (exist)
-                                            RNFS.readFile(RNFS.ExternalDirectoryPath+'/'+db.data.item(i).image, 'base64').then((image) => {
+                                            RNFS.readFile(RNFS.DocumentDirectoryPath+'/'+db.data.item(i).image, 'base64').then((image) => {
                                                 this.exportImage({
                                                     imagePath: db.data.item(i).image,
                                                     image: (image.toString().indexOf('dataimage/jpegbase64') !== -1) ? encodeURIComponent(_.replace(image.toString(), 'dataimage/jpegbase64','')) :  encodeURIComponent(image.toString())
@@ -321,9 +321,9 @@ class ImagePage extends Component {
                                     })
                                 }
                                 if (table == 'patientImages') {
-                                    RNFS.exists(RNFS.ExternalDirectoryPath+'/patient/'+db.data.item(i).image).then((exist) => {
+                                    RNFS.exists(RNFS.DocumentDirectoryPath+'/patient/'+db.data.item(i).image).then((exist) => {
                                         if (exist)
-                                            RNFS.readFile(RNFS.ExternalDirectoryPath+'/patient/'+db.data.item(i).image, 'base64').then((image) => {
+                                            RNFS.readFile(RNFS.DocumentDirectoryPath+'/patient/'+db.data.item(i).image, 'base64').then((image) => {
                                                 this.exportImage({
                                                     imagePath: 'patient/'+db.data.item(i).image,
                                                     image: (image.toString().indexOf('dataimage/jpegbase64') !== -1) ? encodeURIComponent(_.replace(image.toString(), 'dataimage/jpegbase64','')) :  encodeURIComponent(image.toString())
@@ -350,9 +350,10 @@ class ImagePage extends Component {
                                                         this.importImage(Object.keys(param).map((key) => {
                                                             return encodeURIComponent(key) + '=' + encodeURIComponent(param[key]);
                                                         }).join('&')).then((data) => {
+                                                            console.log(data)
                                                             if (!_.isUndefined(data)) {
                                                                 if (data.success) {
-                                                                    RNFS.writeFile(RNFS.ExternalDirectoryPath+'/patient/'+n.image, decodeURIComponent(data.avatar), 'base64').then((success) => {
+                                                                    RNFS.writeFile(RNFS.DocumentDirectoryPath+'/patient/'+n.image, decodeURIComponent(data.avatar), 'base64').then((success) => {
                                                                         console.log("Successfully created!")
                                                                     }).catch((err) => {
                                                                         console.log("Error occured while creating image!")
@@ -482,7 +483,7 @@ class ImagePage extends Component {
                 return response.json()
             });
         } catch (err) {
-            console.log(table+':', e.message)
+            console.log(table+':', err.message)
         }
     }
     jsonToQueryString(json) {
@@ -532,7 +533,9 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
         return (
             <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                 <TouchableOpacity
-                    onPress={() => navigator.parentNavigator.pop()}>
+                    onPress={() => {
+                        navigator.parentNavigator.pop()
+                    }}>
                     <Text style={{color: 'white', margin: 10, marginTop: 15}}>
                         <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                     </Text>
@@ -546,7 +549,14 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
     },
     Title(route, navigator, index, nextState) {
         return (
-            <TouchableOpacity style={[Styles.title, {marginLeft: 50}]}>
+            <TouchableOpacity
+                style={[Styles.title, {marginLeft: 50}]}
+                onPress={() => {
+                    navigator.parentNavigator.push({
+                        id: 'PatientProfile',
+                        passProps: { patientID: patientID},
+                    })
+                }}>
                 <Text style={[Styles.titleText]}>{patientName}</Text>
             </TouchableOpacity>
         )

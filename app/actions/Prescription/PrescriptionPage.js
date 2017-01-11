@@ -154,6 +154,7 @@ class PrescriptionPage extends Component {
         }, () => {
             var rowData = [];
             _.forEach(db.data, function(v, i) {
+                console.log(db.data.item(i))
                 var genericName = _.split(db.data.item(i).genericName, '||');
                 var brandName = _.split(db.data.item(i).brandName, '||');
                 var frequency = _.split(db.data.item(i).frequency, '||');
@@ -176,7 +177,7 @@ class PrescriptionPage extends Component {
                 })
             })
             this.setState({refreshing: false, rowData: rowData})
-            this.updateData(['prescriptions', 'medicines', 'medicineDosages']);
+            this.updateData(['prescriptions']);
         })
     }
     updateData(tables) {
@@ -209,23 +210,8 @@ class PrescriptionPage extends Component {
                                                 var currentImportDate = importDate;
                                                 if (data.total > 0) {
                                                     db.sqlBatch(_.transform(data.data, (result, n, i) => {
-                                                        result.push(["INSERT OR REPLACE INTO "+table+" VALUES ("+_.join(_.fill(Array(_.size(n)), '?'), ',')+")", _.values(n)])
-                                                        if (!_.isUndefined(n.imagePath)) {
-                                                            var param = {id: n.id, type: data.table};
-                                                            this.importImage(Object.keys(param).map((key) => {
-                                                                return encodeURIComponent(key) + '=' + encodeURIComponent(param[key]);
-                                                            }).join('&')).then((data) => {
-                                                                if (!_.isUndefined(data)) {
-                                                                    if (data.success) {
-                                                                        RNFS.writeFile(RNFS.ExternalDirectoryPath+'/'+n.imagePath, decodeURIComponent(data.avatar), 'base64').then((success) => {
-                                                                            console.log("Successfully created!")
-                                                                        }).catch((err) => {
-                                                                            console.log("Error occured while creating image!")
-                                                                        });
-                                                                    }
-                                                                }
-                                                            }).done();
-                                                        }
+                                                        console.log(_.join(_.fill(Array(_.size(n)), '?'), ','), _.values(n))
+                                                        result.push(["INSERT OR REPLACE INTO "+table+"(`id`, `patientID`, `doctorID`, `frequency`, `dateIssued`, `genericName`, `notes`, `brandName`, `dosage`, `pharmacyDrugData`, `forms`, `deleted_at`, `created_at`, `updated_at`) VALUES ("+_.join(_.fill(Array(_.size(n)), '?'), ',')+")", _.values(n)])
                                                         return true
                                                     }, []), () => {
                                                         if(_.last(tables) === table)
@@ -332,7 +318,7 @@ class PrescriptionPage extends Component {
                 return response.json()
             });
         } catch (err) {
-            console.log(table+':', e.message)
+            console.log(table+':', err.message)
         }
     }
     jsonToQueryString(json) {
@@ -382,7 +368,9 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
         return (
             <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                 <TouchableOpacity
-                    onPress={() => navigator.parentNavigator.pop()}>
+                    onPress={() => {
+                        navigator.parentNavigator.pop()
+                    }}>
                     <Text style={{color: 'white', margin: 10, marginTop: 15}}>
                         <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                     </Text>
@@ -396,7 +384,14 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
     },
     Title(route, navigator, index, nextState) {
         return (
-            <TouchableOpacity style={[Styles.title, {marginLeft: 50}]}>
+            <TouchableOpacity
+                style={[Styles.title, {marginLeft: 50}]}
+                onPress={() => {
+                    navigator.parentNavigator.push({
+                        id: 'PatientProfile',
+                        passProps: { patientID: patientID},
+                    })
+                }}>
                 <Text style={[Styles.titleText]}>{patientName}</Text>
             </TouchableOpacity>
         )

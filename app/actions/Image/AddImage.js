@@ -136,7 +136,7 @@ class AddImage extends Component {
     onSubmit() {
         if (this.state.image) {
             var image = this.guid()+'.jpg';
-            RNFS.writeFile(RNFS.ExternalDirectoryPath+'/patient/'+image, this.state.image, 'base64').then((success) => {
+            RNFS.writeFile(RNFS.DocumentDirectoryPath+'/patient/'+image, this.state.image, 'base64').then((success) => {
                 db.transaction((tx) => {
                     var insertID = this.state.mobileID*100000;
                     tx.executeSql("SELECT id FROM patientImages WHERE id BETWEEN "+insertID+" AND "+((insertID*2)-1)+" ORDER BY created_at DESC LIMIT 1", [], (tx, rs) => {
@@ -172,14 +172,14 @@ class AddImage extends Component {
                             patientName: this.props.patientName
                         },
                     })
-                    ToastAndroid.show("Imaging successfully created!", 3000)
+                    ToastAndroid.show("Successfully Created!", 3000)
                 })
             }).catch((err) => {
                 alert(err.message)
-                ToastAndroid.show("Error occured while creating image!", 3000)
+                ToastAndroid.show("Error Occured!", 3000)
             });
         } else {
-            ToastAndroid.show('Invalid image available!', 1000)
+            ToastAndroid.show('Invalid Image!', 1000)
         }
     }
     guid() {
@@ -233,7 +233,9 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
         return (
             <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                 <TouchableOpacity
-                    onPress={() => navigator.parentNavigator.pop()}>
+                    onPress={() => {
+                        navigator.parentNavigator.pop()
+                    }}>
                     <Text style={{color: 'white', margin: 10, marginTop: 15}}>
                         <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                     </Text>
@@ -247,7 +249,14 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
     },
     Title(route, navigator, index, nextState) {
         return (
-            <TouchableOpacity style={[Styles.title, {marginLeft: 50}]}>
+            <TouchableOpacity
+                style={[Styles.title, {marginLeft: 50}]}
+                onPress={() => {
+                    navigator.parentNavigator.push({
+                        id: 'PatientProfile',
+                        passProps: { patientID: patientID},
+                    })
+                }}>
                 <Text style={[Styles.titleText]}>{patientName}</Text>
             </TouchableOpacity>
         )

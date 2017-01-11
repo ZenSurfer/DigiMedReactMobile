@@ -64,7 +64,7 @@ class AppointmentPatientPage extends Component {
                 navigationBar={
                     <Navigator.NavigationBar
                         style={[Styles.navigationBar,{marginTop: 24}]}
-                        routeMapper={NavigationBarRouteMapper(this.props.patientID, this.props.patientName, this.state.avatar)} />
+                        routeMapper={NavigationBarRouteMapper(this.props.patientID, this.props.patientName, this.state.avatar, this.props)} />
                 }/>
         );
     }
@@ -158,16 +158,6 @@ class AppointmentPatientPage extends Component {
             this.setState({refreshing: false, rowData: rowData})
             this.updateData(['appointments']);
         })
-    }
-    componentWillReceiveProps(nextProps) {
-        if (_.size(nextProps.navigator.getCurrentRoutes(0)) > 3) {
-            this.setState({lastRoute: nextProps.navigator.getCurrentRoutes(0)[3].id})
-        } else {
-            if (this.state.lastRoute == 'AddAppointment' || this.state.lastRoute == 'EditAppointment') {
-                this.setState({lastRoute: ''});
-                this.onRefresh();
-            }
-        }
     }
     updateData(tables) {
         NetInfo.isConnected.fetch().then(isConnected => {
@@ -294,7 +284,7 @@ class AppointmentPatientPage extends Component {
                 return response.json()
             });
         } catch (err) {
-            console.log(table+':', e.message)
+            console.log(table+':', err.message)
         }
     }
     jsonToQueryString(json) {
@@ -339,12 +329,14 @@ var styles = StyleSheet.create({
         fontSize: 14,
     },
 })
-var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
+var NavigationBarRouteMapper = (patientID, patientName, avatar, props) => ({
     LeftButton(route, navigator, index, nextState) {
         return (
             <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                 <TouchableOpacity
-                    onPress={() => navigator.parentNavigator.pop()}>
+                    onPress={() => {
+                        navigator.parentNavigator.pop()
+                    }}>
                     <Text style={{color: 'white', margin: 10, marginTop: 15}}>
                         <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                     </Text>
@@ -358,7 +350,14 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
     },
     Title(route, navigator, index, nextState) {
         return (
-            <TouchableOpacity style={[Styles.title, {marginLeft: 50}]}>
+            <TouchableOpacity
+                style={[Styles.title, {marginLeft: 50}]}
+                onPress={() => {
+                    navigator.parentNavigator.push({
+                        id: 'PatientProfile',
+                        passProps: { patientID: patientID},
+                    })
+                }}>
                 <Text style={[Styles.titleText]}>{patientName}</Text>
             </TouchableOpacity>
         )

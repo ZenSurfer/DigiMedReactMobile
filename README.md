@@ -2,6 +2,7 @@
 
 PHP Server
 always_populate_raw_post_data = -1
+ALTER TABLE `diagnosis` ADD `symptoms` VARCHAR(100) NULL AFTER `certPurpose`;
 
 file:node_modules/react-native-bcrypt/dist/bcrypt.js  
 line:50

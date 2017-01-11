@@ -31,11 +31,10 @@ class VerifyPage extends Component {
             email: this.state.email,
             userID: this.props.doctorUserID,
         })).then((data) => {
-            console.log(data)
             if (data.success)
                 this.setState({verifying: false, emailVerified: true})
             else {
-                ToastAndroid.show('Email missmatched!', 1000)
+                ToastAndroid.show('Email Missmatched!', 1000)
                 this.setState({verifying: false})
             }
         }).done()
@@ -157,7 +156,6 @@ class VerifyPage extends Component {
         );
     }
     async pull(link, param) {
-        console.log(EnvInstance.cloudUrl+'/api/v2/'+link+'?'+param)
         try {
             return await fetch(EnvInstance.cloudUrl+'/api/v2/'+link+'?'+param).then((response) => {
                 return response.json()

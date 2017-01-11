@@ -568,29 +568,29 @@ class AddPatient extends Component {
                 });
             }, (err) => {
                 this.setState({refreshing: false})
-                ToastAndroid.show("Error occured while saving!", 3000)
+                ToastAndroid.show("Error Occured!", 3000)
             }, () => {
                 this.setState({refreshing: false})
                 if (this.state.avatar) {
-                    RNFS.writeFile(RNFS.ExternalDirectoryPath +'/'+ imagePath, this.state.avatar, 'base64').then((success) => {
+                    RNFS.writeFile(RNFS.DocumentDirectoryPath +'/'+ imagePath, this.state.avatar, 'base64').then((success) => {
                         this.props.navigator.replace({
                             id: 'PatientPage',
                             sceneConfig: Navigator.SceneConfigs.FadeAndroid
                         })
-                        ToastAndroid.show("Successfully created!", 3000)
+                        ToastAndroid.show("Successfully Created!", 3000)
                     }).catch((err) => {
                         this.props.navigator.replace({
                             id: 'PatientPage',
                             sceneConfig: Navigator.SceneConfigs.FadeAndroid
                         })
-                        ToastAndroid.show("Error occured while creating image!", 3000)
+                        ToastAndroid.show("Error Occured!", 3000)
                     });
                 } else {
                     this.props.navigator.replace({
                         id: 'PatientPage',
                         sceneConfig: Navigator.SceneConfigs.FadeAndroid
                     })
-                    ToastAndroid.show("Successfully created!", 3000)
+                    ToastAndroid.show("Successfully Created!", 3000)
                 }
             })
         } else {
@@ -662,7 +662,9 @@ var NavigationBarRouteMapper = {
     LeftButton(route, navigator, index, navState) {
         return (
             <TouchableOpacity style={Styles.leftButton}
-                onPress={() => navigator.parentNavigator.pop()}>
+                onPress={() => {
+                    navigator.parentNavigator.pop()
+                }}>
                 <Text style={Styles.leftButtonText}>
                     <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                 </Text>

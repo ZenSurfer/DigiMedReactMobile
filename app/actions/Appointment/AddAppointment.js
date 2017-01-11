@@ -58,7 +58,10 @@ class AppointmentPage extends Component {
     async updateCredentials() {
         try {
             var doctor = await AsyncStorage.getItem('doctor');
-            this.setState({doctorID: JSON.parse(doctor).id, mobileID: JSON.parse(doctor).mobileID})
+            this.setState({
+                doctorID: JSON.parse(doctor).id,
+                mobileID: JSON.parse(doctor).mobileID
+            })
         } catch (error) {
             console.log('AsyncStorage error: ' + error.message);
         } finally {
@@ -136,7 +139,7 @@ class AppointmentPage extends Component {
                 navigationBar={
                     <Navigator.NavigationBar
                         style={[Styles.navigationBar,{marginTop: 24}]}
-                        routeMapper={NavigationBarRouteMapper(this.props.patientID, this.props.patientName, this.state.avatar)} />
+                        routeMapper={NavigationBarRouteMapper(this.props.patientID, this.props.patientName, this.state.avatar, this.props)} />
                 }/>
         )
     }
@@ -351,10 +354,13 @@ class AppointmentPage extends Component {
             alert(err.message)
         }, () => {
             if(db.duplicate) {
-                ToastAndroid.show('Time slot reflected at '+db.type+'!', 1000);
+                ToastAndroid.show('Time Reflected At '+db.type+'!', 1000);
             } else {
-                ToastAndroid.show('Appointment successfully scheduled!', 3000);
-                this.props.navigator.pop();
+                ToastAndroid.show('Appointment Successfully Scheduled!', 3000);
+                this.props.navigator.replacePreviousAndPop({
+                    id: (this.props.patientID) ? 'AppointmentPatientPage' : 'AppointmentPage',
+                    passProps: this.props
+                });
             }
         })
     }
@@ -416,13 +422,15 @@ var styles = StyleSheet.create({
     },
 })
 
-var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
+var NavigationBarRouteMapper = (patientID, patientName, avatar, props) => ({
     LeftButton(route, navigator, index, nextState) {
         if (patientID)
             return (
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                     <TouchableOpacity
-                        onPress={() => navigator.parentNavigator.pop()}>
+                        onPress={() => {
+                            navigator.parentNavigator.pop()
+                        }}>
                         <Text style={{color: 'white', margin: 10, marginTop: 15}}>
                             <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                         </Text>
@@ -433,7 +441,9 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
         else
             return (
                 <TouchableOpacity style={{flex: 1, justifyContent: 'center'}}
-                    onPress={() => { navigator.parentNavigator.pop() }}>
+                    onPress={() => {
+                        navigator.parentNavigator.pop()
+                    }}>
                     <Text style={{color: 'white', margin: 10,}}>
                         <Icon name={"keyboard-arrow-left"} size={30} color={"#FFF"} />
                     </Text>
@@ -446,7 +456,14 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
     Title(route, navigator, index, nextState) {
         if (patientID)
             return (
-                <TouchableOpacity style={[Styles.title, {marginLeft: 50}]}>
+                <TouchableOpacity
+                    style={[Styles.title, {marginLeft: 50}]}
+                    onPress={() => {
+                        navigator.parentNavigator.push({
+                            id: 'PatientProfile',
+                            passProps: { patientID: patientID},
+                        })
+                    }}>
                     <Text style={[Styles.titleText]}>{patientName}</Text>
                 </TouchableOpacity>
             )

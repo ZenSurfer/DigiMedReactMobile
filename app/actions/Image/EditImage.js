@@ -36,9 +36,9 @@ class EditImage extends Component {
             alert(err.message)
         }, () => {
             this.setState(db.data.item(0))
-                RNFS.exists(RNFS.ExternalDirectoryPath+'/patient/'+db.data.item(0).image).then((exist) => {
+                RNFS.exists(RNFS.DocumentDirectoryPath+'/patient/'+db.data.item(0).image).then((exist) => {
                     if (exist)
-                        RNFS.readFile(RNFS.ExternalDirectoryPath+'/patient/'+db.data.item(0).image, 'base64').then((rs) => {
+                        RNFS.readFile(RNFS.DocumentDirectoryPath+'/patient/'+db.data.item(0).image, 'base64').then((rs) => {
                             this.setState({uploadImage: _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,')})
                         })
                 })
@@ -148,7 +148,7 @@ class EditImage extends Component {
                 updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
                 patientImageID: this.props.patientImageID
             }
-            RNFS.writeFile(RNFS.ExternalDirectoryPath+'/patient/'+this.state.image, this.state.uploadImage, 'base64').then((success) => {
+            RNFS.writeFile(RNFS.DocumentDirectoryPath+'/patient/'+this.state.image, this.state.uploadImage, 'base64').then((success) => {
                 db.transaction((tx) => {
                     tx.executeSql("UPDATE patientImages SET `image1`=?, `imageAnnotation`=?, `forDisplay`=?, `imageType`=?, `imageModule`=?, `updated_at`=? WHERE id=?", _.values(values), (tx, rs) => {
                         console.log("created: " + rs.rowsAffected);
@@ -165,14 +165,14 @@ class EditImage extends Component {
                             patientName: this.props.patientName
                         },
                     })
-                    ToastAndroid.show("Imaging successfully updated!", 3000)
+                    ToastAndroid.show("Successfully Updated!", 3000)
                 })
             }).catch((err) => {
                 alert(err.message)
-                ToastAndroid.show("Error occured while creating image!", 3000)
+                ToastAndroid.show("Error Occured!", 3000)
             });
         } else {
-            ToastAndroid.show('Invalid image available!', 1000)
+            ToastAndroid.show('Invalid Image!', 1000)
         }
     }
 }
@@ -219,7 +219,9 @@ var NavigationBarRouteMapper = (diagnosisID, patientID, patientName, patientAvat
         return (
             <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                 <TouchableOpacity
-                    onPress={() => navigator.parentNavigator.pop()}>
+                    onPress={() => {
+                        navigator.parentNavigator.pop()
+                    }}>
                     <Text style={{color: 'white', margin: 10, marginTop: 15}}>
                         <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                     </Text>
@@ -233,7 +235,14 @@ var NavigationBarRouteMapper = (diagnosisID, patientID, patientName, patientAvat
     },
     Title(route, navigator, index, nextState) {
         return (
-            <TouchableOpacity style={[Styles.title, {marginLeft: 50}]}>
+            <TouchableOpacity
+                style={[Styles.title, {marginLeft: 50}]}
+                onPress={() => {
+                    navigator.parentNavigator.push({
+                        id: 'PatientProfile',
+                        passProps: { patientID: patientID},
+                    })
+                }}>
                 <Text style={[Styles.titleText]}>{patientName}</Text>
             </TouchableOpacity>
         )

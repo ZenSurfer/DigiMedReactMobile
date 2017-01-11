@@ -53,7 +53,7 @@ class EditUserSetting extends Component {
                 db.data = rs.rows.item(0);
             });
         }, (err) => {
-            ToastAndroid.show("Error occured while loading!", 3000);
+            ToastAndroid.show("Error Occured!", 3000);
         }, () => {
             var rowData = db.data
             this.setState({
@@ -217,19 +217,19 @@ class EditUserSetting extends Component {
                                                             })
                                                         }, (err) => {
                                                             // alert(err.message);
-                                                            ToastAndroid.show("Error occured while saving!", 3000)
+                                                            ToastAndroid.show("Error Occured!", 3000)
                                                         }, () => {
                                                             this.setState({refreshing: false, modalVisible: false})
                                                             this.props.navigator.replacePreviousAndPop({
                                                                 id: 'UserSettingPage'
                                                             });
-                                                            ToastAndroid.show("Successfully changed password!", 3000)
+                                                            ToastAndroid.show("Successfully Password Changed!", 3000)
                                                         })
                                                     } else {
-                                                        ToastAndroid.show("New password not matched!", 3000)
+                                                        ToastAndroid.show("New Password Not Matched!", 3000)
                                                     }
                                                 } else {
-                                                    ToastAndroid.show("Wrong current password!", 3000)
+                                                    ToastAndroid.show("Wrong Current Password!", 3000)
                                                 }
                                             } else { // Required Fields
                                                 if (this.state.password == '') {
@@ -239,7 +239,7 @@ class EditUserSetting extends Component {
                                                 } else if (this.state.cnewPassword == '') {
                                                     ToastAndroid.show("Invalid Confirm New Password!", 3000)
                                                 } else {
-                                                    ToastAndroid.show("An error occured!", 3000)
+                                                    ToastAndroid.show("Error Occured!", 3000)
                                                 }
                                             }
                                             this.setState({refreshing: false})
@@ -346,15 +346,15 @@ class EditUserSetting extends Component {
                 })
             }, (err) => {
                 this.setState({refreshing: false})
-                ToastAndroid.show("Error occured while saving!", 3000)
+                ToastAndroid.show("Error Occured!", 3000)
             }, () => {
                 this.setState({refreshing: false})
                 var doctor = {};
                 doctor['type'] = this.state.type;
                 doctor['initial'] = this.state.initial;
                 this.updateCredentials(doctor).done()
-                this.props.navigator.pop();
-                ToastAndroid.show("Successfully saved!", 3000)
+                this.props.navigator.pop()
+                ToastAndroid.show("Successfully Updated!", 3000)
             })
         } else { // Required Fields
             if (_.trim(this.state.username) == '') {
@@ -362,7 +362,7 @@ class EditUserSetting extends Component {
             } else if (_.trim(this.state.licenseID) == '') {
                 ToastAndroid.show("Invalid License ID!", 3000)
             } else {
-                ToastAndroid.show("An error occured!", 3000)
+                ToastAndroid.show("Error Occured!", 3000)
             }
         }
     }
@@ -422,7 +422,9 @@ var NavigationBarRouteMapper = (doctorName, props) => ({
     LeftButton(route, navigator, index, navState) {
         return (
             <TouchableOpacity style={{flex: 1, justifyContent: 'center'}}
-                onPress={() => navigator.parentNavigator.pop()}>
+                onPress={() => {
+                    navigator.parentNavigator.pop()
+                }}>
                 <Text style={{color: 'white', margin: 10,}}>
                     <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                 </Text>

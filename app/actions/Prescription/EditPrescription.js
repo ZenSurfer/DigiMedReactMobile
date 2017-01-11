@@ -336,15 +336,14 @@ class EditPrescription extends Component {
                                 <TextInput
                                     placeholder={'Text Here...'}
                                     style={[styles.textInput, {flex: 1, alignItems: 'stretch', paddingRight: 50}]}
-                                    keyboardType={'numeric'}
                                     value={this.state.dosage}
                                     placeholderTextColor={'#E0E0E0'}
                                     onChangeText={(text) => this.setState({dosage: text})} />
-                                <TouchableOpacity
+                                {/* <TouchableOpacity
                                     style={{position: 'absolute', right: 0, padding: 13}}
                                     onPress={() => this.setState({selectedValue: {modal: 'dosageVisible', name: 'dosage'}, modalVisible: true})}>
                                     <Icon name={'arrow-drop-down'} size={40} color={'#212121'} style={{marginTop: -8}}/>
-                                </TouchableOpacity>
+                                </TouchableOpacity> */}
                             </View>
                         </View>
                         <Text style={styles.label} >Frequency</Text>
@@ -353,15 +352,14 @@ class EditPrescription extends Component {
                                 <TextInput
                                     placeholder={'Text Here...'}
                                     style={[styles.textInput, {flex: 1, alignItems: 'stretch', paddingRight: 50}]}
-                                    keyboardType={'numeric'}
                                     value={this.state.frequency}
                                     placeholderTextColor={'#E0E0E0'}
                                     onChangeText={(text) => this.setState({frequency: text})} />
-                                <TouchableOpacity
+                                {/* <TouchableOpacity
                                     style={{position: 'absolute', right: 0, padding: 13}}
                                     onPress={() => this.setState({selectedValue: {modal: 'frequencyVisible', name: 'frequency'}, modalVisible: true})}>
                                     <Icon name={'arrow-drop-down'} size={40} color={'#212121'} style={{marginTop: -8}}/>
-                                </TouchableOpacity>
+                                </TouchableOpacity> */}
                             </View>
                         </View>
                         <Text style={styles.label} >Note</Text>
@@ -415,14 +413,14 @@ class EditPrescription extends Component {
                                                 console.log("created: " + rs.rowsAffected);
                                             })
                                         } else {
-                                            tx.executeSql("UPDATE prescriptions  ?, updated_at = ? where id = ?", [moment().format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss'), this.props.prescriptionID], (tx, rs) => {
+                                            tx.executeSql("UPDATE prescriptions SET deleted_at = ?, updated_at = ? where id = ?", [moment().format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss'), this.props.prescriptionID], (tx, rs) => {
                                                 console.log("deleted: " + rs.rowsAffected);
                                             });
                                         }
                                     }, (err) => {
                                         alert(err.message)
                                     }, () => {
-                                        ToastAndroid.show("Prescription successfully deleted!", 3000)
+                                        ToastAndroid.show("Successfully Deleted!", 3000)
                                         this.props.navigator.replacePreviousAndPop({
                                             id: 'PrescriptionPage',
                                             passProps: {
@@ -448,13 +446,11 @@ class EditPrescription extends Component {
         )
     }
     onSubmit() {
-        var  passed = true
-        _.forEach(this.state.prescription, (v, i) => {
-            if (v.generic =='' && passed) {
-                passed = false;
-                ToastAndroid.show("Prescription "+(i+1)+" generic name cannot be empty!", 2000);
-            }
-        })
+        var passed = true
+        if (this.state.generic =='') {
+            passed = false;
+            ToastAndroid.show("Invalid Prescription "+(i+1)+" Generic Name!", 2000);
+        }
         if (passed) {
             db.transaction((tx) => {
                 var frequency = _.split(this.state.prescription.frequency, '||');
@@ -495,7 +491,7 @@ class EditPrescription extends Component {
                         patientName: this.props.patientName
                     }
                 })
-                ToastAndroid.show("Prescription successfully saved!", 3000)
+                ToastAndroid.show("Successfully Updated!", 3000)
             })
         }
     }
@@ -585,7 +581,9 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
         return (
             <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                 <TouchableOpacity
-                    onPress={() => navigator.parentNavigator.pop()}>
+                    onPress={() => {
+                        navigator.parentNavigator.pop()
+                    }}>
                     <Text style={{color: 'white', margin: 10, marginTop: 15}}>
                         <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                     </Text>
@@ -599,7 +597,14 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
     },
     Title(route, navigator, index, navState) {
         return (
-            <TouchableOpacity style={[Styles.title, {marginLeft: 50}]}>
+            <TouchableOpacity
+                style={[Styles.title, {marginLeft: 50}]}
+                onPress={() => {
+                    navigator.parentNavigator.push({
+                        id: 'PatientProfile',
+                        passProps: { patientID: patientID},
+                    })
+                }}>
                 <Text style={Styles.titleText}>{patientName}</Text>
             </TouchableOpacity>
         )

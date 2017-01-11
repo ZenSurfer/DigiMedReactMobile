@@ -1,7 +1,7 @@
 'use strict'
 
 import React, {Component} from 'react'
-import { Text, StyleSheet, View, DrawerLayoutAndroid, Navigator, ToastAndroid, ProgressBarAndroid, InteractionManager, TouchableOpacity, DatePickerAndroid, TimePickerAndroid, Picker, TextInput, ScrollView, ListView, Modal, RefreshControl, TouchableNativeFeedback, Alert, AsyncStorage} from 'react-native'
+import { Text, StyleSheet, Image, View, DrawerLayoutAndroid, Navigator, ToastAndroid, ProgressBarAndroid, InteractionManager, TouchableOpacity, DatePickerAndroid, TimePickerAndroid, Picker, TextInput, ScrollView, ListView, Modal, RefreshControl, TouchableNativeFeedback, Alert, AsyncStorage} from 'react-native'
 import RNFS from 'react-native-fs'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import moment from 'moment'
@@ -158,7 +158,7 @@ class EditAppointment extends Component {
                 navigationBar={
                     <Navigator.NavigationBar
                         style={[Styles.navigationBar,{marginTop: 24}]}
-                        routeMapper={NavigationBarRouteMapper(this.props.patientID, this.props.patientName, this.state.avatar)} />
+                        routeMapper={NavigationBarRouteMapper(this.props.patientID, this.props.patientName, this.state.avatar, this.props)} />
                 }/>
         )
     }
@@ -242,16 +242,19 @@ class EditAppointment extends Component {
                                     {text: 'CANCEL'},
                                     {text: 'OK', onPress: () => {
                                         db.transaction((tx) => {
-                                            tx.executeSql("UPDATE appointments  ?, updated_at = ? where id = ?", [moment().format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss'), this.props.appointmentID], (tx, rs) => {
+                                            tx.executeSql("UPDATE appointments SET deleted_at = ?, updated_at = ? where id = ?", [moment().format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss'), this.props.appointmentID], (tx, rs) => {
                                                 console.log("deleted: " + rs.rowsAffected);
                                             }, (tx, err) => {
                                                 console.log('DELETE error: ' + err.message);
                                             });
                                         }, (err) => {
-                                            ToastAndroid.show("Error occured while deleting!", 3000)
+                                            ToastAndroid.show("Error Occured!", 3000)
                                         }, () => {
-                                            ToastAndroid.show("Successfully deleted!", 3000)
-                                            this.props.navigator.pop()
+                                            ToastAndroid.show("Successfully Deleted!", 3000)
+                                            this.props.navigator.replacePreviousAndPop({
+                                                id: 'AppointmentPatientPage',
+                                                passProps: this.props
+                                            })
                                         })
                                     }},
                                 ]
@@ -304,10 +307,13 @@ class EditAppointment extends Component {
             alert(err.message)
         }, () => {
             if(db.duplicate) {
-                ToastAndroid.show('Time slot reflected at '+db.type+'!', 1000);
+                ToastAndroid.show('Time Reflected At '+db.type+'!', 1000);
             } else {
-                ToastAndroid.show('Appointment successfully scheduled!', 3000);
-                this.props.navigator.pop();
+                ToastAndroid.show('Appointment Successfully Scheduled!', 3000);
+                this.props.navigator.replacePreviousAndPop({
+                    id: 'AppointmentPatientPage',
+                    passProps: this.props
+                })
             }
         })
     }
@@ -369,12 +375,12 @@ var styles = StyleSheet.create({
     },
 })
 
-var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
+var NavigationBarRouteMapper = (patientID, patientName, avatar, props) => ({
     LeftButton(route, navigator, index, nextState) {
         return (
             <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                 <TouchableOpacity
-                    onPress={() => navigator.parentNavigator.pop()}>
+                    onPress={() => navigator.parentNavigator.pop() }>
                     <Text style={{color: 'white', margin: 10, marginTop: 15}}>
                         <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                     </Text>
@@ -389,7 +395,14 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
     },
     Title(route, navigator, index, nextState) {
         return (
-            <TouchableOpacity style={[Styles.title, {marginLeft: 50}]}>
+            <TouchableOpacity
+                style={[Styles.title, {marginLeft: 50}]}
+                onPress={() => {
+                    navigator.parentNavigator.push({
+                        id: 'PatientProfile',
+                        passProps: { patientID: patientID},
+                    })
+                }}>
                 <Text style={[Styles.titleText]}>{patientName}</Text>
             </TouchableOpacity>
         )

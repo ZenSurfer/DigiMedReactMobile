@@ -12,7 +12,6 @@ import bcrypt from 'react-native-bcrypt'
 import Styles from '../../assets/Styles'
 import DrawerPage from '../../components/DrawerPage'
 
-const drawerRef = {}
 const {height, width} = Dimensions.get('window')
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 const EnvInstance = new Env()
@@ -29,6 +28,7 @@ class UserSettingPage extends Component {
             syncing: false,
             syncingTitle: 'Syncing Doctors...',
         }
+        this.drawerRef = {}
     }
     componentWillMount() {
         this.setState({refreshing: true});
@@ -37,21 +37,11 @@ class UserSettingPage extends Component {
                 db.data = rs.rows.item(0);
             });
         }, (err) => {
-            ToastAndroid.show("Error occured while loading!", 3000);
+            ToastAndroid.show("Error Occured!", 3000);
         }, () => {
             var rowData = db.data;
             this.setState({refreshing: false, rowData: rowData});
         });
-    }
-    componentWillReceiveProps(nextProps) {
-        if (_.size(nextProps.navigator.getCurrentRoutes(0)) > 1) {
-            this.setState({lastRoute: nextProps.navigator.getCurrentRoutes(0)[1].id})
-        } else {
-            if (this.state.lastRoute == 'EditUserSetting') {
-                this.setState({lastRoute: ''});
-                this.onRefresh();
-            }
-        }
     }
     render() {
         return (
@@ -62,14 +52,14 @@ class UserSettingPage extends Component {
                     return (<DrawerPage navigator={this.props.navigator} routeName={'settings'}></DrawerPage>)
                 }}
                 statusBarBackgroundColor={'#2962FF'}
-                ref={this.drawerInstance} >
+                ref={ref => this.drawerRef = ref} >
                 <Navigator
                     renderScene={this.renderScene.bind(this)}
                     navigator={this.props.navigator}
                     navigationBar={
                         <Navigator.NavigationBar
                             style={[Styles.navigationBar,{}]}
-                            routeMapper={NavigationBarRouteMapper} />
+                            routeMapper={NavigationBarRouteMapper(this.drawerRef)} />
                     }
                     />
             </DrawerLayoutAndroid>
@@ -157,7 +147,7 @@ class UserSettingPage extends Component {
                 db.data = rs.rows.item(0);
             });
         }, (err) => {
-            ToastAndroid.show("Error occured while loading!", 3000);
+            ToastAndroid.show("Error Occured!", 3000);
         }, () => {
             var rowData = db.data;
             this.setState({refreshing: false, rowData: rowData});
@@ -205,7 +195,7 @@ class UserSettingPage extends Component {
                                                             }).join('&')).then((data) => {
                                                                 if (!_.isUndefined(data)) {
                                                                     if (data.success) {
-                                                                        RNFS.writeFile(RNFS.ExternalDirectoryPath+'/'+n.imagePath, decodeURIComponent(data.avatar), 'base64').then((success) => {
+                                                                        RNFS.writeFile(RNFS.DocumentDirectoryPath+'/'+n.imagePath, decodeURIComponent(data.avatar), 'base64').then((success) => {
                                                                             console.log("Successfully created!")
                                                                         }).catch((err) => {
                                                                             console.log("Error occured while creating image!")
@@ -320,7 +310,7 @@ class UserSettingPage extends Component {
                 return response.json()
             });
         } catch (err) {
-            console.log(table+':', e.message)
+            console.log(table+':', err.message)
         }
     }
     jsonToQueryString(json) {
@@ -367,7 +357,7 @@ var styles = StyleSheet.create({
     }
 })
 
-var NavigationBarRouteMapper = {
+var NavigationBarRouteMapper = (drawerRef) => ({
     LeftButton(route, navigator, index, navState) {
         return (
             <TouchableOpacity style={Styles.leftButton}
@@ -388,6 +378,6 @@ var NavigationBarRouteMapper = {
             </TouchableOpacity>
         )
     }
-}
+})
 
 module.exports = UserSettingPage

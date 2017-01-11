@@ -24,6 +24,31 @@ class HPEDInfo extends Component {
             steps: {active: 1},
             avatar: false,
             icds: [],
+            more: false,
+            symptomsList: [
+                'Swelling of Lymph Nodes in Neck/Armpit/Goin',
+                'Pain in Lymph Nodes aft drinking alcohol',
+                'Recurrent Fever',
+                'Night Sweats',
+                'Unexplained Weight Loss',
+                'Loss of Appetite',
+                'Itchy Skin',
+                'Bone pain',
+                'Broken bone from only minor injury',
+                'Weakness or numbness of legs',
+                'Frequent Infections',
+                'Persistent Fatigue',
+                'Nausea',
+                'Extreme thirst',
+                'Severe Constipation',
+                'Loss of Appetite',
+                'Mental Confusion',
+                'High Blood Level of Calcium [9]',
+                'Low Blood Counts (Anemia) [9]',
+                'Kidneys Problems [9]',
+                'Infections (Pneumonia) [9]',
+                'Enlarged Tongue [12]',
+            ],
         }
     }
     componentWillMount() {
@@ -43,7 +68,7 @@ class HPEDInfo extends Component {
     onRefresh() {
         this.setState({refreshing: true})
         db.transaction((tx) => {
-            tx.executeSql("SELECT `diagnosis`.`patientID`, `diagnosis`.`doctorID`, `diagnosis`.`appointmentID`, `diagnosis`.`preparedByID`, `diagnosis`.`chiefComplaint`, `diagnosis`.`historyIllness`, `diagnosis`.`bodyTemperature`, `diagnosis`.`bloodPressure`, `diagnosis`.`respirationRate`, `diagnosis`.`pulseRate`, `diagnosis`.`medicalHistory`, `diagnosis`.`initialDiagnosis`, `diagnosis`.`physicalExam`, `diagnosis`.`services`, `diagnosis`.`type`, `diagnosis`.`code`, `diagnosis`.`category`, `diagnosis`.`plan`, `diagnosis`.`pay`, `diagnosis`.`referringDoctor`, `diagnosis`.`labs`, `diagnosis`.`imaging`, `diagnosis`.`accident`, `diagnosis`.`painLevel`, `diagnosis`.`allergies`, `diagnosis`.`currentMedications`, `diagnosis`.`date`, `diagnosis`.`timeStart`, `diagnosis`.`timeEnd`, `diagnosis`.`certRemarks`, `diagnosis`.`certPurpose`, ('Dr. ' || `doctors`.`firstname` || ' ' || `doctors`.`middlename` || ' ' || `doctors`.`lastname`)  AS `doctorName` FROM diagnosis LEFT OUTER JOIN `doctors` on `diagnosis`.`doctorID` = `doctors`.`id` WHERE `diagnosis`.`id` = ? LIMIT 1", [this.props.diagnosisID], function(tx, rs) {
+            tx.executeSql("SELECT `diagnosis`.`patientID`, `diagnosis`.`doctorID`, `diagnosis`.`appointmentID`, `diagnosis`.`preparedByID`, `diagnosis`.`chiefComplaint`, `diagnosis`.`historyIllness`, `diagnosis`.`bodyTemperature`, `diagnosis`.`bloodPressure`, `diagnosis`.`respirationRate`, `diagnosis`.`pulseRate`, `diagnosis`.`medicalHistory`, `diagnosis`.`initialDiagnosis`, `diagnosis`.`physicalExam`, `diagnosis`.`services`, `diagnosis`.`type`, `diagnosis`.`code`, `diagnosis`.`category`, `diagnosis`.`plan`, `diagnosis`.`pay`, `diagnosis`.`referringDoctor`, `diagnosis`.`labs`, `diagnosis`.`imaging`, `diagnosis`.`accident`, `diagnosis`.`painLevel`, `diagnosis`.`allergies`, `diagnosis`.`currentMedications`, `diagnosis`.`date`, `diagnosis`.`timeStart`, `diagnosis`.`timeEnd`, `diagnosis`.`certRemarks`, `diagnosis`.`certPurpose`, `symptoms`,('Dr. ' || `doctors`.`firstname` || ' ' || `doctors`.`middlename` || ' ' || `doctors`.`lastname`)  AS `doctorName` FROM diagnosis LEFT OUTER JOIN `doctors` on `diagnosis`.`doctorID` = `doctors`.`id` WHERE `diagnosis`.`id` = ? LIMIT 1", [this.props.diagnosisID], function(tx, rs) {
                 db.data = rs.rows
             });
             tx.executeSql("SELECT `icds`.`code` as `code`, `icds`.`description` as `description` FROM `diagnosisIcds` LEFT OUTER JOIN `icds` ON `icds`.`id` = `diagnosisIcds`.`icdID` WHERE `diagnosisIcds`.`diagnosisID` = ? AND (`diagnosisIcds`.`deleted_at` in (null, 'NULL', '') OR `diagnosisIcds`.`deleted_at` is null) ORDER BY `icds`.`code` ASC", [this.props.diagnosisID], (tx, rs) => {
@@ -52,13 +77,11 @@ class HPEDInfo extends Component {
         }, (error) => {
             console.log('transaction error: ' + error.message);
         }, () => {
-            this.setState({refreshing: false})
-            this.setState({rowData: db.data.item(0)})
             var icds = [];
             _.forEach(db.icds, (v, i) => {
                 icds.push(db.icds.item(i).code+': '+db.icds.item(i).description);
             })
-            this.setState({icds: icds})
+            this.setState({refreshing: false, rowData: db.data.item(0), icds: icds})
         })
     }
     render() {
@@ -69,7 +92,7 @@ class HPEDInfo extends Component {
                 navigationBar={
                     <Navigator.NavigationBar
                         style={[Styles.navigationBar,{marginTop: 24}]}
-                        routeMapper={NavigationBarRouteMapper(this.props.patientName, this.props, this.state.avatar)} />
+                        routeMapper={NavigationBarRouteMapper(this.props.patientID, this.props.patientName, this.props, this.state.avatar)} />
                 }/>
         )
     }
@@ -91,7 +114,8 @@ class HPEDInfo extends Component {
                                 diagnosisID: this.props.diagnosisID,
                                 patientID: this.props.patientID,
                                 patientAvatar: this.props.patientAvatar,
-                                patientName: this.props.patientName }
+                                patientName: this.props.patientName
+                            }
                         })}>
                         <View style={{backgroundColor: '#E91E63',  flex: 1, alignItems: 'stretch', padding: 10, borderColor: '#EC407A', borderStyle: 'solid', borderRightWidth: 1}}>
                             <Text style={{textAlign: 'center'}}><Icon name={'schedule'} color={'#FFFFFF'} size={34} /></Text>
@@ -168,10 +192,10 @@ class HPEDInfo extends Component {
                             {this.steps(this.state.steps.active)}
                         </View>
                     </ScrollView>
-                    <TouchableOpacity
-                        style={[Styles.buttonFab, Styles.subTolbarButton, {marginTop: 24}]}
+                    {/* <TouchableOpacity
+                        style={[Styles.buttonFab, {backgroundColor: 'rgba(0,0,0,0.0)', bottom: 140, elevation: 0}]}
                         onPress={() => this.props.navigator.push({
-                            id: 'EditHPED',
+                            id: 'AddFollowup',
                             passProps: {
                                 diagnosisID: this.props.diagnosisID,
                                 patientID: this.props.patientID,
@@ -179,10 +203,11 @@ class HPEDInfo extends Component {
                                 patientName: this.props.patientName
                             }
                         })}>
-                        <Icon name={'edit'} color={'#FFFFFF'} size={30}/>
+                        <Icon name={'share'} color={'#616161'} size={25}/>
+                        <Text style={{fontSize: 10}}>Share</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={[Styles.buttonFab, {backgroundColor: 'rgba(0,0,0,0.1)', bottom: 80, elevation: 0}]}
+                        style={[Styles.buttonFab, {backgroundColor: 'rgba(0,0,0,0.0)', bottom: 70, elevation: 0}]}
                         onPress={() => this.props.navigator.push({
                             id: 'AddFollowup',
                             passProps: {
@@ -193,51 +218,143 @@ class HPEDInfo extends Component {
                             }
                         })}>
                         <Icon name={'playlist-add'} color={'#616161'} size={30}/>
-                    </TouchableOpacity>
+                        <Text style={{fontSize: 10}}>Follow-Up</Text>
+                    </TouchableOpacity> */}
+                    {(this.state.more) ? (
+                        <TouchableOpacity
+                            activeOpacity={1}
+                            style={{position: 'absolute', bottom: 60, flex: 1, flexDirection: 'row', justifyContent: 'center'}}
+                            onPress={() => {
+                                this.setState({more: !this.state.more})
+                            }}>
+                            <View style={{flex: 1, height: (height - 190)}}>
+                                <View style={{position: 'absolute', bottom: 0, flex: 2, flexDirection: 'row', justifyContent: 'center'}}>
+                                    <View style={{flex: 1, flexGrow: 3, alignItems: 'flex-end'}}>
+                                        <View style={{height: 60, justifyContent: 'center'}}>
+                                            <Text style={{fontSize: 14, backgroundColor: '#E0E0E0', padding: 5, paddingLeft: 16, paddingRight: 16, borderRadius: 100}}>Refer to Doctor</Text>
+                                        </View>
+                                        <View style={{height: 90, justifyContent: 'center'}}>
+                                            <Text style={{fontSize: 14, backgroundColor: '#E0E0E0', padding: 5, paddingLeft: 16, paddingRight: 16, borderRadius: 100}}>Add to Follow-Up</Text>
+                                        </View>
+                                    </View>
+                                    <View style={{flex: 1, alignItems: 'center'}}>
+                                        <TouchableOpacity
+                                            style={styles.fabButton}
+                                            onPress={() => {
+                                                this.props.navigator.push({
+                                                    id: 'DoctorSharePage',
+                                                    passProps: {
+                                                        diagnosisID: this.props.diagnosisID,
+                                                        patientID: this.props.patientID,
+                                                        patientAvatar: this.props.patientAvatar,
+                                                        patientName: this.props.patientName
+                                                    }
+                                                })
+                                                this.setState({more: false})
+                                            }}>
+                                            <Icon name={'share'} color={'#FFF'} size={34}/>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={styles.fabButton}
+                                            onPress={() => {
+                                                this.props.navigator.push({
+                                                    id: 'AddFollowup',
+                                                    passProps: {
+                                                        diagnosisID: this.props.diagnosisID,
+                                                        patientID: this.props.patientID,
+                                                        patientAvatar: this.props.patientAvatar,
+                                                        patientName: this.props.patientName
+                                                    }
+                                                })
+                                                this.setState({more: false})
+                                            }}>
+                                            <Icon name={'playlist-add'} color={'#FFF'} size={34}/>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </View>
+                        </TouchableOpacity>
+                    ) : (
+                        <View/>
+                    )}
                 </View>
-                <View style={{position: 'absolute', bottom: 0, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                <TouchableOpacity
+                    style={[Styles.buttonFab, Styles.subTolbarButton, {marginTop: 84, flex: 2, zIndex: 1}]}
+                    onPress={() => {
+                        this.props.navigator.push({
+                            id: 'EditHPED',
+                            passProps: {
+                                diagnosisID: this.props.diagnosisID,
+                                patientID: this.props.patientID,
+                                patientAvatar: this.props.patientAvatar,
+                                patientName: this.props.patientName
+                            }
+                        })
+                        this.setState({more: false})
+                    }}>
+                    <Icon name={'edit'} color={'#FFFFFF'} size={30}/>
+                </TouchableOpacity>
+                <View style={{position: 'absolute', bottom: 0, flex: 1, flexDirection: 'row', justifyContent: 'center',}}>
                     <TouchableNativeFeedback
-                        onPress={() => this.props.navigator.push({
+                        onPress={() => {
+                            this.props.navigator.push({
                             id: 'OrderItem',
                             passProps: {
                                 diagnosisID: this.props.diagnosisID,
                                 patientID: this.props.patientID,
                                 patientAvatar: this.props.patientAvatar,
                                 patientName: this.props.patientName }
-                        })}>
-                        <View style={{backgroundColor: '#E91E63',  flex: 1, alignItems: 'stretch', padding: 10, borderColor: '#EC407A', borderStyle: 'solid', borderRightWidth: 1}}>
+                            })
+                            this.setState({more: false})
+                        }}>
+                        <View style={{zIndex: 1, backgroundColor: '#E91E63',  flex: 1, alignItems: 'stretch', padding: 10, borderColor: '#EC407A', borderStyle: 'solid', borderRightWidth: 1}}>
                             <Text style={{textAlign: 'center'}}><Icon name={'schedule'} color={'#FFFFFF'} size={34} /></Text>
                             <Text style={{textAlign: 'center', fontSize: 10, color: '#FFFFFF'}}>Labwork</Text>
                         </View>
                     </TouchableNativeFeedback>
                     <TouchableNativeFeedback
-                        onPress={() => this.props.navigator.push({
-                            id: 'PrescriptionPage',
-                            passProps: {
-                                diagnosisID: this.props.diagnosisID,
-                                patientID: this.props.patientID,
-                                patientAvatar: this.props.patientAvatar,
-                                patientName: this.props.patientName
-                            }
-                        })}>
-                        <View style={{backgroundColor: '#E91E63',  flex: 1, alignItems: 'stretch', padding: 10, borderColor: '#EC407A', borderStyle: 'solid', borderRightWidth: 1}}>
+                        onPress={() => {
+                            this.props.navigator.push({
+                                id: 'PrescriptionPage',
+                                passProps: {
+                                    diagnosisID: this.props.diagnosisID,
+                                    patientID: this.props.patientID,
+                                    patientAvatar: this.props.patientAvatar,
+                                    patientName: this.props.patientName
+                                }
+                            })
+                            this.setState({more: false})
+                        }}>
+                        <View style={{zIndex: 1, backgroundColor: '#E91E63',  flex: 1, alignItems: 'stretch', padding: 10, borderColor: '#EC407A', borderStyle: 'solid', borderRightWidth: 1}}>
                             <Text style={{textAlign: 'center'}}><Icon name={'assignment'} color={'#FFFFFF'} size={34} /></Text>
                             <Text style={{textAlign: 'center', fontSize: 10, color: '#FFFFFF'}}>Prescription</Text>
                         </View>
                     </TouchableNativeFeedback>
                     <TouchableNativeFeedback
-                        onPress={() => this.props.navigator.push({
-                            id: 'ImagePage',
-                            passProps: {
-                                diagnosisID: this.props.diagnosisID,
-                                patientID: this.props.patientID,
-                                patientAvatar: this.props.patientAvatar,
-                                patientName: this.props.patientName
-                            }
-                        })}>
-                        <View style={{backgroundColor: '#E91E63',  flex: 1, alignItems: 'stretch', padding: 10}}>
+                        onPress={() => {
+                            this.props.navigator.push({
+                                id: 'ImagePage',
+                                passProps: {
+                                    diagnosisID: this.props.diagnosisID,
+                                    patientID: this.props.patientID,
+                                    patientAvatar: this.props.patientAvatar,
+                                    patientName: this.props.patientName
+                                }
+                            })
+                            this.setState({more: false})
+                        }}>
+                        <View style={{zIndex: 1, backgroundColor: '#E91E63',  flex: 1, alignItems: 'stretch', padding: 10, borderColor: '#EC407A', borderStyle: 'solid', borderRightWidth: 1}}>
                             <Text style={{textAlign: 'center'}}><Icon name={'photo'} color={'#FFFFFF'} size={34} /></Text>
                             <Text style={{textAlign: 'center', fontSize: 10, color: '#FFFFFF'}}>Imaging</Text>
+                        </View>
+                    </TouchableNativeFeedback>
+                    <TouchableNativeFeedback
+                        onPress={() => {
+                            this.setState({more: !this.state.more})
+                        }}>
+                        <View style={{zIndex: 1, backgroundColor: '#E91E63',  flex: 1, alignItems: 'stretch', padding: 10}}>
+                            <Text style={{textAlign: 'center'}}><Icon name={(this.state.more) ? 'close' : 'more-horiz'} color={'#FFFFFF'} size={34} /></Text>
+                            <Text style={{textAlign: 'center', fontSize: 10, color: '#FFFFFF'}}>{(this.state.more) ? 'Close' : 'More'}</Text>
                         </View>
                     </TouchableNativeFeedback>
                 </View>
@@ -251,19 +368,56 @@ class HPEDInfo extends Component {
                     <View style={{backgroundColor: '#FFFFFF', marginTop: 10}}>
                         <View style={[styles.rows, {flexDirection: 'column'}]}>
                             <Text style={styles.label}>Chief Complaint</Text>
-                            <View style={styles.textWrapper}><Text style={styles.text}>{(this.state.rowData.chiefComplaint) ? this.state.rowData.chiefComplaint : '-'}</Text></View>
+                            <View style={styles.textWrapper}>
+                                <Text style={styles.text}>{(this.state.rowData.chiefComplaint) ? this.state.rowData.chiefComplaint : '-'}</Text>
+                                <View style={[styles.textWrapper, {marginTop: 0}]}>
+                                    {(this.state.rowData.symptoms) ? _.map(_.transform(_.split(this.state.rowData.symptoms, ','), (res, n) => {
+                                        res.push(this.state.symptomsList[_.toInteger(n)])
+                                        return true
+                                    }, []), (v, i) => {
+                                        return (
+                                            <View key={i} style={{flex: 1, flexDirection: 'row', marginTop: 3, marginBottom: 3}}>
+                                                <Icon name={'check-box'} size={18} color={'#4CAF50'} style={{paddingRight: 5}}/>
+                                                <Text style={{flex: 1, alignItems: 'stretch', color: '#212121', textAlignVertical: 'center'}}>{v}</Text>
+                                            </View>
+                                        )
+                                    }) : (<View/>)}
+                                </View>
+                            </View>
                         </View>
-                        <View style={[styles.rows, {flexDirection: 'row'}]}>
-                            <Text style={[styles.label, {color: (this.state.rowData.historyIllness) ? '#EC407A': '#757575'}]}>History of Present Illness</Text>
-                            <TouchableOpacity onPress={this.openModal.bind(this, 'History of Present Illness', this.state.rowData.historyIllness)}>
-                                <Icon name={'info'} size={30} color={'#03A9F4'}/>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={[styles.rows, {flexDirection: 'row'}]}>
-                            <Text style={[styles.label, {color: (this.state.rowData.medicalHistory) ? '#EC407A': '#757575'}]}>Pertinent Medical History</Text>
-                            <TouchableOpacity onPress={this.openModal.bind(this, 'Pertinent Medical History', this.state.rowData.medicalHistory)}>
-                                <Icon name={'info'} size={30} color={'#03A9F4'}/>
-                            </TouchableOpacity>
+                        <View style={[styles.rows, {flexDirection: 'column'}]}>
+                            <Text style={styles.label}>Pathologist Reports</Text>
+                                {_.map(_.split(this.state.rowData.labs, '||'), (v, i) => {
+                                    if (v) {
+                                        var labs = _.split(_.split(v, '::')[1], '@@');
+                                        if (labs[1] === 'yes') {
+                                            var color = '#4CAF50';
+                                            var status = 'thumb-up';
+                                        } else if (labs[1] === 'no') {
+                                            var color = '#F44336';
+                                            var status = 'thumb-down';
+                                        } else {
+                                            var color = '#03A9F4';
+                                            var status = 'thumbs-up-down';
+                                        }
+                                        return (
+                                            <View key={i} style={{flex: 1, flexDirection: 'row', marginBottom: -10}}>
+                                                <View style={[styles.rows, {flex: 1, alignItems: 'stretch'}]}>
+                                                    <View style={styles.textWrapper}><Text style={[styles.text]}>{(labs[0]) ? labs[0] : '-'}</Text></View>
+                                                </View>
+                                                <View style={[styles.textWrapper, {marginLeft: 10, justifyContent: 'center'}]}>
+                                                    <View style={{backgroundColor: color, borderRadius: 100, padding: 6}}>
+                                                        <Icon name={status} size={12} color={'#FFF'}/>
+                                                    </View>
+                                                    {/* <Text style={[styles.text, {padding: 10, borderRadius: 100, backgroundColor: 'red'}]}>{status}</Text> */}
+                                                </View>
+                                            </View>
+                                        )
+                                    } else
+                                        return (
+                                            <View key={i} style={styles.textWrapper}><Text style={styles.text}>-</Text></View>
+                                        )
+                                })}
                         </View>
                         <View style={[styles.rows, {flexDirection: 'column'}]}>
                             <Text style={styles.label}>Initial Diagnosis</Text>
@@ -295,6 +449,18 @@ class HPEDInfo extends Component {
             case 2:
                 return (
                     <View style={{backgroundColor: '#FFFFFF', marginTop: 10, marginBottom: 20}}>
+                        <View style={[styles.rows, {flexDirection: 'row'}]}>
+                            <Text style={[styles.label, {color: (this.state.rowData.historyIllness) ? '#EC407A': '#757575'}]}>History of Present Illness</Text>
+                            <TouchableOpacity onPress={this.openModal.bind(this, 'History of Present Illness', this.state.rowData.historyIllness)}>
+                                <Icon name={'info'} size={30} color={'#03A9F4'}/>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={[styles.rows, {flexDirection: 'row'}]}>
+                            <Text style={[styles.label, {color: (this.state.rowData.medicalHistory) ? '#EC407A': '#757575'}]}>Pertinent Medical History</Text>
+                            <TouchableOpacity onPress={this.openModal.bind(this, 'Pertinent Medical History', this.state.rowData.medicalHistory)}>
+                                <Icon name={'info'} size={30} color={'#03A9F4'}/>
+                            </TouchableOpacity>
+                        </View>
                         <View style={[styles.rows, {flexDirection: 'row'}]}>
                             <Text style={[styles.label, {color: (this.state.rowData.accident > 0) ? '#EC407A': '#757575'}]}>Is Accident?</Text>
                             <TouchableOpacity onPress={this.openModal.bind(this, 'Is Accident?', (this.state.rowData.accident > 0) ? 'Yes / Pain Level '+this.state.rowData.painLevel : 'No')}>
@@ -469,15 +635,29 @@ var styles = StyleSheet.create({
         fontSize: 16,
         textAlign: 'center',
     },
+    fabButton: {
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        backgroundColor: '#E91E63',
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 4,
+        marginBottom: 15,
+    }
 })
 
-var NavigationBarRouteMapper = (patientName, props, avatar) => ({
+var NavigationBarRouteMapper = (patientID, patientName, props, avatar) => ({
 
     LeftButton(route, navigator, index, nextState) {
         return (
             <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                 <TouchableOpacity
-                    onPress={() => navigator.parentNavigator.pop()}>
+                    onPress={() => {
+                        var data = _.last(_.dropRight(navigator.parentNavigator.getCurrentRoutes(0)), 1);
+                        navigator.parentNavigator.replacePreviousAndPop({id: data.id, passProps: data.passProps})
+                    }}>
                     <Text style={{color: 'white', margin: 10, marginTop: 15}}>
                         <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                     </Text>
@@ -505,9 +685,8 @@ var NavigationBarRouteMapper = (patientName, props, avatar) => ({
                                         console.log('DELETE error: ' + err.message);
                                     });
                                 }, (err) => {
-                                    ToastAndroid.show("Error occured while deleting!", 3000)
+                                    ToastAndroid.show("Error Occured!", 3000)
                                 }, () => {
-                                    ToastAndroid.show("Successfully deleted!", 3000)
                                     navigator.parentNavigator.pop()
                                 })
                             }},
@@ -522,7 +701,14 @@ var NavigationBarRouteMapper = (patientName, props, avatar) => ({
     },
     Title(route, navigator, index, nextState) {
         return (
-            <TouchableOpacity style={[Styles.title, {marginLeft: 50}]}>
+            <TouchableOpacity
+                style={[Styles.title, {marginLeft: 50}]}
+                onPress={() => {
+                    navigator.parentNavigator.push({
+                        id: 'PatientProfile',
+                        passProps: { patientID: patientID},
+                    })
+                }}>
                 <Text style={Styles.titleText}>{patientName}</Text>
             </TouchableOpacity>
         )

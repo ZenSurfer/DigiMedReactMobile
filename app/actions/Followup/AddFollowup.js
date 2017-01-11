@@ -199,12 +199,12 @@ class AddFollowup extends Component {
                             onChangeText={(text) => this.setState({description: text})} />
                     </ScrollView>
                     <TouchableOpacity
-                        style={[Styles.buttonFab, {backgroundColor: '#4CAF50', bottom: 80}]}
+                        style={[Styles.buttonFab, {backgroundColor: '#4CAF50', bottom: 20}]}
                         onPress={this.onSubmit.bind(this)}>
                         <Icon name="save" size={30} color="#FFF" />
                     </TouchableOpacity>
                 </View>
-                <View style={{position: 'absolute', bottom: 0, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                {/* <View style={{position: 'absolute', bottom: 0, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                     <TouchableNativeFeedback
                         onPress={() => this.props.navigator.push({
                             id: 'OrderItem',
@@ -234,7 +234,7 @@ class AddFollowup extends Component {
                             <Text style={{textAlign: 'center', fontSize: 10, color: '#FFFFFF'}}>Imaging</Text>
                         </View>
                     </TouchableNativeFeedback>
-                </View>
+                </View> */}
             </View>
         )
     }
@@ -243,7 +243,7 @@ class AddFollowup extends Component {
         var timeStart = moment(this.state.presetText+' '+this.state.presetStart.presetTime).add(1, 'minutes').format('HH:mm:00');
         var timeEnd = moment(this.state.presetText+' '+this.state.presetEnd.presetTime).subtract(1, 'minutes').format('HH:mm:00');
         if (!this.state.name) {
-            ToastAndroid.show('Cannot be empty brief description!', 3000);
+            ToastAndroid.show('Cannot Invalid Brief Description!', 3000);
         } else {
             db.transaction((tx) => {
                 db.duplicate = false;
@@ -287,10 +287,10 @@ class AddFollowup extends Component {
                 alert(err.message)
             }, () => {
                 if(db.duplicate) {
-                    ToastAndroid.show('Time slot reflected at '+db.type+'!', 1000);
+                    ToastAndroid.show('Time Reflected At '+db.type+'!', 1000);
                 } else {
-                    ToastAndroid.show('Followup successfully scheduled!', 3000);
-                    this.props.navigator.pop();
+                    ToastAndroid.show('Followup Successfully Scheduled!', 3000);
+                    this.props.navigator.pop()
                 }
             })
         }
@@ -357,7 +357,9 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
         return (
             <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                 <TouchableOpacity
-                    onPress={() => navigator.parentNavigator.pop()}>
+                    onPress={() => {
+                        navigator.parentNavigator.pop()
+                    }}>
                     <Text style={{color: 'white', margin: 10, marginTop: 15}}>
                         <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                     </Text>
@@ -371,7 +373,14 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
     },
     Title(route, navigator, index, nextState) {
         return (
-            <TouchableOpacity style={[Styles.title, {marginLeft: 50}]}>
+            <TouchableOpacity
+                style={[Styles.title, {marginLeft: 50}]}
+                onPress={() => {
+                    navigator.parentNavigator.push({
+                        id: 'PatientProfile',
+                        passProps: { patientID: patientID},
+                    })
+                }}>
                 <Text style={[Styles.titleText]}>{patientName}</Text>
             </TouchableOpacity>
         )

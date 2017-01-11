@@ -51,9 +51,12 @@ import UserProfilePage from './actions/User/UserProfilePage'
 import EditUserProfile from './actions/User/EditUserProfile'
 
 import DoctorPage from './actions/Doctor/DoctorPage'
+import DoctorSharePage from './actions/Doctor/DoctorSharePage'
 import AddDoctor from './actions/Doctor/AddDoctor'
 import EditDoctor from './actions/Doctor/EditDoctor'
 import DoctorProfile from './actions/Doctor/DoctorProfile'
+
+import ReferralPage from './actions/Referral/ReferralPage'
 
 import ExportPage from './actions/Syncing/ExportPage'
 import ImportPage from './actions/Syncing/ImportPage'
@@ -141,7 +144,8 @@ module.exports = (route, navigator, self) => {
     if (routeId === 'HPEDPage') {
         return (
             <HPEDPage navigator={navigator} {...route.passProps}>
-                <StatusBar backgroundColor='#2962FF'/>
+                {/* <StatusBar backgroundColor='#2962FF'/> */}
+                <StatusBar backgroundColor='#2962FF' translucent={true}/>
             </HPEDPage>
         )
     }
@@ -320,6 +324,13 @@ module.exports = (route, navigator, self) => {
            </DoctorPage>
        )
    }
+   if (routeId === 'DoctorSharePage') {
+       return (
+           <DoctorSharePage navigator={navigator} {...route.passProps}>
+               <StatusBar backgroundColor='#2962FF'/>
+           </DoctorSharePage>
+       )
+   }
    if (routeId === 'AddDoctor') {
        return (
            <AddDoctor navigator={navigator} {...route.passProps}>
@@ -361,6 +372,14 @@ module.exports = (route, navigator, self) => {
         return (
             <FrontPage navigator={navigator} {...route.passProps}>
             </FrontPage>
+        )
+    }
+    // referral page
+    if (routeId === 'ReferralPage') {
+        return (
+            <ReferralPage navigator={navigator} {...route.passProps}>
+                <StatusBar backgroundColor='#2962FF' translucent={true}/>
+            </ReferralPage>
         )
     }
 

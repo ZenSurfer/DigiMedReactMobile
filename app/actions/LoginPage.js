@@ -10,7 +10,7 @@ import bcrypt from 'react-native-bcrypt'
 import Env from '../env'
 import FCM from 'react-native-fcm';
 
-const dirPath = RNFS.ExternalDirectoryPath
+const dirPath = RNFS.DocumentDirectoryPath
 const EnvInstance = new Env()
 const db = EnvInstance.db()
 
@@ -18,8 +18,8 @@ class LoginPage extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            username: '',
-            password: '',
+            username: 'RAJ',
+            password: 'doctor2',
             auth: false,
             visibility: false,
             failed: false,
@@ -115,7 +115,7 @@ class LoginPage extends Component {
                                                                             sceneConfig: Navigator.SceneConfigs.FadeAndroid
                                                                         })
                                                                     } else
-                                                                    ToastAndroid.show('Invalid username / password!', 1000);
+                                                                    ToastAndroid.show('Invalid Username / Password!', 1000);
                                                                 }
                                                             }).done();
                                                         } else {
@@ -163,7 +163,7 @@ class LoginPage extends Component {
                                                                                     sceneConfig: Navigator.SceneConfigs.FadeAndroid
                                                                                 })
                                                                             } else
-                                                                            ToastAndroid.show('Invalid username / password!', 1000);
+                                                                            ToastAndroid.show('Invalid Username / Password!', 1000);
                                                                         }
                                                                     }).done();
                                                                 }
@@ -209,7 +209,7 @@ class LoginPage extends Component {
             });
         } catch (err) {
             this.setState({auth: false, failed: true})
-            ToastAndroid.show('Cloud server request failed!', 1000)
+            ToastAndroid.show('Server Failed!', 1000)
             console.log(err.message)
         }
     }

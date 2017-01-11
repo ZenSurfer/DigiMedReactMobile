@@ -11,7 +11,6 @@ import Env from '../../env'
 import Styles from '../../assets/Styles'
 import DrawerPage from '../../components/DrawerPage'
 
-const drawerRef = {}
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 const EnvInstance = new Env()
 const db = EnvInstance.db()
@@ -29,6 +28,7 @@ class UserProfilePage extends Component {
             syncing: false,
             syncingTitle: 'Syncing Doctors...',
         }
+        this.drawerRef = {}
     }
     componentWillMount() {
         this.setState({refreshing: true});
@@ -40,9 +40,9 @@ class UserProfilePage extends Component {
             alert(err.message);
         }, () => {
             if (db.data.imagePath)
-                RNFS.exists(RNFS.ExternalDirectoryPath +'/'+ db.data.imagePath).then((exist) => {
+                RNFS.exists(RNFS.DocumentDirectoryPath +'/'+ db.data.imagePath).then((exist) => {
                     if (exist)
-                        RNFS.readFile(RNFS.ExternalDirectoryPath +'/'+ db.data.imagePath, 'base64').then((rs) => {
+                        RNFS.readFile(RNFS.DocumentDirectoryPath +'/'+ db.data.imagePath, 'base64').then((rs) => {
                             this.setState({avatar: (rs.toString().indexOf('dataimage/jpegbase64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/jpeg;base64,'+rs.toString()});
                         })
                 })
@@ -58,14 +58,14 @@ class UserProfilePage extends Component {
                     return (<DrawerPage navigator={this.props.navigator}></DrawerPage>)
                 }}
                 statusBarBackgroundColor={'#2962FF'}
-                ref={this.drawerInstance} >
+                ref={ref => this.drawerRef = ref} >
                 <Navigator
                     renderScene={(this.state.renderPlaceholderOnly) ? this.renderPlaceholderView.bind(this) : this.renderScene.bind(this)}
                     navigator={this.props.navigator}
                     navigationBar={
                         <Navigator.NavigationBar
                             style={[Styles.navigationBar,{}]}
-                            routeMapper={NavigationBarRouteMapper} />
+                            routeMapper={NavigationBarRouteMapper(this.drawerRef)} />
                     }
                     />
             </DrawerLayoutAndroid>
@@ -76,16 +76,6 @@ class UserProfilePage extends Component {
             setTimeout(() => { this.setState({renderPlaceholderOnly: false, progress: 1}) }, 500)
 
         });
-    }
-    componentWillReceiveProps(nextProps) {
-        if (_.size(nextProps.navigator.getCurrentRoutes(0)) > 1) {
-            this.setState({lastRoute: nextProps.navigator.getCurrentRoutes(0)[1].id})
-        } else {
-            if (this.state.lastRoute == 'EditUserProfile') {
-                this.setState({lastRoute: ''});
-                this.onRefresh();
-            }
-        }
     }
     renderPlaceholderView() {
         return (
@@ -213,19 +203,24 @@ class UserProfilePage extends Component {
         }, () => {
             var doctorName = 'Dr. '+db.data.firstname+' '+db.data.middlename+' '+db.data.lastname;
             if (db.data.imagePath)
-                RNFS.exists(RNFS.ExternalDirectoryPath +'/'+ db.data.imagePath).then((exist) => {
+                RNFS.exists(RNFS.DocumentDirectoryPath +'/'+ db.data.imagePath).then((exist) => {
                     if (exist)
-                        RNFS.readFile(RNFS.ExternalDirectoryPath +'/'+ db.data.imagePath, 'base64').then((rs) => {
+                        RNFS.readFile(RNFS.DocumentDirectoryPath +'/'+ db.data.imagePath, 'base64').then((rs) => {
                             this.setState({avatar: (rs.toString().indexOf('dataimage/jpegbase64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/jpeg;base64,'+rs.toString()});
                         })
                 })
-            this.updateCredentials({
-                userID: db.data.userID,
-                id: db.data.id,
-                name: doctorName,
-                type: db.data.type,
-                initial: db.data.initial,
-                imagePath: db.data.imagePath
+            this.updateMobileID().then(data => {
+                if (data) {
+                    this.updateCredentials({
+                        userID: db.data.userID,
+                        id: db.data.id,
+                        name: doctorName,
+                        type: db.data.type,
+                        initial: db.data.initial,
+                        imagePath: db.data.imagePath,
+                        mobileID: data.mobileID
+                    }).done();
+                }
             }).done();
             this.setState({refreshing: false, rowData: db.data, doctorName: doctorName});
             this.updateData(['doctors']);
@@ -236,6 +231,17 @@ class UserProfilePage extends Component {
             await AsyncStorage.setItem('doctor', JSON.stringify(data))
         } catch (error) {
             console.log('AsyncStorage error: ' + error.message);
+        }
+    }
+    async updateMobileID() {
+        try {
+            var mobile = await AsyncStorage.getItem('mobile');
+            if (!_.isNull(mobile)) {
+                return JSON.parse(mobile)
+            } else
+                return false
+        } catch (err) {
+            console.log('AsyncStorage error: ' + err.message);
         }
     }
     drawerInstance(instance) {
@@ -258,9 +264,9 @@ class UserProfilePage extends Component {
                             _.forEach(db.data, (v, i) => {
                                 rows.push(i+ '='+ encodeURIComponent('{') + this.jsonToQueryString(db.data.item(i)) + encodeURIComponent('}'))
                                 if (table == 'patients' || table == 'staff' || table == 'nurses' || table == 'doctors') {
-                                    RNFS.exists(RNFS.ExternalDirectoryPath+'/'+db.data.item(i).imagePath).then((exist) => {
+                                    RNFS.exists(RNFS.DocumentDirectoryPath+'/'+db.data.item(i).imagePath).then((exist) => {
                                         if (exist)
-                                            RNFS.readFile(RNFS.ExternalDirectoryPath+'/'+db.data.item(i).imagePath, 'base64').then((image) => {
+                                            RNFS.readFile(RNFS.DocumentDirectoryPath+'/'+db.data.item(i).imagePath, 'base64').then((image) => {
                                                 this.exportImage({
                                                     imagePath: db.data.item(i).imagePath,
                                                     image: (image.toString().indexOf('dataimage/jpegbase64') !== -1) ? encodeURIComponent(_.replace(image.toString(), 'dataimage/jpegbase64','')) :  encodeURIComponent(image.toString())
@@ -269,9 +275,9 @@ class UserProfilePage extends Component {
                                     })
                                 }
                                 if (table == 'patientImages') {
-                                    RNFS.exists(RNFS.ExternalDirectoryPath+'/patient/'+db.data.item(i).image).then((exist) => {
+                                    RNFS.exists(RNFS.DocumentDirectoryPath+'/patient/'+db.data.item(i).image).then((exist) => {
                                         if (exist)
-                                            RNFS.readFile(RNFS.ExternalDirectoryPath+'/patient/'+db.data.item(i).image, 'base64').then((image) => {
+                                            RNFS.readFile(RNFS.DocumentDirectoryPath+'/patient/'+db.data.item(i).image, 'base64').then((image) => {
                                                 this.exportImage({
                                                     imagePath: 'patient/'+db.data.item(i).image,
                                                     image: (image.toString().indexOf('dataimage/jpegbase64') !== -1) ? encodeURIComponent(_.replace(image.toString(), 'dataimage/jpegbase64','')) :  encodeURIComponent(image.toString())
@@ -301,7 +307,7 @@ class UserProfilePage extends Component {
                                                             }).join('&')).then((data) => {
                                                                 if (!_.isUndefined(data)) {
                                                                     if (data.success) {
-                                                                        RNFS.writeFile(RNFS.ExternalDirectoryPath+'/'+n.imagePath, decodeURIComponent(data.avatar), 'base64').then((success) => {
+                                                                        RNFS.writeFile(RNFS.DocumentDirectoryPath+'/'+n.imagePath, decodeURIComponent(data.avatar), 'base64').then((success) => {
                                                                             console.log("Successfully created!")
                                                                         }).catch((err) => {
                                                                             console.log("Error occured while creating image!")
@@ -497,7 +503,7 @@ var styles = StyleSheet.create({
     }
 })
 
-var NavigationBarRouteMapper = {
+var NavigationBarRouteMapper = (drawerRef) => ({
     LeftButton(route, navigator, index, navState) {
         return (
             <TouchableOpacity style={Styles.leftButton}
@@ -518,6 +524,6 @@ var NavigationBarRouteMapper = {
             </TouchableOpacity>
         )
     }
-}
+})
 
 module.exports = UserProfilePage

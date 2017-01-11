@@ -140,7 +140,9 @@ var NavigationBarRouteMapper = {
     LeftButton(route, navigator, index, nextState) {
         return (
             <TouchableOpacity style={{flex: 1, justifyContent: 'center'}}
-                onPress={() => navigator.parentNavigator.pop()}>
+                onPress={() => {
+                    navigator.parentNavigator.pop()
+                }}>
                 <Text style={{color: 'white', margin: 10,}}>
                     <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                 </Text>

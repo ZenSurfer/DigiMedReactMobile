@@ -32,8 +32,8 @@ class SplashPage extends Component {
     }
     componentWillMount() {
         FCM.getFCMToken().then(token => this.setState({token: token}));
-        RNFS.mkdir(RNFS.ExternalDirectoryPath + '/patient')
-        RNFS.mkdir(RNFS.ExternalDirectoryPath + '/avatar')
+        RNFS.mkdir(RNFS.DocumentDirectoryPath + '/patient')
+        RNFS.mkdir(RNFS.DocumentDirectoryPath + '/avatar')
         var table = {}
         _.forEach(_.omit(Schema, ['index']), (v, i) => {
             table[i] = '';
@@ -121,7 +121,7 @@ class SplashPage extends Component {
                         })
                     }).done()
                 } else {
-                    ToastAndroid.show('Connection problem!', 1000)
+                    ToastAndroid.show('Connection Problem!', 1000)
                     this.props.navigator.replace({
                         id: 'LoginPage',
                         sceneConfig: Navigator.SceneConfigs.FadeAndroid
@@ -170,7 +170,6 @@ class SplashPage extends Component {
                         tx.executeSql("SELECT `doctors`.`userID`, `doctors`.`id`, ('Dr. ' || `doctors`.`firstname` || ' ' || `doctors`.`middlename` || ' ' || `doctors`.`lastname`) as name, `doctors`.`type`, `doctors`.`initial`, `users`.`password`, `doctors`.`imagePath`, `users`.`accountVerified`, `users`.`emailVerified` FROM `users` LEFT OUTER JOIN `doctors` ON `doctors`.`userID`=`users`.`id` WHERE `users`.`id`=? AND `users`.`userType`='doctor' AND (`users`.`deleted_at` in (null, 'NULL', '') OR `users`.`deleted_at` is null) LIMIT 1", [this.state.doctorUserID], (tx, rs) => {
                             if (rs.rows.item(0).accountVerified !== null || rs.rows.item(0).emailVerified !== null) {
                                 var doctor = _.omit(rs.rows.item(0), ['password', 'accountVerified', 'emailVerified']);
-                                doctor['cloudUrl'] = EnvInstance.cloudUrl;
                                 NetInfo.isConnected.fetch().then(isConnected => {
                                     if (isConnected) {
                                         this.register({
@@ -179,58 +178,64 @@ class SplashPage extends Component {
                                             token: this.state.token,
                                             doctor: doctor,
                                         }).then((data) => {
-                                            var table = 'mobile'
-                                            this.importDate(table).then(importDate => {
-                                                if (importDate === null) {
-                                                    importDate = moment().year(2000).format('YYYY-MM-DD HH:mm:ss')
+                                            if (data) {
+                                                console.log('online-register', data)
+                                                doctor['mobileID'] = data.mobileID
+                                                AsyncStorage.setItem('doctor', JSON.stringify(doctor))
+                                                AsyncStorage.setItem('mobile', JSON.stringify(data))
+                                                if (data.new) {
+                                                    AsyncStorage.setItem('importDate', JSON.stringify({}))
+                                                    AsyncStorage.setItem('exportDate', JSON.stringify({}))
                                                 }
-                                                this.importData(table, importDate).then((data) => {
-                                                    var currentImportDate = importDate;
-                                                    if (data.total > 0) {
-                                                        db.sqlBatch(_.transform(data.data, (result, n, i) => {
-                                                            result.push(["INSERT OR REPLACE INTO "+table+" VALUES ("+_.join(_.fill(Array(_.size(n)), '?'), ',')+")", _.values(n)])
-                                                            return true
-                                                        }, []), () => {
-                                                            currentImportDate = data.importdate;
-                                                            this.updateImportDate(table, currentImportDate).then(msg => {
-                                                                console.log(data.table+' import', msg)
-                                                            }).done()
-                                                        }, (err) => {
-                                                            console.log(err.message)
+                                                this.props.navigator.replace({
+                                                    id: 'AppointmentPage',
+                                                    sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                                });
+                                            } else {
+                                                console.log('offline-register', data)
+                                                this.offlineMode().then(data => {
+                                                    if (data) {
+                                                        doctor['mobileID'] = data.mobileID;
+                                                        AsyncStorage.setItem('doctor', JSON.stringify(doctor))
+                                                        ToastAndroid.show('Connection Problem, Offline Mode!', 1000)
+                                                        this.props.navigator.replace({
+                                                            id: 'AppointmentPage',
+                                                            sceneConfig: Navigator.SceneConfigs.FadeAndroid
                                                         });
                                                     } else {
-                                                        currentImportDate = data.importdate;
-                                                        this.updateImportDate(table, currentImportDate  ).then(msg => {
-                                                            console.log(data.table+' import', msg)
-                                                        }).done()
+                                                        ToastAndroid.show('Login Problem!', 1000)
+                                                        this.props.navigator.replace({
+                                                            id: 'LoginPage',
+                                                            sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                                        });
                                                     }
-                                                }).done()
-                                            }).done()
-                                            doctor['mobileID'] = data.mobileID
-                                            AsyncStorage.setItem('doctor', JSON.stringify(doctor))
-                                            if (data.new) {
-                                                AsyncStorage.setItem('importDate', JSON.stringify({}))
-                                                AsyncStorage.setItem('exportDate', JSON.stringify({}))
+                                                }).done();
                                             }
-                                            this.props.navigator.replace({
-                                                id: 'AppointmentPage',
-                                                sceneConfig: Navigator.SceneConfigs.FadeAndroid
-                                            });
                                         }).done()
                                     } else {
-                                        db.transaction(tx => {
-                                            tx.executeSql("SELECT id FROM mobile WHERE userID="+doctor.userID+" AND doctorID="+doctor.id+" ORDER BY created_at DESC LIMIT 1", [], (tx, rs) => {
-                                                db.mobileID = rs.rows.item(0).id;
-                                            })
-                                        }, err => console.log(err.message), () => {
-                                            doctor['mobileID'] = db.mobileID;
-                                            AsyncStorage.setItem('doctor', JSON.stringify(doctor))
-                                            ToastAndroid.show('Offline mode!', 1000)
-                                            this.props.navigator.replace({
-                                                id: 'AppointmentPage',
-                                                sceneConfig: Navigator.SceneConfigs.FadeAndroid
-                                            });
-                                        })
+                                        // db.transaction(tx => {
+                                        //     tx.executeSql("SELECT id FROM mobile WHERE userID="+doctor.userID+" AND doctorID="+doctor.id+" ORDER BY created_at DESC LIMIT 1", [], (tx, rs) => {
+                                        //         db.mobileID = rs.rows.item(0).id;
+                                        //     })
+                                        // }, err => console.log(err.message), () => {
+                                        this.offlineMode().then(data => {
+                                            if (data) {
+                                                doctor['mobileID'] = data.mobileID;
+                                                AsyncStorage.setItem('doctor', JSON.stringify(doctor))
+                                                ToastAndroid.show('Offline Mode!', 1000)
+                                                this.props.navigator.replace({
+                                                    id: 'AppointmentPage',
+                                                    sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                                });
+                                            } else {
+                                                ToastAndroid.show('Login Problem!', 1000)
+                                                this.props.navigator.replace({
+                                                    id: 'LoginPage',
+                                                    sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                                });
+                                            }
+                                        }).done();
+                                        // })
                                     }
                                 });
                             } else {
@@ -247,6 +252,17 @@ class SplashPage extends Component {
                 }
             });
         })
+    }
+    async offlineMode() {
+        try {
+            var mobile = await AsyncStorage.getItem('mobile');
+            if (!_.isNull(mobile)) {
+                return JSON.parse(mobile)
+            } else
+                return false
+        } catch (err) {
+            console.log('AsyncStorage error: ' + err.message);
+        }
     }
     render() {
         return (
@@ -310,14 +326,13 @@ class SplashPage extends Component {
     }
     async register(param) {
         try {
-            param = Object.keys(param).map((key) => {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/register?'+Object.keys(param).map((key) => {
                 return encodeURIComponent(key) + '=' + encodeURIComponent(param[key]);
-            }).join('&');
-            return await fetch(EnvInstance.cloudUrl+'/api/v2/register?'+param).then((response) => {
+            }).join('&')).then((response) => {
                 return response.json()
             });
         } catch (err) {
-            console.log(err.message)
+            return false
         }
     }
     async importDate(table) {

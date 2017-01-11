@@ -11,7 +11,6 @@ import Env from '../../env'
 import Styles from '../../assets/Styles'
 import DrawerPage from '../../components/DrawerPage'
 
-const drawerRef = {}
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 const EnvInstance = new Env()
 const db = EnvInstance.db()
@@ -28,6 +27,7 @@ class DoctorProfile extends Component {
             refreshing: false,
             renderPlaceholderOnly: true,
         }
+        this.drawerRef = {}
     }
     render() {
         return (
@@ -38,14 +38,14 @@ class DoctorProfile extends Component {
                     return (<DrawerPage navigator={this.props.navigator}></DrawerPage>)
                 }}
                 statusBarBackgroundColor={'#2962FF'}
-                ref={this.drawerInstance} >
+                ref={ref => this.drawerRef = ref} >
                 <Navigator
                     renderScene={(this.state.renderPlaceholderOnly) ? this.renderPlaceholderView.bind(this) : this.renderScene.bind(this)}
                     navigator={this.props.navigator}
                     navigationBar={
                         <Navigator.NavigationBar
                             style={[Styles.navigationBar,{}]}
-                            routeMapper={NavigationBarRouteMapper} />
+                            routeMapper={NavigationBarRouteMapper(this.drawerRef)} />
                     }
                     />
             </DrawerLayoutAndroid>
@@ -56,16 +56,6 @@ class DoctorProfile extends Component {
             setTimeout(() => { this.setState({renderPlaceholderOnly: false, progress: 1}) }, 500)
         });
         this.onRefresh()
-    }
-    componentWillReceiveProps(nextProps) {
-        if (_.size(nextProps.navigator.getCurrentRoutes(0)) > 1) {
-            this.setState({lastRoute: nextProps.navigator.getCurrentRoutes(0)[1].id})
-        } else {
-            if (this.state.lastRoute == 'EditUserProfile') {
-                this.setState({lastRoute: ''});
-                this.onRefresh();
-            }
-        }
     }
     renderPlaceholderView() {
         return (
@@ -214,9 +204,9 @@ class DoctorProfile extends Component {
         }, () => {
             var doctorName = 'Dr. '+db.data.firstname+' '+db.data.middlename+' '+db.data.lastname;
             if (db.data.imagePath)
-                RNFS.exists(RNFS.ExternalDirectoryPath +'/'+ db.data.imagePath).then((exist) => {
+                RNFS.exists(RNFS.DocumentDirectoryPath +'/'+ db.data.imagePath).then((exist) => {
                     if (exist)
-                        RNFS.readFile(RNFS.ExternalDirectoryPath +'/'+ db.data.imagePath, 'base64').then((rs) => {
+                        RNFS.readFile(RNFS.DocumentDirectoryPath +'/'+ db.data.imagePath, 'base64').then((rs) => {
                             this.setState({avatar: (rs.toString().indexOf('dataimage/jpegbase64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/jpeg;base64,'+rs.toString()});
                         })
                 })
@@ -290,11 +280,13 @@ var styles = StyleSheet.create({
     }
 })
 
-var NavigationBarRouteMapper = {
+var NavigationBarRouteMapper = (drawerRef) => ({
     LeftButton(route, navigator, index, navState) {
         return (
             <TouchableOpacity style={Styles.leftButton}
-                onPress={() => navigator.parentNavigator.pop()}>
+                onPress={() => {
+                    navigator.parentNavigator.pop()
+                }}>
                 <Text style={Styles.leftButtonText}>
                     <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                 </Text>
@@ -311,6 +303,6 @@ var NavigationBarRouteMapper = {
             </TouchableOpacity>
         )
     }
-}
+})
 
 module.exports = DoctorProfile

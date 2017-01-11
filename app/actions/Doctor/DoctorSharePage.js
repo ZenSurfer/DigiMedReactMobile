@@ -1,37 +1,45 @@
 'use strict'
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, Keyboard, Image, View, AsyncStorage, Navigator, StatusBar, ProgressBarAndroid, DrawerLayoutAndroid, InteractionManager, TouchableNativeFeedback, TouchableOpacity, ListView, RefreshControl, Modal, TouchableHighlight, TextInput, NetInfo, ActivityIndicator} from 'react-native'
+import {StyleSheet, Text, TextInput, Image, View, Alert, DatePickerAndroid, Navigator, TouchableNativeFeedback, TouchableOpacity, ListView, RefreshControl, NetInfo, AsyncStorage, ActivityIndicator, ToastAndroid} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import IconFont from 'react-native-vector-icons/FontAwesome'
+import IconAwesome from 'react-native-vector-icons/FontAwesome'
 import RNFS from 'react-native-fs'
-import moment from 'moment'
 import _ from 'lodash'
+import moment from 'moment'
 import Env from '../../env'
+import Parser from 'react-native-html-parser'
+import FCM from 'react-native-fcm'
 
 import Styles from '../../assets/Styles'
 import DrawerPage from '../../components/DrawerPage'
 
+const drawerRef = {}
+const DomParser = Parser.DOMParser
+const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 const EnvInstance = new Env()
 const db = EnvInstance.db()
-const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 
-class PatientPage extends Component {
+class DoctorSharePage extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            refreshing: true,
-            query: '',
-            queryText: '',
-            search: 'ORDER BY firstname ASC',
-            searchType: 'firstname',
-            modalVisible: false,
-            rowData: [],
-
+            refreshing: false,
+            doctors: [],
             syncing: false,
-            syncingTitle: 'Syncing Patients...',
+            syncingTitle: 'Syncing Doctors...',
+            avatar: false,
+            note: '',
+            selected: [{rowID: '', id: ''}],
         }
-        this.drawerRef = {}
+    }
+    componentWillMount() {
+        RNFS.exists(this.props.patientAvatar).then((exist) => {
+            if (exist)
+                RNFS.readFile(this.props.patientAvatar, 'base64').then((rs) => {
+                    this.setState({avatar: (rs.toString().indexOf('dataimage/jpegbase64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/jpeg;base64,'+rs.toString()})
+                })
+        })
     }
     componentDidMount() {
         this.updateCredentials().done();
@@ -48,33 +56,52 @@ class PatientPage extends Component {
             }, 1000)
         }
     }
+    onRefresh() {
+        this.setState({refreshing: true})
+        db.transaction((tx) => {
+            tx.executeSql("SELECT * FROM doctors WHERE id!=? AND (deleted_at in (null, 'NULL', '') OR deleted_at is null) ORDER BY firstname ASC, middlename ASC, lastname ASC", [this.state.doctorID], (tx, rs) => {
+                db.data = rs.rows
+            })
+        }, (err) => alert(err.message), () => {
+            var doctors = [];
+            _.forEach(db.data, (v, i) => {
+                doctors.push(db.data.item(i))
+                if (db.data.item(i).imagePath != '')
+                    RNFS.exists(RNFS.DocumentDirectoryPath +'/'+ db.data.item(i).imagePath).then((exist) => {
+                        if (exist)
+                            RNFS.readFile(RNFS.DocumentDirectoryPath +'/'+ db.data.item(i).imagePath, 'base64').then((rs) => {
+                                var obj = {};
+                                if (rs.toString().indexOf('dataimage/jpegbase64') !== -1) {
+                                    obj['doctor'+db.data.item(i).id] = _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,');
+                                } else {
+                                    obj['doctor'+db.data.item(i).id] = 'data:image/jpeg;base64,'+rs.toString();
+                                }
+                                this.setState(obj);
+                            })
+                    })
+            })
+            this.setState({doctors: doctors, refreshing: false})
+            this.updateData(['doctors']);
+        })
+    }
     render() {
         return (
-            <DrawerLayoutAndroid
-                drawerWidth={300}
-                drawerPosition={DrawerLayoutAndroid.positions.Left}
-                renderNavigationView={() => {
-                    return (<DrawerPage navigator={this.props.navigator} routeName={'patients'}></DrawerPage>)
-                }}
-                statusBarBackgroundColor={'#2962FF'}
-                ref={ref => this.drawerRef = ref} >
-                <Navigator
-                    renderScene={this.renderScene.bind(this)}
-                    navigator={this.props.navigator}
-                    navigationBar={
-                        <Navigator.NavigationBar
-                            style={[Styles.navigationBar,{}]}
-                            routeMapper={NavigationBarRouteMapper(this.drawerRef, this)} />
-                    }
-                    />
-            </DrawerLayoutAndroid>
+            <Navigator
+                renderScene={this.renderScene.bind(this)}
+                navigator={this.props.navigator}
+                navigationBar={
+                    <Navigator.NavigationBar style={[Styles.navigationBar, {marginTop: 24}]}
+                        routeMapper={NavigationBarRouteMapper(this.props.patientID, this.props.patientName, this.state.avatar)} />
+                }
+                />
         )
     }
     renderScene(route, navigator) {
         return (
-            <View style={Styles.containerStyle}>
-                <View style={[Styles.subTolbar, {}]}>
-                    <Text style={Styles.subTitle}>Patient</Text>
+            <View style={[Styles.containerStyle, {}]}>
+                {this.props.children}
+                <View style={[Styles.subTolbar, {marginTop: 24}]}>
+                    <Text style={Styles.subTitle}>Refer to Doctor</Text>
                 </View>
                 {(this.state.syncing) ? (
                     <View style={{alignItems: 'center'}}>
@@ -86,44 +113,8 @@ class PatientPage extends Component {
                 ) : (
                     <View />
                 )}
-                <Modal
-                    transparent={true}
-                    visible={this.state.modalVisible}
-                    onRequestClose={() => this.setState({modalVisible: false, cancel: true})}>
-                    <TouchableOpacity
-                        activeOpacity={1}
-                        style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.5)'}}
-                        onPress={() => this.setState({modalVisible: false, cancel: true})}>
-                        <View style={{backgroundColor: '#FFF', elevation: 5}}>
-                            <TextInput
-                                placeholder={'Text Here...'}
-                                style={[styles.textInput, {fontSize: 18, padding: 8, margin: 0}]}
-                                autoCapitalize={'words'}
-                                value={this.state.queryText}
-                                autoFocus={true}
-                                placeholderTextColor={'#E0E0E0'}
-                                underlineColorAndroid={'#FFF'}
-                                returnKeyType={'search'}
-                                selectTextOnFocus={true}
-                                onChangeText={(text) => this.setState({queryText: text})}
-                                onSubmitEditing={() => {
-                                    this.setState({cancel: false})
-                                    Keyboard.addListener('keyboardDidHide', () => {
-                                        if (!this.state.cancel) {
-                                            this.setState({modalVisible: false, query: 'AND (`patients`.`firstname` LIKE "'+this.state.queryText+'%" OR `patients`.`lastname` LIKE "'+this.state.queryText+'%" OR `patients`.`middlename` LIKE "'+this.state.queryText+'%") '})
-                                            this.onRefresh();
-                                        } else {
-                                            this.setState({modalVisible: false})
-                                        }
-                                    })
-                                }}/>
-
-                        </View>
-                    </TouchableOpacity>
-                </Modal>
                 <ListView
-                    style={{marginBottom: 36}}
-                    dataSource={ds.cloneWithRows(this.state.rowData)}
+                    dataSource={ds.cloneWithRows(this.state.doctors)}
                     renderRow={(rowData, sectionID, rowID) => this.renderListView(rowData, rowID)}
                     enableEmptySections={true}
                     refreshControl={
@@ -131,64 +122,57 @@ class PatientPage extends Component {
                             refreshing={this.state.refreshing}
                             onRefresh={this.onRefresh.bind(this)}
                         />
-                    }
-                />
-                <TouchableOpacity
-                    style={[Styles.buttonFab, Styles.subTolbarButton, {}]}
-                    onPress={() => this.props.navigator.push({
-                        id: 'AddPatient',
-                    })}>
-                    <Icon name={'person-add'} color={'#FFFFFF'} size={30}/>
-                </TouchableOpacity>
-                <View style={{position: 'absolute', bottom: 0, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
-                    <TouchableNativeFeedback
-                        onPress={() => {
-                            this.setState({refreshing: true, searchType: 'firstname'})
-                            if (this.state.search == 'ORDER BY firstname ASC')
-                                this.setState({search: 'ORDER BY firstname DESC'})
-                            else
-                                this.setState({search: 'ORDER BY firstname ASC'})
-                            this.onRefresh()
+                    }/>
+                <View style={{flexDirection: 'row', backgroundColor: '#FFF', padding: 16, borderColor: '#E0E0E0', borderTopWidth: 0.5, paddingBottom: 10}}>
+                    <View style={{flex: 1, alignItems: 'stretch'}}>
+                        <Text style={styles.label} >Note</Text>
+                        <TextInput
+                            placeholder={'Text Here...'}
+                            style={[styles.textInput, {textAlignVertical: 'top', paddingTop: 10, paddingBottom: 20, height: Math.max(35, this.state.height)}]}
+                            onContentSizeChange={(event) => {
+                                this.setState({height: event.nativeEvent.contentSize.height});
+                            }}
+                            autoCapitalize={'words'}
+                            value={this.state.note}
+                            placeholderTextColor={'#E0E0E0'}
+                            multiline={true}
+                            onChangeText={(text) => this.setState({note: text})} />
+                    </View>
+                    <View style={{marginLeft: 10, justifyContent: 'flex-end', marginBottom: 10}}>
+                        <TouchableOpacity onPress={() => {
+                            NetInfo.isConnected.fetch().then(isConnected => {
+                                if (isConnected) {
+                                    console.log({
+                                        diagnosisID: this.props.diagnosisID,
+                                        patientID: this.props.patientID,
+                                        doctorReferralID: this.state.selected[0].id,
+                                        note: this.state.note
+                                    })
+                                    this.sendReferral({
+                                        diagnosisID: this.props.diagnosisID,
+                                        patientID: this.props.patientID,
+                                        doctorReferralID: this.state.selected[0].id,
+                                        note: this.state.note
+                                    }).then(data => {
+                                        if (!_.isUndefined(data)) {
+                                            if (data.success) {
+                                                ToastAndroid.show(_.upperFirst(data.message), 3000)
+                                                this.props.navigator.pop()
+                                            } else {
+                                                ToastAndroid.show(_.upperFirst(data.message), 3000)
+                                            }
+                                        } else {
+                                            ToastAndroid.show('Encountered Problem!', 3000)
+                                        }
+                                    }).done();
+                                } else {
+                                    ToastAndroid.show('Connection Problem!', 3000)
+                                }
+                            });
                         }}>
-                        <View style={{flex: 1, alignItems: 'stretch', padding: 10, borderColor: '#FFF', borderRightWidth: 0.5, backgroundColor: '#F5F5F5'}}>
-                            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-                                <Text style={{color: (this.state.searchType=='firstname') ? '#424242' : '#BDBDBD', textAlign: 'center', textAlignVertical: 'center', paddingRight: 5}}>First Name</Text>
-                                <Text style={{color: (this.state.searchType=='firstname') ? '#424242' : '#BDBDBD', textAlign: 'center', textAlignVertical: 'center'}}><IconFont name={(this.state.search == 'ORDER BY firstname ASC') ? 'sort-alpha-desc' : 'sort-alpha-asc'} size={16} /></Text>
-                            </View>
-                        </View>
-                    </TouchableNativeFeedback>
-                    <TouchableNativeFeedback
-                        onPress={() => {
-                            this.setState({refreshing: true, searchType: 'middlename'})
-                            if (this.state.search == 'ORDER BY middlename ASC')
-                                this.setState({search: 'ORDER BY middlename DESC'})
-                            else
-                                this.setState({search: 'ORDER BY middlename ASC'})
-                            this.onRefresh()
-                        }}>
-                        <View style={{flex: 1, alignItems: 'stretch', padding: 10, borderColor: '#FFF', borderRightWidth: 0.5, backgroundColor: '#F5F5F5'}}>
-                            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-                                <Text style={{color: (this.state.searchType=='middlename') ? '#424242' : '#BDBDBD', textAlign: 'center', textAlignVertical: 'center', paddingRight: 5}}>Middle Name</Text>
-                                <Text style={{color: (this.state.searchType=='middlename') ? '#424242' : '#BDBDBD', textAlign: 'center', textAlignVertical: 'center'}}><IconFont name={(this.state.search == 'ORDER BY middlename ASC') ? 'sort-alpha-desc' : 'sort-alpha-asc'} size={16} /></Text>
-                            </View>
-                        </View>
-                    </TouchableNativeFeedback>
-                    <TouchableNativeFeedback
-                        onPress={() => {
-                            this.setState({refreshing: true, searchType: 'lastname'})
-                            if (this.state.search == 'ORDER BY lastname ASC')
-                                this.setState({search: 'ORDER BY lastname DESC'})
-                            else
-                                this.setState({search: 'ORDER BY lastname ASC'})
-                            this.onRefresh()
-                        }}>
-                        <View style={{flex: 1, alignItems: 'stretch', padding: 10, backgroundColor: '#F5F5F5'}}>
-                            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-                                <Text style={{color: (this.state.searchType=='lastname') ? '#424242' : '#BDBDBD', textAlign: 'center', textAlignVertical: 'center', paddingRight: 5}}>Last Name</Text>
-                                <Text style={{color: (this.state.searchType=='lastname') ? '#424242' : '#BDBDBD', textAlign: 'center', textAlignVertical: 'center'}}><IconFont name={(this.state.search == 'ORDER BY lastname ASC') ? 'sort-alpha-desc' : 'sort-alpha-asc'} size={16} /></Text>
-                            </View>
-                        </View>
-                    </TouchableNativeFeedback>
+                            <Icon name={'send'} color={'#4CAF50'} size={30}/>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
         )
@@ -196,57 +180,50 @@ class PatientPage extends Component {
     renderListView(rowData, rowID) {
         return (
             <TouchableNativeFeedback
-                onPress={() => this.gotoPatientProfile(rowData)}>
-                <View style={[styles.listView, {paddingTop: 0, paddingBottom: 0}]}>
-                    <View style={{height: 70, justifyContent: 'center'}}>
-                        {(rowData.imagePath) ? ((this.state['patient'+rowData.id]) ? (<Image source={{uri: this.state['patient'+rowData.id]}} style={[styles.avatarImage, {marginLeft: 20, marginRight: 12}]}/>) : ((<Icon name={'account-circle'} color={'#E0E0E0'} size={80}  style={styles.avatarIcon}/>))) : (<Icon name={'account-circle'} color={'#E0E0E0'} size={80}  style={styles.avatarIcon}/>)}
-                    </View>
-                    <View style={[styles.listText, {justifyContent: 'center'}]}>
-                        <Text style={styles.listItemHead}>{rowData.firstname+' '+rowData.middlename+' '+rowData.lastname}</Text>
-                        <Text style={styles.listItem}>{moment().diff(rowData.birthdate, 'years')} yo / {rowData.sex ? 'Male' : 'Female'}</Text>
-                        {/* <Text style={styles.listItem}>{moment(rowData.birthdate).format('MMMM DD, YYYY')} / AAA</Text> */}
+                onPress={() => {
+                    var selected = [];
+                    selected[0] = {rowID: rowID, id: rowData.id};
+                    this.setState({selected: selected})
+                }}>
+                <View style={{flex: 1, backgroundColor: (this.state.selected[0].rowID == rowID) ? '#4CAF50' : '#FFF', borderColor: '#E0E0E0', borderBottomWidth: 0.5}}>
+                    <View style={{flex: 1, flexDirection: 'row', padding: 16, paddingTop: 0, paddingBottom: 0, height: 80, justifyContent: 'center'}}>
+                        <View style={{flex: 1, justifyContent: 'center', marginRight: -170}}>
+                            {(rowData.imagePath) ? ((this.state['doctor'+rowData.id]) ? (
+                                <Image
+                                    resizeMode={'cover'}
+                                    style={{width: 59, height: 59, borderRadius: 100}}
+                                    source={{uri: this.state['doctor'+rowData.id]}}/>
+                                ) : ((<Icon name={'account-circle'} color={(this.state.selected[0].rowID == rowID) ? '#FFF' : '#E0E0E0'} size={80}  style={{margin: -5}}/>))) : (<Icon name={'account-circle'} color={(this.state.selected[0].rowID == rowID) ? '#FFF' : '#E0E0E0'} size={80}  style={{margin: -5}}/>)}
+                        </View>
+                        <View style={{flex: 1, alignItems: 'stretch', flexDirection: 'column', justifyContent: 'center'}}>
+                            <Text style={[styles.listItemHead, {color: (this.state.selected[0].rowID == rowID) ? '#FFF' : '#424242'}]}>Dr. {rowData.firstname} {(rowData.middlename) ? rowData.middlename+' ' : ''}{rowData.lastname}</Text>
+                            <Text style={[styles.listItem,(rowData.type) ? {color: '#424242'} : {}, {color: (this.state.selected[0].rowID == rowID) ? '#FFF' : '#424242'}]}>{(rowData.type) ? rowData.type : '-'}</Text>
+                            {/* <Text style={[styles.listItem, {paddingTop: 5}]}>{(rowData.address) ? rowData.address : '-'}</Text> */}
+                            {/* <Text style={[styles.listItem, {color: (this.state.selected[0].rowID == rowID) ? '#FFF' : '#616161'}]}>{(rowData.phone1) ? rowData.phone1 : ''} {(rowData.phone2) ? '/ '+rowData.phone2 : ''}</Text> */}
+                        </View>
                     </View>
                 </View>
             </TouchableNativeFeedback>
         )
     }
-    onRefresh() {
-        this.setState({refreshing: true})
-        db.transaction((tx) => {
-            tx.executeSql("SELECT * FROM patients WHERE (deleted_at in (null, 'NULL', '') OR deleted_at is null) "+this.state.query+" "+this.state.search, [], function(tx, rs) {
-                db.data = rs.rows
-            }, function(error) {
-                console.log('SELECT SQL statement ERROR: ' + error.message);
-            });
-        }, (error) => {
-            console.log('transaction error: ' + error.message);
-        }, () => {
-            var rowData = []; var self = this;
-            _.forEach(db.data, function(v, i) {
-                rowData.push(db.data.item(i))
-                if (db.data.item(i).imagePath != '')
-                    RNFS.readFile(RNFS.DocumentDirectoryPath +'/'+ db.data.item(i).imagePath, 'base64').then((rs) => {
-                        var obj = {};
-                        if (rs.toString().indexOf('dataimage/jpegbase64') !== -1) {
-                            obj['patient'+db.data.item(i).id] = _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,');
-                        } else {
-                            obj['patient'+db.data.item(i).id] = 'data:image/jpeg;base64,'+rs.toString();
-                        }
-                        self.setState(obj);
-                    })
-            })
-            this.setState({refreshing: false, rowData: rowData})
-            this.updateData(['patients']);
-        })
-    }
-    gotoPatientProfile(rowData) {
-        this.props.navigator.push({
-            id: 'PatientProfile',
-            passProps: { patientID: rowData.id },
-        })
-    }
     drawerInstance(instance) {
         drawerRef = instance
+    }
+    async sendReferral(param) {
+        try {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/postReferrals?api_token=RchwRDA6potmChgFDhF78CDT2HIvmMwDYMO2UWtcFvjRHtNlH072VLoMtu5N', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(param)
+            }).then((response) => {
+                return response.json()
+            });
+        } catch (err) {
+            alert(err.message)
+        }
     }
     updateData(tables) {
         NetInfo.isConnected.fetch().then(isConnected => {
@@ -295,7 +272,7 @@ class PatientPage extends Component {
                                             importDate = moment().year(2000).format('YYYY-MM-DD HH:mm:ss')
                                         }
                                         if (moment().diff(moment(importDate), 'minutes') >= EnvInstance.interval) {
-                                            this.setState({syncing: true, syncingTitle: 'Syncing Patients...'})
+                                            this.setState({syncing: true, syncingTitle: 'Syncing Doctors...'})
                                             this.importData(table, importDate).then((data) => {
                                                 var currentImportDate = importDate;
                                                 if (data.total > 0) {
@@ -449,17 +426,14 @@ class PatientPage extends Component {
     }
 }
 
-var styles = StyleSheet.create({
-    avatarImage: {
-        height: 60,
-        borderRadius: 30,
-        width: 60,
+const styles = StyleSheet.create({
+    time: {
+        color: '#616161',
+        fontSize: 20,
+        textAlignVertical: 'center',
+        height: 30,
         marginLeft: 16,
         marginRight: 16,
-    },
-    avatarIcon: {
-        marginLeft: 16,
-        marginRight: 8,
     },
     textResult: {
         margin: 6,
@@ -469,65 +443,77 @@ var styles = StyleSheet.create({
     listView: {
         flex: 1,
         flexDirection: 'row',
+        alignItems: 'center',
         borderStyle: 'solid',
         borderBottomWidth: 0.5,
         borderBottomColor: '#E0E0E0',
         backgroundColor: '#FFF',
-        elevation: 10,
         paddingTop: 4,
         paddingBottom: 4,
-    },
-    listIcon: {
-        marginLeft: 16,
-        marginRight: 16,
-        marginTop: 5,
-        marginBottom: 5,
-    },
-    listText: {
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        alignItems: 'stretch',
-        marginTop: 10,
-        marginBottom: 10,
+        paddingRight: 16,
+        paddingLeft: 16,
     },
     listItemHead: {
-        fontSize: 22,
+        fontSize: 19,
         color: '#424242'
     },
     listItem: {
         fontSize: 14,
+        paddingTop: 1,
+        paddingBottom: 1,
+    },
+    avatarImage: {
+        height: 48,
+        width: 48,
+        borderRadius: 30,
+        margin: 5,
+        marginRight: 10,
+    },
+    avatarIcon: {
+        margin: 0,
+    },
+    textInput: {
+        fontSize: 16,
+        paddingTop: 5,
+        marginBottom: 5,
+        marginLeft: -2,
     },
 })
 
-var NavigationBarRouteMapper = (drawerRef, state) => ({
+
+var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
     LeftButton(route, navigator, index, navState) {
         return (
-            <TouchableOpacity style={Styles.leftButton}
-                onPress={() => drawerRef.openDrawer()}>
-                <Text style={Styles.leftButtonText}>
-                    <Icon name="menu" size={30} color="#FFF" />
-                </Text>
-            </TouchableOpacity>
+            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                <TouchableOpacity
+                    onPress={() => {
+                        navigator.parentNavigator.pop()
+                    }}>
+                    <Text style={{color: 'white', margin: 10, marginTop: 15}}>
+                        <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
+                    </Text>
+                </TouchableOpacity>
+                {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Icon name={'account-circle'} color={'#FFFFFF'} size={65}  style={styles.avatarIcon}/>)}
+            </View>
         )
     },
     RightButton(route, navigator, index, navState) {
-        return (
-            <TouchableOpacity style={Styles.rightButton}
-                onPress={() => state.setState({modalVisible: true})} >
-                <Text style={Styles.rightButtonText}>
-                    <Icon name="search" size={30} color="#FFF" />
-                </Text>
-            </TouchableOpacity>
-        )
+        return null
     },
     Title(route, navigator, index, navState) {
         return (
-            <TouchableOpacity style={Styles.title}>
-                <Text style={Styles.titleText}>Menu</Text>
+            <TouchableOpacity
+                style={[Styles.title, {marginLeft: 50}]}
+                onPress={() => {
+                    navigator.parentNavigator.push({
+                        id: 'PatientProfile',
+                        passProps: { patientID: patientID},
+                    })
+                }}>
+                <Text style={Styles.titleText}>{patientName}</Text>
             </TouchableOpacity>
         )
     }
 })
 
-module.exports = PatientPage
+module.exports = DoctorSharePage

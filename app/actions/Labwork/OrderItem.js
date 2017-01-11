@@ -46,6 +46,11 @@ class OrderItem extends Component {
                 this.setState({avatar: (rs.toString().indexOf('dataimage/jpegbase64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/jpeg;base64,'+rs.toString()})
             })
         })
+        if (this.props.labItemSelect) {
+            _.forEach(_.split(this.props.labItemSelect, ','), (v, i) => {
+                this.labItemSelect(v)
+            })
+        }
     }
     componentDidMount() {
         this.updateCredentials().done();
@@ -55,6 +60,7 @@ class OrderItem extends Component {
             var doctor = await AsyncStorage.getItem('doctor');
             this.setState({
                 doctorID: JSON.parse(doctor).id,
+                doctorUserID: JSON.parse(doctor).userID,
                 mobileID: JSON.parse(doctor).mobileID,
             })
         } catch (error) {
@@ -162,7 +168,7 @@ class OrderItem extends Component {
                                         }, (err) => alert(err.message), () => {
                                             this.setState({modalVisible: false})
                                             this.pendingItemUpdate();
-                                            ToastAndroid.show('Successfully completed!', 3000);
+                                            ToastAndroid.show('Successfully Completed!', 3000);
                                         })
                                     }}>
                                     <View style={{backgroundColor: '#4CAF50'}}>
@@ -186,7 +192,7 @@ class OrderItem extends Component {
                                         }, (err) => alert(err.message), () => {
                                             this.setState({modalVisible: false})
                                             this.pendingItemUpdate();
-                                            ToastAndroid.show('Successfully saved!', 3000);
+                                            ToastAndroid.show('Successfully Saved!', 3000);
                                         })
                                     }}>
                                     <View style={{backgroundColor: '#4CAF50'}}>
@@ -263,16 +269,7 @@ class OrderItem extends Component {
         )
     }
     labItemUpdate() {
-        this.setState({refreshing: true, labItem: {}, labItemSelect: {}})
-        db.transaction(tx => {
-            tx.executeSql("SELECT * FROM labItemClass", [], (tx, rs) => {
-                console.log(rs.rows)
-                _.forEach(rs.rows, (v, i) => {
-                    console.log(rs.rows.item(i))
-                })
-            })
-        })
-
+        this.setState({refreshing: true, labItem: {}, labItemSelect: (this.props.labItemSelect) ? this.state.labItemSelect : {}})
         db.transaction((tx) => {
             tx.executeSql("SELECT `labItemClass`.`value` as `class`, (SELECT GROUP_CONCAT((`labItem`.`id` || ':' ||`labItem`.`name`), '@') FROM labItem WHERE (`labItem`.`deleted_at` in (null, 'NULL', '') OR `labItem`.`deleted_at` is null) AND `labItem`.`labItemClassID` = `labItemClass`.`id` ORDER BY `labItem`.`name` ASC) as `value` FROM labItemClass ORDER BY `labItemClass`.`value` ASC", [], (tx, rs) => {
                 db.data = rs.rows
@@ -291,7 +288,7 @@ class OrderItem extends Component {
     pendingItemUpdate() {
         this.setState({refreshing: true, pendingItem: {}})
         db.transaction((tx) => {
-            tx.executeSql("SELECT `labwork`.`id` as `id`, `labwork`.`orderDate`, `labwork`.`labData` FROM `labwork` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND (`labwork`.`completed` in (null, 'NULL', '') OR `labwork`.`completed` is null) AND `labwork`.`patientID` = ? AND `labwork`.`userID` = ?  ORDER BY `labwork`.`orderDate` DESC, `labwork`.`created_at` DESC", [this.props.patientID, this.props.doctorUserID], (tx, rs) => {
+            tx.executeSql("SELECT `labwork`.`id` as `id`, `labwork`.`orderDate`, `labwork`.`labData` FROM `labwork` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND (`labwork`.`completed` in (null, 'NULL', '') OR `labwork`.`completed` is null) AND `labwork`.`patientID` = ? AND `labwork`.`userID` = ?  ORDER BY `labwork`.`orderDate` DESC, `labwork`.`created_at` DESC", [this.props.patientID, this.state.doctorUserID], (tx, rs) => {
                 var pendingItemObj = {};
                 _.forEach(rs.rows, (v, i) => {
                     var orderDate = rs.rows.item(i).orderDate;
@@ -323,7 +320,7 @@ class OrderItem extends Component {
     recentItemUpdate() {
         this.setState({refreshing: true, recentItem: {}})
         db.transaction((tx) => {
-            tx.executeSql("SELECT `labwork`.`completionDate`, `labwork`.`labData` FROM `labwork` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND `labwork`.`completed` = 1 AND `labwork`.`patientID` = ? AND `labwork`.`userID` = ? ORDER BY `labwork`.`completionDate` DESC, `labwork`.`created_at` DESC", [this.props.patientID, this.props.doctorUserID], (tx, rs) => {
+            tx.executeSql("SELECT `labwork`.`completionDate`, `labwork`.`labData` FROM `labwork` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND `labwork`.`completed` = 1 AND `labwork`.`patientID` = ? AND `labwork`.`userID` = ? ORDER BY `labwork`.`completionDate` DESC, `labwork`.`created_at` DESC", [this.props.patientID, this.state.doctorUserID], (tx, rs) => {
                 var recentItemObj = {};
                 _.forEach(rs.rows, (v, i) => {
                     var completionDate = rs.rows.item(i).completionDate;
@@ -524,7 +521,7 @@ class OrderItem extends Component {
                             return (
                                 <View key={i} style={{flex: 1, alignItems: 'stretch'}}>
                                     <View style={{padding: 10, paddingLeft: 16, paddingRight: 16, backgroundColor: '#FFEB3B', elevation: 1}}>
-                                        <Text style={{fontSize: 25, color: '#424242'}}>{i}</Text>
+                                        <Text style={{fontSize: 20, color: '#424242'}}>{i}</Text>
                                     </View>
                                     <LineChart
                                         ref={ref => this.lineChartRef = ref}
@@ -550,7 +547,7 @@ class OrderItem extends Component {
     getChart() {
         this.setState({refreshing: true, allItem: {}})
         db.transaction((tx) => {
-            tx.executeSql("SELECT `labwork`.`completionDate`, `labwork`.`labData` FROM `labwork` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND `labwork`.`completed` = 1 AND `labwork`.`patientID` = ? AND `labwork`.`userID` = ? ORDER BY `labwork`.`completionDate` ASC, `labwork`.`created_at` ASC", [this.props.patientID, this.props.doctorUserID], (tx, rs) => {
+            tx.executeSql("SELECT `labwork`.`completionDate`, `labwork`.`labData` FROM `labwork` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND `labwork`.`completed` = 1 AND `labwork`.`patientID` = ? AND `labwork`.`userID` = ? ORDER BY `labwork`.`completionDate` ASC, `labwork`.`created_at` ASC", [this.props.patientID, this.state.doctorUserID], (tx, rs) => {
                 var recentItemObj = {};
                 _.forEach(rs.rows, (v, i) => {
                     var orderDate = rs.rows.item(i).completionDate;
@@ -637,19 +634,20 @@ class OrderItem extends Component {
                 tx.executeSql("SELECT id FROM labwork WHERE id BETWEEN "+insertID+" AND "+((insertID*2)-1)+" ORDER BY created_at DESC LIMIT 1", [], (tx, rs) => {
                     if (rs.rows.length > 0)
                         insertID = rs.rows.item(0).id + 1;
-                    var insert = [insertID, this.props.patientID, this.props.doctorUserID, moment().format('YYYY-MM-DD'), null, null, labData, null, null, moment().format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss')];
-                    tx.executeSql("INSERT INTO `labwork` (`id`, `patientID`, `userID`, `orderDate`, `completionDate`, `completed`, `labData`, `viewed`, `deleted_at`, `created_at`, `updated_at`) VALUES (?,?,?,?,?,?,?,?,?,?,?)", insert, (tx, rs) => {
+                    var insert = [insertID, this.props.patientID, this.props.diagnosisID, this.state.doctorUserID, moment().format('YYYY-MM-DD'), null, null, labData, null, null, moment().format('YYYY-MM-DD HH:mm:ss'), moment().format('YYYY-MM-DD HH:mm:ss')];
+                    tx.executeSql("INSERT INTO `labwork` (`id`, `patientID`, `diagnosisID`, `userID`, `orderDate`, `completionDate`, `completed`, `labData`, `viewed`, `deleted_at`, `created_at`, `updated_at`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", insert, (tx, rs) => {
                         console.log('insert:', rs.insertId)
                     })
                 })
             }, (err) => {
                 alert(err.message)
             }, () => {
-                ToastAndroid.show('Laboratory items order success!', 3000)
+                ToastAndroid.show('Laboratory Items Successfully Order!', 3000)
                 this.setState({labItemSelect: {}})
+                this.updateData(['labwork']);
             })
         } else
-        ToastAndroid.show('No item selected!', 1000)
+        ToastAndroid.show('No Item Selected!', 1000)
     }
     updateData(tables) {
         NetInfo.isConnected.fetch().then(isConnected => {
@@ -689,7 +687,7 @@ class OrderItem extends Component {
                                                             }).join('&')).then((data) => {
                                                                 if (!_.isUndefined(data)) {
                                                                     if (data.success) {
-                                                                        RNFS.writeFile(RNFS.ExternalDirectoryPath+'/'+n.imagePath, decodeURIComponent(data.avatar), 'base64').then((success) => {
+                                                                        RNFS.writeFile(RNFS.DocumentDirectoryPath+'/'+n.imagePath, decodeURIComponent(data.avatar), 'base64').then((success) => {
                                                                             console.log("Successfully created!")
                                                                         }).catch((err) => {
                                                                             console.log("Error occured while creating image!")
@@ -791,6 +789,7 @@ class OrderItem extends Component {
     }
     async exportData(table, rows) {
         try {
+            console.log(_.join(rows, '&'))
             return await fetch(EnvInstance.cloudUrl+'/api/v2/export?table='+table, {
                 method: 'POST',
                 headers: {
@@ -802,7 +801,7 @@ class OrderItem extends Component {
                 return response.json()
             });
         } catch (err) {
-            console.log(table+':', e.message)
+            console.log(table+':', err.message)
         }
     }
     jsonToQueryString(json) {
@@ -892,7 +891,9 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
         return (
             <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                 <TouchableOpacity
-                    onPress={() => navigator.parentNavigator.pop()}>
+                    onPress={() => {
+                        navigator.parentNavigator.pop()
+                    }}>
                     <Text style={{color: 'white', margin: 10, marginTop: 15}}>
                         <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                     </Text>
@@ -906,7 +907,14 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
     },
     Title(route, navigator, index, navState) {
         return (
-            <TouchableOpacity style={[Styles.title, {marginLeft: 50}]}>
+            <TouchableOpacity
+                style={[Styles.title, {marginLeft: 50}]}
+                onPress={() => {
+                    navigator.parentNavigator.push({
+                        id: 'PatientProfile',
+                        passProps: { patientID: patientID},
+                    })
+                }}>
                 <Text style={Styles.titleText}>{patientName}</Text>
             </TouchableOpacity>
         )

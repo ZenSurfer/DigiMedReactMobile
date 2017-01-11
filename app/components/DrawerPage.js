@@ -19,20 +19,15 @@ class DrawerPage extends Component {
             avatar: false,
             pendingCount: 0,
             completedCount: 0,
+            userID: '',
+            doctorID: '',
+            doctorName: '',
+            doctorType: '',
+            doctorInitial: '',
         }
     }
     componentDidMount() {
         this.updateCredentials().done();
-    }
-    componentWillReceiveProps(nextProps) {
-        if (_.size(nextProps.navigator.getCurrentRoutes(0)) > 1) {
-            this.setState({lastRoute: nextProps.navigator.getCurrentRoutes(0)[1].id})
-        } else {
-            if (this.state.lastRoute == 'EditUserProfile' || this.state.lastRoute == 'EditUserSetting') {
-                this.setState({lastRoute: ''});
-                this.updateCredentials().done();
-            }
-        }
     }
     async updateCredentials() {
         try {
@@ -44,15 +39,15 @@ class DrawerPage extends Component {
                 doctorType: JSON.parse(doctor).type,
                 doctorInitial: JSON.parse(doctor).initial,
             })
-            RNFS.exists(RNFS.ExternalDirectoryPath +'/'+ JSON.parse(doctor).imagePath).then((exist) => {
+            RNFS.exists(RNFS.DocumentDirectoryPath +'/'+ JSON.parse(doctor).imagePath).then((exist) => {
                 if (exist)
-                    RNFS.readFile(RNFS.ExternalDirectoryPath +'/'+ JSON.parse(doctor).imagePath, 'base64').then((rs) => {
+                    RNFS.readFile(RNFS.DocumentDirectoryPath +'/'+ JSON.parse(doctor).imagePath, 'base64').then((rs) => {
                         this.setState({avatar: (rs.toString().indexOf('dataimage/jpegbase64') !== -1) ? _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,') : 'data:image/jpeg;base64,'+rs.toString()})
                     })
             })
             db.transaction((tx) => {
-                tx.executeSql("SELECT count(*) as pendingCount FROM labwork WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND (`labwork`.`completed` in (null, 'NULL', '') OR `labwork`.`completed` is null) AND `labwork`.`userID`=?", [JSON.parse(doctor).userID], (tx, rs) => db.pendingCount = rs.rows.item(0).pendingCount)
-                tx.executeSql("SELECT count(*) as completedCount FROM `labwork` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND `labwork`.`completionDate` IS NOT NULL AND `labwork`.`userID`=?", [JSON.parse(doctor).userID], (tx, rs) => db.completedCount = rs.rows.item(0).completedCount)
+                tx.executeSql("SELECT count(*) as pendingCount FROM `labwork` OUTER LEFT JOIN `patients` ON `patients`.`id`=`labwork`.`patientID` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND (`labwork`.`completed` in (null, 'NULL', '') OR `labwork`.`completed` is null  OR `labwork`.`completed`=0) AND `labwork`.`userID`=?", [JSON.parse(doctor).userID], (tx, rs) => db.pendingCount = rs.rows.item(0).pendingCount)
+                tx.executeSql("SELECT count(*) as completedCount FROM `labwork` OUTER LEFT JOIN `patients` ON `patients`.`id`=`labwork`.`patientID` OUTER LEFT JOIN `diagnosis` on `diagnosis`.`id`=`labwork`.`diagnosisID` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND `labwork`.`completed`=1 AND `labwork`.`done`=0 AND `diagnosis`.`doctorID`=? AND `labwork`.`userID`=?", [JSON.parse(doctor).id,JSON.parse(doctor).userID], (tx, rs) => db.completedCount = rs.rows.item(0).completedCount)
             }, (err) => alert(err.message), () => {
                 this.setState({pendingCount: db.pendingCount, completedCount: db.completedCount})
             })
@@ -142,7 +137,7 @@ class DrawerPage extends Component {
                             }>
                             <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'patients') ? '#EEEEEE' : '#FFFFFF'}]}>
                                 <View style={styles.iconWrapper}>
-                                    <Icon name='face' style={[styles.icon, {color: '#2979FF'}]}/>
+                                    <Icon name='face' style={[styles.icon, {color: '#616161'}]}/>
                                 </View>
                                 <Text style={styles.drawerViewText}>Patients</Text>
                             </View>
@@ -158,9 +153,25 @@ class DrawerPage extends Component {
                             }>
                             <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'doctors') ? '#EEEEEE' : '#FFFFFF'}]}>
                                 <View style={styles.iconWrapper}>
-                                    <IconAwesome name='stethoscope' style={[styles.icon, {fontSize: 25, color: '#2979FF'}]}/>
+                                    <Icon name='contacts' style={[styles.icon, {fontSize: 25, color: '#2979FF'}]}/>
                                 </View>
                                 <Text style={styles.drawerViewText}>Doctors</Text>
+                            </View>
+                        </TouchableNativeFeedback>
+                        <TouchableNativeFeedback
+                            onPress={() => this.props.navigator.replace({
+                                id: 'ReferralPage',
+                                passProps: {
+                                    doctorID: this.state.doctorID
+                                },
+                                sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                            })
+                            }>
+                            <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'referrals') ? '#EEEEEE' : '#FFFFFF'}]}>
+                                <View style={styles.iconWrapper}>
+                                    <Icon name='new-releases' style={[styles.icon, {fontSize: 25, color: '#FFAB00'}]}/>
+                                </View>
+                                <Text style={styles.drawerViewText}>Doctor Referrals</Text>
                             </View>
                         </TouchableNativeFeedback>
                         <View style={{marginTop: 5, marginBottom: 5, borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}></View>
