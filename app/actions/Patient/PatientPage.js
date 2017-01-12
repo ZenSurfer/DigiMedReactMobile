@@ -197,14 +197,16 @@ class PatientPage extends Component {
         return (
             <TouchableNativeFeedback
                 onPress={() => this.gotoPatientProfile(rowData)}>
-                <View style={[styles.listView, {paddingTop: 0, paddingBottom: 0}]}>
-                    <View style={{height: 70, justifyContent: 'center'}}>
-                        {(rowData.imagePath) ? ((this.state['patient'+rowData.id]) ? (<Image source={{uri: this.state['patient'+rowData.id]}} style={[styles.avatarImage, {marginLeft: 20, marginRight: 12}]}/>) : ((<Icon name={'account-circle'} color={'#E0E0E0'} size={80}  style={styles.avatarIcon}/>))) : (<Icon name={'account-circle'} color={'#E0E0E0'} size={80}  style={styles.avatarIcon}/>)}
-                    </View>
-                    <View style={[styles.listText, {justifyContent: 'center'}]}>
-                        <Text style={styles.listItemHead}>{rowData.firstname+' '+rowData.middlename+' '+rowData.lastname}</Text>
-                        <Text style={styles.listItem}>{moment().diff(rowData.birthdate, 'years')} yo / {rowData.sex ? 'Male' : 'Female'}</Text>
-                        {/* <Text style={styles.listItem}>{moment(rowData.birthdate).format('MMMM DD, YYYY')} / AAA</Text> */}
+                <View style={{flex: 1, backgroundColor: '#FFFFFF', borderColor: '#E0E0E0', borderBottomWidth: 0.5}}>
+                    <View style={{flex: 1, flexDirection: 'row', paddingLeft: 16, minHeight: 80, justifyContent: 'center'}}>
+                        <View style={{justifyContent: 'center', alignItems: 'center', marginRight: 16}}>
+                            {(rowData.imagePath) ? ((this.state['patient'+rowData.id]) ? (<Image source={{uri: this.state['patient'+rowData.id]}} style={[styles.avatarImage]}/>) : ((<Image source={require('./../../assets/images/logo.png')} style={[styles.avatarImage]}/>))) : (<Image source={require('./../../assets/images/logo.png')} style={[styles.avatarImage]}/>)}
+                        </View>
+                        <View style={[styles.listText, {flex: 1, alignItems: 'stretch', justifyContent: 'center'}]}>
+                            <Text style={styles.listItemHead}>{rowData.firstname+' '+rowData.middlename+' '+rowData.lastname}</Text>
+                            <Text style={styles.listItem}>{moment().diff(rowData.birthdate, 'years')} yo / {rowData.sex ? 'Male' : 'Female'}</Text>
+                            {/* <Text style={styles.listItem}>{moment(rowData.birthdate).format('MMMM DD, YYYY')} / AAA</Text> */}
+                        </View>
                     </View>
                 </View>
             </TouchableNativeFeedback>
@@ -225,14 +227,17 @@ class PatientPage extends Component {
             _.forEach(db.data, function(v, i) {
                 rowData.push(db.data.item(i))
                 if (db.data.item(i).imagePath != '')
-                    RNFS.readFile(RNFS.DocumentDirectoryPath +'/'+ db.data.item(i).imagePath, 'base64').then((rs) => {
-                        var obj = {};
-                        if (rs.toString().indexOf('dataimage/jpegbase64') !== -1) {
-                            obj['patient'+db.data.item(i).id] = _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,');
-                        } else {
-                            obj['patient'+db.data.item(i).id] = 'data:image/jpeg;base64,'+rs.toString();
-                        }
-                        self.setState(obj);
+                    RNFS.exists(RNFS.DocumentDirectoryPath +'/'+ db.data.item(i).imagePath).then((exist) => {
+                        if (exist)
+                            RNFS.readFile(RNFS.DocumentDirectoryPath +'/'+ db.data.item(i).imagePath, 'base64').then((rs) => {
+                                var obj = {};
+                                if (rs.toString().indexOf('dataimage/jpegbase64') !== -1) {
+                                    obj['patient'+db.data.item(i).id] = _.replace(rs.toString(), 'dataimage/jpegbase64','data:image/jpeg;base64,');
+                                } else {
+                                    obj['patient'+db.data.item(i).id] = 'data:image/jpeg;base64,'+rs.toString();
+                                }
+                                self.setState(obj);
+                            })
                     })
             })
             this.setState({refreshing: false, rowData: rowData})
@@ -244,9 +249,6 @@ class PatientPage extends Component {
             id: 'PatientProfile',
             passProps: { patientID: rowData.id },
         })
-    }
-    drawerInstance(instance) {
-        drawerRef = instance
     }
     updateData(tables) {
         NetInfo.isConnected.fetch().then(isConnected => {
@@ -308,6 +310,7 @@ class PatientPage extends Component {
                                                             }).join('&')).then((data) => {
                                                                 if (!_.isUndefined(data)) {
                                                                     if (data.success) {
+                                                                        // console.log(RNFS.DocumentDirectoryPath+'/'+n.imagePath, decodeURIComponent(data.avatar))
                                                                         RNFS.writeFile(RNFS.DocumentDirectoryPath+'/'+n.imagePath, decodeURIComponent(data.avatar), 'base64').then((success) => {
                                                                             console.log("Successfully created!")
                                                                         }).catch((err) => {
@@ -454,12 +457,8 @@ var styles = StyleSheet.create({
         height: 60,
         borderRadius: 30,
         width: 60,
-        marginLeft: 16,
-        marginRight: 16,
     },
     avatarIcon: {
-        marginLeft: 16,
-        marginRight: 8,
     },
     textResult: {
         margin: 6,

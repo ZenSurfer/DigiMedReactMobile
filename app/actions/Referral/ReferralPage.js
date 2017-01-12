@@ -20,8 +20,8 @@ const db = EnvInstance.db()
 const referralStatus = {
     'okay': 'Not Concern',
     'monitor': 'Monitor',
-    'bloodTest': 'Request Blood Tests:',
-    'labwork': 'Request Laboratory Works:',
+    'bloodTest': 'Request for blood test:',
+    'labwork': 'Request for laboratory works:',
     'seeDoctor': 'Need to see me'
 }
 
@@ -57,7 +57,7 @@ class ReferralPage extends Component {
     onRefresh() {
         this.setState({refreshing: true})
         db.transaction((tx) => {
-            tx.executeSql("SELECT referrals.diagnosisID, referrals.patientID, (patients.firstname || ' ' || patients.middlename || ' ' || patients.lastname) as patientName, patients.imagePath, diagnosis.chiefComplaint, (doctors.firstname || ' ' || doctors.middlename || ' ' || doctors.lastname) as doctorName, referrals.updated_at as date, diagnosis.symptoms, referrals.comment, referrals.note, referrals.type, referrals.view, referrals.labworkID FROM `referrals` left outer join diagnosis on diagnosis.id=referrals.diagnosisID LEFT OUTER JOIN patients on patients.id=referrals.patientID LEFT OUTER JOIN doctors on doctors.id=doctorReferralID WHERE diagnosis.doctorID=? ORDER BY referrals.updated_at DESC", [this.state.doctorID], (tx, rs) => {
+            tx.executeSql("SELECT referrals.diagnosisID, referrals.created_at ,referrals.patientID, (patients.firstname || ' ' || patients.middlename || ' ' || patients.lastname) as patientName, patients.imagePath, diagnosis.chiefComplaint, (doctors.firstname || ' ' || doctors.middlename || ' ' || doctors.lastname) as doctorName, referrals.updated_at as date, diagnosis.symptoms, referrals.comment, referrals.note, referrals.type, referrals.view, referrals.labworkID FROM `referrals` left outer join diagnosis on diagnosis.id=referrals.diagnosisID LEFT OUTER JOIN patients on patients.id=referrals.patientID LEFT OUTER JOIN doctors on doctors.id=doctorReferralID WHERE diagnosis.doctorID=? ORDER BY referrals.updated_at DESC", [this.state.doctorID], (tx, rs) => {
                 var referrals = [];
                 _.forEach(rs.rows, (v, i) => {
                     var refer = rs.rows.item(i);
@@ -158,7 +158,7 @@ class ReferralPage extends Component {
                                         onPress={() => {
                                             Alert.alert(
                                                 (rowData.view) ? 'Doctor Replied' : 'Waiting for Response',
-                                                (rowData.view) ? 'Note:\n'+rowData.note+'\n\nComment:\n'+rowData.comment+'\n\n'+referralStatus[rowData.type]+rowData.labwork : 'Note:\n'+rowData.note,
+                                                (rowData.view) ? rowData.comment+'\n\n'+referralStatus[rowData.type]+rowData.labwork+'\n\nNote:\n'+rowData.note : rowData.note,
                                                 [
                                                     {text: (rowData.type === 'labwork' || rowData.type === 'bloodTest') ? 'LABWORK' : '', onPress: () => {
                                                         this.props.navigator.push({
@@ -193,6 +193,7 @@ class ReferralPage extends Component {
                                 <View style={[styles.listText, {flex: 1, alignItems: 'stretch'}]}>
                                     <Text style={styles.listItem}>{(rowData.date) ? moment(rowData.date).format('MMMM DD, YYYY') : ''}</Text>
                                     <Text style={styles.listItemHead}>{rowData.doctorName}</Text>
+                                    <Text style={{color: '#FF5722', fontSize: 10}}>Referred to doctor {moment().from(rowData.created_at, true)} ago.</Text>
                                     <Text style={[]}>{rowData.chiefComplaint}</Text>
                                     <View style={{flex: 1, flexDirection: 'row', marginTop: 5, marginBottom: 5}}>
                                         {_.map(['Hodgkin\'s Lymphoma', "Multiple Myeloma"], (v, i) => {
@@ -243,7 +244,7 @@ class ReferralPage extends Component {
             alert(err.message)
         }, () => {
             ToastAndroid.show('Laboratory Items Successfully Order!', 3000)
-            this.updateData(['labwork']);
+            this.updateData(['doctors', 'labItem', 'labItemClass', 'labwork']);
         })
     }
     updateData(tables) {
@@ -306,6 +307,7 @@ class ReferralPage extends Component {
                                                             }).join('&')).then((data) => {
                                                                 if (!_.isUndefined(data)) {
                                                                     if (data.success) {
+                                                                        // console.log(RNFS.DocumentDirectoryPath+'/'+n.imagePath, decodeURIComponent(data.avatar))
                                                                         RNFS.writeFile(RNFS.DocumentDirectoryPath+'/'+n.imagePath, decodeURIComponent(data.avatar), 'base64').then((success) => {
                                                                             console.log("Successfully created!")
                                                                         }).catch((err) => {

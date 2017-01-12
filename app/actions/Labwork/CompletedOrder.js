@@ -51,7 +51,7 @@ class PendingOrder extends Component {
     onRefresh() {
         this.setState({refreshing: true})
         db.transaction((tx) => {
-            tx.executeSql("SELECT `patients`.`imagePath` as `imagePath`, `diagnosis`.`symptoms` as `symptoms`, `labwork`.`diagnosisID` as `diagnosisID`, `patients`.`id` as `patientID`, (`patients`.`firstname` || ' ' || `patients`.`middlename` || ' ' || `patients`.`lastname`) as `patientName`, `labwork`.`id` as `id`, `labwork`.`orderDate`, `labwork`.`labData`, `labwork`.`completionDate` FROM `labwork` OUTER LEFT JOIN `patients` ON `patients`.`id`=`labwork`.`patientID` OUTER LEFT JOIN `diagnosis` on `diagnosis`.`id`=`labwork`.`diagnosisID` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND `labwork`.`completed`=1 AND `labwork`.`done`=0 AND `diagnosis`.`doctorID`=? AND `labwork`.`userID`=? ORDER BY `labwork`.`orderDate` DESC, `labwork`.`created_at` DESC", [this.state.doctorID, this.props.userID], (tx, rs) => {
+            tx.executeSql("SELECT `patients`.`imagePath` as `imagePath`, `diagnosis`.`symptoms` as `symptoms`, `labwork`.`diagnosisID` as `diagnosisID`, `patients`.`id` as `patientID`, (`patients`.`firstname` || ' ' || `patients`.`middlename` || ' ' || `patients`.`lastname`) as `patientName`, `labwork`.`id` as `id`, `labwork`.`orderDate`, `labwork`.`labData`, `labwork`.`completionDate`, `labwork`.`created_at` FROM `labwork` OUTER LEFT JOIN `patients` ON `patients`.`id`=`labwork`.`patientID` OUTER LEFT JOIN `diagnosis` on `diagnosis`.`id`=`labwork`.`diagnosisID` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND `labwork`.`completed`=1 AND `labwork`.`done`=0 AND `diagnosis`.`doctorID`=? AND `labwork`.`userID`=? ORDER BY `labwork`.`completionDate` DESC, `labwork`.`updated_at` DESC", [this.state.doctorID, this.props.userID], (tx, rs) => {
                 db.completedItem = [];
                 _.forEach(rs.rows, (v, i) => {
                     var completedItemObj = {};
@@ -61,6 +61,7 @@ class PendingOrder extends Component {
                     completedItemObj['diagnosisID'] = rs.rows.item(i).diagnosisID;
                     completedItemObj['orderDate'] = rs.rows.item(i).orderDate;
                     completedItemObj['completionDate'] = rs.rows.item(i).completionDate;
+                    completedItemObj['created_at'] = rs.rows.item(i).created_at;
                     completedItemObj['patientName'] = rs.rows.item(i).patientName;
                     completedItemObj['labworkID'] = rs.rows.item(i).id;
                     var labData = _.split(_.split(rs.rows.item(i).labData, ':::')[1], '@@');
@@ -89,7 +90,7 @@ class PendingOrder extends Component {
             alert(err.message)
         }, () => {
             this.setState({completedItem: db.completedItem, refreshing: false})
-            this.updateData(['labwork']);
+            this.updateData(['labItem', 'labItemClass', 'labwork']);
         })
     }
     render() {
@@ -158,9 +159,9 @@ class PendingOrder extends Component {
                     <View style={[styles.listView, {flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}]}>
                         <View style={{flex: 1, justifyContent: 'center', flexDirection: 'row', paddingTop: 5, paddingBottom: 5}}>
                             <View style={{flex: 1, alignItems: 'stretch', paddingRight: 16}}>
-                                <Text>{moment(rowData.orderDate).format('MMMM DD, YYYY')}</Text>
+                                <Text>{moment(rowData.completionDate).format('MMMM DD, YYYY')}</Text>
                                 <Text style={styles.listItemHead}>{rowData.patientName}</Text>
-                                <Text style={{color: '#FF5722', fontSize: 10}}>Updated last {rowData.completionDate}</Text>
+                                <Text style={{color: '#FF5722', fontSize: 10}}>Labwork ordered {moment().from(rowData.created_at, true)} ago.</Text>
                                 <View style={{flex: 1, flexDirection: 'row', marginTop: 5, marginBottom: 5}}>
                                     {_.map(['Hodgkin\'s Lymphoma', "Multiple Myeloma"], (v, i) => {
                                         var symptomsSelected = _.transform(_.split(rowData.symptoms, ','), (res, n) => {

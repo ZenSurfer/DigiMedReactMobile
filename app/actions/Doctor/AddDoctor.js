@@ -1,7 +1,7 @@
 'use-strict'
 
 import React, {Component} from 'react'
-import {Text, View, StyleSheet, Navigator, Image, DrawerLayoutAndroid, ListView, TouchableOpacity, InteractionManager, ScrollView, RefreshControl, Dimensions, ActivityIndicator, TextInput, Picker, DatePickerAndroid, ToastAndroid, AsyncStorage} from 'react-native'
+import {Text, PixelRatio, Platform, View, StyleSheet, Navigator, Image, DrawerLayoutAndroid, ListView, TouchableOpacity, InteractionManager, ScrollView, RefreshControl, Dimensions, ActivityIndicator, TextInput, Picker, DatePickerAndroid, ToastAndroid, AsyncStorage} from 'react-native'
 import RNFS from 'react-native-fs'
 import ImagePicker from 'react-native-image-picker'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -17,6 +17,7 @@ const EnvInstance = new Env()
 const db = EnvInstance.db()
 const {height, width} = Dimensions.get('window')
 const avatar = require('../../assets/images/banner.jpg')
+const windowSize = Dimensions.get('window');
 
 class AddDoctor extends Component {
     constructor(props) {
@@ -47,6 +48,24 @@ class AddDoctor extends Component {
             updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
 
             refreshing: false,
+        }
+        this.pixelDensity = PixelRatio.get();
+        this.width = windowSize.width;
+        this.height = windowSize.height;
+        this.adjustedWidth = this.width * this.pixelDensity;
+        this.adjustedHeight = this.height * this.pixelDensity;
+        this.isTablet();
+    }
+    isTablet() {
+        if(this.pixelDensity < 2 && (this.adjustedWidth >= 1000 || this.adjustedHeight >= 1000)) {
+            this.isTablet = true;
+            this.isPhone = false;
+        } else if(this.pixelDensity === 2 && (this.adjustedWidth >= 1920 || this.adjustedHeight >= 1920)) {
+            this.isTablet = true;
+            this.isPhone = false;
+        } else {
+            this.isTablet = false;
+            this.isPhone = true;
         }
     }
     render() {
@@ -114,16 +133,16 @@ class AddDoctor extends Component {
                     </View>
                     <ScrollView
                         keyboardShouldPersistTaps={true}>
-                        <View style={{height: 300, backgroundColor: '#EEEEEE'}}>
+                        <View style={{height: (this.isTablet) ? 600 : 300, backgroundColor: '#EEEEEE'}}>
                             {(this.state.avatar) ? (
                                 <Image
-                                    style={{backgroundColor: '#EEEEEE', width: width, height: 300}}
+                                    style={{backgroundColor: '#EEEEEE', width: width, height: (this.isTablet) ? 600 : 300}}
                                     resizeMode={'cover'}
                                     source={{uri: this.state.avatar}} />
                                 ) : (<View/>)}
                         </View>
                         <View style={{position: 'absolute', top: 0, flex: 1, flexDirection: 'row', justifyContent: 'center', zIndex: 2}}>
-                            <View style={{flex: 1, alignItems: 'center', height: 300, flexDirection: 'row', justifyContent: 'center'}}>
+                            <View style={{flex: 1, alignItems: 'center', height: (this.isTablet) ? 600 : 300, flexDirection: 'row', justifyContent: 'center'}}>
                                 <TouchableOpacity
                                     style={{padding: 18, backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: 50, marginRight: 4}}
                                     onPress={() => {

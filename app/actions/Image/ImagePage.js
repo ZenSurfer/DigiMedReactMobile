@@ -1,7 +1,7 @@
 'use strict';
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, View, ListView, RefreshControl, Navigator, Dimensions, ToastAndroid, TouchableOpacity, TouchableNativeFeedback, Image, Alert, ScrollView, InteractionManager, ActivityIndicator, AsyncStorage, NetInfo} from 'react-native'
+import {StyleSheet, PixelRatio, Platform, Text, View, ListView, RefreshControl, Navigator, Dimensions, ToastAndroid, TouchableOpacity, TouchableNativeFeedback, Image, Alert, ScrollView, InteractionManager, ActivityIndicator, AsyncStorage, NetInfo} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import RNFS from 'react-native-fs'
 import _ from 'lodash'
@@ -13,6 +13,7 @@ const {height, width} = Dimensions.get('window');
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 const EnvInstance = new Env()
 const db = EnvInstance.db()
+const windowSize = Dimensions.get('window');
 
 class ImagePage extends Component {
     constructor(props) {
@@ -23,6 +24,24 @@ class ImagePage extends Component {
             avatar: false,
             syncing: false,
             syncingTitle: 'Syncing Imaging...',
+        }
+        this.pixelDensity = PixelRatio.get();
+        this.width = windowSize.width;
+        this.height = windowSize.height;
+        this.adjustedWidth = this.width * this.pixelDensity;
+        this.adjustedHeight = this.height * this.pixelDensity;
+        this.isTablet();
+    }
+    isTablet() {
+        if(this.pixelDensity < 2 && (this.adjustedWidth >= 1000 || this.adjustedHeight >= 1000)) {
+            this.isTablet = true;
+            this.isPhone = false;
+        } else if(this.pixelDensity === 2 && (this.adjustedWidth >= 1920 || this.adjustedHeight >= 1920)) {
+            this.isTablet = true;
+            this.isPhone = false;
+        } else {
+            this.isTablet = false;
+            this.isPhone = true;
         }
     }
     componentWillMount() {
@@ -62,7 +81,7 @@ class ImagePage extends Component {
     }
     renderScene(route, navigator) {
         return (
-            <View style={[Styles.containerStyle, {backgroundColor: '#E0E0E0'}]}>
+            <View style={[Styles.containerStyle]}>
                 {this.props.children}
                 <View style={[Styles.subTolbar, {marginTop: 24}]}>
                     <Text style={Styles.subTitle}>Imaging</Text>
@@ -89,15 +108,15 @@ class ImagePage extends Component {
                         return (
                             <View key={i} style={{flexDirection: 'row'}}>
                                 <View style={{flex: 1, alignItems: 'stretch'}}>
-                                    <View style={{height: 180, backgroundColor: '#FFFFFF'}}>
+                                    <View style={{height: (this.isTablet) ? 300 : 180, backgroundColor: '#FFFFFF'}}>
                                         <Image
                                             resizeMode={'cover'}
-                                            style={{height: 180, alignItems: 'stretch'}}
+                                            style={{height: (this.isTablet) ? 300 : 180, alignItems: 'stretch'}}
                                             source={{uri: (this.state.imaging[i].image) ? this.state[this.state.imaging[i].image] : '' }}/>
                                         <View style={{position: 'absolute', top: 0, flex: 1, flexDirection: 'row',}}>
-                                            <View style={{flex: 1, height: 180, justifyContent: 'center', alignItems: 'center'}}>
+                                            <View style={{flex: 1, height: (this.isTablet) ? 300 : 180, justifyContent: 'center', alignItems: 'center'}}>
                                                 <TouchableOpacity
-                                                    style={{padding: 18, backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: 100}}
+                                                    style={{padding: 18, marginTop: -50, backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: 100}}
                                                     onPress={() => this.props.navigator.push({
                                                         id: 'ViewImage',
                                                         passProps: {
@@ -114,7 +133,7 @@ class ImagePage extends Component {
                                             </View>
                                         </View>
                                     </View>
-                                    <View style={{flexDirection: 'row', backgroundColor: '#FFEB3B'}}>
+                                    <View style={{position: 'absolute', bottom: 0, flexDirection: 'row', backgroundColor: 'rgba(0,0,0,0.5)'}}>
                                         <TouchableOpacity
                                             style={{flex: 1, alignItems: 'center', paddingTop: 10, paddingBottom: 10}}
                                             onPress={() => {
@@ -162,23 +181,23 @@ class ImagePage extends Component {
                                                 )
                                             }}>
                                             <View style={{flexDirection: 'row', paddingTop: 2, paddingBottom: 2}}>
-                                                <Icon name={'info'} size={25} style={{color: '#212121', textAlignVertical: 'center'}}/>
-                                                <Text style={{color: '#212121', paddingLeft: 10, textAlignVertical: 'center'}}>Annotation</Text>
+                                                <Icon name={'info'} size={25} style={{color: '#FFF', textAlignVertical: 'center'}}/>
+                                                <Text style={{color: '#FFF', paddingLeft: 10, textAlignVertical: 'center'}}>ANNOTATION</Text>
                                             </View>
                                         </TouchableOpacity>
                                     </View>
                                 </View>
                                 {(_.isEmpty(this.state.imaging[i+1])) ? (<View style={{flex: 1, alignItems: 'stretch'}}/>) : (
                                     <View style={{flex: 1, alignItems: 'stretch'}}>
-                                        <View style={{height: 180, backgroundColor: '#FFFFFF'}}>
+                                        <View style={{height: (this.isTablet) ? 300 : 180, backgroundColor: '#FFFFFF'}}>
                                             <Image
                                                 resizeMode={'cover'}
-                                                style={{height: 180, alignItems: 'stretch'}}
+                                                style={{height: (this.isTablet) ? 300 : 180, alignItems: 'stretch'}}
                                                 source={{uri: (this.state.imaging[i+1].image) ? this.state[this.state.imaging[i+1].image] : '' }}/>
                                             <View style={{position: 'absolute', top: 0, flex: 1, flexDirection: 'row',}}>
-                                                <View style={{flex: 1, height: 180, justifyContent: 'center', alignItems: 'center'}}>
+                                                <View style={{flex: 1, height: (this.isTablet) ? 300 : 180, justifyContent: 'center', alignItems: 'center'}}>
                                                     <TouchableOpacity
-                                                        style={{padding: 18, backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: 100}}
+                                                        style={{padding: 18, marginTop: -50, backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: 100}}
                                                         onPress={() => this.props.navigator.push({
                                                             id: 'ViewImage',
                                                             passProps: {
@@ -195,7 +214,7 @@ class ImagePage extends Component {
                                                 </View>
                                             </View>
                                         </View>
-                                        <View style={{flexDirection: 'row', backgroundColor: '#FFEB3B'}}>
+                                        <View style={{position: 'absolute', bottom: 0,  flexDirection: 'row', backgroundColor: 'rgba(0,0,0,0.5)'}}>
                                             <TouchableOpacity
                                                 style={{flex: 1, alignItems: 'center', paddingTop: 10, paddingBottom: 10}}
                                                 onPress={() => {
@@ -243,8 +262,8 @@ class ImagePage extends Component {
                                                     )
                                                 }}>
                                                 <View style={{flexDirection: 'row', paddingTop: 2, paddingBottom: 2}}>
-                                                    <Icon name={'info'} size={25} style={{color: '#212121', textAlignVertical: 'center'}}/>
-                                                    <Text style={{color: '#212121', paddingLeft: 10, textAlignVertical: 'center'}}>Annotation</Text>
+                                                    <Icon name={'info'} size={25} style={{color: '#FFF', textAlignVertical: 'center'}}/>
+                                                    <Text style={{color: '#FFF', paddingLeft: 10, textAlignVertical: 'center'}}>ANNOTATION</Text>
                                                 </View>
                                             </TouchableOpacity>
                                         </View>

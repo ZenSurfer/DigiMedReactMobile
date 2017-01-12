@@ -48,7 +48,7 @@ class PendingOrder extends Component {
     onRefresh() {
         this.setState({refreshing: true})
         db.transaction((tx) => {
-            tx.executeSql("SELECT `diagnosis`.`symptoms` as `symptoms`, (`patients`.`firstname` || ' ' || `patients`.`middlename` || ' ' || `patients`.`lastname`) as `patientName`, `labwork`.`id` as `id`, `labwork`.`orderDate`, `labwork`.`labData` FROM `labwork` OUTER LEFT JOIN `patients` ON `patients`.`id`=`labwork`.`patientID` OUTER LEFT JOIN `diagnosis` on `diagnosis`.`id`=`labwork`.`diagnosisID` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND (`labwork`.`completed` in (null, 'NULL', '') OR `labwork`.`completed` is null  OR `labwork`.`completed`=0) AND `labwork`.`userID`=? ORDER BY `labwork`.`orderDate` DESC, `labwork`.`updated_at` DESC", [this.props.userID], (tx, rs) => {
+            tx.executeSql("SELECT `diagnosis`.`symptoms` as `symptoms`, (`patients`.`firstname` || ' ' || `patients`.`middlename` || ' ' || `patients`.`lastname`) as `patientName`, `labwork`.`id` as `id`, `labwork`.`orderDate`, `labwork`.`labData`, `labwork`.`created_at` FROM `labwork` OUTER LEFT JOIN `patients` ON `patients`.`id`=`labwork`.`patientID` OUTER LEFT JOIN `diagnosis` on `diagnosis`.`id`=`labwork`.`diagnosisID` WHERE (`labwork`.`deleted_at` in (null, 'NULL', '') OR `labwork`.`deleted_at` is null) AND (`labwork`.`completed` in (null, 'NULL', '') OR `labwork`.`completed` is null  OR `labwork`.`completed`=0) AND `labwork`.`userID`=? ORDER BY `labwork`.`orderDate` DESC, `labwork`.`updated_at` DESC", [this.props.userID], (tx, rs) => {
                 db.pendingItem = [];
                 _.forEach(rs.rows, (v, i) => {
                     var pendingItemObj = {};
@@ -56,6 +56,7 @@ class PendingOrder extends Component {
                     pendingItemObj['patientName'] = rs.rows.item(i).patientName;
                     pendingItemObj['symptoms'] = rs.rows.item(i).symptoms;
                     pendingItemObj['labworkID'] = rs.rows.item(i).id;
+                    pendingItemObj['created_at'] = rs.rows.item(i).created_at;
                     var labData = _.split(_.split(rs.rows.item(i).labData, ':::')[1], '@@');
                     tx.executeSql("SELECT `labItem`.`name`, `labItem`.`unit`, `labItem`.`normalMinValue`, `labItem`.`normalMaxValue`, `labItem`.`isNumeric` FROM `labItem` WHERE `labItem`.`id` in ("+_.join(_.split(_.split(rs.rows.item(i).labData, ':::')[0], '@@'), ',')+")", [], (tx, rs) => {
                         var items = [];
@@ -71,7 +72,7 @@ class PendingOrder extends Component {
             alert(err.message)
         }, () => {
             this.setState({pendingItem: db.pendingItem, refreshing: false})
-            this.updateData(['labwork']);
+            this.updateData(['labtItem', 'labItemClass', 'labwork']);
         })
     }
     render() {
@@ -130,6 +131,7 @@ class PendingOrder extends Component {
                 <View style={{flex: 1, alignItems: 'stretch', paddingRight: 16}}>
                     <Text>{moment(rowData.orderDate).format('MMMM DD, YYYY')}</Text>
                     <Text style={styles.listItemHead}>{rowData.patientName}</Text>
+                    <Text style={{color: '#FF5722', fontSize: 10}}>Labwork ordered {moment().from(rowData.created_at, true)} ago.</Text>
                     <Text style={{color: '#E91E63'}}>{_.join(rowData.items, ', ')}</Text>
                     <View style={{flex: 1, flexDirection: 'row', marginTop: 5, marginBottom: 5}}>
                         {_.map(['Hodgkin\'s Lymphoma', "Multiple Myeloma"], (v, i) => {
@@ -154,7 +156,7 @@ class PendingOrder extends Component {
                 <TouchableOpacity
                     style={{backgroundColor: '#2979FF', padding: 10, borderRadius: 100}}
                     onPress={() => this.updatePendingOrder(rowData.labworkID)}>
-                    <Icon name={'autorenew'} size={22} color={'#FFF'}/>
+                    <Icon name={'update'} size={22} color={'#FFF'}/>
                 </TouchableOpacity>
             </View>
         )

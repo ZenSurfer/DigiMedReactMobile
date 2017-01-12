@@ -1,7 +1,7 @@
 'use strict';
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, View, ListView, RefreshControl, Navigator, Dimensions, ToastAndroid, TouchableOpacity, TouchableNativeFeedback, Image, Alert, ScrollView, TextInput, AsyncStorage} from 'react-native'
+import {StyleSheet, PixelRatio, Platform, Text, View, ListView, RefreshControl, Navigator, Dimensions, ToastAndroid, TouchableOpacity, TouchableNativeFeedback, Image, Alert, ScrollView, TextInput, AsyncStorage} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import ImagePicker from 'react-native-image-picker'
 import RNFS from 'react-native-fs'
@@ -14,6 +14,7 @@ const {height, width} = Dimensions.get('window');
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 const EnvInstance = new Env()
 const db = EnvInstance.db()
+const windowSize = Dimensions.get('window');
 
 class AddImage extends Component {
     constructor(props) {
@@ -24,6 +25,24 @@ class AddImage extends Component {
             avatar: false,
             imageAnnotation: '',
             renderPlaceholderOnly: true,
+        }
+        this.pixelDensity = PixelRatio.get();
+        this.width = windowSize.width;
+        this.height = windowSize.height;
+        this.adjustedWidth = this.width * this.pixelDensity;
+        this.adjustedHeight = this.height * this.pixelDensity;
+        this.isTablet();
+    }
+    isTablet() {
+        if(this.pixelDensity < 2 && (this.adjustedWidth >= 1000 || this.adjustedHeight >= 1000)) {
+            this.isTablet = true;
+            this.isPhone = false;
+        } else if(this.pixelDensity === 2 && (this.adjustedWidth >= 1920 || this.adjustedHeight >= 1920)) {
+            this.isTablet = true;
+            this.isPhone = false;
+        } else {
+            this.isTablet = false;
+            this.isPhone = true;
         }
     }
     componentWillMount() {
@@ -69,7 +88,7 @@ class AddImage extends Component {
                     keyboardShouldPersistTaps={true}>
                     <View style={{position: 'absolute', top: 0, flex: 1, flexDirection: 'row', justifyContent: 'center', zIndex: 2}}>
                         {(this.state.image) ? (
-                            <View style={{flex: 1, alignItems: 'center', height: 300, flexDirection: 'row', justifyContent: 'center'}}>
+                            <View style={{flex: 1, alignItems: 'center', height: (this.isTablet) ? 600 : 300, flexDirection: 'row', justifyContent: 'center'}}>
                                 <TouchableOpacity
                                     style={{padding: 18, backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: 50, marginRight: 4}}
                                     onPress={() => {
@@ -79,7 +98,7 @@ class AddImage extends Component {
                                 </TouchableOpacity>
                             </View>
                         ) : (
-                            <View style={{flex: 1, alignItems: 'center', height: 300, flexDirection: 'row', justifyContent: 'center'}}>
+                            <View style={{flex: 1, alignItems: 'center', height: (this.isTablet) ? 600 : 300, flexDirection: 'row', justifyContent: 'center'}}>
                                 <TouchableOpacity
                                     style={{padding: 18, backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: 50, marginRight: 4}}
                                     onPress={() => {
@@ -101,10 +120,10 @@ class AddImage extends Component {
                             </View>
                         )}
                     </View>
-                    <View style={{flex: 1, flexDirection: 'row', height: 300, backgroundColor: '#E0E0E0'}}>
+                    <View style={{flex: 1, flexDirection: 'row', height: (this.isTablet) ? 600 : 300, backgroundColor: '#E0E0E0'}}>
                         {(this.state.image) ? (
                             <Image
-                                style={{flex: 1, alignItems: 'stretch', height: 300}}
+                                style={{flex: 1, alignItems: 'stretch', height: (this.isTablet) ? 600 : 300}}
                                 resizeMode={'cover'}
                                 source={{uri: this.state.image}} />
                         ) : (<View/>)}

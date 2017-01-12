@@ -265,9 +265,6 @@ class HPEDPage extends Component {
 
         )
     }
-    drawerInstance(instance) {
-        drawerRef = instance
-    }
     onRefresh() {
         this.setState({refreshing: true})
         db.transaction((tx) => {

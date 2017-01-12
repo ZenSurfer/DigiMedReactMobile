@@ -347,6 +347,28 @@ class AppointmentPage extends Component {
                             var rows = [];
                             _.forEach(db.data, (v, i) => {
                                 rows.push(i+ '='+ encodeURIComponent('{') + this.jsonToQueryString(db.data.item(i)) + encodeURIComponent('}'))
+                                if (table == 'patients' || table == 'staff' || table == 'nurses' || table == 'doctors') {
+                                    RNFS.exists(RNFS.DocumentDirectoryPath+'/'+db.data.item(i).imagePath).then((exist) => {
+                                        if (exist)
+                                            RNFS.readFile(RNFS.DocumentDirectoryPath+'/'+db.data.item(i).imagePath, 'base64').then((image) => {
+                                                this.exportImage({
+                                                    imagePath: db.data.item(i).imagePath,
+                                                    image: (image.toString().indexOf('dataimage/jpegbase64') !== -1) ? encodeURIComponent(_.replace(image.toString(), 'dataimage/jpegbase64','')) :  encodeURIComponent(image.toString())
+                                                }, table).done();
+                                            })
+                                    })
+                                }
+                                if (table == 'patientImages') {
+                                    RNFS.exists(RNFS.DocumentDirectoryPath+'/patient/'+db.data.item(i).image).then((exist) => {
+                                        if (exist)
+                                            RNFS.readFile(RNFS.DocumentDirectoryPath+'/patient/'+db.data.item(i).image, 'base64').then((image) => {
+                                                this.exportImage({
+                                                    imagePath: 'patient/'+db.data.item(i).image,
+                                                    image: (image.toString().indexOf('dataimage/jpegbase64') !== -1) ? encodeURIComponent(_.replace(image.toString(), 'dataimage/jpegbase64','')) :  encodeURIComponent(image.toString())
+                                                }, table).done();
+                                            })
+                                    })
+                                }
                             })
                             this.exportData(table, rows).then(data => {
                                 if(!_.isUndefined(data) && data.success) {
@@ -362,6 +384,23 @@ class AppointmentPage extends Component {
                                                 if (data.total > 0) {
                                                     db.sqlBatch(_.transform(data.data, (result, n, i) => {
                                                         result.push(["INSERT OR REPLACE INTO "+table+" VALUES ("+_.join(_.fill(Array(_.size(n)), '?'), ',')+")", _.values(n)])
+                                                        if (!_.isUndefined(n.imagePath)) {
+                                                            var param = {id: n.id, type: data.table};
+                                                            this.importImage(Object.keys(param).map((key) => {
+                                                                return encodeURIComponent(key) + '=' + encodeURIComponent(param[key]);
+                                                            }).join('&')).then((data) => {
+                                                                if (!_.isUndefined(data)) {
+                                                                    if (data.success) {
+                                                                        // console.log(RNFS.DocumentDirectoryPath+'/'+n.imagePath, decodeURIComponent(data.avatar))
+                                                                        RNFS.writeFile(RNFS.DocumentDirectoryPath+'/'+n.imagePath, decodeURIComponent(data.avatar), 'base64').then((success) => {
+                                                                            console.log("Successfully created!")
+                                                                        }).catch((err) => {
+                                                                            console.log("Error occured while creating image!")
+                                                                        });
+                                                                    }
+                                                                }
+                                                            }).done();
+                                                        }
                                                         return true
                                                     }, []), () => {
                                                         if(_.last(tables) === table)
@@ -371,6 +410,7 @@ class AppointmentPage extends Component {
                                                             console.log(data.table+' import', msg)
                                                             if(_.last(tables) === table)
                                                                 this.onRefresh()
+                                                            // ToastAndroid.show('Appointments updated!', 1000)
                                                         }).done()
                                                     }, (err) => {
                                                         if(_.last(tables) === table)
@@ -399,6 +439,31 @@ class AppointmentPage extends Component {
                 })
             }
         })
+    }
+    async importImage(param) {
+        try {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/image?'+param).then((response) => {
+                return response.json()
+            });
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
+    async exportImage(rows, table) {
+        try {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/storeimage?type='+table, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(rows)
+            }).then((response) => {
+                return response.json()
+            });
+        } catch (err) {
+            console.log(table+':', err.message)
+        }
     }
     async importDate(table) {
         try {

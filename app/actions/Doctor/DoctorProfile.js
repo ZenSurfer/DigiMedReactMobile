@@ -1,7 +1,7 @@
 'use-strict'
 
 import React, {Component} from 'react'
-import {Text, View, StyleSheet, Navigator, Image, DrawerLayoutAndroid, ListView, TouchableOpacity, InteractionManager, ScrollView, RefreshControl, Dimensions, ActivityIndicator} from 'react-native'
+import {Text, PixelRatio, Platform, View, StyleSheet, Navigator, Image, DrawerLayoutAndroid, ListView, TouchableOpacity, InteractionManager, ScrollView, RefreshControl, Dimensions, ActivityIndicator} from 'react-native'
 import RNFS from 'react-native-fs'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import _ from 'lodash'
@@ -16,6 +16,7 @@ const EnvInstance = new Env()
 const db = EnvInstance.db()
 const {height, width} = Dimensions.get('window')
 const avatar = require('../../assets/images/banner.jpg')
+const windowSize = Dimensions.get('window');
 
 class DoctorProfile extends Component {
     constructor(props) {
@@ -28,6 +29,24 @@ class DoctorProfile extends Component {
             renderPlaceholderOnly: true,
         }
         this.drawerRef = {}
+        this.pixelDensity = PixelRatio.get();
+        this.width = windowSize.width;
+        this.height = windowSize.height;
+        this.adjustedWidth = this.width * this.pixelDensity;
+        this.adjustedHeight = this.height * this.pixelDensity;
+        this.isTablet();
+    }
+    isTablet() {
+        if(this.pixelDensity < 2 && (this.adjustedWidth >= 1000 || this.adjustedHeight >= 1000)) {
+            this.isTablet = true;
+            this.isPhone = false;
+        } else if(this.pixelDensity === 2 && (this.adjustedWidth >= 1920 || this.adjustedHeight >= 1920)) {
+            this.isTablet = true;
+            this.isPhone = false;
+        } else {
+            this.isTablet = false;
+            this.isPhone = true;
+        }
     }
     render() {
         return (
@@ -86,10 +105,10 @@ class DoctorProfile extends Component {
                         />
                     }>
                     <View style={[styles.person, {backgroundColor: '#FFFFFF'}]}>
-                        <View style={[styles.personInformation, {height: 300, justifyContent: 'center'}]}>
+                        <View style={[styles.personInformation, {height: (this.isTablet) ? 600 : 300, justifyContent: 'center'}]}>
                             {(this.state.avatar) ? (
                                 <Image
-                                    style={[styles.avatarImage, {marginTop: 5}]}
+                                    style={[styles.avatarImage, {height: (this.isTablet) ? 600 : 300, marginTop: 5}]}
                                     source={{uri: this.state.avatar}} />
                                 ) : (
                                 <View>

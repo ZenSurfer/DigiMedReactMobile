@@ -187,13 +187,8 @@ class DoctorSharePage extends Component {
                 }}>
                 <View style={{flex: 1, backgroundColor: (this.state.selected[0].rowID == rowID) ? '#4CAF50' : '#FFF', borderColor: '#E0E0E0', borderBottomWidth: 0.5}}>
                     <View style={{flex: 1, flexDirection: 'row', padding: 16, paddingTop: 0, paddingBottom: 0, height: 80, justifyContent: 'center'}}>
-                        <View style={{flex: 1, justifyContent: 'center', marginRight: -170}}>
-                            {(rowData.imagePath) ? ((this.state['doctor'+rowData.id]) ? (
-                                <Image
-                                    resizeMode={'cover'}
-                                    style={{width: 59, height: 59, borderRadius: 100}}
-                                    source={{uri: this.state['doctor'+rowData.id]}}/>
-                                ) : ((<Icon name={'account-circle'} color={(this.state.selected[0].rowID == rowID) ? '#FFF' : '#E0E0E0'} size={80}  style={{margin: -5}}/>))) : (<Icon name={'account-circle'} color={(this.state.selected[0].rowID == rowID) ? '#FFF' : '#E0E0E0'} size={80}  style={{margin: -5}}/>)}
+                        <View style={{justifyContent: 'center', alignItems: 'center', marginRight: 16}}>
+                            {(rowData.imagePath) ? ((this.state['doctor'+rowData.id]) ? (<Image resizeMode={'cover'} style={{width: 59, height: 59, borderRadius: 100}} source={{uri: this.state['doctor'+rowData.id]}}/>) : ((<Image source={require('./../../assets/images/logo.png')} resizeMode={'cover'} style={{width: 59, height: 59, borderRadius: 100}} />))) : (<Image source={require('./../../assets/images/logo.png')} resizeMode={'cover'} style={{width: 59, height: 59, borderRadius: 100}} />)}
                         </View>
                         <View style={{flex: 1, alignItems: 'stretch', flexDirection: 'column', justifyContent: 'center'}}>
                             <Text style={[styles.listItemHead, {color: (this.state.selected[0].rowID == rowID) ? '#FFF' : '#424242'}]}>Dr. {rowData.firstname} {(rowData.middlename) ? rowData.middlename+' ' : ''}{rowData.lastname}</Text>

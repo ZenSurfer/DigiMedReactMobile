@@ -71,6 +71,23 @@ class ImportPage extends Component {
                                             }
                                         }).done();
                                     }
+                                    if (data.table === 'patientImages') {
+                                        var param = {id: n.id, type: data.table};
+                                        var path = RNFS.DocumentDirectoryPath+'/patient/'+n.image;
+                                        this.importImage(Object.keys(param).map((key) => {
+                                            return encodeURIComponent(key) + '=' + encodeURIComponent(param[key]);
+                                        }).join('&')).then((data) => {
+                                            if (!_.isUndefined(data)) {
+                                                if (data.success) {
+                                                    RNFS.writeFile(path, decodeURIComponent(data.avatar), 'base64').then((success) => {
+                                                        console.log("Successfully created!")
+                                                    }).catch((err) => {
+                                                        console.log("Error occured while creating image!")
+                                                    });
+                                                }
+                                            }
+                                        }).done();
+                                    }
                                     return true
                                 }, []), () => {
                                     this.setState({title: 'Importing Data '+Math.round(((this.state.importFile + 1) / _.size(filterSchema)) * 100)+'%'})
