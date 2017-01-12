@@ -255,7 +255,7 @@ class EditUserSetting extends Component {
                     <ScrollView
                         keyboardShouldPersistTaps={true}>
                         <View style={{backgroundColor: '#FFFFFF'}}>
-                            <View style={[{padding: 12, paddingRight: 16, backgroundColor: '#FFFFFF', borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}]}>
+                            <View style={[{padding: 12, paddingRight: 16, backgroundColor: '#FFFFFF', borderBottomWidth: 0.5, borderBottomColor: '#EEE'}]}>
                                 <View style={[styles.rows, {flexDirection: 'column'}]}>
                                     <Text style={[styles.label, {fontSize: 25, color:'#424242'}]}>User Settings</Text>
                                 </View>

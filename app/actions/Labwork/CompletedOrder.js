@@ -194,7 +194,7 @@ class PendingOrder extends Component {
                 <View style={{backgroundColor: '#FFF', marginBottom: 5}}>
                     {_.map(rowData.items, (v, i) => {
                         return (
-                            <View key={i} style={{flex: 2, flexDirection: 'row', padding: 5, paddingLeft: 16, paddingRight: 16, borderStyle: 'solid', borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0',}}>
+                            <View key={i} style={{flex: 2, flexDirection: 'row', padding: 5, paddingLeft: 16, paddingRight: 16, borderStyle: 'solid', borderBottomWidth: 0.5, borderBottomColor: '#EEE',}}>
                                 <Text style={{flex: 1, alignItems: 'stretch'}}>{v}</Text>
                                 <Text style={{flex: 1, alignItems: 'stretch', color: rowData.color[i] }}>{(rowData.values[i]) ? rowData.values[i] : '-'} {rowData.units[i]}</Text>
                             </View>
@@ -435,7 +435,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         borderStyle: 'solid',
         borderBottomWidth: 0.5,
-        borderBottomColor: '#E0E0E0',
+        borderBottomColor: '#EEE',
         backgroundColor: '#FFF',
         padding: 16,
         paddingTop: 4,

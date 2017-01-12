@@ -238,7 +238,7 @@ class AppointmentPage extends Component {
             <View>
                 {(_.size(rowData) > 0) ? (
                     <View style={{flexDirection: 'column', backgroundColor: '#F5F5F5'}}>
-                        <View style={{backgroundColor: '#FFEB3B', borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}>
+                        <View style={{backgroundColor: '#FFEB3B', borderBottomWidth: 0.5, borderBottomColor: '#EEE'}}>
                             <Text style={[styles.time, {padding: 10, paddingLeft: 16, paddingRight: 16, fontSize: 18}]}>{this.state.schedules[rowID]}</Text>
                         </View>
                         <ListView
@@ -551,7 +551,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderStyle: 'solid',
         borderBottomWidth: 0.5,
-        borderBottomColor: '#E0E0E0',
+        borderBottomColor: '#EEE',
         backgroundColor: '#FFF',
         paddingTop: 4,
         paddingBottom: 4,

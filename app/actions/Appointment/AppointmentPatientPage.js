@@ -308,7 +308,7 @@ var styles = StyleSheet.create({
     listView: {
         borderStyle: 'solid',
         borderBottomWidth: 0.5,
-        borderBottomColor: '#E0E0E0',
+        borderBottomColor: '#EEE',
         backgroundColor: '#FFF',
         elevation: 10,
     },
@@ -341,7 +341,7 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar, props) => ({
                         <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                     </Text>
                 </TouchableOpacity>
-                {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Icon name={'account-circle'} color={'#FFFFFF'} size={65}  style={styles.avatarIcon}/>)}
+                {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Image source={require('./../../assets/images/logo.png')} style={styles.avatarImage}/>)}
             </View>
         )
     },

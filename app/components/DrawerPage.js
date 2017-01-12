@@ -174,7 +174,7 @@ class DrawerPage extends Component {
                                 <Text style={styles.drawerViewText}>Doctor Referrals</Text>
                             </View>
                         </TouchableNativeFeedback>
-                        <View style={{marginTop: 5, marginBottom: 5, borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}></View>
+                        <View style={{marginTop: 5, marginBottom: 5, borderBottomWidth: 0.5, borderBottomColor: '#EEE'}}></View>
                         <Text style={[styles.drawerLabel]}>Labworks</Text>
                         <TouchableNativeFeedback
                             onPress={() => this.props.navigator.replace({
@@ -223,7 +223,7 @@ class DrawerPage extends Component {
                                 </View>
                             </View>
                         </TouchableNativeFeedback>
-                        <View style={{marginTop: 5, marginBottom: 5, borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}></View>
+                        <View style={{marginTop: 5, marginBottom: 5, borderBottomWidth: 0.5, borderBottomColor: '#EEE'}}></View>
                         <Text style={[styles.drawerLabel]}>Syncing</Text>
                         <TouchableNativeFeedback
                             onPress={() => this.props.navigator.push({
@@ -261,7 +261,7 @@ class DrawerPage extends Component {
                                 <Text style={styles.drawerViewText}>Export to Cloud</Text>
                             </View>
                         </TouchableNativeFeedback>
-                        <View style={{marginTop: 5, marginBottom: 5, borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}></View>
+                        <View style={{marginTop: 5, marginBottom: 5, borderBottomWidth: 0.5, borderBottomColor: '#EEE'}}></View>
                         <Text style={styles.drawerLabel}>Dashboard</Text>
                         <TouchableNativeFeedback
                             onPress={() => this.props.navigator.replace({

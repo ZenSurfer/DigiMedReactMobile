@@ -376,7 +376,7 @@ class OrderItem extends Component {
                                     {_.map(labItems, (v, i) => {
                                         if ((i % 2) == 0)
                                         return (
-                                            <View key={i} style={{flexDirection: 'row', backgroundColor: ((i%4)==0) ? '#FAFAFA': '#FFF', paddingLeft: 16, paddingRight: 16, borderStyle: 'solid', borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}>
+                                            <View key={i} style={{flexDirection: 'row', backgroundColor: ((i%4)==0) ? '#FAFAFA': '#FFF', paddingLeft: 16, paddingRight: 16, borderStyle: 'solid', borderBottomWidth: 0.5, borderBottomColor: '#EEE'}}>
                                                 <TouchableOpacity style={{flex: 1, alignItems: 'stretch', flexDirection: 'row'}}
                                                     activeOpacity={1}
                                                     onPress={this.labItemSelect.bind(this, _.split(labItems[i], ':')[0])}>
@@ -431,7 +431,7 @@ class OrderItem extends Component {
                                                         }), 0);
                                                         this.setState({modalVisible: true, modalItems: rowData, modalLabworkID: modalLabworkID});
                                                     }}>
-                                                    <View style={{paddingLeft: 16, paddingRight: 16, paddingBottom: 5, marginTop: 0, borderStyle: 'solid', borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}>
+                                                    <View style={{paddingLeft: 16, paddingRight: 16, paddingBottom: 5, marginTop: 0, borderStyle: 'solid', borderBottomWidth: 0.5, borderBottomColor: '#EEE'}}>
                                                         {_.map(rowData, (v, i) => {
                                                             return (
                                                                 <View key={i} style={{flexDirection: 'row', paddingTop: 5, paddingBottom: 5}}>
@@ -479,7 +479,7 @@ class OrderItem extends Component {
                                         dataSource={ds.cloneWithRows(rowData)}
                                         renderRow={(rowData, sectionID, rowID) => {
                                             return (
-                                                <View style={{paddingLeft: 16, paddingRight: 16, paddingBottom: 5, marginTop: 0, borderStyle: 'solid', borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}>
+                                                <View style={{paddingLeft: 16, paddingRight: 16, paddingBottom: 5, marginTop: 0, borderStyle: 'solid', borderBottomWidth: 0.5, borderBottomColor: '#EEE'}}>
                                                     {_.map(rowData, (v, i) => {
                                                         return (
                                                             <View key={i} style={{flexDirection: 'row', paddingTop: 5, paddingBottom: 5}}>
@@ -898,7 +898,7 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
                         <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                     </Text>
                 </TouchableOpacity>
-                {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Icon name={'account-circle'} color={'#FFFFFF'} size={65}  style={styles.avatarIcon}/>)}
+                {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Image source={require('./../../assets/images/logo.png')} style={styles.avatarImage}/>)}
             </View>
         )
     },

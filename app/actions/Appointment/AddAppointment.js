@@ -194,7 +194,7 @@ class AppointmentPage extends Component {
                                             onPress={() => {
                                                 this.setState({patientID: rowData.id, patientName: patientName, modalVisible: false})
                                             }}>
-                                            <View style={{flexDirection: 'row', padding: 12, paddingLeft: 16, paddingRight: 16, backgroundColor: (rowID%2) ? '#FFFFFF' : '#FAFAFA', borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}>
+                                            <View style={{flexDirection: 'row', padding: 12, paddingLeft: 16, paddingRight: 16, backgroundColor: (rowID%2) ? '#FFFFFF' : '#FAFAFA', borderBottomWidth: 0.5, borderBottomColor: '#EEE'}}>
                                                 <Text style={{flex: 1, alignItems: 'stretch'}}>{rowData.firstname}</Text>
                                                 <Text style={{flex: 1, alignItems: 'stretch'}}>{rowData.middlename}</Text>
                                                 <Text style={{flex: 1, alignItems: 'stretch'}}>{rowData.lastname}</Text>
@@ -435,7 +435,7 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar, props) => ({
                             <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                         </Text>
                     </TouchableOpacity>
-                    {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Icon name={'account-circle'} color={'#FFFFFF'} size={65}  style={styles.avatarIcon}/>)}
+                    {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Image source={require('./../../assets/images/logo.png')} style={styles.avatarImage}/>)}
                 </View>
             )
         else

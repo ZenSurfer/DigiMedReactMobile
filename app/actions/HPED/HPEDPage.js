@@ -160,7 +160,7 @@ class HPEDPage extends Component {
     }
     renderListView(rowData, rowID) {
         return (
-            <View style={{flex: 1, borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}>
+            <View style={{flex: 1, borderBottomWidth: 0.5, borderBottomColor: '#EEE'}}>
                 <TouchableNativeFeedback onPress={() => {
                         this.props.navigator.push({
                             id: 'HPEDInfo',
@@ -557,7 +557,7 @@ var NavigationBarRouteMapper = (drawerRef, patientID, patientName, avatar) => ({
                         <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                     </Text>
                 </TouchableOpacity>
-                {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Icon name={'account-circle'} color={'#FFFFFF'} size={65}  style={styles.avatarIcon}/>)}
+                {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Image source={require('./../../assets/images/logo.png')} style={styles.avatarImage}/>)}
             </View>
         )
     },

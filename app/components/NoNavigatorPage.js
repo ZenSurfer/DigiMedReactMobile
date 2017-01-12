@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     },
     select: {
         borderBottomWidth: 2,
-        borderBottomColor: '#E0E0E0',
+        borderBottomColor: '#EEE',
         borderStyle: 'solid',
         marginBottom: 10,
     },

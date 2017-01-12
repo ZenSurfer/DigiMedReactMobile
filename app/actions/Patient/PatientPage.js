@@ -470,7 +470,7 @@ var styles = StyleSheet.create({
         flexDirection: 'row',
         borderStyle: 'solid',
         borderBottomWidth: 0.5,
-        borderBottomColor: '#E0E0E0',
+        borderBottomColor: '#EEE',
         backgroundColor: '#FFF',
         elevation: 10,
         paddingTop: 4,

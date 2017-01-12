@@ -78,7 +78,7 @@ class UserSettingPage extends Component {
                             onRefresh={this.onRefresh.bind(this)}
                         />
                     }>
-                    <View style={[styles.person, {backgroundColor: '#FFFFFF', borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}]}>
+                    <View style={[styles.person, {backgroundColor: '#FFFFFF', borderBottomWidth: 0.5, borderBottomColor: '#EEE'}]}>
                         <View style={{backgroundColor: '#FFFFFF', marginTop: 10}}>
                             <View style={[styles.rows, {flexDirection: 'column'}]}>
                                 <Text style={[styles.label, {fontSize: 25, color:'#424242'}]}>User Settings</Text>

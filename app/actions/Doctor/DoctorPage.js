@@ -376,7 +376,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderStyle: 'solid',
         borderBottomWidth: 0.5,
-        borderBottomColor: '#E0E0E0',
+        borderBottomColor: '#EEE',
         backgroundColor: '#FFF',
         paddingTop: 4,
         paddingBottom: 4,

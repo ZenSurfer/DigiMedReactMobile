@@ -137,7 +137,7 @@ class ReferralPage extends Component {
     }
     renderListView(rowData, rowID) {
         return (
-            <View style={{flex: 1, borderBottomWidth: 0.5, borderBottomColor: '#E0E0E0'}}>
+            <View style={{flex: 1, borderBottomWidth: 0.5, borderBottomColor: '#EEE'}}>
                 <TouchableNativeFeedback onPress={() => {
                         this.props.navigator.push({
                             id: 'HPEDInfo',
@@ -529,7 +529,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderStyle: 'solid',
         borderBottomWidth: 0.5,
-        borderBottomColor: '#E0E0E0',
+        borderBottomColor: '#EEE',
         backgroundColor: '#FFF',
         paddingTop: 4,
         paddingBottom: 4,
