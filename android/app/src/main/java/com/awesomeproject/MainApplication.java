@@ -4,6 +4,7 @@ import android.app.Application;
 import android.util.Log;
 
 import com.facebook.react.ReactApplication;
+import com.beefe.picker.PickerViewPackage;
 import com.github.xinthink.rnmk.ReactMaterialKitPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.evollu.react.fcm.FIRMessagingPackage;
@@ -41,6 +42,7 @@ public class MainApplication extends Application implements ReactApplication {
           new ImagePickerPackage(),
           new MPChartPackage(),
           new MainReactPackage(),
+            new PickerViewPackage(),
             new ReactMaterialKitPackage(),
             new RNFetchBlobPackage(),
             new FIRMessagingPackage()

@@ -21,6 +21,7 @@
     "react-native-image-picker": "^0.22.7",
     "react-native-material-kit": "^0.3.2",
     "react-native-photo-view": "^1.2.0",
+    "react-native-picker": "^4.0.16",
     "react-native-picker-android": "^1.0.3",
     "react-native-sqlite-storage": "^3.1.2",
     "react-native-vector-icons": "^2.0.3",

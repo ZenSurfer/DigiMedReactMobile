@@ -47,12 +47,20 @@ line:144
         animated: false,
         showHideTransition: 'fade',
         -backgroundColor: '',
-        +backgroundColor: '#2979FF',
+        +backgroundColor: '#2962FF',
         barStyle: 'default',
         translucent: false,
         hidden: false,
         networkActivityIndicatorVisible: false,
     });
+
+file:node_modules/react-native/Libraries/Components/DrawerAndroid/DrawerLayoutAndroid.android.js
+line:163
+
+    getInitialState: function() {
+        -return {statusBarBackgroundColor: undefined};
+        +return {statusBarBackgroundColor: '#2962FF'};
+    },
 
 file:node_modules/react-native/Libraries/Components/TextInput/TextInput.js  
 line:676
