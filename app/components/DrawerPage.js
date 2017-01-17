@@ -85,7 +85,7 @@ class DrawerPage extends Component {
                                                 doctorID: this.state.doctorID,
                                                 doctorName: this.state.doctorName,
                                             },
-                                            sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                            sceneConfig: Navigator.SceneConfigs.FloatFromBottomAndroid
                                         })
                                         }>
                                         <Icon name={'arrow-drop-down'} size={30} color={'#FFF'} style={{textAlign: 'center', textAlignVertical: 'center'}}/>
@@ -108,7 +108,7 @@ class DrawerPage extends Component {
                                         doctorID: this.state.doctorID,
                                         doctorName: this.state.doctorName,
                                     },
-                                    sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                    sceneConfig: Navigator.SceneConfigs.FloatFromBottomAndroid
                                 })
                                 }>
                                 <Icon name={'arrow-drop-down'} size={25} color={'#FFF'} style={{textAlign: 'center', textAlignVertical: 'center'}}/>
@@ -119,7 +119,7 @@ class DrawerPage extends Component {
                         <TouchableNativeFeedback
                             onPress={() => this.props.navigator.replace({
                                 id: 'AppointmentPage',
-                                sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                sceneConfig: Navigator.SceneConfigs.FloatFromBottomAndroid
                             })
                             }>
                             <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'appointments') ? '#EEEEEE' : '#FFFFFF'}]}>
@@ -132,7 +132,7 @@ class DrawerPage extends Component {
                         <TouchableNativeFeedback
                             onPress={() => this.props.navigator.replace({
                                 id: 'PatientPage',
-                                sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                sceneConfig: Navigator.SceneConfigs.FloatFromBottomAndroid
                             })
                             }>
                             <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'patients') ? '#EEEEEE' : '#FFFFFF'}]}>
@@ -148,7 +148,7 @@ class DrawerPage extends Component {
                                 passProps: {
                                     doctorID: this.state.doctorID
                                 },
-                                sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                sceneConfig: Navigator.SceneConfigs.FloatFromBottomAndroid
                             })
                             }>
                             <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'doctors') ? '#EEEEEE' : '#FFFFFF'}]}>
@@ -164,7 +164,7 @@ class DrawerPage extends Component {
                                 passProps: {
                                     doctorID: this.state.doctorID
                                 },
-                                sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                sceneConfig: Navigator.SceneConfigs.FloatFromBottomAndroid
                             })
                             }>
                             <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'referrals') ? '#EEEEEE' : '#FFFFFF'}]}>
@@ -182,7 +182,7 @@ class DrawerPage extends Component {
                                 passProps: {
                                     userID: this.state.userID,
                                 },
-                                sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                sceneConfig: Navigator.SceneConfigs.FloatFromBottomAndroid
                             })
                             }>
                             <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'pending') ? '#EEEEEE' : '#FFFFFF'}]}>
@@ -205,7 +205,7 @@ class DrawerPage extends Component {
                                 passProps: {
                                     userID: this.state.userID,
                                 },
-                                sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                sceneConfig: Navigator.SceneConfigs.FloatFromBottomAndroid
                             })
                             }>
                             <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'completed') ? '#EEEEEE' : '#FFFFFF'}]}>
@@ -271,7 +271,7 @@ class DrawerPage extends Component {
                                     doctorID: this.state.doctorID,
                                     doctorName: this.state.doctorName,
                                 },
-                                sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                sceneConfig: Navigator.SceneConfigs.FloatFromBottomAndroid
                             })
                             }>
                             <View style={[styles.drawerViewWrapper, {backgroundColor: (this.props.routeName == 'settings') ? '#EEEEEE' : '#FFFFFF'}]}>
@@ -284,9 +284,9 @@ class DrawerPage extends Component {
                         <TouchableNativeFeedback
                             onPress={() => {
                                 this.removeCredentials().done(() => {
-                                    this.props.navigator.replace({
+                                    this.props.navigator.push({
                                         id: 'LoginPage',
-                                        sceneConfig: Navigator.SceneConfigs.FloatFromLeft
+                                        sceneConfig: Navigator.SceneConfigs.FloatFromBottomAndroid
                                     })
                                 });
                             }

@@ -79,6 +79,7 @@ class HPEDPage extends Component {
     renderScene(route, navigator) {
         return (
             <View style={Styles.containerStyle}>
+                {this.props.children}
                 <View style={[Styles.subTolbar, {}]}>
                     <Text style={Styles.subTitle}>H.P.E.D.</Text>
                 </View>
@@ -557,7 +558,7 @@ var NavigationBarRouteMapper = (drawerRef, patientID, patientName, avatar) => ({
                         <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                     </Text>
                 </TouchableOpacity>
-                {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Image source={require('./../../assets/images/logo.png')} style={styles.avatarImage}/>)}
+                {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Image source={require('./../../assets/images/patient.png')} style={styles.avatarImage}/>)}
             </View>
         )
     },

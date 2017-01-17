@@ -1,7 +1,7 @@
 'use strict';
 
 import React, {Component} from 'react'
-import {Text, View, Navigator, ActivityIndicator, StyleSheet, Dimensions, TouchableOpacity, AsyncStorage, ToastAndroid, ProgressBarAndroid, Animated, Easing, NetInfo} from 'react-native'
+import {Text, View, Image, Navigator, ActivityIndicator, StyleSheet, Dimensions, TouchableOpacity, AsyncStorage, ToastAndroid, ProgressBarAndroid, Animated, Easing, NetInfo} from 'react-native'
 import RNFS from 'react-native-fs'
 import FCM from 'react-native-fcm';
 import Schema from '../database/schema.js'
@@ -28,6 +28,7 @@ class SplashPage extends Component {
             title: 'Validating Requirements...',
             error: 1,
             doctorUserID: this.props.doctorUserID,
+            firstLoad: true,
         }
     }
     componentWillMount() {
@@ -41,20 +42,30 @@ class SplashPage extends Component {
         this.setState({table: _.omit(table, ['migrations', 'password_resets'])});
     }
     componentDidMount() {
-        this.updateCredentials().then(validate => {
-            if (validate || this.state.doctorUserID) {
-                if (this.props.initial) {
-                    this.setState({title: 'Initial Configuration...'})
-                    this.initial();
-                } else
-                    this.validate();
+        this.isInitial().then(initial => {
+            if (!initial || this.state.doctorUserID) {
+                this.setState({firstLoad: false})
+                this.updateCredentials().then(validate => {
+                    if (validate || this.state.doctorUserID) {
+                        if (this.props.initial) {
+                            this.setState({title: 'Initial Configuration...'})
+                            this.initial();
+                        } else
+                            this.validate();
+                    } else {
+                        this.props.navigator.push({
+                            id: 'LoginPage',
+                            sceneConfig: Navigator.SceneConfigs.FloatFromBottomAndroid
+                        });
+                    }
+                }).done();
             } else {
-                this.props.navigator.replace({
-                    id: 'LoginPage',
-                    sceneConfig: Navigator.SceneConfigs.FadeAndroid
-                });
+                this.props.navigator.push({
+                    id: 'StepOne',
+                    statusBarHidden: true
+                })
             }
-        }).done();
+        }).done()
     }
     async updateCredentials() {
         try {
@@ -65,6 +76,19 @@ class SplashPage extends Component {
             } else
                 return false
         } catch (error) {
+            return false
+            console.log('AsyncStorage error: ' + error.message);
+        }
+    }
+    async isInitial() {
+        try {
+            var mobile = await AsyncStorage.getItem('mobile');
+            if (!_.isNull(mobile)) {
+                return false
+            } else
+                return true
+        } catch (error) {
+            return true
             console.log('AsyncStorage error: ' + error.message);
         }
     }
@@ -122,9 +146,9 @@ class SplashPage extends Component {
                     }).done()
                 } else {
                     ToastAndroid.show('Connection Problem!', 1000)
-                    this.props.navigator.replace({
+                    this.props.navigator.push({
                         id: 'LoginPage',
-                        sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                        sceneConfig: Navigator.SceneConfigs.FloatFromBottomAndroid
                     });
                 }
             })
@@ -155,9 +179,9 @@ class SplashPage extends Component {
                         if (this.state.error == 4) {
                             this.setState({title: 'Cannot Fixed Problem Relogin...'})
                             setTimeout(() => {
-                                this.props.navigator.replace({
+                                this.props.navigator.push({
                                     id: 'LoginPage',
-                                    sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                    sceneConfig: Navigator.SceneConfigs.FloatFromBottomAndroid
                                 });
                             }, 1000)
                         } else {
@@ -187,9 +211,9 @@ class SplashPage extends Component {
                                                     AsyncStorage.setItem('importDate', JSON.stringify({}))
                                                     AsyncStorage.setItem('exportDate', JSON.stringify({}))
                                                 }
-                                                this.props.navigator.replace({
+                                                this.props.navigator.push({
                                                     id: 'AppointmentPage',
-                                                    sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                                    sceneConfig: Navigator.SceneConfigs.FloatFromBottomAndroid
                                                 });
                                             } else {
                                                 console.log('offline-register', data)
@@ -198,15 +222,15 @@ class SplashPage extends Component {
                                                         doctor['mobileID'] = data.mobileID;
                                                         AsyncStorage.setItem('doctor', JSON.stringify(doctor))
                                                         ToastAndroid.show('Connection Problem, Offline Mode!', 1000)
-                                                        this.props.navigator.replace({
+                                                        this.props.navigator.push({
                                                             id: 'AppointmentPage',
-                                                            sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                                            sceneConfig: Navigator.SceneConfigs.FloatFromBottomAndroid
                                                         });
                                                     } else {
                                                         ToastAndroid.show('Login Problem!', 1000)
-                                                        this.props.navigator.replace({
+                                                        this.props.navigator.push({
                                                             id: 'LoginPage',
-                                                            sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                                            sceneConfig: Navigator.SceneConfigs.FloatFromBottomAndroid
                                                         });
                                                     }
                                                 }).done();
@@ -223,15 +247,15 @@ class SplashPage extends Component {
                                                 doctor['mobileID'] = data.mobileID;
                                                 AsyncStorage.setItem('doctor', JSON.stringify(doctor))
                                                 ToastAndroid.show('Offline Mode!', 1000)
-                                                this.props.navigator.replace({
+                                                this.props.navigator.push({
                                                     id: 'AppointmentPage',
-                                                    sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                                    sceneConfig: Navigator.SceneConfigs.FloatFromBottomAndroid
                                                 });
                                             } else {
                                                 ToastAndroid.show('Login Problem!', 1000)
-                                                this.props.navigator.replace({
+                                                this.props.navigator.push({
                                                     id: 'LoginPage',
-                                                    sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                                    sceneConfig: Navigator.SceneConfigs.FloatFromBottomAndroid
                                                 });
                                             }
                                         }).done();
@@ -239,12 +263,12 @@ class SplashPage extends Component {
                                     }
                                 });
                             } else {
-                                this.props.navigator.replace({
+                                this.props.navigator.push({
                                     id: 'VerifyPage',
                                     passProps: {
                                         doctorUserID: this.state.doctorUserID,
                                     },
-                                    sceneConfig: Navigator.SceneConfigs.FadeAndroid
+                                    sceneConfig: Navigator.SceneConfigs.HorizontalSwipeJump
                                 });
                             }
                         })
@@ -268,13 +292,20 @@ class SplashPage extends Component {
         return (
             <View style={{flex: 1, backgroundColor: '#2962FF', alignItems: 'center', justifyContent: 'center'}}>
                 {this.props.children}
-                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', paddingLeft: 16, paddingRight: 16}}>
+                    <Image
+                        style={{flex: 1, maxWidth: 300}}
+                        resizeMode={'contain'}
+                        source={require('./../assets/images/splash.png')}
+                    />
+                </View>
+                {/* <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                     <Animatable.Text
                         animation="pulse"
                         iterationCount={'infinite'}
                         easing="ease-out">
                         <Icon name={'insert-drive-file'}  size={100} color={'#FFF'}/>
-                    </Animatable.Text>
+                    </Animatable.Text> */}
                     {/** <TouchableOpacity
                         style={{padding: 30, backgroundColor: '#FFF'}}
                         onPress={() => this.initial()}>
@@ -285,21 +316,20 @@ class SplashPage extends Component {
                         onPress={() => this.validate()}>
                         <Text>Validate</Text>
                     </TouchableOpacity>**/}
-                </View>
-                <View style={{position: 'absolute', bottom: 20, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                {/* </View> */}
+                <View style={{position: 'absolute', backgroundColor: '#2962FF', bottom: 0, paddingBottom: 10, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                     <View style={{flex: 1, alignItems: 'stretch'}}>
-                        <Text style={{color: 'white', fontSize: 20, paddingBottom: 20, textAlign: 'center'}}>{this.state.title}</Text>
+                        <Text style={{color: 'white', fontSize: 20, paddingBottom: 10, paddingTop: 10, textAlign: 'center'}}>{this.state.title}</Text>
                         <View style={[styles.loading]}>
                             <ProgressBarAndroid
-                                progress={this.state.progress}
-                                indeterminate={!(this.state.progress > 0) ? true : false}
+                                indeterminate={true}
                                 styleAttr={'Horizontal'}
                                 color={'#FFF'}/>
                         </View>
                     </View>
                 </View>
             </View>
-        );
+        )
     }
     parse(table, values) {
         var rows = []; var where = [];

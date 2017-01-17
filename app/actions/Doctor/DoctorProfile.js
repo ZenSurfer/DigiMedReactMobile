@@ -79,6 +79,7 @@ class DoctorProfile extends Component {
     renderPlaceholderView() {
         return (
             <View style={Styles.containerStyle}>
+                {this.props.children}
                 <View style={[Styles.subTolbar, {}]}>
                     <Text style={Styles.subTitle}>{this.props.doctorName}</Text>
                 </View>
@@ -265,7 +266,7 @@ var styles = StyleSheet.create({
         flex: 1,
         // flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#E0E0E0',
+        backgroundColor: '#EEE',
         marginLeft: -20,
         marginRight: -20,
         marginBottom: 20,

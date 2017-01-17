@@ -435,7 +435,7 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar, props) => ({
                             <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                         </Text>
                     </TouchableOpacity>
-                    {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Image source={require('./../../assets/images/logo.png')} style={styles.avatarImage}/>)}
+                    {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Image source={require('./../../assets/images/patient.png')} style={styles.avatarImage}/>)}
                 </View>
             )
         else

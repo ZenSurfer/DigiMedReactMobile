@@ -1,7 +1,7 @@
 'use strict'
 
 import React from 'react'
-import {StatusBar, View, Text, TouchableOpacity, BackAndroid} from 'react-native'
+import {StatusBar, View, Text, TouchableOpacity} from 'react-native'
 import SQLite from 'react-native-sqlite-storage'
 
 import SplashPage from './actions/SplashPage'
@@ -9,6 +9,10 @@ import VerifyPage from './actions/VerifyPage'
 import LoginPage from './actions/LoginPage'
 import PersonPage from './actions/PersonPage'
 import SearchPage from './actions/SearchPage'
+
+import StepOne from './actions/Splash/StepOne'
+import StepTwo from './actions/Splash/StepTwo'
+import StepThree from './actions/Splash/StepThree'
 
 import MainPage from './actions/MainPage'
 import FrontPage from './actions/FrontPage'
@@ -70,8 +74,29 @@ module.exports = (route, navigator, self) => {
     if (routeId === 'SplashPage') {
         return (
             <SplashPage navigator={navigator} {...route.passProps}>
-                <StatusBar backgroundColor='#2962FF'/>
+                <StatusBar backgroundColor='rgba(0,0,0,0)' translucent={true}/>
             </SplashPage>
+        )
+    }
+    if (routeId === 'StepOne') {
+        return (
+            <StepOne navigator={navigator} {...route.passProps}>
+                <StatusBar backgroundColor='rgba(0,0,0,0)' translucent={true}/>
+            </StepOne>
+        )
+    }
+    if (routeId === 'StepTwo') {
+        return (
+            <StepTwo navigator={navigator} {...route.passProps}>
+                <StatusBar backgroundColor='rgba(0,0,0,0)' translucent={true}/>
+            </StepTwo>
+        )
+    }
+    if (routeId === 'StepThree') {
+        return (
+            <StepThree navigator={navigator} {...route.passProps}>
+                <StatusBar backgroundColor='rgba(0,0,0,0)' translucent={true}/>
+            </StepThree>
         )
     }
     if (routeId === 'VerifyPage') {
@@ -84,7 +109,7 @@ module.exports = (route, navigator, self) => {
     if (routeId === 'LoginPage') {
         return (
             <LoginPage navigator={navigator} {...route.passProps}>
-                <StatusBar backgroundColor='#2962FF'/>
+                <StatusBar backgroundColor='rgba(0,0,0,0)' translucent={true}/>
             </LoginPage>
         )
     }
@@ -99,7 +124,7 @@ module.exports = (route, navigator, self) => {
     if (routeId === 'MainPage') {
         return (
             <MainPage navigator={navigator} {...route.passProps}>
-                <StatusBar backgroundColor='#2962FF' translucent={true}/>
+                <StatusBar backgroundColor='#2962FF'/>
             </MainPage>
         )
     }
@@ -107,21 +132,21 @@ module.exports = (route, navigator, self) => {
     if (routeId === 'PatientPage') {
         return (
             <PatientPage navigator={navigator} {...route.passProps}>
-                <StatusBar backgroundColor='#2962FF' translucent={true}/>
+                <StatusBar backgroundColor='rgba(0, 0, 0, 0.01)' translucent={true}/>
             </PatientPage>
         )
     }
     if (routeId === 'AddPatient') {
         return (
             <AddPatient navigator={navigator} {...route.passProps}>
-                <StatusBar backgroundColor='#2962FF' translucent={true}/>
+                <StatusBar backgroundColor='#2962FF'/>
             </AddPatient>
         )
     }
     if (routeId === 'PatientProfile') {
         return (
             <PatientProfile navigator={navigator} {...route.passProps}>
-                <StatusBar backgroundColor='#2962FF' translucent={true}/>
+                <StatusBar backgroundColor='rgba(0, 0, 0, 0.01)' translucent={true}/>
             </PatientProfile>
         )
     }
@@ -145,7 +170,7 @@ module.exports = (route, navigator, self) => {
         return (
             <HPEDPage navigator={navigator} {...route.passProps}>
                 {/* <StatusBar backgroundColor='#2962FF'/> */}
-                <StatusBar backgroundColor='#2962FF' translucent={true}/>
+                <StatusBar backgroundColor='rgba(0, 0, 0, 0.01)' translucent={true}/>
             </HPEDPage>
         )
     }
@@ -174,14 +199,14 @@ module.exports = (route, navigator, self) => {
     if (routeId === 'PendingOrder') {
         return (
             <PendingOrder navigator={navigator} {...route.passProps}>
-                <StatusBar backgroundColor='#2962FF' translucent={true}/>
+                <StatusBar backgroundColor='rgba(0, 0, 0, 0.01)' translucent={true}/>
             </PendingOrder>
         )
     }
     if (routeId === 'CompletedOrder') {
         return (
             <CompletedOrder navigator={navigator} {...route.passProps}>
-                <StatusBar backgroundColor='#2962FF' translucent={true}/>
+                <StatusBar backgroundColor='rgba(0, 0, 0, 0.01)' translucent={true}/>
             </CompletedOrder>
         )
     }
@@ -240,14 +265,14 @@ module.exports = (route, navigator, self) => {
     if (routeId === 'AppointmentPage') {
         return (
             <AppointmentPage navigator={navigator} {...route.passProps}>
-                <StatusBar backgroundColor='#2962FF' translucent={true}/>
+                <StatusBar backgroundColor='rgba(0, 0, 0, 0.01)' translucent={true}/>
             </AppointmentPage>
         )
     }
     if (routeId === 'AppointmentPatientPage') {
         return (
             <AppointmentPatientPage navigator={navigator} {...route.passProps}>
-                <StatusBar backgroundColor='#2962FF' translucent={true}/>
+                <StatusBar backgroundColor='rgba(0, 0, 0, 0.01)' translucent={true}/>
             </AppointmentPatientPage>
         )
     }
@@ -291,7 +316,7 @@ module.exports = (route, navigator, self) => {
    if (routeId === 'UserSettingPage') {
        return (
            <UserSettingPage navigator={navigator} {...route.passProps}>
-               <StatusBar backgroundColor='#2962FF' translucent={true}/>
+               <StatusBar backgroundColor='rgba(0, 0, 0, 0.01)' translucent={true}/>
            </UserSettingPage>
        )
    }
@@ -305,7 +330,7 @@ module.exports = (route, navigator, self) => {
    if (routeId === 'UserProfilePage') {
        return (
            <UserProfilePage navigator={navigator} {...route.passProps}>
-               <StatusBar backgroundColor='#2962FF' translucent={true}/>
+               <StatusBar backgroundColor='rgba(0, 0, 0, 0.01)' translucent={true}/>
            </UserProfilePage>
        )
    }
@@ -320,7 +345,7 @@ module.exports = (route, navigator, self) => {
    if (routeId === 'DoctorPage') {
        return (
            <DoctorPage navigator={navigator} {...route.passProps}>
-               <StatusBar backgroundColor='#2962FF' translucent={true}/>
+               <StatusBar backgroundColor='rgba(0, 0, 0, 0.01)' translucent={true}/>
            </DoctorPage>
        )
    }
@@ -356,14 +381,14 @@ module.exports = (route, navigator, self) => {
     if (routeId === 'ExportPage') {
         return (
             <ExportPage navigator={navigator} {...route.passProps}>
-                <StatusBar backgroundColor='#2962FF'/>
+                <StatusBar backgroundColor='rgba(0, 0, 0, 0)' translucent={true} />
             </ExportPage>
         )
     }
     if (routeId === 'ImportPage') {
         return (
             <ImportPage navigator={navigator} {...route.passProps}>
-                <StatusBar backgroundColor='#2962FF'/>
+                <StatusBar backgroundColor='rgba(0, 0, 0, 0)' translucent={true} />
             </ImportPage>
         )
     }
@@ -378,7 +403,7 @@ module.exports = (route, navigator, self) => {
     if (routeId === 'ReferralPage') {
         return (
             <ReferralPage navigator={navigator} {...route.passProps}>
-                <StatusBar backgroundColor='#2962FF' translucent={true}/>
+                <StatusBar backgroundColor='rgba(0, 0, 0, 0.01)' translucent={true}/>
             </ReferralPage>
         )
     }

@@ -73,7 +73,6 @@ class AwesomeProject extends Component {
         }
     }
     componentWillUnmount() {
-        // this.refreshUnsubscribe();
         this.notificationUnsubscribe();
     }
     render() {
@@ -92,11 +91,13 @@ class AwesomeProject extends Component {
     }
     renderScene(route, navigator) {
         BackAndroid.addEventListener('hardwareBackPress', function() {
-            if (route.id !== 'PatientPage') {
+            console.log(navigator.getCurrentRoutes(0))
+            if (route.id === 'LoginPage' || route.id === 'AppointmentPage' || route.id === 'StepOne' || route.id === 'SplashPage' || route.id === 'ImportPage' || route.id === 'ExportPage' || route.id === 'CompletedOrder' || route.id === 'PendingOrder' || route.id === 'ReferralPage' || route.id === 'PatientPage' || route.id === 'UserProfilePage' || route.id === 'UserSettingPage') {
+                return true;
+            } else {
                 navigator.pop();
                 return true;
             }
-            return false
         });
         return routes(route, navigator, this)
     }

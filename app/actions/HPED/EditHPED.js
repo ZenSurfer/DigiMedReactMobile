@@ -246,7 +246,7 @@ class EditHPED extends Component {
                         </View>
                     </View>
                 </Modal>
-                <View style={{flexDirection: 'row', backgroundColor: '#E0E0E0', paddingRight:100}}>
+                <View style={{flexDirection: 'row', backgroundColor: '#EEE', paddingRight:100}}>
                     <TouchableOpacity
                         activeOpacity={(this.state.steps.active == 1) ? 1 : 0.2}
                         style={[styles.steps, (this.state.steps.active == 1) ? styles.stepsActive : {}]}
@@ -910,7 +910,7 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
                         <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                     </Text>
                 </TouchableOpacity>
-                {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Image source={require('./../../assets/images/logo.png')} style={styles.avatarImage}/>)}
+                {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Image source={require('./../../assets/images/patient.png')} style={styles.avatarImage}/>)}
             </View>
         )
     },

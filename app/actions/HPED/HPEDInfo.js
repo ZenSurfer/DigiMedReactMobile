@@ -164,7 +164,7 @@ class HPEDInfo extends Component {
                     <View style={[Styles.subTolbar, {marginTop: 24}]}>
                         <Text style={Styles.subTitle}>H.P.E.D. Information</Text>
                     </View>
-                    <View style={{flexDirection: 'row', backgroundColor: '#E0E0E0', paddingRight:100}}>
+                    <View style={{flexDirection: 'row', backgroundColor: '#EEE', paddingRight:100}}>
                         <TouchableOpacity
                             activeOpacity={(this.state.steps.active == 1) ? 1 : 0.2}
                             style={[styles.steps, (this.state.steps.active == 1) ? styles.stepsActive : {}]}
@@ -231,10 +231,10 @@ class HPEDInfo extends Component {
                                 <View style={{position: 'absolute', bottom: 0, flex: 2, flexDirection: 'row', justifyContent: 'center'}}>
                                     <View style={{flex: 1, flexGrow: 3, alignItems: 'flex-end'}}>
                                         <View style={{height: 60, justifyContent: 'center'}}>
-                                            <Text style={{fontSize: 14, backgroundColor: '#E0E0E0', padding: 5, paddingLeft: 16, paddingRight: 16, borderRadius: 100}}>Refer to Doctor</Text>
+                                            <Text style={{fontSize: 14, backgroundColor: '#EEE', padding: 5, paddingLeft: 16, paddingRight: 16, borderRadius: 100}}>Refer to Doctor</Text>
                                         </View>
                                         <View style={{height: 90, justifyContent: 'center'}}>
-                                            <Text style={{fontSize: 14, backgroundColor: '#E0E0E0', padding: 5, paddingLeft: 16, paddingRight: 16, borderRadius: 100}}>Add to Follow-Up</Text>
+                                            <Text style={{fontSize: 14, backgroundColor: '#EEE', padding: 5, paddingLeft: 16, paddingRight: 16, borderRadius: 100}}>Add to Follow-Up</Text>
                                         </View>
                                     </View>
                                     <View style={{flex: 1, alignItems: 'center'}}>
@@ -662,7 +662,7 @@ var NavigationBarRouteMapper = (patientID, patientName, props, avatar) => ({
                         <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                     </Text>
                 </TouchableOpacity>
-                {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Image source={require('./../../assets/images/logo.png')} style={styles.avatarImage}/>)}
+                {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Image source={require('./../../assets/images/patient.png')} style={styles.avatarImage}/>)}
             </View>
         )
     },

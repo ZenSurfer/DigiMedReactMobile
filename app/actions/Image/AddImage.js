@@ -120,7 +120,7 @@ class AddImage extends Component {
                             </View>
                         )}
                     </View>
-                    <View style={{flex: 1, flexDirection: 'row', height: (this.isTablet) ? 600 : 300, backgroundColor: '#E0E0E0'}}>
+                    <View style={{flex: 1, flexDirection: 'row', height: (this.isTablet) ? 600 : 300, backgroundColor: '#EEE'}}>
                         {(this.state.image) ? (
                             <Image
                                 style={{flex: 1, alignItems: 'stretch', height: (this.isTablet) ? 600 : 300}}
@@ -259,7 +259,7 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
                         <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                     </Text>
                 </TouchableOpacity>
-                {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Image source={require('./../../assets/images/logo.png')} style={styles.avatarImage}/>)}
+                {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Image source={require('./../../assets/images/patient.png')} style={styles.avatarImage}/>)}
             </View>
         )
     },

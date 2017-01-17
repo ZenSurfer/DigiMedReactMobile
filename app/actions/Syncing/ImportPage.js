@@ -1,7 +1,7 @@
 'use strict';
 
 import React, {Component} from 'react'
-import {Text, View, Navigator, ActivityIndicator, StyleSheet, Dimensions, TouchableOpacity, AsyncStorage, ToastAndroid, ProgressBarAndroid, NetInfo} from 'react-native'
+import {Text, View, Navigator, ActivityIndicator, StyleSheet, Dimensions, TouchableOpacity, AsyncStorage, ToastAndroid, ProgressBarAndroid, NetInfo, Image} from 'react-native'
 import RNFS from 'react-native-fs'
 import Schema from '../../database/schema.js'
 import Styles from '../../assets/Styles.js'
@@ -141,10 +141,15 @@ class ImportPage extends Component {
     }
     render() {
         return (
-            <View style={{flex: 1, backgroundColor: '#2962FF', alignItems: 'center', justifyContent: 'center'}}>
+            <View style={{flex: 1, backgroundColor: '#51d6ab', alignItems: 'center', justifyContent: 'center'}}>
                 {this.props.children}
-                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                    {!(this.state.progress >= 0.1) ? (
+                <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', paddingLeft: 16, paddingRight: 16}}>
+                    <Image
+                        style={{flex: 1, maxWidth: 300}}
+                        resizeMode={'contain'}
+                        source={require('./../../assets/images/import.jpg')}
+                    />
+                    {/* {!(this.state.progress >= 0.1) ? (
                         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
                             <Animatable.Text
                                 animation="pulse"
@@ -166,16 +171,16 @@ class ImportPage extends Component {
                                     </View>
                                 </View>
                         </View>
-                    )}
+                    )} */}
                 </View>
                 {/**<TouchableOpacity
                     style={{padding: 30, backgroundColor: '#FFF'}}
                     onPress={() => this.validate()}>
                     <Text>Validate</Text>
                 </TouchableOpacity>**/}
-                <View style={{position: 'absolute', bottom: 20, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                <View style={{position: 'absolute', backgroundColor: '#51d6ab', bottom: 0, paddingBottom: 10, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                     <View style={{flex: 1, alignItems: 'stretch'}}>
-                        <Text style={{color: 'white', fontSize: 20, paddingBottom: 20, textAlign: 'center'}}>{this.state.title}</Text>
+                        <Text style={{color: 'white', fontSize: 20, paddingBottom: 10, paddingTop: 10, textAlign: 'center'}}>{this.state.title}</Text>
                         <View style={[styles.loading]}>
                             <ProgressBarAndroid
                                 progress={this.state.progress}

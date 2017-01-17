@@ -95,6 +95,7 @@ class DoctorPage extends Component {
     renderScene(route, navigator) {
         return (
             <View style={Styles.containerStyle}>
+                {this.props.children}
                 <View style={[Styles.subTolbar, {}]}>
                     <Text style={Styles.subTitle}>Doctor</Text>
                 </View>
@@ -141,7 +142,7 @@ class DoctorPage extends Component {
                 <View style={{flex: 1, backgroundColor: '#FFFFFF', borderColor: '#E0E0E0', borderBottomWidth: 0.5}}>
                     <View style={{flex: 1, flexDirection: 'row', padding: 16, paddingTop: 0, paddingBottom: 0, minHeight: 100, justifyContent: 'center'}}>
                         <View style={{justifyContent: 'center', alignItems: 'center', marginRight: 16}}>
-                            {(rowData.imagePath) ? ((this.state['doctor'+rowData.id]) ? (<Image resizeMode={'cover'} style={{width: 59, height: 59, borderRadius: 100}} source={{uri: this.state['doctor'+rowData.id]}}/>) : ((<Image source={require('./../../assets/images/logo.png')} resizeMode={'cover'} style={{width: 59, height: 59, borderRadius: 100}} />))) : (<Image source={require('./../../assets/images/logo.png')} resizeMode={'cover'} style={{width: 59, height: 59, borderRadius: 100}} />)}
+                            {(rowData.imagePath) ? ((this.state['doctor'+rowData.id]) ? (<Image resizeMode={'cover'} style={{width: 59, height: 59, borderRadius: 100}} source={{uri: this.state['doctor'+rowData.id]}}/>) : ((<Image source={require('./../../assets/images/patient.png')} resizeMode={'cover'} style={{width: 59, height: 59, borderRadius: 100}} />))) : (<Image source={require('./../../assets/images/patient.png')} resizeMode={'cover'} style={{width: 59, height: 59, borderRadius: 100}} />)}
                         </View>
                         <View style={{flex: 1, alignItems: 'stretch', flexDirection: 'column', justifyContent: 'center'}}>
                             <Text style={styles.listItemHead}>Dr. {rowData.firstname} {(rowData.middlename) ? rowData.middlename+' ' : ''}{rowData.lastname}</Text>

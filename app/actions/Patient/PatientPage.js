@@ -73,6 +73,7 @@ class PatientPage extends Component {
     renderScene(route, navigator) {
         return (
             <View style={Styles.containerStyle}>
+                {this.props.children}
                 <View style={[Styles.subTolbar, {}]}>
                     <Text style={Styles.subTitle}>Patient</Text>
                 </View>
@@ -200,7 +201,7 @@ class PatientPage extends Component {
                 <View style={{flex: 1, backgroundColor: '#FFFFFF', borderColor: '#E0E0E0', borderBottomWidth: 0.5}}>
                     <View style={{flex: 1, flexDirection: 'row', paddingLeft: 16, minHeight: 80, justifyContent: 'center'}}>
                         <View style={{justifyContent: 'center', alignItems: 'center', marginRight: 16}}>
-                            {(rowData.imagePath) ? ((this.state['patient'+rowData.id]) ? (<Image source={{uri: this.state['patient'+rowData.id]}} style={[styles.avatarImage]}/>) : ((<Image source={require('./../../assets/images/logo.png')} style={[styles.avatarImage]}/>))) : (<Image source={require('./../../assets/images/logo.png')} style={[styles.avatarImage]}/>)}
+                            {(rowData.imagePath) ? ((this.state['patient'+rowData.id]) ? (<Image source={{uri: this.state['patient'+rowData.id]}} style={[styles.avatarImage]}/>) : ((<Image source={require('./../../assets/images/patient.png')} style={[styles.avatarImage]}/>))) : (<Image source={require('./../../assets/images/patient.png')} style={[styles.avatarImage]}/>)}
                         </View>
                         <View style={[styles.listText, {flex: 1, alignItems: 'stretch', justifyContent: 'center'}]}>
                             <Text style={styles.listItemHead}>{rowData.firstname+' '+rowData.middlename+' '+rowData.lastname}</Text>

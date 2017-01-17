@@ -1,7 +1,7 @@
 'use strict';
 
 import React, { Component } from 'react'
-import { StyleSheet, Text, View, Navigator, ScrollView, ProgressBarAndroid, ToastAndroid, DrawerLayoutAndroid, TextInput, TouchableOpacity, Dimensions, ActivityIndicator, Animated, AsyncStorage, NetInfo} from 'react-native'
+import { StyleSheet, Text, Image, View, Navigator, ScrollView, ProgressBarAndroid, ToastAndroid, DrawerLayoutAndroid, TextInput, TouchableOpacity, Dimensions, ActivityIndicator, Animated, AsyncStorage, NetInfo} from 'react-native'
 import RNFS from 'react-native-fs'
 import Schema from '../../database/schema.js'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -47,21 +47,23 @@ class ExportPage extends Component {
     }
     render() {
         return (
-            <View style={{flex: 1, backgroundColor: '#2962FF', justifyContent: 'center' , flexDirection: 'column'}}>
+            <View style={{flex: 1, backgroundColor: '#51bfd8', justifyContent: 'center' , flexDirection: 'column'}}>
                 {this.props.children}
-                {!(this.state.progress >= 0.1) ? (
+                <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', paddingLeft: 16, paddingRight: 16}}>
+                    <Image
+                        style={{flex: 1, maxWidth: 300}}
+                        resizeMode={'contain'}
+                        source={require('./../../assets/images/export.jpg')}
+                    />
+                </View>
+                {/* {!(this.state.progress >= 0.1) ? (
                     <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-                        {/**<View style={{width: 200, justifyContent: 'center'}}>**/}
                             <Animatable.Text
                                 animation="pulse"
                                 iterationCount={'infinite'}
                                 easing="ease-out">
                                 <Icon name={'insert-drive-file'}  size={100} color={'#FFF'}/>
                             </Animatable.Text>
-                        {/**</View>
-                        <View style={{marginLeft: -60, justifyContent: 'center'}}>
-                            <IconFont name={'server'} size={40} color={'#FFF'}/>
-                        </View>**/}
                     </View>
                 ) : (
                     <View style={{flexDirection: 'row', justifyContent: 'center', height: 100}}>
@@ -76,10 +78,10 @@ class ExportPage extends Component {
                             <IconFont name={'server'} size={35} color={'#FFF'}/>
                         </View>
                     </View>
-                )}
-                <View style={{position: 'absolute', bottom: 20, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
+                )} */}
+                <View style={{position: 'absolute', backgroundColor: '#51bfd8', bottom: 0, paddingBottom: 10, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                     <View style={{flex: 1, alignItems: 'stretch'}}>
-                        <Text style={{color: 'white', fontSize: 20, paddingBottom: 20, textAlign: 'center'}}>{this.state.table}</Text>
+                        <Text style={{color: 'white', fontSize: 20, paddingBottom: 10, paddingTop: 10, textAlign: 'center'}}>{this.state.table}</Text>
                         <View style={[styles.loading]}>
                             <ProgressBarAndroid
                                 progress={this.state.progress}

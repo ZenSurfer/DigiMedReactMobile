@@ -188,7 +188,7 @@ class DoctorSharePage extends Component {
                 <View style={{flex: 1, backgroundColor: (this.state.selected[0].rowID == rowID) ? '#4CAF50' : '#FFF', borderColor: '#E0E0E0', borderBottomWidth: 0.5}}>
                     <View style={{flex: 1, flexDirection: 'row', padding: 16, paddingTop: 0, paddingBottom: 0, height: 80, justifyContent: 'center'}}>
                         <View style={{justifyContent: 'center', alignItems: 'center', marginRight: 16}}>
-                            {(rowData.imagePath) ? ((this.state['doctor'+rowData.id]) ? (<Image resizeMode={'cover'} style={{width: 59, height: 59, borderRadius: 100}} source={{uri: this.state['doctor'+rowData.id]}}/>) : ((<Image source={require('./../../assets/images/logo.png')} resizeMode={'cover'} style={{width: 59, height: 59, borderRadius: 100}} />))) : (<Image source={require('./../../assets/images/logo.png')} resizeMode={'cover'} style={{width: 59, height: 59, borderRadius: 100}} />)}
+                            {(rowData.imagePath) ? ((this.state['doctor'+rowData.id]) ? (<Image resizeMode={'cover'} style={{width: 59, height: 59, borderRadius: 100}} source={{uri: this.state['doctor'+rowData.id]}}/>) : ((<Image source={require('./../../assets/images/patient.png')} resizeMode={'cover'} style={{width: 59, height: 59, borderRadius: 100}} />))) : (<Image source={require('./../../assets/images/patient.png')} resizeMode={'cover'} style={{width: 59, height: 59, borderRadius: 100}} />)}
                         </View>
                         <View style={{flex: 1, alignItems: 'stretch', flexDirection: 'column', justifyContent: 'center'}}>
                             <Text style={[styles.listItemHead, {color: (this.state.selected[0].rowID == rowID) ? '#FFF' : '#424242'}]}>Dr. {rowData.firstname} {(rowData.middlename) ? rowData.middlename+' ' : ''}{rowData.lastname}</Text>
@@ -488,7 +488,7 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
                         <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                     </Text>
                 </TouchableOpacity>
-                {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Image source={require('./../../assets/images/logo.png')} style={styles.avatarImage}/>)}
+                {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Image source={require('./../../assets/images/patient.png')} style={styles.avatarImage}/>)}
             </View>
         )
     },

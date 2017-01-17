@@ -68,6 +68,7 @@ class UserSettingPage extends Component {
     renderScene(route, navigator) {
         return (
             <View style={Styles.containerStyle}>
+                {this.props.children}
                 <View style={[Styles.subTolbar, {}]}>
                     <Text style={Styles.subTitle}>{this.props.doctorName}</Text>
                 </View>

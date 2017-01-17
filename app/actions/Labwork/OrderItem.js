@@ -85,7 +85,7 @@ class OrderItem extends Component {
     }
     renderScene(route, navigator) {
         return (
-            <View style={[Styles.containerStyle, {backgroundColor: '#E0E0E0'}]}>
+            <View style={[Styles.containerStyle, {backgroundColor: '#EEE'}]}>
                 {this.state.children}
                 <View style={[Styles.subTolbar, {marginTop: 24}]}>
                     <Text style={Styles.subTitle}>Laboratory Works</Text>
@@ -203,7 +203,7 @@ class OrderItem extends Component {
                         </View>
                     </View>
                 </Modal>
-                <View style={{flexDirection: 'row', backgroundColor: '#E0E0E0', zIndex: 0}}>
+                <View style={{flexDirection: 'row', backgroundColor: '#EEE', zIndex: 0}}>
                     <TouchableOpacity
                         ref={ref => this.refStep1 = ref}
                         activeOpacity={(this.state.steps.active == 1) ? 1 : 0.2}
@@ -898,7 +898,7 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
                         <Icon name="keyboard-arrow-left" size={30} color="#FFF" />
                     </Text>
                 </TouchableOpacity>
-                {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Image source={require('./../../assets/images/logo.png')} style={styles.avatarImage}/>)}
+                {(avatar) ? (<Image source={{uri: avatar}} style={styles.avatarImage}/>) : (<Image source={require('./../../assets/images/patient.png')} style={styles.avatarImage}/>)}
             </View>
         )
     },

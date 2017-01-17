@@ -35,7 +35,7 @@ class LoginPage extends Component {
                         <View style={[styles.scrollViewWrapper]}>
                             <View style={styles.imageWrapper}>
                                 <Image
-                                    style={{width: 300, height: 160}}
+                                    style={{height: 130}}
                                     resizeMode={'contain'}
                                     source={require('../assets/images/logo.png')}
                                 />

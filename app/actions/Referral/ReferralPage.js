@@ -108,6 +108,7 @@ class ReferralPage extends Component {
     renderScene(route, navigator) {
         return (
             <View style={Styles.containerStyle}>
+                {this.props.children}
                 <View style={[Styles.subTolbar, {}]}>
                     <Text style={Styles.subTitle}>Doctor Referrals</Text>
                 </View>

@@ -453,7 +453,7 @@ var styles = StyleSheet.create({
         flex: 1,
         // flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#E0E0E0',
+        backgroundColor: '#EEE',
         marginLeft: -20,
         marginRight: -20,
         marginBottom: 20,
