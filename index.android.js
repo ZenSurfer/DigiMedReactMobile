@@ -92,7 +92,7 @@ class AwesomeProject extends Component {
     renderScene(route, navigator) {
         BackAndroid.addEventListener('hardwareBackPress', function() {
             console.log(navigator.getCurrentRoutes(0))
-            if (route.id === 'LoginPage' || route.id === 'AppointmentPage' || route.id === 'StepOne' || route.id === 'SplashPage' || route.id === 'ImportPage' || route.id === 'ExportPage' || route.id === 'CompletedOrder' || route.id === 'PendingOrder' || route.id === 'ReferralPage' || route.id === 'PatientPage' || route.id === 'UserProfilePage' || route.id === 'UserSettingPage') {
+            if (route.id === 'DoctorPage' || route.id === 'LoginPage' || route.id === 'AppointmentPage' || route.id === 'StepOne' || route.id === 'SplashPage' || route.id === 'ImportPage' || route.id === 'ExportPage' || route.id === 'CompletedOrder' || route.id === 'PendingOrder' || route.id === 'ReferralPage' || route.id === 'PatientPage' || route.id === 'UserProfilePage' || route.id === 'UserSettingPage') {
                 return true;
             } else {
                 navigator.pop();
