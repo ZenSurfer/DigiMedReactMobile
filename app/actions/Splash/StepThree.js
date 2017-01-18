@@ -27,7 +27,7 @@ class StepThree extends Component {
                 <View style={{position: 'absolute', bottom: 0, flex: 1, flexDirection: 'row'}}>
                     <View style={{flex: 1, alignItems: 'stretch', flexDirection: 'column'}}>
                         <View style={{flex: 1, padding: 16, borderBottomWidth: 0.5, borderColor: '#FFF', paddingBottom: 30}}>
-                            <Text style={{color: '#FFF', textAlign: 'center', fontSize: 16}}>Laboratory tests check a sample of your blood, urine, or body tissues. A technician or your doctor analyzes the test samples to see if your results fall within the normal range.</Text>
+                            <Text style={{color: '#FFF', textAlign: 'left', fontSize: 16}}>Laboratory tests check a sample of your blood, urine, or body tissues. A technician or your doctor analyzes the test samples to see if your results fall within the normal range.</Text>
                         </View>
                         <View style={{flex: 1, flexDirection: 'row'}}>
                             <TouchableOpacity

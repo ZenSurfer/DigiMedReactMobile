@@ -27,7 +27,7 @@ class StepOne extends Component {
                 <View style={{position: 'absolute', bottom: 0, flex: 1, flexDirection: 'row'}}>
                     <View style={{flex: 1, alignItems: 'stretch', flexDirection: 'column'}}>
                         <View style={{flex: 1, padding: 16, borderBottomWidth: 0.5, borderColor: '#FFF', paddingBottom: 30}}>
-                            <Text style={{color: '#FFF', textAlign: 'center', fontSize: 16}}>Diagnosis can help find problems before they start. They also can help find problems early, when your chances for treatment and cure are better. Which exams and screenings you need depends on your age, health and family history, and lifestyle choices.</Text>
+                            <Text style={{color: '#FFF', textAlign: 'left', fontSize: 16}}>Diagnosis can help find problems before they start. They also can help find problems early, when your chances for treatment and cure are better. Which exams and screenings you need depends on your age, health and family history, and lifestyle choices.</Text>
                         </View>
                         <View style={{flex: 1, flexDirection: 'row'}}>
                             <TouchableOpacity

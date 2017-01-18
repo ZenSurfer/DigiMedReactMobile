@@ -27,7 +27,7 @@ class StepTwo extends Component {
                 <View style={{position: 'absolute', bottom: 0, flex: 1, flexDirection: 'row'}}>
                     <View style={{flex: 1, alignItems: 'stretch', flexDirection: 'column'}}>
                         <View style={{flex: 1, padding: 16, borderBottomWidth: 0.5, borderColor: '#FFF', paddingBottom: 30}}>
-                            <Text style={{color: '#FFF', textAlign: 'center', fontSize: 16}}>Appointments may be made for routine visits or new problems that you may be experiencing. If you wish to schedule a time for a physical or procedure, setting up an appointment is very easy to use.</Text>
+                            <Text style={{color: '#FFF', textAlign: 'left', fontSize: 16}}>Appointments may be made for routine visits or new problems that you may be experiencing. If you wish to schedule a time for a physical or procedure, setting up an appointment is very easy to use.</Text>
                         </View>
                         <View style={{flex: 1, flexDirection: 'row'}}>
                             <TouchableOpacity
