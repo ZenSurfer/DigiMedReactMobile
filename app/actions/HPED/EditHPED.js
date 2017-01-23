@@ -767,12 +767,12 @@ class EditHPED extends Component {
                 } else if (percentage <= 50) {
                     status = props.order;
                     notifyStatus.active = true;
-                    notifyStatus.title = 'REQUEST BLOOD TEST';
+                    notifyStatus.title = 'REQUEST DIAGNOSIS TEST';
                     var potential = 'Medium Level';
                 } else if (percentage <= 90) {
                     status = props.order;
                     notifyStatus.active = true;
-                    notifyStatus.title = 'REQUEST BLOOD TEST';
+                    notifyStatus.title = 'REQUEST DIAGNOSIS TEST';
                     var potential = 'High Level';
                 } else {
                     status = props.refer;
