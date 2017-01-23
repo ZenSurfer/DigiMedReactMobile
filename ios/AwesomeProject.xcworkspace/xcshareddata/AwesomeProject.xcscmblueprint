@@ -1,0 +1,32 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "C0922CE249C7085BAA340AEBAF5F56091D8F63D1",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+    "03d9ec6a-56ca-45ae-925f-75d73d54eed9++3119" : {
+
+    }
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "03d9ec6a-56ca-45ae-925f-75d73d54eed9++3119" : 9223372036854775807,
+    "C0922CE249C7085BAA340AEBAF5F56091D8F63D1" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "FCC150C2-1D5B-4E46-9B97-6B304F61DAF6",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "03d9ec6a-56ca-45ae-925f-75d73d54eed9++3119" : "",
+    "C0922CE249C7085BAA340AEBAF5F56091D8F63D1" : "AwesomeProject\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "AwesomeProject",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "ios\/AwesomeProject.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "svn:\/\/192.168.1.88\/imd-repository",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "03d9ec6a-56ca-45ae-925f-75d73d54eed9++3119"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "bitbucket.org:atadmin\/imd_react.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "C0922CE249C7085BAA340AEBAF5F56091D8F63D1"
+    }
+  ]
+}
