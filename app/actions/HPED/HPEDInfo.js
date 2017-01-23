@@ -31,7 +31,7 @@ class HPEDInfo extends Component {
                 'Recurrent Fever',
                 'Night Sweats',
                 'Unexplained Weight Loss',
-                'Loss of Appetite',
+                'Loss of Weight',
                 'Itchy Skin',
                 'Bone pain',
                 'Broken bone from only minor injury',

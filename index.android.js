@@ -14,6 +14,7 @@ class AwesomeProject extends Component {
             completed: false,
             initialRoute: 'SplashPage',
             passProps: {},
+            lastPage: '',
         }
         this.navInstance = {}
     }
@@ -90,12 +91,16 @@ class AwesomeProject extends Component {
         )
     }
     renderScene(route, navigator) {
+        var self = this;
         BackAndroid.addEventListener('hardwareBackPress', function() {
-            console.log(navigator.getCurrentRoutes(0))
+            // console.log()
             if (route.id === 'DoctorPage' || route.id === 'LoginPage' || route.id === 'AppointmentPage' || route.id === 'StepOne' || route.id === 'SplashPage' || route.id === 'ImportPage' || route.id === 'ExportPage' || route.id === 'CompletedOrder' || route.id === 'PendingOrder' || route.id === 'ReferralPage' || route.id === 'PatientPage' || route.id === 'UserProfilePage' || route.id === 'UserSettingPage') {
                 return true;
             } else {
-                navigator.pop();
+                if (self.state.lastPage !== route.id) {
+                    self.setState({lastPage: route.id})
+                    navigator.pop();
+                }
                 return true;
             }
         });

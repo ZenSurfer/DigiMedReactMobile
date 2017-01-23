@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "675898253505",
-    "firebase_url": "https://test-eab8d.firebaseio.com",
-    "project_id": "test-eab8d",
-    "storage_bucket": "test-eab8d.appspot.com"
+    "project_number": "649094933130",
+    "firebase_url": "https://awesomeproject-b2378.firebaseio.com",
+    "project_id": "awesomeproject-b2378",
+    "storage_bucket": "awesomeproject-b2378.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:675898253505:android:bdda3018bb58ca0a",
+        "mobilesdk_app_id": "1:649094933130:android:bdda3018bb58ca0a",
         "android_client_info": {
           "package_name": "com.awesomeproject"
         }
       },
       "oauth_client": [
         {
-          "client_id": "675898253505-83igg1pofkut9lla2vemoesb3pl1jvm1.apps.googleusercontent.com",
+          "client_id": "649094933130-sc6tp2r26c5cgmoftn56m7s1q2857oep.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCDwG-eHXtu-EpfdOhPbk_MBYQB8kqonfQ"
+          "current_key": "AIzaSyAGeMkItUiJWP7-grfv3YLvAV3hcvH3n1E"
         }
       ],
       "services": {

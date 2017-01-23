@@ -117,11 +117,11 @@ class EditUserSetting extends Component {
                         <View style={{flex: 1, justifyContent: 'center', alignItems: 'stretch', backgroundColor: 'rgba(0,0,0,0.4)'}}>
                             <View style={{backgroundColor: '#FFF', marginLeft: 20, marginRight: 20, elevation: 5, borderRadius: 2}}>
                                 <View style={{padding: 16, paddingRight: 0, paddingBottom: 16, paddingTop: 16}}>
-                                    <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
+                                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                                         <Text style={{color: '#212121', fontSize: 26, textAlignVertical: 'center'}}>Change Password</Text>
                                     </View>
                                 </View>
-                                <View style={{flex: 1, marginBottom: -10, marginTop: -10}}>
+                                <View style={{marginBottom: -10, marginTop: -10}}>
                                     <View style={{backgroundColor: '#FFFFFF', padding: 16}}>
                                         <Text style={styles.label} >Current Password</Text>
                                         <View>
