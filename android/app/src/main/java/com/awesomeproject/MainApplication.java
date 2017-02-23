@@ -4,6 +4,7 @@ import android.app.Application;
 import android.util.Log;
 
 import com.facebook.react.ReactApplication;
+import cn.mandata.react_native_mpchart.MPChartPackage;
 import com.beefe.picker.PickerViewPackage;
 import com.github.xinthink.rnmk.ReactMaterialKitPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
@@ -17,7 +18,6 @@ import com.oblador.vectoricons.VectorIconsPackage;
 import com.imagepicker.ImagePickerPackage;
 import org.pgsqlite.SQLitePluginPackage;
 import com.rnfs.RNFSPackage;
-import cn.mandata.react_native_mpchart.MPChartPackage;
 import com.reactnative.photoview.PhotoViewPackage;
 
 import java.util.Arrays;
@@ -27,7 +27,7 @@ public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
-    protected boolean getUseDeveloperSupport() {
+    public boolean getUseDeveloperSupport() {
       return BuildConfig.DEBUG;
     }
 
@@ -40,8 +40,8 @@ public class MainApplication extends Application implements ReactApplication {
           new VectorIconsPackage(),
           new ReactMaterialKitPackage(),
           new ImagePickerPackage(),
-          new MPChartPackage(),
           new MainReactPackage(),
+            new MPChartPackage(),
             new PickerViewPackage(),
             new ReactMaterialKitPackage(),
             new RNFetchBlobPackage(),
