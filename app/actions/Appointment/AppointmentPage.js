@@ -203,7 +203,7 @@ class AppointmentPage extends Component {
                     <View style={{alignItems: 'center'}}>
                         <View style={{flexDirection: 'row', padding: 15, paddingTop: 10, paddingBottom: 10, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
                             <ActivityIndicator color="#616161" size={15}/>
-                            <Text style={{textAlignVertical: 'center', paddingLeft: 10, color: '#616161', fontSize: 11}}>{this.state.syncingTitle}</Text>
+                            {/* <Text style={{textAlignVertical: 'center', paddingLeft: 10, color: '#616161', fontSize: 11}}>{this.state.syncingTitle}</Text> */}
                         </View>
                     </View>
                 ) : (
@@ -379,7 +379,8 @@ class AppointmentPage extends Component {
                                             importDate = moment().year(2000).format('YYYY-MM-DD HH:mm:ss')
                                         }
                                         if (moment().diff(moment(importDate), 'minutes') >= EnvInstance.interval) {
-                                            this.setState({syncing: true, syncingTitle: 'Syncing Appointments...'})
+                                            // this.setState({syncing: true, syncingTitle: 'Syncing Appointments...'})
+                                            this.setState({syncing: true})
                                             this.importData(table, importDate).then((data) => {
                                                 var currentImportDate = importDate;
                                                 if (data.total > 0) {

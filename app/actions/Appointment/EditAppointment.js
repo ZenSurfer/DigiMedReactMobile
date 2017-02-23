@@ -1,7 +1,7 @@
 'use strict'
 
 import React, {Component} from 'react'
-import { Text, StyleSheet, Image, View, DrawerLayoutAndroid, Navigator, ToastAndroid, ProgressBarAndroid, InteractionManager, TouchableOpacity, DatePickerAndroid, TimePickerAndroid, Picker, TextInput, ScrollView, ListView, Modal, RefreshControl, TouchableNativeFeedback, Alert, AsyncStorage} from 'react-native'
+import { Text, StyleSheet, Image, View, DrawerLayoutAndroid, Navigator, ToastAndroid, ProgressBar, InteractionManager, TouchableOpacity, DatePickerAndroid, TimePickerAndroid, Picker, TextInput, ScrollView, ListView, Modal, RefreshControl, TouchableNativeFeedback, Alert, AsyncStorage} from 'react-native'
 import RNFS from 'react-native-fs'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import moment from 'moment'
@@ -171,7 +171,7 @@ class EditAppointment extends Component {
                         <Text style={Styles.subTitle}>Edit Appointment</Text>
                     </View>
                     <ScrollView style={styles.containerWrapper}
-                        keyboardShouldPersistTaps={true}>
+                        keyboardShouldPersistTaps={'always'}>
                         {(this.props.patientID) ? (
                             <View style={{flex: 1, alignItems: 'stretch', marginTop: 20}}>
                                 <Text style={[styles.label]}>Date</Text>

@@ -312,7 +312,7 @@ class EditPrescription extends Component {
                     </TouchableOpacity>
                 </Modal>
                 <ScrollView
-                    keyboardShouldPersistTaps={true}>
+                    keyboardShouldPersistTaps={'always'}>
                     <View style={{backgroundColor: '#FFFFFF', paddingLeft: 14, paddingRight: 16, paddingTop: 16, paddingBottom: 90}}>
                         <Text style={styles.label} >Generic Name</Text>
                         <TextInput

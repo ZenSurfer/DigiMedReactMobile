@@ -31,7 +31,7 @@ class LoginPage extends Component {
                 {this.props.children}
                 <View style={{flex: 1, alignItems: 'center', flexDirection: 'row', justifyContent: 'center', }}>
                     <ScrollView
-                        keyboardShouldPersistTaps={true}>
+                        keyboardShouldPersistTaps={'always'}>
                         <View style={[styles.scrollViewWrapper]}>
                             <View style={styles.imageWrapper}>
                                 <Image

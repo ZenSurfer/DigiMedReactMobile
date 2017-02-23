@@ -89,7 +89,7 @@ class EditImage extends Component {
                     <Text style={Styles.subTitle}>Edit Imaging</Text>
                 </View>
                 <ScrollView
-                    keyboardShouldPersistTaps={true}>
+                    keyboardShouldPersistTaps={'always'}>
                     <View style={{position: 'absolute', top: 0, flex: 1, flexDirection: 'row', justifyContent: 'center', zIndex: 2}}>
                         {(this.state.uploadImage) ? (
                             <View style={{flex: 1, alignItems: 'center', height: (this.isTablet) ? 600 : 300, flexDirection: 'row', justifyContent: 'center'}}>

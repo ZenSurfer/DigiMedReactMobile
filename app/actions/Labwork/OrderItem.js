@@ -94,7 +94,7 @@ class OrderItem extends Component {
                     <View style={{alignItems: 'center'}}>
                         <View style={{flexDirection: 'row', padding: 15, paddingTop: 10, paddingBottom: 10, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
                             <ActivityIndicator color="#616161" size={15}/>
-                            <Text style={{textAlignVertical: 'center', paddingLeft: 10, color: '#616161', fontSize: 11}}>{this.state.syncingTitle}</Text>
+                            {/* <Text style={{textAlignVertical: 'center', paddingLeft: 10, color: '#616161', fontSize: 11}}>{this.state.syncingTitle}</Text> */}
                         </View>
                     </View>
                 ) : (
@@ -121,7 +121,7 @@ class OrderItem extends Component {
                             </View>
                             <ScrollView
                                 style={{flex: 1}}
-                                keyboardShouldPersistTaps={true}>
+                                keyboardShouldPersistTaps={'always'}>
                                 <View style={{padding: 16}}>
                                     {_.map(this.state.modalItems, (v, i) => {
                                         return (
@@ -359,7 +359,7 @@ class OrderItem extends Component {
             return (
                 <ScrollView
                     ref={(ref) => this.refStep1 = ref}
-                    keyboardShouldPersistTaps={true}
+                    keyboardShouldPersistTaps={'always'}
                     refreshControl={
                         <RefreshControl
                             refreshing={this.state.refreshing}

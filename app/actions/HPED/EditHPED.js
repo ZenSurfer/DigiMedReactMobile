@@ -330,7 +330,7 @@ class EditHPED extends Component {
             case 1:
                 return (
                     <ScrollView
-                        keyboardShouldPersistTaps={true}>
+                        keyboardShouldPersistTaps={'always'}>
                         <View style={{backgroundColor: '#FFFFFF', paddingLeft: 16, paddingRight: 16, paddingTop: 16, paddingBottom: 90}}>
                             <Text style={styles.label} >Chief Complaint</Text>
                             <TextInput
@@ -452,7 +452,7 @@ class EditHPED extends Component {
             case 2:
                 return (
                     <ScrollView
-                        keyboardShouldPersistTaps={true}>
+                        keyboardShouldPersistTaps={'always'}>
                         <View style={{backgroundColor: '#FFFFFF', paddingLeft: 16, paddingRight: 16, paddingTop: 16, paddingBottom: (this.state.other) ? 90 : 40}}>
                             <Text style={styles.label} >History of Present Illness</Text>
                             <TextInput

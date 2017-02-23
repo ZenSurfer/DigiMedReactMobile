@@ -153,7 +153,7 @@ class EditUserProfile extends Component {
                         <Text style={Styles.subTitle}>Edit Profile</Text>
                     </View>
                     <ScrollView
-                        keyboardShouldPersistTaps={true}>
+                        keyboardShouldPersistTaps={'always'}>
                         <View style={{height: (this.isTablet) ? 600 : 300, backgroundColor: '#EEEEEE'}}>
                             {(this.state.avatar) ? (
                                 <Image

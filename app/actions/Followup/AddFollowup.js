@@ -1,7 +1,7 @@
 'use strict'
 
 import React, {Component} from 'react'
-import { Text, StyleSheet, View, DrawerLayoutAndroid, Navigator, ToastAndroid, ProgressBarAndroid, InteractionManager, TouchableOpacity, DatePickerAndroid, TimePickerAndroid, Picker, TextInput, ScrollView, ListView, Modal, RefreshControl, TouchableNativeFeedback, AsyncStorage, Image} from 'react-native'
+import { Text, StyleSheet, View, DrawerLayoutAndroid, Navigator, ToastAndroid, ProgressBar, InteractionManager, TouchableOpacity, DatePickerAndroid, TimePickerAndroid, Picker, TextInput, ScrollView, ListView, Modal, RefreshControl, TouchableNativeFeedback, AsyncStorage, Image} from 'react-native'
 import RNFS from 'react-native-fs'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import moment from 'moment'
@@ -147,7 +147,7 @@ class AddFollowup extends Component {
                         <Text style={Styles.subTitle}>Add Follow-Up</Text>
                     </View>
                     <ScrollView style={styles.containerWrapper}
-                        keyboardShouldPersistTaps={true}>
+                        keyboardShouldPersistTaps={'always'}>
                         <View style={{flexDirection: 'row', marginTop: 20}}>
                             <View style={{flex: 1, alignItems: 'stretch'}}>
                                 <Text style={[styles.label]}>Date</Text>

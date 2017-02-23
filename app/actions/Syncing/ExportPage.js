@@ -1,7 +1,7 @@
 'use strict';
 
 import React, { Component } from 'react'
-import { StyleSheet, Text, Image, View, Navigator, ScrollView, ProgressBarAndroid, ToastAndroid, DrawerLayoutAndroid, TextInput, TouchableOpacity, Dimensions, ActivityIndicator, Animated, AsyncStorage, NetInfo} from 'react-native'
+import { StyleSheet, Text, Image, View, Navigator, ScrollView, ProgressBar, ToastAndroid, DrawerLayoutAndroid, TextInput, TouchableOpacity, Dimensions, ActivityIndicator, Animated, AsyncStorage, NetInfo} from 'react-native'
 import RNFS from 'react-native-fs'
 import Schema from '../../database/schema.js'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -81,14 +81,10 @@ class ExportPage extends Component {
                 )} */}
                 <View style={{position: 'absolute', backgroundColor: '#51bfd8', bottom: 0, paddingBottom: 10, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                     <View style={{flex: 1, alignItems: 'stretch'}}>
-                        <Text style={{color: 'white', fontSize: 20, paddingBottom: 10, paddingTop: 10, textAlign: 'center'}}>{this.state.table}</Text>
                         <View style={[styles.loading]}>
-                            <ProgressBarAndroid
-                                progress={this.state.progress}
-                                indeterminate={!(this.state.progress > 0) ? true : false}
-                                styleAttr={'Horizontal'}
-                                color={'#FFF'}/>
+                            <ActivityIndicator size={30} color={'#FFFFFF'}/>
                         </View>
+                        <Text style={{color: 'white', fontSize: 20, paddingTop: 10, textAlign: 'center'}}>{this.state.table}</Text>
                     </View>
                 </View>
                 {/**<TouchableOpacity

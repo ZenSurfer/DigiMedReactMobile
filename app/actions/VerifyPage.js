@@ -1,7 +1,7 @@
 'use strict';
 
 import React, {Component} from 'react'
-import {Text, View, Navigator, ActivityIndicator, StyleSheet, Dimensions, TouchableOpacity, AsyncStorage, ToastAndroid, ProgressBarAndroid, Animated, Easing, TextInput, TouchableNativeFeedback} from 'react-native'
+import {Text, View, Navigator, ActivityIndicator, StyleSheet, Dimensions, TouchableOpacity, AsyncStorage, ToastAndroid, ProgressBar, Animated, Easing, TextInput, TouchableNativeFeedback} from 'react-native'
 import RNFS from 'react-native-fs'
 import Schema from '../database/schema.js'
 import Populate from '../database/values.js'

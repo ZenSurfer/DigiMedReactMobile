@@ -1,7 +1,7 @@
 'use strict';
 
 import React, { Component } from 'react'
-import { Text, StyleSheet, View, DrawerLayoutAndroid, Navigator, ToastAndroid, ProgressBarAndroid, InteractionManager, TouchableOpacity, DatePickerAndroid, TimePickerAndroid, Picker, TextInput, ScrollView, ListView} from 'react-native'
+import { Text, StyleSheet, View, DrawerLayoutAndroid, Navigator, ToastAndroid, ProgressBar, InteractionManager, TouchableOpacity, DatePickerAndroid, TimePickerAndroid, Picker, TextInput, ScrollView, ListView} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import _ from 'lodash'
 import moment from 'moment'
@@ -147,7 +147,7 @@ class FrontPage extends Component {
                     <Text style={Styles.subTitle}>Edit Patient Information</Text>
                 </View>
                 <View style={Styles.loading}>
-                    <ProgressBarAndroid style={Styles.progress} styleAttr={'Horizontal'} color={'#FF5722'}/>
+                    <ProgressBar style={Styles.progress} styleAttr={'Horizontal'} color={'#FF5722'}/>
                 </View>
             </View>
         );
@@ -160,7 +160,7 @@ class FrontPage extends Component {
                     <Text style={Styles.subTitle}>{this.state.presetText}</Text>
                 </View>
                 <ScrollView style={styles.containerWrapper}
-                    keyboardShouldPersistTaps={true}>
+                    keyboardShouldPersistTaps={'always'}>
                     <Text style={[styles.label, {marginTop: 20}]}>Select Patient</Text>
                     <View style={styles.select}>
                         <Picker

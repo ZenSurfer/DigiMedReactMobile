@@ -1,7 +1,7 @@
 'use strict';
 
 import React, {Component} from 'react'
-import {Text, Image, View, Navigator, ActivityIndicator, StyleSheet, Dimensions, TouchableOpacity, AsyncStorage, ToastAndroid, ProgressBarAndroid, Animated, Easing, NetInfo} from 'react-native'
+import {Text, Image, View, Navigator, ActivityIndicator, StyleSheet, Dimensions, TouchableOpacity, AsyncStorage, ToastAndroid, ProgressBar, Animated, Easing, NetInfo} from 'react-native'
 import moment from 'moment'
 import _ from 'lodash'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -26,7 +26,7 @@ class StepOne extends Component {
                 </View>
                 <View style={{position: 'absolute', bottom: 0, flex: 1, flexDirection: 'row'}}>
                     <View style={{flex: 1, alignItems: 'stretch', flexDirection: 'column'}}>
-                        <View style={{flex: 1, padding: 16, borderBottomWidth: 0.5, borderColor: '#FFF', paddingBottom: 30}}>
+                        <View style={{flex: 1, padding: 16,  paddingBottom: 30}}>
                             <Text style={{color: '#FFF', textAlign: 'left', fontSize: 16}}>Diagnosis can help find problems before they start. They also can help find problems early, when your chances for treatment and cure are better. Which exams and screenings you need depends on your age, health and family history, and lifestyle choices.</Text>
                         </View>
                         <View style={{flex: 1, flexDirection: 'row'}}>

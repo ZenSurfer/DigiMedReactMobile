@@ -1,7 +1,7 @@
 'use strict';
 
 import React, {Component} from 'react'
-import {Text, View, Navigator, ActivityIndicator, StyleSheet, Dimensions, TouchableOpacity, AsyncStorage, ToastAndroid, ProgressBarAndroid, NetInfo, Image} from 'react-native'
+import {Text, View, Navigator, ActivityIndicator, StyleSheet, Dimensions, TouchableOpacity, AsyncStorage, ToastAndroid, ProgressBar, NetInfo, Image} from 'react-native'
 import RNFS from 'react-native-fs'
 import Schema from '../../database/schema.js'
 import Styles from '../../assets/Styles.js'
@@ -180,14 +180,10 @@ class ImportPage extends Component {
                 </TouchableOpacity>**/}
                 <View style={{position: 'absolute', backgroundColor: '#51d6ab', bottom: 0, paddingBottom: 10, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                     <View style={{flex: 1, alignItems: 'stretch'}}>
-                        <Text style={{color: 'white', fontSize: 20, paddingBottom: 10, paddingTop: 10, textAlign: 'center'}}>{this.state.title}</Text>
                         <View style={[styles.loading]}>
-                            <ProgressBarAndroid
-                                progress={this.state.progress}
-                                indeterminate={!(this.state.progress > 0) ? true : false}
-                                styleAttr={'Horizontal'}
-                                color={'#FFF'}/>
+                            <ActivityIndicator size={30} color={'#FFFFFF'}/>
                         </View>
+                        <Text style={{color: 'white', fontSize: 20, paddingTop: 10, textAlign: 'center'}}>{this.state.title}</Text>
                     </View>
                 </View>
             </View>

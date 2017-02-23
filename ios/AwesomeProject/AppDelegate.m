@@ -11,8 +11,11 @@
 
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
+<<<<<<< ours
 
 #import "RNFIRMessaging.h"
+=======
+>>>>>>> theirs
 
 @implementation AppDelegate
 

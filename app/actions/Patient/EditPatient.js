@@ -161,7 +161,7 @@ class EditPatient extends Component {
                     <Text style={Styles.subTitle}>Edit Patient Information</Text>
                 </View>
                 <ScrollView
-                    keyboardShouldPersistTaps={true}>
+                    keyboardShouldPersistTaps={'always'}>
                     <View style={{height: 300, backgroundColor: '#EEEEEE'}}>
                         {(this.state.avatar) ? (
                             <Image

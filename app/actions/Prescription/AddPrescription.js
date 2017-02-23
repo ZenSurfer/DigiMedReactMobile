@@ -290,7 +290,7 @@ class AddPrescription extends Component {
                     </View>
                 </Modal>
                 <ScrollView
-                    keyboardShouldPersistTaps={true}>
+                    keyboardShouldPersistTaps={'always'}>
                     <View style={{flex: 1, justifyContent: 'center'}}>
                         {_.map(this.state.prescription, (v, i) => {
                             return (

@@ -314,7 +314,8 @@ class UserProfilePage extends Component {
                                             importDate = moment().year(2000).format('YYYY-MM-DD HH:mm:ss')
                                         }
                                         if (moment().diff(moment(importDate), 'minutes') >= EnvInstance.interval) {
-                                            this.setState({syncing: true, syncingTitle: 'Syncing Doctors...'})
+                                            // this.setState({syncing: true, syncingTitle: 'Syncing Doctors...'})
+                                            this.setState({syncing: true})
                                             this.importData(table, importDate).then((data) => {
                                                 var currentImportDate = importDate;
                                                 if (data.total > 0) {

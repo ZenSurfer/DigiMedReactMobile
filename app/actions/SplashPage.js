@@ -1,7 +1,7 @@
 'use strict';
 
 import React, {Component} from 'react'
-import {Text, View, Image, Navigator, ActivityIndicator, StyleSheet, Dimensions, TouchableOpacity, AsyncStorage, ToastAndroid, ProgressBarAndroid, Animated, Easing, NetInfo} from 'react-native'
+import {Text, View, Image, Navigator, ActivityIndicator, StyleSheet, Dimensions, TouchableOpacity, AsyncStorage, ToastAndroid, ProgressBar, Animated, Easing, NetInfo} from 'react-native'
 import RNFS from 'react-native-fs'
 import FCM from 'react-native-fcm';
 import Schema from '../database/schema.js'
@@ -319,13 +319,10 @@ class SplashPage extends Component {
                 {/* </View> */}
                 <View style={{position: 'absolute', backgroundColor: '#2962FF', bottom: 0, paddingBottom: 10, flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
                     <View style={{flex: 1, alignItems: 'stretch'}}>
-                        <Text style={{color: 'white', fontSize: 20, paddingBottom: 10, paddingTop: 10, textAlign: 'center'}}>{this.state.title}</Text>
                         <View style={[styles.loading]}>
-                            <ProgressBarAndroid
-                                indeterminate={true}
-                                styleAttr={'Horizontal'}
-                                color={'#FFF'}/>
+                            <ActivityIndicator size={30} color={'#FFFFFF'}/>
                         </View>
+                        <Text style={{color: 'white', fontSize: 20, paddingBottom: 10, paddingTop: 10, textAlign: 'center'}}>{this.state.title}</Text>
                     </View>
                 </View>
             </View>

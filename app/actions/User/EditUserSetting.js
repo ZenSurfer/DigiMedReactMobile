@@ -253,7 +253,7 @@ class EditUserSetting extends Component {
                         </View>
                     </Modal>
                     <ScrollView
-                        keyboardShouldPersistTaps={true}>
+                        keyboardShouldPersistTaps={'always'}>
                         <View style={{backgroundColor: '#FFFFFF'}}>
                             <View style={[{padding: 12, paddingRight: 16, backgroundColor: '#FFFFFF', borderBottomWidth: 0.5, borderBottomColor: '#EEE'}]}>
                                 <View style={[styles.rows, {flexDirection: 'column'}]}>

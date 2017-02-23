@@ -37,7 +37,7 @@ class SearchPage extends Component {
             <View style={[Styles.containerStyle, {backgroundColor: '#FFFFFF'}]}>
                 {this.props.children}
                 <ScrollView
-                    keyboardShouldPersistTaps={true}>
+                    keyboardShouldPersistTaps={'always'}>
                     <View style={{backgroundColor: '#FFFFFF', paddingLeft: 16, paddingRight: 16, paddingTop: 16}}>
                         <Text style={styles.label} >First Name</Text>
                         <TextInput

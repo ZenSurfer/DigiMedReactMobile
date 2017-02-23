@@ -242,7 +242,7 @@ class AddHPED extends Component {
                     </TouchableOpacity>
                 </View>
                 <ScrollView
-                    keyboardShouldPersistTaps={true}>
+                    keyboardShouldPersistTaps={'always'}>
                     {this.steps(this.state.steps.active)}
                 </ScrollView>
                 <TouchableOpacity
