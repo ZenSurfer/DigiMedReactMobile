@@ -61,7 +61,7 @@ class DrawerPage extends Component {
                 <View style={styles.drawerView}>
                     {(this.state.avatar) ? (
                         <Image
-                            style={{height: 200, width: 300, overlayColor: 'rgba(0,0,0,1)'}}
+                            style={{height: 200, width: 300}}
                             source={{uri: this.state.avatar}}
                             resizeMode={'cover'}>
                             <View style={{position: 'absolute', height: 200, width: 300, backgroundColor: 'rgba(0,0,0,0.4)'}}></View>

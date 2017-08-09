@@ -1,37 +1,62 @@
-'use strict';
+'use strict'
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, View, ListView, RefreshControl, Navigator, Dimensions, ToastAndroid, TouchableOpacity, TouchableNativeFeedback, Image, Alert, AsyncStorage, NetInfo, ActivityIndicator} from 'react-native'
+import {StyleSheet, Text, Keyboard, Image, View, AsyncStorage, Navigator, StatusBar, ProgressBar, DrawerLayoutAndroid, InteractionManager, TouchableNativeFeedback, TouchableOpacity, ListView, RefreshControl, Modal, TouchableHighlight, TextInput, NetInfo, ActivityIndicator} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import IconFont from 'react-native-vector-icons/FontAwesome'
 import RNFS from 'react-native-fs'
-import _ from 'lodash'
-import Styles from '../../assets/Styles'
-import Env from '../../env'
 import moment from 'moment'
+import _ from 'lodash'
+import Env from '../../env'
 
-const {height, width} = Dimensions.get('window');
-const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
+import Styles from '../../assets/Styles'
+import DrawerPage from '../../components/DrawerPage'
+
 const EnvInstance = new Env()
 const db = EnvInstance.db()
+const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 
-class AppointmentPatientPage extends Component {
+class CDSResult extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            doctorID: 0,
             refreshing: true,
+            query: '',
+            queryText: '',
+            search: 'ORDER BY firstname ASC',
+            searchType: 'firstname',
+            modalVisible: false,
             rowData: [],
             avatar: false,
-            appointmentType: {
-                'follow-up': 'Follow-Up',
-                'admission': 'Hospital Admission',
-                'diagnosis': 'Medical Diagnosis',
-                'procedure': 'Procedure',
-                'unspecified': 'Initial Check-Up',
-            },
             syncing: false,
-            syncingTitle: 'Syncing Appointments...',
+            syncingTitle: 'Syncing Patients...',
         }
+        this.sampleData = [
+            {
+                id: 1,
+                name: "Tuberculosis",
+                condition: {
+                    level: 'vhigh',
+                    text: 'Very Severe Condition',
+                },
+                results: [
+                    'Severe Cousg', 'Chest Pain', 'Extreme Smoking', 'Weight loss', 'Malaises'
+                ],
+                recommendation: 'Need to see a doctor, Sever tuberculosis requiring ICU admission.'
+            },
+            {
+                id: 2,
+                name: "Hypertension",
+                condition: {
+                    level: 'mild',
+                    text: 'Mild Condition',
+                },
+                results: [
+                    'Headache', 'Chest Pain', 'Vision Problems'
+                ],
+                recommendation: 'Mild hypertension should be treated with advice on lifesteyl changed, not medication.'
+            },
+        ]
     }
     componentWillMount() {
         RNFS.exists(this.props.patientAvatar).then((exist) => {
@@ -63,29 +88,18 @@ class AppointmentPatientPage extends Component {
                 navigator={this.props.navigator}
                 navigationBar={
                     <Navigator.NavigationBar
-                        style={[Styles.navigationBar,{marginTop: 24}]}
-                        routeMapper={NavigationBarRouteMapper(this.props.patientID, this.props.patientName, this.state.avatar, this.props)} />
+                        style={[Styles.navigationBar, {marginTop: 24}]}
+                        routeMapper={NavigationBarRouteMapper(this.props.patientID, this.props.patientName, this.state.avatar, this)} />
                 }/>
-        );
+        )
     }
     renderScene(route, navigator) {
         return (
-            <View style={Styles.containerStyle}>
+            <View style={[Styles.containerStyle]}>
                 {this.props.children}
                 <View style={[Styles.subTolbar, {marginTop: 24}]}>
-                    <Text style={Styles.subTitle}>Appointment</Text>
+                    <Text style={Styles.subTitle}>Test Results</Text>
                 </View>
-                {(this.state.syncing) ? (
-                    <View style={{alignItems: 'center', backgroundColor: '#607D8B'}}>
-                        <View style={{flexDirection: 'row', padding: 15, paddingTop: 10, paddingBottom: 10, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                            <ActivityIndicator color="#FFF" size={15}/>
-                            <Text style={{paddingLeft: 10, fontSize: 10, textAlignVertical: 'center', color: '#FFF'}}>UPDATING DATA</Text>
-                            {/* <Text style={{textAlignVertical: 'center', paddingLeft: 10, color: '#616161', fontSize: 11}}>{this.state.syncingTitle}</Text> */}
-                        </View>
-                    </View>
-                ) : (
-                    <View />
-                )}
                 <ListView
                     dataSource={ds.cloneWithRows(this.state.rowData)}
                     renderRow={(rowData, sectionID, rowID) => this.renderListView(rowData, rowID)}
@@ -94,70 +108,51 @@ class AppointmentPatientPage extends Component {
                         <RefreshControl
                             refreshing={this.state.refreshing}
                             onRefresh={this.onRefresh.bind(this)}
-                            />
-                    }/>
-                <TouchableOpacity
-                    style={[Styles.buttonFab, Styles.subTolbarButton, {marginTop: 24}]}
-                    onPress={() => this.props.navigator.push({
-                        id: 'AddAppointment',
-                        passProps: {
-                            patientID: this.props.patientID,
-                            patientAvatar: this.props.patientAvatar,
-                            patientName: this.props.patientName
-                        }
-                    })}>
-                    <Icon name={'add'} color={'#FFFFFF'} size={30}/>
-                </TouchableOpacity>
+                        />
+                    }
+                />
             </View>
-        );
+        )
     }
     renderListView(rowData, rowID) {
         return (
-            <View style={styles.listView}>
-                <TouchableNativeFeedback
-                    onPress={() => this.props.navigator.push({
-                        id: 'EditAppointment',
-                        passProps: {
-                            appointmentID: rowData.id,
-                            patientID: this.props.patientID,
-                            patientAvatar: this.props.patientAvatar,
-                            patientName: this.props.patientName
-                        }
-                    })}>
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+            <View style={{flex: 1, backgroundColor: '#FFFFFF', borderColor: '#E0E0E0', borderBottomWidth: 0.5}}>
+                <View style={{flex: 1, flexDirection: 'row', paddingLeft: 16, paddingRight: 16, minHeight: 80, justifyContent: 'center'}}>
+                    <View style={[styles.listText, {flex: 1, alignItems: 'stretch', flexDirection: 'column', justifyContent: 'center'}]}>
+                        <Text style={styles.listItemHead}>{rowData.name}</Text>
+                        <Text style={[styles[rowData.condition.level]]}>{rowData.condition.text}</Text>
+                        <Text style={{marginTop: 10, color: '#4CAF50'}}>Results</Text>
+                        {_.map(rowData.results, (v, i) => {
+                            return (<Text key={i}><Icon name={'check'}/> {v}</Text>);
+                        })}
+                        <Text style={{marginTop: 10, color: '#FFB300'}}>Recommendation</Text>
+                        <Text>{rowData.recommendation}</Text>
                         <TouchableOpacity
-                            style={{justifyContent: 'center', padding: 12, borderRadius: 50, backgroundColor: '#03A9F4', marginLeft: 16}}
-                            onPress={() => Alert.alert(
-                                'Note',
-                                rowData.notes,
-                                [{text: 'CLOSE'}]
-                            )}>
-                            <Icon style={{textAlignVertical: 'center', textAlign: 'center', color: '#FFF'}} name='announcement' size={20}/>
+                            style={[Styles.coloredButton, {marginTop: 20, backgroundColor: '#E91E63'}]}
+                            activeOpacity={0.6}>
+                            <Text style={{color: '#FFF'}}>PROCEED TO DIAGNOSE</Text>
                         </TouchableOpacity>
-                        <View style={[styles.listText, {flex: 1, alignItems: 'stretch'}]}>
-                            <Text style={styles.listItem}>{moment(rowData.date+' '+rowData.timeStart).format('MMMM DD, YYYY')}</Text>
-                            <Text style={styles.listItemHead}>{this.state.appointmentType[rowData.type]}</Text>
-                            <Text style={styles.listItem}>{moment(rowData.date+' '+rowData.timeStart).format('hh:mm A')} <Text style={{}}>to</Text> {moment(rowData.date+' '+rowData.timeEnd).format('hh:mm A')} </Text>
-                            {/* <Text style={styles.listItem}>{rowData.id} {rowData.diagnosisID}</Text> */}
-                        </View>
                     </View>
-                </TouchableNativeFeedback>
+                </View>
             </View>
         )
     }
     onRefresh() {
-        this.setState({refreshing: true})
-        db.transaction((tx) => {
-            tx.executeSql("SELECT * FROM appointments WHERE patientID=? AND doctorID =? AND (deleted_at in (null, 'NULL', '') OR deleted_at is null) ORDER BY date DESC, timeStart DESC", [this.props.patientID, this.state.doctorID], function(tx, rs) {
-                db.data = rs.rows
-            }, (err) =>  { alert(err.message); });
-        }, (err) => { alert(err.message); }, () => {
-            var rowData = [];
-            _.forEach(db.data, function(v, i) {
-                rowData.push(db.data.item(i))
-            })
-            this.setState({refreshing: false, rowData: rowData})
-            this.updateData(['appointments']);
+        this.setState({refreshing: false, rowData: _.remove(this.sampleData, (n) => {
+            if (this.state.queryText !== '')
+                return !_.includes(n['name'], this.state.queryText);
+            else
+                return true;
+        })})
+    }
+    gotoCDSResult(rowData) {
+        this.props.navigator.push({
+            id: 'CDSResult',
+            passProps: {
+                patientID: this.props.patientID,
+                patientAvatar: this.props.patientAvatar,
+                patientName: this.props.patientName
+            }
         })
     }
     updateData(tables) {
@@ -176,6 +171,28 @@ class AppointmentPatientPage extends Component {
                             var rows = [];
                             _.forEach(db.data, (v, i) => {
                                 rows.push(i+ '='+ encodeURIComponent('{') + this.jsonToQueryString(db.data.item(i)) + encodeURIComponent('}'))
+                                if (table == 'patients' || table == 'staff' || table == 'nurses' || table == 'doctors') {
+                                    RNFS.exists(RNFS.DocumentDirectoryPath+'/'+db.data.item(i).imagePath).then((exist) => {
+                                        if (exist)
+                                            RNFS.readFile(RNFS.DocumentDirectoryPath+'/'+db.data.item(i).imagePath, 'base64').then((image) => {
+                                                this.exportImage({
+                                                    imagePath: db.data.item(i).imagePath,
+                                                    image: (image.toString().indexOf('dataimage/jpegbase64') !== -1) ? encodeURIComponent(_.replace(image.toString(), 'dataimage/jpegbase64','')) :  encodeURIComponent(image.toString())
+                                                }, table).done();
+                                            })
+                                    })
+                                }
+                                if (table == 'patientImages') {
+                                    RNFS.exists(RNFS.DocumentDirectoryPath+'/patient/'+db.data.item(i).image).then((exist) => {
+                                        if (exist)
+                                            RNFS.readFile(RNFS.DocumentDirectoryPath+'/patient/'+db.data.item(i).image, 'base64').then((image) => {
+                                                this.exportImage({
+                                                    imagePath: 'patient/'+db.data.item(i).image,
+                                                    image: (image.toString().indexOf('dataimage/jpegbase64') !== -1) ? encodeURIComponent(_.replace(image.toString(), 'dataimage/jpegbase64','')) :  encodeURIComponent(image.toString())
+                                                }, table).done();
+                                            })
+                                    })
+                                }
                             })
                             this.exportData(table, rows).then(data => {
                                 if(!_.isUndefined(data) && data.success) {
@@ -185,13 +202,30 @@ class AppointmentPatientPage extends Component {
                                             importDate = moment().year(2000).format('YYYY-MM-DD HH:mm:ss')
                                         }
                                         if (moment().diff(moment(importDate), 'minutes') >= EnvInstance.interval) {
-                                            // this.setState({syncing: true, syncingTitle: 'Syncing Appointments...'})
+                                            // this.setState({syncing: true, syncingTitle: 'Syncing Patients...'})
                                             this.setState({syncing: true})
                                             this.importData(table, importDate).then((data) => {
                                                 var currentImportDate = importDate;
                                                 if (data.total > 0) {
                                                     db.sqlBatch(_.transform(data.data, (result, n, i) => {
                                                         result.push(["INSERT OR REPLACE INTO "+table+" VALUES ("+_.join(_.fill(Array(_.size(n)), '?'), ',')+")", _.values(n)])
+                                                        if (!_.isUndefined(n.imagePath)) {
+                                                            var param = {id: n.id, type: data.table};
+                                                            this.importImage(Object.keys(param).map((key) => {
+                                                                return encodeURIComponent(key) + '=' + encodeURIComponent(param[key]);
+                                                            }).join('&')).then((data) => {
+                                                                if (!_.isUndefined(data)) {
+                                                                    if (data.success) {
+                                                                        // console.log(RNFS.DocumentDirectoryPath+'/'+n.imagePath, decodeURIComponent(data.avatar))
+                                                                        RNFS.writeFile(RNFS.DocumentDirectoryPath+'/'+n.imagePath, decodeURIComponent(data.avatar), 'base64').then((success) => {
+                                                                            console.log("Successfully created!")
+                                                                        }).catch((err) => {
+                                                                            console.log("Error occured while creating image!")
+                                                                        });
+                                                                    }
+                                                                }
+                                                            }).done();
+                                                        }
                                                         return true
                                                     }, []), () => {
                                                         if(_.last(tables) === table)
@@ -218,6 +252,9 @@ class AppointmentPatientPage extends Component {
                                                     }).done()
                                                 }
                                             }).done()
+                                        } else {
+                                            if(_.last(tables) === table)
+                                                this.setState({syncing: false})
                                         }
                                     }).done()
                                 }
@@ -227,6 +264,31 @@ class AppointmentPatientPage extends Component {
                 })
             }
         })
+    }
+    async importImage(param) {
+        try {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/image?'+param).then((response) => {
+                return response.json()
+            });
+        } catch (err) {
+            console.log(err.message)
+        }
+    }
+    async exportImage(rows, table) {
+        try {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/storeimage?type='+table, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(rows)
+            }).then((response) => {
+                return response.json()
+            });
+        } catch (err) {
+            console.log(table+':', err.message)
+        }
     }
     async importDate(table) {
         try {
@@ -307,31 +369,53 @@ var styles = StyleSheet.create({
     avatarIcon: {
         margin: 0,
     },
+    textResult: {
+        margin: 6,
+        marginLeft: 16,
+        flexDirection: 'row',
+    },
     listView: {
+        flex: 1,
+        flexDirection: 'row',
         borderStyle: 'solid',
         borderBottomWidth: 0.5,
         borderBottomColor: '#EEE',
         backgroundColor: '#FFF',
         elevation: 10,
+        paddingTop: 4,
+        paddingBottom: 4,
+    },
+    listIcon: {
+        marginLeft: 16,
+        marginRight: 16,
+        marginTop: 5,
+        marginBottom: 5,
     },
     listText: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
         alignItems: 'stretch',
         marginTop: 10,
         marginBottom: 10,
-        marginLeft: 16,
-        marginRight: 16,
     },
     listItemHead: {
-        fontSize: 22,
-        paddingTop: 0,
-        paddingBottom: 2,
-        color: '#424242'
+        fontSize: 26,
+        paddingTop: 10,
+        color: '#212121'
     },
     listItem: {
         fontSize: 14,
     },
+    vhigh: {
+        color: '#B71C1C',
+    },
+    mild: {
+        color: '#FFB300'
+    }
 })
-var NavigationBarRouteMapper = (patientID, patientName, avatar, props) => ({
+
+var NavigationBarRouteMapper = (patientID, patientName, avatar, state) => ({
     LeftButton(route, navigator, index, nextState) {
         return (
             <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -347,8 +431,15 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar, props) => ({
             </View>
         )
     },
-    RightButton(route, navigator, index, nextState) {
-        return null
+    RightButton(route, navigator, index, navState) {
+        return (
+            <TouchableOpacity style={Styles.rightButton}
+                onPress={() => state.setState({modalVisible: true})} >
+                <Text style={Styles.rightButtonText}>
+                    <Icon name="search" size={30} color="#FFF" />
+                </Text>
+            </TouchableOpacity>
+        )
     },
     Title(route, navigator, index, nextState) {
         return (
@@ -366,4 +457,4 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar, props) => ({
     }
 })
 
-module.exports = AppointmentPatientPage;
+module.exports = CDSResult

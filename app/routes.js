@@ -65,6 +65,10 @@ import ReferralPage from './actions/Referral/ReferralPage'
 import ExportPage from './actions/Syncing/ExportPage'
 import ImportPage from './actions/Syncing/ImportPage'
 
+import CDSPage from './actions/CDS/CDSPage'
+import CDSQuestion from './actions/CDS/CDSQuestion'
+import CDSResult from './actions/CDS/CDSResult'
+
 import Styles from './assets/Styles'
 
 module.exports = (route, navigator, self) => {
@@ -405,6 +409,28 @@ module.exports = (route, navigator, self) => {
             <ReferralPage navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='rgba(0, 0, 0, 0.01)' translucent={true}/>
             </ReferralPage>
+        )
+    }
+    // clinical decision support page
+    if (routeId === 'CDSPage') {
+        return (
+            <CDSPage navigator={navigator} {...route.passProps}>
+                <StatusBar backgroundColor='rgba(0, 0, 0, 0.01)' translucent={true}/>
+            </CDSPage>
+        )
+    }
+    if (routeId === 'CDSQuestion') {
+        return (
+            <CDSQuestion navigator={navigator} {...route.passProps}>
+                <StatusBar backgroundColor='rgba(0, 0, 0, 0.01)' translucent={true}/>
+            </CDSQuestion>
+        )
+    }
+    if (routeId === 'CDSResult') {
+        return (
+            <CDSResult navigator={navigator} {...route.passProps}>
+                <StatusBar backgroundColor='rgba(0, 0, 0, 0.01)' translucent={true}/>
+            </CDSResult>
         )
     }
 

@@ -693,7 +693,7 @@ var NavigationBarRouteMapper = (patientID, patientName, props, avatar) => ({
                         ]
                     )
             }}>
-                <Text style={{color: '#FFFFFF', margin: 10, marginRight: 16, backgroundColor: '#FFFFFF'}}>
+                <Text style={{color: '#FFFFFF', margin: 10, marginRight: 16}}>
                     <Icon name={"more-vert"} size={30} color={'#FFFFFF'} />
                 </Text>
             </ToolbarAndroid>

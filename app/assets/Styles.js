@@ -81,7 +81,7 @@ module.exports = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'stretch',
         marginTop: 56,
-        backgroundColor: '#FFF'
+        backgroundColor: '#EEE'
     },
 
     // button styles

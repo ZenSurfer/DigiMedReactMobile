@@ -394,9 +394,23 @@ class PatientProfile extends Component {
                                 patientName: this.state.rowData.firstname+' '+this.state.rowData.middlename+' '+this.state.rowData.lastname
                             }
                         })}>
-                        <View style={{backgroundColor: '#E91E63', flex: 1, alignItems: 'stretch',  padding: 10}}>
+                        <View style={{backgroundColor: '#E91E63', flex: 1, alignItems: 'stretch',  padding: 10, borderColor: '#EC407A', borderStyle: 'solid', borderRightWidth: 1}}>
                             <Text style={{textAlign: 'center'}}><Icon name={'schedule'} color={'#FFFFFF'} size={34} /></Text>
                             <Text style={{textAlign: 'center', fontSize: 10, color: '#FFFFFF'}}>Appointments</Text>
+                        </View>
+                    </TouchableNativeFeedback>
+                    <TouchableNativeFeedback
+                        onPress={() => this.props.navigator.push({
+                            id: 'CDSPage',
+                            passProps: {
+                                patientID: this.state.rowData.id,
+                                patientAvatar: RNFS.DocumentDirectoryPath +'/'+ this.state.rowData.imagePath,
+                                patientName: this.state.rowData.firstname+' '+this.state.rowData.middlename+' '+this.state.rowData.lastname
+                            }
+                        })}>
+                        <View style={{backgroundColor: '#E91E63', flex: 1, alignItems: 'stretch',  padding: 10}}>
+                            <Text style={{textAlign: 'center'}}><Icon name={'developer-board'} color={'#FFFFFF'} size={34} /></Text>
+                            <Text style={{textAlign: 'center', fontSize: 10, color: '#FFFFFF'}}>CDS</Text>
                         </View>
                     </TouchableNativeFeedback>
                 </View>
@@ -495,9 +509,7 @@ var NavigationBarRouteMapper = (patientID) => ({
         return (
             <TouchableOpacity style={{flex: 1, justifyContent: 'center'}}
                 onPress={() => {
-                    navigator.parentNavigator.replacePreviousAndPop({
-                        id: 'PatientPage',
-                    })
+                    navigator.parentNavigator.pop();
                 }}>
                 <Text style={{color: 'white', margin: 10,}}>
                     <Icon name={"keyboard-arrow-left"} size={30} color={"#FFF"} />
@@ -533,7 +545,7 @@ var NavigationBarRouteMapper = (patientID) => ({
                         ]
                     )
             }}>
-                <Text style={{color: '#FFFFFF', margin: 10, marginRight: 16, backgroundColor: '#FFFFFF'}}>
+                <Text style={{color: '#FFFFFF', margin: 10, marginRight: 16}}>
                     <Icon name={"more-vert"} size={30} color={'#FFFFFF'} />
                 </Text>
             </ToolbarAndroid>

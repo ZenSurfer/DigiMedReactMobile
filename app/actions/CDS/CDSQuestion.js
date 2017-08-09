@@ -1,30 +1,85 @@
-'use strict';
+'use strict'
 
 import React, {Component} from 'react'
-import {StyleSheet, Text, View, ListView, RefreshControl, Navigator, Dimensions, ToastAndroid, TouchableOpacity, TouchableNativeFeedback, Image, Alert, AsyncStorage, NetInfo, ActivityIndicator} from 'react-native'
+import {StyleSheet, Text, Keyboard, Image, View, AsyncStorage, Navigator, StatusBar, ProgressBar, DrawerLayoutAndroid, InteractionManager, TouchableNativeFeedback, TouchableOpacity, ListView, RefreshControl, Modal, TouchableHighlight, TextInput, NetInfo, ActivityIndicator} from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import IconFont from 'react-native-vector-icons/FontAwesome'
 import RNFS from 'react-native-fs'
-import _ from 'lodash'
-import Styles from '../../assets/Styles'
-import Env from '../../env'
 import moment from 'moment'
+import _ from 'lodash'
+import Env from '../../env'
 
-const {height, width} = Dimensions.get('window');
-const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
+import Styles from '../../assets/Styles'
+import DrawerPage from '../../components/DrawerPage'
+
 const EnvInstance = new Env()
 const db = EnvInstance.db()
+const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2})
 
-class FollowupPage extends Component {
+class CDSQuestion extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            doctorID: 0,
-            refreshing: false,
+            refreshing: true,
+            query: '',
+            queryText: '',
+            search: 'ORDER BY firstname ASC',
+            searchType: 'firstname',
+            modalVisible: false,
             rowData: [],
             avatar: false,
             syncing: false,
-            syncingTitle: 'Syncing Follow-Ups...',
+            syncingTitle: 'Syncing Patients...',
         }
+        this.sampleData = [
+            {
+                id: 1,
+                title: "How bad is your cough?",
+                data: [
+                    {
+                        id: 1,
+                        value: 'mild',
+                        selected: false,
+                    },
+                    {
+                        id: 2,
+                        value: 'moderate',
+                        selected: false,
+                    },
+                    {
+                        id: 3,
+                        value: 'severe',
+                        selected: false,
+                    },
+                ],
+            },
+            {
+                id: 2,
+                title: "Do you have chest pain?",
+                selected: null,
+            },
+            {
+                id: 3,
+                title: "How many cigarettes do you smoke each day?",
+                data: [
+                    {
+                        id: 1,
+                        value: 'none',
+                        selected: false,
+                    },
+                    {
+                        id: 2,
+                        value: 'less than 8',
+                        selected: false,
+                    },
+                    {
+                        id: 3,
+                        value: 'extreme',
+                        selected: false,
+                    },
+                ],
+            },
+        ]
     }
     componentWillMount() {
         RNFS.exists(this.props.patientAvatar).then((exist) => {
@@ -44,7 +99,9 @@ class FollowupPage extends Component {
         } catch (error) {
             console.log('AsyncStorage error: ' + error.message);
         } finally {
-            this.onRefresh();
+            setTimeout(() => {
+                this.onRefresh();
+            }, 1000)
         }
     }
     render() {
@@ -54,29 +111,18 @@ class FollowupPage extends Component {
                 navigator={this.props.navigator}
                 navigationBar={
                     <Navigator.NavigationBar
-                        style={[Styles.navigationBar,{marginTop: 24}]}
-                        routeMapper={NavigationBarRouteMapper(this.props.patientID, this.props.patientName, this.state.avatar)} />
+                        style={[Styles.navigationBar, {marginTop: 24}]}
+                        routeMapper={NavigationBarRouteMapper(this.props.patientID, this.props.patientName, this.state.avatar, this)} />
                 }/>
-        );
+        )
     }
     renderScene(route, navigator) {
         return (
-            <View style={Styles.containerStyle}>
+            <View style={[Styles.containerStyle]}>
                 {this.props.children}
                 <View style={[Styles.subTolbar, {marginTop: 24}]}>
-                    <Text style={Styles.subTitle}>Follow-Up</Text>
+                    <Text style={Styles.subTitle}>Test Questions</Text>
                 </View>
-                {(this.state.syncing) ? (
-                    <View style={{alignItems: 'center', backgroundColor: '#607D8B'}}>
-                        <View style={{flexDirection: 'row', padding: 15, paddingTop: 10, paddingBottom: 10, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
-                            <ActivityIndicator color="#FFF" size={15}/>
-                            <Text style={{paddingLeft: 10, fontSize: 10, textAlignVertical: 'center', color: '#FFF'}}>UPDATING DATA</Text>
-                            {/* <Text style={{textAlignVertical: 'center', paddingLeft: 10, color: '#616161', fontSize: 11}}>{this.state.syncingTitle}</Text> */}
-                        </View>
-                    </View>
-                ) : (
-                    <View />
-                )}
                 <ListView
                     dataSource={ds.cloneWithRows(this.state.rowData)}
                     renderRow={(rowData, sectionID, rowID) => this.renderListView(rowData, rowID)}
@@ -85,64 +131,91 @@ class FollowupPage extends Component {
                         <RefreshControl
                             refreshing={this.state.refreshing}
                             onRefresh={this.onRefresh.bind(this)}
-                            />
-                    }/>
+                        />
+                    }
+                />
                 <TouchableOpacity
-                    style={[Styles.buttonFab, Styles.subTolbarButton, {marginTop: 24}]}
-                    onPress={() => this.props.navigator.push({
-                        id: 'AddFollowup',
-                        passProps: {
-                            diagnosisID: this.props.diagnosisID,
-                            patientID: this.props.patientID,
-                            patientAvatar: this.props.patientAvatar,
-                            patientName: this.props.patientName
-                        }
-                    })}>
-                    <Icon name={'add'} color={'#FFFFFF'} size={30}/>
+                    style={[Styles.buttonFab, {backgroundColor: '#4CAF50'}]}
+                    onPress={() => this.gotoCDSResult()}>
+                    <Icon name={'check'} color={'#FFFFFF'} size={30}/>
                 </TouchableOpacity>
-            </View>
-        );
-    }
-    renderListView(rowData, rowID) {
-        return (
-            <View style={styles.listView}>
-                <TouchableNativeFeedback
-                    onPress={() => this.props.navigator.push({
-                        id: 'EditFollowup',
-                        passProps: {
-                            followupID: rowData.id,
-                            diagnosisID: this.props.diagnosisID,
-                            patientID: this.props.patientID,
-                            patientAvatar: this.props.patientAvatar,
-                            patientName: this.props.patientName,
-                            prescriptionID: rowData.prescriptionID ,
-                            prescriptionRowID: rowData.prescriptionRowID}
-                    })}>
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                        <View style={[styles.listText, {flex: 1, alignItems: 'stretch'}]}>
-                            <Text style={styles.listItem}>{moment(rowData.date+' '+rowData.time).format('MMMM DD, YYYY')}</Text>
-                            <Text style={styles.listItemHead}>{rowData.name}</Text>
-                            <Text style={styles.listItem}>{moment(rowData.date+' '+rowData.time).format('hh:mm A')} / {_.upperFirst(rowData.emergencyOrElective)}</Text>
-                            {/* <Text style={styles.listItem}>{rowData.id} {rowData.diagnosisID}</Text> */}
-                        </View>
-                    </View>
-                </TouchableNativeFeedback>
             </View>
         )
     }
+    renderListView(rowData, rowID) {
+        return (
+            <View style={{flex: 1, backgroundColor: '#FFFFFF', borderColor: '#E0E0E0', borderBottomWidth: 0.5}}>
+                <View style={{flex: 1, flexDirection: 'row', paddingLeft: 16, paddingRight: 16, minHeight: 80, justifyContent: 'center'}}>
+                {(_.isArray(rowData.data)) ?  (
+                    <View style={[styles.listText, {flex: 1, alignItems: 'center', justifyContent: 'center'}]}>
+                        <Text style={styles.listItemHead}>{rowData.title}</Text>
+                        <View style={{flex: 1, flexDirection: 'column', marginTop: 10, marginBottom: 12, alignSelf: 'stretch'}}>{_.map(rowData.data, (v, i) => {
+                                return (
+                                    <TouchableOpacity
+                                        key={i}
+                                        style={[Styles.coloredButton, {borderWidth: 0.5, borderRadius: 0, marginTop: 0, marginBottom: 0}, ((v.selected) ? {borderColor: '#FFD54F', backgroundColor: '#FFCA28'}: {backgroundColor: '#448AFF', borderColor: '#82B1FF'})]}
+                                        onPress={() => this.updateRowData(rowID, i)}
+                                        activeOpacity={0.6}
+                                    >
+                                        <Text style={((v.selected) ? {color: '#212121'}: {color: '#FFF'})}>{_.upperCase(v.value)}</Text>
+                                    </TouchableOpacity>
+                                )
+                            })}
+                        </View>
+                    </View>) : (
+                    <View style={[styles.listText, {flex: 1, alignItems: 'center', justifyContent: 'center'}]}>
+                        <Text style={styles.listItemHead}>{rowData.title}</Text>
+                        <View style={[{flexDirection: 'row'}]}>
+                            <TouchableOpacity
+                                style={[Styles.coloredButton, {borderWidth: 0.5, borderRadius: 0, marginTop: 0, marginBottom: 0}, ((rowData.data) ? {borderColor: '#FFD54F', backgroundColor: '#FFCA28'}: {backgroundColor: '#448AFF', borderColor: '#82B1FF'})]}
+                                onPress={() => this.updateRowData(rowID, true)}
+                                activeOpacity={0.6}>
+                                <Text style={((rowData.data) ? {color: '#212121'} : {color: '#FFF'})}>YES</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[Styles.coloredButton, {borderColor: '#448AFF', borderWidth: 0.5, borderRadius: 0, marginTop: 0, marginBottom: 0}, ((!rowData.data && rowData.data != null) ? {borderColor: '#FFD54F', backgroundColor: '#FFCA28'}: {backgroundColor: '#448AFF', borderColor: '#82B1FF'})]}
+                                onPress={() => this.updateRowData(rowID, false)}
+                                activeOpacity={0.6}>
+                                <Text style={((!rowData.data && rowData.data != null) ? {color: '#212121'} : {color: '#FFF'})}>NO</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                )}
+                </View>
+            </View>
+        )
+    }
+    updateRowData(rowID, value) {
+        var rowData = this.state.rowData;
+        if (_.isArray(rowData[rowID]['data'])) {
+            _.map(rowData[rowID]['data'], (v, i) => {
+                v['selected'] = false;
+                return v;
+            });
+            rowData[rowID]['data'][value]['selected'] = true;
+        } else {
+            rowData[rowID]['data'] = '';
+            rowData[rowID]['data'] = value;
+        }
+        this.setState({rowData: rowData});
+    }
     onRefresh() {
-        this.setState({refreshing: true})
-        db.transaction((tx) => {
-            tx.executeSql("SELECT * FROM followup WHERE diagnosisID=? AND leadSurgeon=? AND (deleted_at in (null, 'NULL', '') OR deleted_at is null) ORDER BY date DESC, time DESC", [this.props.diagnosisID, this.state.doctorID], function(tx, rs) {
-                db.data = rs.rows
-            }, (err) =>  { alert(err.message); });
-        }, (err) => { alert(err.message); }, () => {
-            var rowData = [];
-            _.forEach(db.data, function(v, i) {
-                rowData.push(db.data.item(i))
-            })
-            this.setState({refreshing: false, rowData: rowData})
-            this.updateData(['followup', 'followupIcds']);
+        this.setState({refreshing: false, rowData: _.remove(this.sampleData, (n) => {
+            if (this.state.queryText !== '')
+                return !_.includes(n['name'], this.state.queryText);
+            else
+                return true;
+        })})
+    }
+    gotoCDSResult(rowData) {
+        this.props.navigator.push({
+            id: 'CDSResult',
+            passProps: {
+                patientID: this.props.patientID,
+                patientAvatar: this.props.patientAvatar,
+                patientName: this.props.patientName,
+                rowData: this.state.rowData
+            }
         })
     }
     updateData(tables) {
@@ -161,6 +234,28 @@ class FollowupPage extends Component {
                             var rows = [];
                             _.forEach(db.data, (v, i) => {
                                 rows.push(i+ '='+ encodeURIComponent('{') + this.jsonToQueryString(db.data.item(i)) + encodeURIComponent('}'))
+                                if (table == 'patients' || table == 'staff' || table == 'nurses' || table == 'doctors') {
+                                    RNFS.exists(RNFS.DocumentDirectoryPath+'/'+db.data.item(i).imagePath).then((exist) => {
+                                        if (exist)
+                                            RNFS.readFile(RNFS.DocumentDirectoryPath+'/'+db.data.item(i).imagePath, 'base64').then((image) => {
+                                                this.exportImage({
+                                                    imagePath: db.data.item(i).imagePath,
+                                                    image: (image.toString().indexOf('dataimage/jpegbase64') !== -1) ? encodeURIComponent(_.replace(image.toString(), 'dataimage/jpegbase64','')) :  encodeURIComponent(image.toString())
+                                                }, table).done();
+                                            })
+                                    })
+                                }
+                                if (table == 'patientImages') {
+                                    RNFS.exists(RNFS.DocumentDirectoryPath+'/patient/'+db.data.item(i).image).then((exist) => {
+                                        if (exist)
+                                            RNFS.readFile(RNFS.DocumentDirectoryPath+'/patient/'+db.data.item(i).image, 'base64').then((image) => {
+                                                this.exportImage({
+                                                    imagePath: 'patient/'+db.data.item(i).image,
+                                                    image: (image.toString().indexOf('dataimage/jpegbase64') !== -1) ? encodeURIComponent(_.replace(image.toString(), 'dataimage/jpegbase64','')) :  encodeURIComponent(image.toString())
+                                                }, table).done();
+                                            })
+                                    })
+                                }
                             })
                             this.exportData(table, rows).then(data => {
                                 if(!_.isUndefined(data) && data.success) {
@@ -170,6 +265,7 @@ class FollowupPage extends Component {
                                             importDate = moment().year(2000).format('YYYY-MM-DD HH:mm:ss')
                                         }
                                         if (moment().diff(moment(importDate), 'minutes') >= EnvInstance.interval) {
+                                            // this.setState({syncing: true, syncingTitle: 'Syncing Patients...'})
                                             this.setState({syncing: true})
                                             this.importData(table, importDate).then((data) => {
                                                 var currentImportDate = importDate;
@@ -183,6 +279,7 @@ class FollowupPage extends Component {
                                                             }).join('&')).then((data) => {
                                                                 if (!_.isUndefined(data)) {
                                                                     if (data.success) {
+                                                                        // console.log(RNFS.DocumentDirectoryPath+'/'+n.imagePath, decodeURIComponent(data.avatar))
                                                                         RNFS.writeFile(RNFS.DocumentDirectoryPath+'/'+n.imagePath, decodeURIComponent(data.avatar), 'base64').then((success) => {
                                                                             console.log("Successfully created!")
                                                                         }).catch((err) => {
@@ -238,6 +335,22 @@ class FollowupPage extends Component {
             });
         } catch (err) {
             console.log(err.message)
+        }
+    }
+    async exportImage(rows, table) {
+        try {
+            return await fetch(EnvInstance.cloudUrl+'/api/v2/storeimage?type='+table, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(rows)
+            }).then((response) => {
+                return response.json()
+            });
+        } catch (err) {
+            console.log(table+':', err.message)
         }
     }
     async importDate(table) {
@@ -319,31 +432,49 @@ var styles = StyleSheet.create({
     avatarIcon: {
         margin: 0,
     },
+    textResult: {
+        margin: 6,
+        marginLeft: 16,
+        flexDirection: 'row',
+    },
     listView: {
+        flex: 1,
+        flexDirection: 'row',
         borderStyle: 'solid',
         borderBottomWidth: 0.5,
         borderBottomColor: '#EEE',
         backgroundColor: '#FFF',
         elevation: 10,
+        paddingTop: 4,
+        paddingBottom: 4,
+    },
+    listIcon: {
+        marginLeft: 16,
+        marginRight: 16,
+        marginTop: 5,
+        marginBottom: 5,
     },
     listText: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
         alignItems: 'stretch',
         marginTop: 10,
         marginBottom: 10,
-        marginLeft: 16,
-        marginRight: 16,
     },
     listItemHead: {
-        fontSize: 22,
-        paddingTop: 0,
-        paddingBottom: 2,
-        color: '#424242'
+        fontSize: 24,
+        color: '#424242',
+        textAlign: 'center',
+        paddingTop: 20,
+        paddingBottom: 16,
     },
     listItem: {
         fontSize: 14,
     },
 })
-var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
+
+var NavigationBarRouteMapper = (patientID, patientName, avatar, state) => ({
     LeftButton(route, navigator, index, nextState) {
         return (
             <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center'}}>
@@ -359,8 +490,15 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
             </View>
         )
     },
-    RightButton(route, navigator, index, nextState) {
-        return null
+    RightButton(route, navigator, index, navState) {
+        return (
+            <TouchableOpacity style={Styles.rightButton}
+                onPress={() => state.setState({modalVisible: true})} >
+                <Text style={Styles.rightButtonText}>
+                    <Icon name="search" size={30} color="#FFF" />
+                </Text>
+            </TouchableOpacity>
+        )
     },
     Title(route, navigator, index, nextState) {
         return (
@@ -378,4 +516,4 @@ var NavigationBarRouteMapper = (patientID, patientName, avatar) => ({
     }
 })
 
-module.exports = FollowupPage;
+module.exports = CDSQuestion
