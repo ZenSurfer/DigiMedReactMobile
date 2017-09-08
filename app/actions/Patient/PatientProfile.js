@@ -399,6 +399,22 @@ class PatientProfile extends Component {
                             <Text style={{textAlign: 'center', fontSize: 10, color: '#FFFFFF'}}>Appointments</Text>
                         </View>
                     </TouchableNativeFeedback>
+                    { (this.state.rowData.isPedia == 1) ? (
+                        <TouchableNativeFeedback
+                           onPress={() => this.props.navigator.push({
+                               id: 'VaccinePage',
+                               passProps: {
+                                   patientID: this.state.rowData.id,
+                                   patientAvatar: RNFS.DocumentDirectoryPath +'/'+ this.state.rowData.imagePath,
+                                   patientName: this.state.rowData.firstname+' '+this.state.rowData.middlename+' '+this.state.rowData.lastname
+                               }
+                           })}>
+                           <View style={{backgroundColor: '#E91E63', flex: 1, alignItems: 'stretch',  padding: 10, borderColor: '#EC407A', borderStyle: 'solid', borderRightWidth: 1}}>
+                               <Text style={{textAlign: 'center'}}><Icon name={'child-care'} color={'#FFFFFF'} size={34} /></Text>
+                               <Text style={{textAlign: 'center', fontSize: 10, color: '#FFFFFF'}}>Vaccine</Text>
+                           </View>
+                       </TouchableNativeFeedback>
+                   ) : null}
                     <TouchableNativeFeedback
                         onPress={() => this.props.navigator.push({
                             id: 'CDSPage',

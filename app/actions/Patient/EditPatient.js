@@ -96,7 +96,8 @@ class EditPatient extends Component {
                     birthdate: {
                         text: moment(this.state.birthdate).format('MMMM DD, YYYY'),
                         date: new Date(this.state.birthdate),
-                    }
+                    },
+                    isPedia: (this.state.isPedia ? true : false)
             })
             if (db.data.imagePath != '')
                 RNFS.exists(RNFS.DocumentDirectoryPath +'/'+ db.data.imagePath).then((exist) => {
@@ -467,11 +468,11 @@ class EditPatient extends Component {
                             onChangeText={(text) => this.setState({policyNumber: text})} />
                         <View style={{flexDirection: 'row', marginTop: 10,}}>
                             <Switch
-                                onValueChange={(value) => this.setState({isInfant: value})}
+                                onValueChange={(value) => this.setState({isPedia: value})}
                                 style={{marginBottom: 10, marginRight: 10}}
-                                value={this.state.isInfant} />
+                                value={this.state.isPedia} />
                             <Text style={[styles.textInput, styles.switch]}>Is Infant? </Text>
-                            <Text style={[styles.textInput, styles.switch, {color: '#212121'}]}>{this.state.isInfant ? 'Yes' : 'No'}</Text>
+                            <Text style={[styles.textInput, styles.switch, {color: '#212121'}]}>{this.state.isPedia ? 'Yes' : 'No'}</Text>
                         </View>
                         <Text style={styles.label} >Father's Name</Text>
                         <TextInput
@@ -604,7 +605,7 @@ class EditPatient extends Component {
                 policyNumber: this.state.policyNumber,
                 imagePath: imagePath,
                 imageMime: 'jpeg',
-                isPedia: this.state.isPedia,
+                isPedia: (this.state.isPedia ? 1 : 0),
                 fatherName: this.state.fatherName,
                 motherName: this.state.motherName,
                 guardianName: this.state.guardianName,
@@ -612,6 +613,7 @@ class EditPatient extends Component {
                 updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
                 id: this.props.patientID,
             }
+            console.warn(this.state.isPedia);
             db.transaction((tx) => {
                 tx.executeSql("UPDATE patients SET primaryDoc = ?, secondaryDoc = ?, referredByID = ?, code = ?, category = ?, firstname = ?, lastname = ?, middlename = ?, nickname = ?, birthdate = ?, birthPlace = ?, religion = ?, address = ?, status = ?, occupation = ?, sex = ?, race = ?, nationality = ?, height = ?, hmoID = ?, hmo = ?, hmoCode = ?, telHome = ?, telOffice = ?, telMobile = ?, email = ?, company = ?, companyAddress = ?, companyContact = ?, companyID = ?, personNotify = ?, personMobile = ?, personRelation = ?, personAddress = ?, insuranceProvider = ?, accountVerified = ?, policyNumber = ?, imagePath = ?, imageMime = ?, isPedia = ?, fatherName = ?, motherName = ?, guardianName = ?, spouseName = ?, updated_at = ? WHERE id = ?", _.values(value), (tx, rs) => {
                     console.log("updated: " + rs.rowsAffected);

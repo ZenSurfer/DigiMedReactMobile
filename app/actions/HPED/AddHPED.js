@@ -679,27 +679,27 @@ class AddHPED extends Component {
                     },
                 })
 
-                this.analyze(['Hodgkin\'s Lymphoma', "Multiple Myeloma"], [lymphomaCount, myelomaCount], [lymphoma, myeloma], {
-                    order: {
-                        id: 'OrderItem',
-                        passProps: {
-                            diagnosisID: db.insertID,
-                            patientID: this.props.patientID,
-                            patientAvatar: this.props.patientAvatar,
-                            patientName: this.props.patientName,
-                            labItemSelect: '152,4,8',
-                        }
-                    },
-                    refer: {
-                        id: 'DoctorSharePage',
-                        passProps: {
-                            diagnosisID: db.insertID,
-                            patientID: this.props.patientID,
-                            patientAvatar: this.props.patientAvatar,
-                            patientName: this.props.patientName
-                        }
-                    }
-                })
+                // this.analyze(['Hodgkin\'s Lymphoma', "Multiple Myeloma"], [lymphomaCount, myelomaCount], [lymphoma, myeloma], {
+                //     order: {
+                //         id: 'OrderItem',
+                //         passProps: {
+                //             diagnosisID: db.insertID,
+                //             patientID: this.props.patientID,
+                //             patientAvatar: this.props.patientAvatar,
+                //             patientName: this.props.patientName,
+                //             labItemSelect: '152,4,8',
+                //         }
+                //     },
+                //     refer: {
+                //         id: 'DoctorSharePage',
+                //         passProps: {
+                //             diagnosisID: db.insertID,
+                //             patientID: this.props.patientID,
+                //             patientAvatar: this.props.patientAvatar,
+                //             patientName: this.props.patientName
+                //         }
+                //     }
+                // })
             })
         } else {
             ToastAndroid.show("Invalid Chief Complaint!", 1000)

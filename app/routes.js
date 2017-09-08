@@ -69,6 +69,8 @@ import CDSPage from './actions/CDS/CDSPage'
 import CDSQuestion from './actions/CDS/CDSQuestion'
 import CDSResult from './actions/CDS/CDSResult'
 
+import VaccinePage from './actions/Vaccine/VaccinePage'
+
 import Styles from './assets/Styles'
 
 module.exports = (route, navigator, self) => {
@@ -431,6 +433,14 @@ module.exports = (route, navigator, self) => {
             <CDSResult navigator={navigator} {...route.passProps}>
                 <StatusBar backgroundColor='rgba(0, 0, 0, 0.01)' translucent={true}/>
             </CDSResult>
+        )
+    }
+    // vaccine page
+    if (routeId === 'VaccinePage') {
+        return (
+            <VaccinePage navigator={navigator} {...route.passProps}>
+                <StatusBar backgroundColor='rgba(0, 0, 0, 0.01)' translucent={true}/>
+            </VaccinePage>
         )
     }
 

@@ -153,11 +153,11 @@ class CDSQuestion extends Component {
                                 return (
                                     <TouchableOpacity
                                         key={i}
-                                        style={[Styles.coloredButton, {borderWidth: 0.5, borderRadius: 0, marginTop: 0, marginBottom: 0}, ((v.selected) ? {borderColor: '#FFD54F', backgroundColor: '#FFCA28'}: {backgroundColor: '#448AFF', borderColor: '#82B1FF'})]}
+                                        style={[Styles.coloredButton, {borderWidth: 0.5, borderRadius: 0, marginTop: 0, marginBottom: 0}, ((v.selected) ? {borderColor: '#FFD54F', backgroundColor: '#FFCA28'}: {backgroundColor: '#EEEEEE', borderColor: '#E0E0E0'})]}
                                         onPress={() => this.updateRowData(rowID, i)}
                                         activeOpacity={0.6}
                                     >
-                                        <Text style={((v.selected) ? {color: '#212121'}: {color: '#FFF'})}>{_.upperCase(v.value)}</Text>
+                                        <Text style={{color: '#212121'}}>{_.upperCase(v.value)}</Text>
                                     </TouchableOpacity>
                                 )
                             })}
@@ -165,18 +165,18 @@ class CDSQuestion extends Component {
                     </View>) : (
                     <View style={[styles.listText, {flex: 1, alignItems: 'center', justifyContent: 'center'}]}>
                         <Text style={styles.listItemHead}>{rowData.title}</Text>
-                        <View style={[{flexDirection: 'row'}]}>
+                        <View style={[{flexDirection: 'row', marginBottom: 15}]}>
                             <TouchableOpacity
-                                style={[Styles.coloredButton, {borderWidth: 0.5, borderRadius: 0, marginTop: 0, marginBottom: 0}, ((rowData.data) ? {borderColor: '#FFD54F', backgroundColor: '#FFCA28'}: {backgroundColor: '#448AFF', borderColor: '#82B1FF'})]}
+                                style={[Styles.coloredButton, {borderWidth: 0.5, borderRadius: 0, marginTop: 0, marginBottom: 0}, ((rowData.data) ? {borderColor: '#FFD54F', backgroundColor: '#FFCA28'}: {backgroundColor: '#EEEEEE', borderColor: '#E0E0E0'})]}
                                 onPress={() => this.updateRowData(rowID, true)}
                                 activeOpacity={0.6}>
-                                <Text style={((rowData.data) ? {color: '#212121'} : {color: '#FFF'})}>YES</Text>
+                                <Text style={{color: '#212121'}}>YES</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={[Styles.coloredButton, {borderColor: '#448AFF', borderWidth: 0.5, borderRadius: 0, marginTop: 0, marginBottom: 0}, ((!rowData.data && rowData.data != null) ? {borderColor: '#FFD54F', backgroundColor: '#FFCA28'}: {backgroundColor: '#448AFF', borderColor: '#82B1FF'})]}
+                                style={[Styles.coloredButton, {borderColor: '#EEEEEE', borderWidth: 0.5, borderRadius: 0, marginTop: 0, marginBottom: 0}, ((!rowData.data && rowData.data != null) ? {borderColor: '#FFD54F', backgroundColor: '#FFCA28'}: {backgroundColor: '#EEEEEE', borderColor: '#E0E0E0'})]}
                                 onPress={() => this.updateRowData(rowID, false)}
                                 activeOpacity={0.6}>
-                                <Text style={((!rowData.data && rowData.data != null) ? {color: '#212121'} : {color: '#FFF'})}>NO</Text>
+                                <Text style={{color: '#212121'}}>NO</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

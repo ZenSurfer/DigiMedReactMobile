@@ -112,17 +112,16 @@ class ReferralPage extends Component {
                 <View style={[Styles.subTolbar, {}]}>
                     <Text style={Styles.subTitle}>Doctor Referrals</Text>
                 </View>
-                {(this.state.syncing) ? (
+                {/* {(this.state.syncing) ? (
                     <View style={{alignItems: 'center', backgroundColor: '#607D8B'}}>
                         <View style={{flexDirection: 'row', padding: 15, paddingTop: 10, paddingBottom: 10, borderBottomLeftRadius: 5, borderBottomRightRadius: 5}}>
                             <ActivityIndicator color="#FFF" size={15}/>
                             <Text style={{paddingLeft: 10, fontSize: 10, textAlignVertical: 'center', color: '#FFF'}}>UPDATING DATA</Text>
-                            {/* <Text style={{textAlignVertical: 'center', paddingLeft: 10, color: '#616161', fontSize: 11}}>{this.state.syncingTitle}</Text> */}
                         </View>
                     </View>
                 ) : (
                     <View />
-                )}
+                )} */}
                 <ListView
                     dataSource={ds.cloneWithRows(this.state.referrals)}
                     renderRow={(rowData, sectionID, rowID) => this.renderListView(rowData, rowID)}
